@@ -1,0 +1,36 @@
+{
+    "editor.fontFamily": "'Maple Mono', 'monospace', monospace",
+    "editor.fontSize": 12,
+    "editor.minimap.side": "left",
+    "editor.scrollbar.vertical": "hidden",
+    "editor.scrollbar.verticalScrollbarSize": 0,
+    "extensions.autoUpdate": false,
+    "security.workspace.trust.enabled": false,
+    "security.workspace.trust.startupPrompt": "never",
+    "security.workspace.trust.untrustedFiles": "newWindow",
+    "telemetry.telemetryLevel": "off",
+    "terminal.explorerKind": "both",
+    "terminal.external.linuxExec": "kitty",
+    "terminal.sourceControlRepositoriesKind": "both",
+    "window.menuBarVisibility": "toggle",
+    "workbench.colorTheme": "Tokyo Night Storm",
+    "workbench.statusBar.visible": false,
+    "workbench.iconTheme": "catppuccin-mocha",
+    "editor.minimap.autohide": true,
+    "editor.formatOnSave": true,
+    "diffEditor.codeLens": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "workbench.sideBar.location": "right",
+    "nix.enableLanguageServer": true,
+    "nix.formatterPath": "nixpkgs-fmt",
+    "nix.serverPath": "nil",
+    "nix.serverSettings": {
+        "nil": {
+            "formatting": {
+                "command": [
+                    "nixpkgs-fmt"
+                ]
+            }
+        }
+    }
+}
