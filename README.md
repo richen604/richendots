@@ -4,6 +4,8 @@ my personal dotfiles from the flake template of [hydenix](https://github.com/ric
 
 some modules are specific to my system, feel free to use what you can as a reference.
 
+![screenshot](./assets/screenshot.png)
+
 ## structure 📁
 
 quick overview of my modules:
