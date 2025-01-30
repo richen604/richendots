@@ -68,7 +68,7 @@
         devices = [ "nodev" ];
         efiSupport = true;
         useOSProber = true;
-        configurationLimit = 5;
+        configurationLimit = 10;
         extraEntries = ''
           menuentry "UEFI Firmware Settings" {
             fwsetup
