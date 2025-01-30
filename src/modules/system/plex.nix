@@ -14,7 +14,7 @@
 
   fileSystems."/data/plex" = {
     device = "/dev/sda1";
-    fsType = "ntfs3";
+    fsType = "ntfs";
     options = [
       "rw"
       "uid=plex"
