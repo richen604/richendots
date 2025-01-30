@@ -53,6 +53,13 @@ quick overview of my modules:
 - [ ] fix "reboot-to" script, grub-reboot has issues
 - [ ] cleanup generic modules in home.nix and configuration.nix
 
+Potential setups:
+
+- [ ] sopsnix / agenix security stuff
+- [ ] password managers?
+- [ ] use cases for specializations
+- [ ] impermanence
+
 ## license 📄
 
 this project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details
