@@ -185,14 +185,17 @@
         "nix-index-database": "nix-index-database"
       },
       "locked": {
-        "lastModified": 1737857114,
-        "narHash": "sha256-uN/75LpVHFQvkk+9Hs2MQ/yEHROYKzX6k5QkhTFqnPA=",
-        "path": "/home/richen/hydenix",
-        "type": "path"
+        "lastModified": 1737853582,
+        "narHash": "sha256-igq5vGdXKmpmlf2rzgQ0XheeIb8oJmKL1VTSgmagtno=",
+        "owner": "richen604",
+        "repo": "hydenix",
+        "rev": "acf1a1f4a9cd1f2f433503b3d317df0cf1fc8bc1",
+        "type": "github"
       },
       "original": {
-        "path": "/home/richen/hydenix",
-        "type": "path"
+        "owner": "richen604",
+        "repo": "hydenix",
+        "type": "github"
       }
     },
     "hydenix-nixpkgs": {
