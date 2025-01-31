@@ -55,6 +55,8 @@ quick overview of my modules:
 
 Potential setups:
 
+- [ ] drives (not disko)
+- [ ] backups using borg for dev and some xdg dirs
 - [ ] sopsnix / agenix security stuff
 - [ ] password managers?
 - [ ] use cases for specializations
