@@ -8,6 +8,7 @@
     ./modules/hm/zsh.nix
     ./modules/hm/easyeffects.nix
     ./modules/hm/games.nix
+    ./modules/hm/git.nix
   ];
 
   home.packages = with pkgs; [
@@ -16,7 +17,10 @@
     vesktop
   ];
 
-  modules.easyeffects.enable = true;
+  modules = {
+    easyeffects.enable = true;
+    git.enable = true;
+  };
 
   home.file = {
     ".config/hypr/userprefs.conf" = pkgs.lib.mkForce {
