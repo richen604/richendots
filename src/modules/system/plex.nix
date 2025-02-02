@@ -21,6 +21,9 @@
       "gid=plex"
       "permissions"
       "acl"
+      "dmask=0002"
+      "fmask=0002"
+      "nofail"
     ];
   };
 
@@ -38,10 +41,11 @@
     "d /var/lib/plex 0775 plex plex"
     "Z /var/lib/plex - plex plex"
     "d /data/plex 0775 plex plex"
-    "d /data/plex 0775 ${userConfig.username} ${userConfig.username}"
+    "Z /data/plex - plex plex"
   ];
 
   environment.systemPackages = with pkgs; [
     plex-desktop
+    qbittorrent
   ];
 }
