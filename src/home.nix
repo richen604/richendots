@@ -9,10 +9,10 @@
     ./modules/hm/easyeffects.nix
     ./modules/hm/games.nix
     ./modules/hm/git.nix
+    ./modules/hm/obsidian.nix
   ];
 
   home.packages = with pkgs; [
-    gparted
     comma
     vesktop
   ];
@@ -20,6 +20,7 @@
   modules = {
     easyeffects.enable = true;
     git.enable = true;
+    obsidian.enable = true;
   };
 
   home.file = {
