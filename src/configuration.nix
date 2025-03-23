@@ -1,6 +1,7 @@
 {
   config,
   userConfig,
+  userPkgs,
   pkgs,
   inputs,
   ...
@@ -16,8 +17,11 @@
     ./modules/system/linux-cachyos.nix
     ./modules/system/gamescope.nix
 
+    inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-intel
-    #inputs.nixos-hardware.nixosModules.common-gpu-amd
+
+    inputs.richendots-private.nixosModules.fern
+    inputs.richendots-private.serviceModules.keepassxc-sync
   ];
 
   modules = {
@@ -68,7 +72,6 @@
         devices = [ "nodev" ];
         efiSupport = true;
         useOSProber = true;
-        configurationLimit = 10;
         extraEntries = ''
           menuentry "UEFI Firmware Settings" {
             fwsetup
@@ -132,6 +135,26 @@
     pnpm
 
     cpufrequtils
+
+    # Updated Spotube to 4.0.2
+    (userPkgs.spotube.overrideAttrs (oldAttrs: {
+      version = "4.0.2";
+      passthru.sources =
+        let
+          fetchArtifact =
+            { filename, hash }:
+            pkgs.fetchurl {
+              url = "https://github.com/KRTirtho/spotube/releases/download/v4.0.2/${filename}";
+              inherit hash;
+            };
+        in
+        {
+          "x86_64-linux" = fetchArtifact {
+            filename = "Spotube-linux-x86_64.deb";
+            hash = "sha256-SM/lWUhXe20FCgneegn5As5a53YBsoDIMfIYhRBHWjI="; # Replace with actual hash
+          };
+        };
+    }))
   ];
 
   # Add capability settings for gamescope

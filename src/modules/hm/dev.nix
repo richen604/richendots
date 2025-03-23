@@ -7,6 +7,8 @@
     nix-direnv
     nil
     direnv
+    nix-output-monitor
+    nix-fast-build
   ];
 
   programs = {

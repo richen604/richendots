@@ -9,6 +9,10 @@
     chaotic.url = "github:chaotic-cx/nyx/18c577a2a160453f4a6b4050fb0eac7d28b92ead";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    richendots-private = {
+      # url = "git+ssh://git@github.com/richen604/richendots-private.git";
+      url = "path:/home/richen/Dev/richendots-private";
+    };
   };
 
   outputs =
@@ -25,7 +29,7 @@
 
       hydenixConfig = inputs.hydenix.lib.mkConfig {
         userConfig = import ./config.nix;
-        extraInputs = inputs;
+        extraInputs = inputs // inputs.richendots-private.inputs;
         # Pass user's pkgs to be used alongside hydenix's pkgs (eg. userPkgs.kitty)
         extraPkgs = pkgs;
       };
@@ -33,6 +37,7 @@
     {
 
       nixosConfigurations.${hydenixConfig.userConfig.host} = hydenixConfig.nixosConfiguration;
+      nixosConfigurations.nixos = hydenixConfig.nixosConfiguration;
 
       packages.${system} = {
         # Packages below load your config in ./config.nix

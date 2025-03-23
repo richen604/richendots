@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
 {
 
   imports = [
@@ -10,11 +14,14 @@
     ./modules/hm/games.nix
     ./modules/hm/git.nix
     ./modules/hm/obsidian.nix
+
+    inputs.richendots-private.userModules.richen
   ];
 
   home.packages = with pkgs; [
     comma
     vesktop
+
   ];
 
   modules = {
