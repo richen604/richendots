@@ -1,5 +1,8 @@
 { userConfig, pkgs, ... }:
 
+# TODO: proxy, requires passwords
+# TODO: sonarr search, requires passwords
+# TODO: qbitorrent web instance, requires passwords
 {
   services.plex = {
     enable = true;
@@ -29,6 +32,7 @@
 
   users.groups.plex = {
     name = "plex";
+    members = [ userConfig.username ];
   };
   users.users.plex = {
     group = "plex";
@@ -44,8 +48,23 @@
     "Z /data/plex - plex plex"
   ];
 
+  # Add qBittorrent service configuration
+  systemd.services.qbittorrent = {
+    description = "qBittorrent";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = userConfig.username;
+      Group = "plex";
+      ExecStart = "${pkgs.qbittorrent-enhanced-nox}/bin/qbittorrent-nox";
+      Restart = "on-failure";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     plex-desktop
-    qbittorrent
   ];
+
 }

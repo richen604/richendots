@@ -41,26 +41,7 @@ quick overview of my modules:
 
 ## TODO
 
-- [ ] multi system for other hosts (laptop, desktop, vm, install liveusbs, etc)
-  - Host naming scheme:
-    - 🌿 Desktop: fern
-    - 🌱 Laptop: moss
-    - 🪵 Server: cedar
-    - 🌱 Live USB OS: sapling
-    - 🍀 Main VM: clover
-    - Install USBs: [hostname]-seed (fern-seed, moss-seed, cedar-seed)
-    - VMs: [hostname]-vm (fern-vm, moss-vm, cedar-vm)
-- [ ] fix "reboot-to" script, grub-reboot has issues
-- [ ] cleanup generic modules in home.nix and configuration.nix
-
-Potential setups:
-
-- [ ] drives (not disko)
-- [ ] backups using borg for dev and some xdg dirs
-- [ ] sopsnix / agenix security stuff
-- [ ] password managers?
-- [ ] use cases for specializations
-- [ ] impermanence
+see [TODO.md](TODO.md)
 
 ## license 📄
 

@@ -2,7 +2,7 @@
   username = "richen";
   gitUser = "richen604";
   gitEmail = "56615615+richen604@users.noreply.github.com";
-  host = "nixos";
+  host = "fern";
   /*
     Default password is required for sudo support in systems
     !REMEMBER TO USE passwd TO CHANGE THE PASSWORD!
