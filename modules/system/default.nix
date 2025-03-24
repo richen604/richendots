@@ -27,7 +27,7 @@
     autologin.enable = true;
     vfio.enable = true;
     drivers.enable = true;
-    plex.enable = false;
+    plex.enable = true;
     linux-cachyos.enable = false;
     boot.enable = true;
     ssh.enable = true;
