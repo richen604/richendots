@@ -30,7 +30,7 @@ in
           device = "nodev";
           useOSProber = true;
           efiSupport = true;
-          theme = pkgs.hydenix.grub-retroboot;
+          # theme = pkgs.hydenix.grub-retroboot;
           extraEntries = ''
             menuentry "UEFI Firmware Settings" {
               fwsetup

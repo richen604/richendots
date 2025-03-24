@@ -168,10 +168,12 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1743016191,
-        "narHash": "sha256-ZXQisqir1RNRDOQDhmu50He1B/PaEpleRXk+yD3O8tM=",
-        "path": "/media/backup_drive/Dev/hydenix",
-        "type": "path"
+        "lastModified": 1737853582,
+        "narHash": "sha256-igq5vGdXKmpmlf2rzgQ0XheeIb8oJmKL1VTSgmagtno=",
+        "owner": "richen604",
+        "repo": "hydenix",
+        "rev": "acf1a1f4a9cd1f2f433503b3d317df0cf1fc8bc1",
+        "type": "github"
       },
       "original": {
         "path": "/media/backup_drive/Dev/hydenix",
@@ -257,11 +259,11 @@
     },
     "nixos-hardware_2": {
       "locked": {
-        "lastModified": 1742806253,
-        "narHash": "sha256-zvQ4GsCJT6MTOzPKLmlFyM+lxo0JGQ0cSFaZSACmWfY=",
+        "lastModified": 1741792691,
+        "narHash": "sha256-f0BVt1/cvA0DQ/q3rB+HY4g4tKksd03ZkzI4xehC2Ew=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "ecaa2d911e77c265c2a5bac8b583c40b0f151726",
+        "rev": "e1f12151258b12c567f456d8248e4694e9390613",
         "type": "github"
       },
       "original": {
