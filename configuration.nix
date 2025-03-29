@@ -30,12 +30,9 @@ in
     ./modules/system
   ];
 
-  home-manager.backupFileExtension = ".bak";
-
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = null;
     extraSpecialArgs = {
       inherit inputs;
     };
