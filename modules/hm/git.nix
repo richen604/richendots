@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  userConfig,
   ...
 }:
 
@@ -65,8 +64,6 @@ in
 
     programs.git = {
       enable = true;
-      userName = userConfig.gitUser;
-      userEmail = userConfig.gitEmail;
       extraConfig = {
         init.defaultBranch = "main";
       };

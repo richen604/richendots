@@ -2,21 +2,17 @@
   config,
   lib,
   pkgs,
-  userConfig,
   ...
 }:
-
-with lib;
-
 let
   cfg = config.modules.sunshine;
 in
 {
   options.modules.sunshine = {
-    enable = mkEnableOption "Sunshine streaming server";
+    enable = lib.mkEnableOption "Sunshine streaming server";
 
-    allowedNetworks = mkOption {
-      type = types.listOf types.str;
+    allowedNetworks = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
       default = [
         "192.168.0.0/16"
         "10.0.0.0/8"
@@ -25,7 +21,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     # Install sunshine and required X11 packages
     environment.systemPackages = with pkgs; [
       sunshine
@@ -113,10 +109,10 @@ in
     };
 
     users.groups.keyd = {
-      members = [ userConfig.username ];
+      members = [ "richen" ];
     };
     # Additional groups for Wayland/KMS access
-    users.users.${userConfig.username}.extraGroups = [
+    users.users.richen.extraGroups = [
       "video"
       "input"
       "render"
@@ -132,7 +128,7 @@ in
 
     # Firewall rules
     networking.firewall = {
-      extraCommands = concatMapStrings (net: ''
+      extraCommands = lib.concatMapStrings (net: ''
         iptables -A INPUT -p tcp -s ${net} -j ACCEPT
         iptables -A INPUT -p udp -s ${net} -j ACCEPT
       '') cfg.allowedNetworks;

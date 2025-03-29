@@ -4,27 +4,20 @@
   lib,
   ...
 }:
-
 let
   cfg = config.modules.wol;
-  inherit (lib)
-    mkEnableOption
-    mkOption
-    mkIf
-    types
-    ;
 in
 {
   options.modules.wol = {
-    enable = mkEnableOption "Wake-on-LAN support";
-    interface = mkOption {
-      type = types.str;
+    enable = lib.mkEnableOption "Wake-on-LAN support";
+    interface = lib.mkOption {
+      type = lib.types.str;
       description = "Network interface to enable WoL on";
       example = "enp7s0";
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
 
     # Network settings for WoL
     networking = {

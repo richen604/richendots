@@ -4,8 +4,8 @@
   home.packages = with pkgs; [
     code-cursor
     nixfmt-rfc-style
-    nix-direnv
     nil
+    nix-direnv
     direnv
     nix-output-monitor
     nix-fast-build

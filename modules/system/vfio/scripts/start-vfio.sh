@@ -27,8 +27,8 @@ main() {
         log "PCI device reset file not found, skipping reset"
     fi
 
-    HOST_CORES='14-19'
-    VIRT_CORES='0-13' 
+    HOST_CORES='12-19'  # 2 P-cores (threads 12-15) + 4 E-cores (threads 16-19)
+    VIRT_CORES='0-11'   # 6 P-cores (threads 0-11)
 
     # Function to convert core range to hexadecimal mask
     cores_to_mask() {

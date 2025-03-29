@@ -11,7 +11,7 @@
   <memoryBacking>
     <hugepages/>
   </memoryBacking>
-  <vcpu placement="static">16</vcpu>
+  <vcpu placement="static">12</vcpu>
   <cputune>
     <vcpupin vcpu="0" cpuset="0"/>
     <vcpupin vcpu="1" cpuset="1"/>
@@ -25,14 +25,12 @@
     <vcpupin vcpu="9" cpuset="9"/>
     <vcpupin vcpu="10" cpuset="10"/>
     <vcpupin vcpu="11" cpuset="11"/>
-    <vcpupin vcpu="12" cpuset="12"/>
-    <vcpupin vcpu="13" cpuset="13"/>
-    <emulatorpin cpuset="14-19"/>
+    <emulatorpin cpuset="16-19"/>
   </cputune>
   <os>
     <type arch="x86_64" machine="pc-q35-8.0">hvm</type>
-    <loader readonly="yes" secure="yes" type="pflash">/run/libvirt/nix-ovmf/OVMF_CODE.fd</loader>
-    <nvram template="/run/libvirt/nix-ovmf/OVMF_VARS.fd">/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
+    <loader readonly="yes" secure="yes" type="pflash">/var/libvirt/nix-ovmf/OVMF_CODE.fd</loader>
+    <nvram template="/var/libvirt/nix-ovmf/OVMF_VARS.fd">/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
     <bootmenu enable="no"/>
     <smbios mode="host"/>
   </os>
@@ -68,7 +66,7 @@
     <ioapic driver="kvm"/>
   </features>
   <cpu mode="host-passthrough" check="none" migratable="off">
-    <topology sockets="1" dies="1" clusters="1" cores="8" threads="2"/>
+    <topology sockets="1" dies="1" clusters="1" cores="6" threads="2"/>
     <cache mode="passthrough"/>
     <maxphysaddr mode="passthrough" limit="40"/>
     <feature policy="disable" name="aes"/>
@@ -203,10 +201,11 @@
     <controller type="scsi" index="0" model="lsilogic">
       <address type="pci" domain="0x0000" bus="0x10" slot="0x02" function="0x0"/>
     </controller>
-    <interface type="network">
+    <interface type="bridge">
       <mac address="52:54:00:bb:ad:a6"/>
-      <source network="default"/>
-      <model type="e1000e"/>
+      <source bridge="br0"/>
+      <model type="virtio"/>
+      <driver name="vhost" queues="8"/>
       <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
     </interface>
     <serial type="pty">
@@ -240,7 +239,8 @@
     </sound>
     <audio id="1" type="spice"/>
     <video>
-      <model type="none"/>
+      <model type="qxl" ram="65536" vram="65536" vgamem="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
     </video>
     <hostdev mode="subsystem" type="usb" managed="yes">
       <source startupPolicy="optional">
