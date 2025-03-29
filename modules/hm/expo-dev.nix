@@ -7,7 +7,6 @@
     android-tools
     sdkmanager
     nodePackages.pnpm
-    nodePackages.expo-cli
     nodejs_20
   ];
 }

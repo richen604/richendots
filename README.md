@@ -6,39 +6,6 @@ some modules are specific to my system, feel free to use what you can as a refer
 
 ![screenshot](./assets/screenshot.png)
 
-## structure 📁
-
-quick overview of my modules:
-
-```bash
-├── src/
-│   ├── misc/                                 # i put files for `home.file` calls here
-│   ├── modules/
-│   │   ├── hm/                               # home manager modules
-│   │   │   ├── dev.nix
-│   │   │   ├── easyeffects.nix
-│   │   │   ├── expo-dev.nix
-│   │   │   ├── games.nix
-│   │   │   ├── obs.nix
-│   │   │   └── zsh.nix
-│   │   └── system/                           # system modules
-│   │       ├── vfio/                         # vfio modules for pci passthrough
-│   │       │   ├── scripts/                  # useful scripts and files for vfio passthrough
-│   │       │   └── vfio.nix
-│   │       ├── autologin.nix
-│   │       ├── gamescope.nix
-│   │       ├── linux-cachyos.nix             # cachyos linux kernel
-│   │       ├── plex.nix
-│   │       ├── steam.nix
-│   │       ├── sunshine.nix
-│   │       └── wol.nix
-│   ├── configuration.nix                      # main configuration file
-│   └── home.nix                               # main home manager configuration file
-├── config.nix                                 # hydenix config file
-├── flake.nix
-└── hardware-configuration.nix
-```
-
 ## TODO
 
 see [TODO.md](TODO.md)

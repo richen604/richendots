@@ -3,11 +3,11 @@
 
 
 TOTAL_CORES='0-19'
-TOTAL_CORES_MASK=FFFFF # bitmask 0b11111111111111111111
-HOST_CORES='16-19'     # Cores reserved for host
-HOST_CORES_MASK=F0000  # bitmask 0b11110000000000000000
-VIRT_CORES='0-15'      # Cores reserved for virtual machine(s)
-VIRT_CORES_MASK=0FFFF  # bitmask 0b00001111111111111111
+TOTAL_CORES_MASK=FFFFF  # bitmask for all 20 threads
+HOST_CORES='12-19'      # 2 P-cores (threads 12-15) + 4 E-cores (threads 16-19)
+HOST_CORES_MASK=FF000   # bitmask 0b11111111000000000000
+VIRT_CORES='0-11'       # 6 P-cores (threads 0-11)
+VIRT_CORES_MASK=00FFF   # bitmask 0b00000000111111111111
 
 unpin_cores() {
 	# Reset all tasks to use all cores

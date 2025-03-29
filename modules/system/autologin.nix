@@ -1,15 +1,17 @@
 {
   config,
   lib,
-  userConfig,
   ...
 }:
 
+let
+  cfg = config.modules.autologin;
+in
 {
   options.modules.autologin = {
     enable = lib.mkEnableOption "autologin";
   };
-  config = lib.mkIf config.modules.autologin.enable {
+  config = lib.mkIf cfg.enable {
     services = {
       displayManager = {
         sddm = {
@@ -18,7 +20,7 @@
           settings = {
             Autologin = {
               Session = "hyprland.desktop";
-              User = userConfig.username;
+              User = "richen";
             };
           };
         };
