@@ -1,0 +1,8 @@
+{
+  ...
+}:
+{
+  imports = [
+    ./hydenix.nix
+  ];
+}

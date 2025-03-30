@@ -19,36 +19,41 @@
       ...
     }@inputs:
     let
-      HOSTNAME = "fern";
-
-      hydenixConfig = inputs.hydenix.inputs.hydenix-nixpkgs.lib.nixosSystem {
-        inherit (inputs.hydenix.lib) system;
-        specialArgs = {
-          inputs = inputs // inputs.richendots-private.inputs;
+      # Create a function to generate host configurations
+      mkHost =
+        hostname:
+        inputs.hydenix.inputs.hydenix-nixpkgs.lib.nixosSystem {
+          inherit (inputs.hydenix.lib) system;
+          specialArgs = {
+            inputs = inputs // inputs.richendots-private.inputs;
+            hostname = hostname;
+          };
+          modules = [
+            ./hosts/${hostname}
+          ];
         };
-        modules = [
-          ./configuration.nix
-        ];
-      };
 
-      # Create VM variant of the NixOS configuration
-      fern-vm = import ./hosts/vm/fern-vm.nix {
-        inherit inputs;
-        nixosConfiguration = hydenixConfig;
-      };
+      # Create VM variant function
+      mkVm =
+        hostname:
+        (import ./hosts/vm.nix {
+          inherit inputs hostname;
+          nixosConfiguration = mkHost hostname;
+        }).config.system.build.vm;
 
       isoConfig = inputs.hydenix.lib.iso {
         hydenix-inputs = inputs.hydenix.inputs // inputs.hydenix.lib // inputs.hydenix;
       };
     in
     {
-
-      nixosConfigurations.${HOSTNAME} = hydenixConfig;
-      nixosConfigurations.nixos = hydenixConfig;
+      nixosConfigurations = {
+        fern = mkHost "fern";
+        oak = mkHost "oak";
+      };
 
       packages.${inputs.hydenix.lib.system} = {
-        default = hydenixConfig;
-        fern-vm = fern-vm.config.system.build.vm;
+        fern-vm = mkVm "fern";
+        oak-vm = mkVm "oak";
         build-iso = isoConfig.build-iso;
         burn-iso = isoConfig.burn-iso;
       };
