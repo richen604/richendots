@@ -168,11 +168,11 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1743367454,
-        "narHash": "sha256-t/ix74kj9ZGv3KoaiPTajX5KVXfPSGXObvsiCrssPxU=",
+        "lastModified": 1743367944,
+        "narHash": "sha256-KGXkG/qo0OP9KPNXyOU0k0Me1clLdPQGno+Hj6Hvek0=",
         "owner": "richen604",
         "repo": "hydenix",
-        "rev": "a8e53567ad02cb67368ba3a22215b803f9ee2f05",
+        "rev": "b05d27937bcbe20f9939e05b655cc3afbcfa398a",
         "type": "github"
       },
       "original": {
