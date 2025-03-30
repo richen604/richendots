@@ -50,6 +50,8 @@
       nixosConfigurations = {
         fern = mkHost "fern";
         oak = mkHost "oak";
+        # TODO: temp host for rebuild iso
+        nixos = mkHost "oak";
       };
 
       packages.${inputs.hydenix.lib.system} = {
