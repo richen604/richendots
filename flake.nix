@@ -43,6 +43,7 @@
 
       isoConfig = inputs.hydenix.lib.iso {
         hydenix-inputs = inputs.hydenix.inputs // inputs.hydenix.lib // inputs.hydenix;
+        flake = inputs.self.outPath;
       };
     in
     {
