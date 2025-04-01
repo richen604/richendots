@@ -168,11 +168,11 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1743367944,
-        "narHash": "sha256-KGXkG/qo0OP9KPNXyOU0k0Me1clLdPQGno+Hj6Hvek0=",
+        "lastModified": 1743370967,
+        "narHash": "sha256-GYP0EprbMD1bARQUijYyL93hyxJebS5sPZC13D5HGrE=",
         "owner": "richen604",
         "repo": "hydenix",
-        "rev": "b05d27937bcbe20f9939e05b655cc3afbcfa398a",
+        "rev": "174f11d016c18724f5357cfba6ba2b06d466db4c",
         "type": "github"
       },
       "original": {
@@ -260,11 +260,11 @@
     },
     "nixos-hardware_2": {
       "locked": {
-        "lastModified": 1743167577,
-        "narHash": "sha256-I09SrXIO0UdyBFfh0fxDq5WnCDg8XKmZ1HQbaXzMA1k=",
+        "lastModified": 1743420942,
+        "narHash": "sha256-b/exDDQSLmENZZgbAEI3qi9yHkuXAXCPbormD8CSJXo=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "0ed819e708af17bfc4bbc63ee080ef308a24aa42",
+        "rev": "de6fc5551121c59c01e2a3d45b277a6d05077bc4",
         "type": "github"
       },
       "original": {
@@ -292,11 +292,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1743095683,
-        "narHash": "sha256-gWd4urRoLRe8GLVC/3rYRae1h+xfQzt09xOfb0PaHSk=",
+        "lastModified": 1743315132,
+        "narHash": "sha256-6hl6L/tRnwubHcA4pfUUtk542wn2Om+D4UnDhlDW9BE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5e5402ecbcb27af32284d4a62553c019a3a49ea6",
+        "rev": "52faf482a3889b7619003c0daec593a1912fddc1",
         "type": "github"
       },
       "original": {
@@ -419,11 +419,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1743319096,
-        "narHash": "sha256-8S8k42yRox6vzMc1bl8v/pV+AD/S+yKSdu6XW/3nxUg=",
+        "lastModified": 1743385030,
+        "narHash": "sha256-60QyZd4Lshkjo9+RjvTohzy2IWxn4gaBFPIzQ0s5Ao8=",
         "ref": "main",
-        "rev": "0da5d30bca8aaac488f25ef0e6d0a139d35d4cac",
-        "revCount": 19,
+        "rev": "452349d028ca5bf5895754ab9dddbf4a8ebd47b0",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/richen604/richendots-private.git"
       },

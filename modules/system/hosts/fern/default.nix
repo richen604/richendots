@@ -9,6 +9,7 @@
     ./sunshine.nix
     ./vfio
     ./wol.nix
+    ./openrgb.nix
   ];
 
   modules = {
@@ -26,6 +27,7 @@
       plex.enable = true;
       sunshine.enable = true;
       vfio.enable = true;
+      openrgb.enable = true;
     };
   };
 }

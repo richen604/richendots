@@ -11,6 +11,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
       url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      # url = "path:/media/backup_drive/Dev/richendots-private";
     };
   };
 
