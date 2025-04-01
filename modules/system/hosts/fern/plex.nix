@@ -30,7 +30,7 @@ in
     };
 
     fileSystems."/data/plex" = {
-      device = "/dev/sda1";
+      device = "/dev/disk/by-id/764A73A84A736431";
       fsType = "ntfs";
       options = [
         "rw"

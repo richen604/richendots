@@ -70,6 +70,8 @@
 
     pkgs.cpufrequtils
 
+    pkgs.dpms-off
+
     # Updated Spotube to 4.0.2
     (pkgs.userPkgs.spotube.overrideAttrs (oldAttrs: {
       version = "4.0.2";

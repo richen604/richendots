@@ -10,3 +10,6 @@
 - 🍀 Main VM: clover
 - Install USBs: [hostname]-seed (fern-seed, oak-seed, cedar-seed)
 - VMs: [hostname]-vm (fern-vm, oak-vm, cedar-vm)
+
+- [ ] hydenix: some yubikey touch detection for hyprlock and waybar <https://github.com/maximbaz/yubikey-touch-detector>
+- [ ] hydenix: rofi theme for browser search using unduck shebang
