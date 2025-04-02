@@ -220,18 +220,21 @@
       <target type="virtio" name="com.redhat.spice.0"/>
       <address type="virtio-serial" controller="0" bus="0" port="1"/>
     </channel>
-    <input type="mouse" bus="virtio">
-      <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
+    <channel type="unix">
+      <source mode="bind"/>
+      <target type="virtio" name="org.qemu.guest_agent.0"/>
+    </channel>
+    <input type="tablet" bus="usb">
+      <address type="usb" bus="0" port="4"/>
     </input>
-    <input type="keyboard" bus="virtio">
-      <address type="pci" domain="0x0000" bus="0x09" slot="0x00" function="0x0"/>
+    <input type="keyboard" bus="usb">
+      <address type="usb" bus="0" port="5"/>
     </input>
-    <input type="keyboard" bus="ps2"/>
-    <input type="mouse" bus="ps2"/>
-    <graphics type="spice" autoport="yes" listen="127.0.0.1">
+    <graphics type="spice" port="5900" autoport="no" listen="127.0.0.1">
       <listen type="address" address="127.0.0.1"/>
       <image compression="off"/>
       <gl enable="no"/>
+      <secure-channels>keyboard,mouse</secure-channels>
     </graphics>
     <sound model="ich9">
       <audio id="1"/>
@@ -266,12 +269,6 @@
         <address domain="0x0000" bus="0x09" slot="0x00" function="0x0"/>
       </source>
       <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
-    </hostdev>
-    <hostdev mode="subsystem" type="pci" managed="yes">
-      <source>
-        <address domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
-      </source>
-      <address type="pci" domain="0x0000" bus="0x0a" slot="0x00" function="0x0"/>
     </hostdev>
     <redirdev bus="usb" type="spicevmc">
       <address type="usb" bus="0" port="2"/>
