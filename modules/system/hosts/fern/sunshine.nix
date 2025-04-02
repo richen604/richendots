@@ -48,10 +48,10 @@ in
                 do = "${pkgs.writeShellScript "stream-mode" ''
                   sed -i 's/\$mainMod = Super/\$mainMod = ALT_R/' ~/.config/hypr/keybindings.conf
                   ${pkgs.hyprland}/bin/hyprctl keyword input:kb_layout "us"
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-4,disable
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-6,disable
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-5,addreserved,0,0,0,0
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-5,2320x1080@60,0x0,2
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:BNQ BenQ GW2780 ET85P0086404U,disable"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:DELL E2020H BJ7NFJ3,disable"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,addreserved,0,0,0,0"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,2320x1080@60,0x0,2"
                   ${pkgs.hyprland}/bin/hyprctl keyword misc:cursor_zoom_factor 2
                   ${pkgs.hyprland}/bin/hyprctl keyword misc:no_direct_scanout 1
                 ''}";
@@ -70,14 +70,13 @@ in
             prep-cmd = [
               {
                 do = "${pkgs.writeShellScript "stream-mode" ''
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-4,disable
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-6,disable
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:BNQ BenQ GW2780 ET85P0086404U,disable"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:DELL E2020H BJ7NFJ3,disable"
                   sleep 1
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-5,2560x1440@144,0x0,1.6
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,2560x1440@60,0x0,1.6"
                   ${pkgs.hyprland}/bin/hyprctl keyword misc:cursor_zoom_factor 1.6
                 ''}";
                 undo = "${pkgs.writeShellScript "regular-mode" ''
-
                   ${pkgs.hyprland}/bin/hyprctl reload
                 ''}";
               }
@@ -90,11 +89,29 @@ in
             prep-cmd = [
               {
                 do = "${pkgs.writeShellScript "stream-mode" ''
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-4,disable
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-6,disable
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:BNQ BenQ GW2780 ET85P0086404U,disable"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:DELL E2020H BJ7NFJ3,disable"
                   sleep 1
-                  ${pkgs.hyprland}/bin/hyprctl keyword monitor DP-5,1920x1080@144,0x0,1.25
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,1920x1080@60,0x0,1.25"
                   ${pkgs.hyprland}/bin/hyprctl keyword misc:cursor_zoom_factor 1.25
+                ''}";
+                undo = "${pkgs.writeShellScript "regular-mode" ''
+                  ${pkgs.hyprland}/bin/hyprctl reload
+                ''}";
+              }
+            ];
+            auto-detach = "true";
+            output = "DP-5";
+          }
+          {
+            name = "Laptop Stream (3200x2000 - Scaled)";
+            prep-cmd = [
+              {
+                do = "${pkgs.writeShellScript "stream-mode" ''
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:BNQ BenQ GW2780 ET85P0086404U,disable"
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:DELL E2020H BJ7NFJ3,disable"
+                  sleep 1
+                  ${pkgs.hyprland}/bin/hyprctl keyword monitor "desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,2560x1600@60,0x0,1.25"
                 ''}";
                 undo = "${pkgs.writeShellScript "regular-mode" ''
                   ${pkgs.hyprland}/bin/hyprctl reload
