@@ -28,6 +28,7 @@ in
     inputs.hydenix.lib.nixOsModules
     ./hardware-configuration.nix
     ../../modules/system/hosts/fern
+    ../common/private.nix
   ];
 
   home-manager = {
