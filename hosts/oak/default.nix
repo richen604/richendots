@@ -28,6 +28,7 @@ in
     inputs.hydenix.lib.nixOsModules
     ./hardware-configuration.nix
     ../../modules/system/hosts/oak
+    ../common/private.nix
   ];
 
   home-manager = {
