@@ -14,6 +14,7 @@ in
   imports = [
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-intel
   ];
 
   options.modules.fern.drivers = {
@@ -57,6 +58,7 @@ in
       videoDrivers = [
         "amdgpu"
         "nvidia"
+        "modesetting"
       ];
     };
   };

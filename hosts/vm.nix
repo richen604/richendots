@@ -50,9 +50,6 @@ nixosConfiguration.extendModules {
               "virtio"
             ];
           };
-          modules = {
-            dev.enable = lib.mkForce true;
-          };
         };
 
         virtualisation.libvirtd.enable = true;
