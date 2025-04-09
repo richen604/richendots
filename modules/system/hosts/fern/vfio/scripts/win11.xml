@@ -227,9 +227,8 @@
     <input type="tablet" bus="usb">
       <address type="usb" bus="0" port="4"/>
     </input>
-    <input type="keyboard" bus="usb">
-      <address type="usb" bus="0" port="5"/>
-    </input>
+    <input type="mouse" bus="ps2"/>
+    <input type="keyboard" bus="ps2"/>
     <graphics type="spice" port="5900" autoport="no" listen="127.0.0.1">
       <listen type="address" address="127.0.0.1"/>
       <image compression="off"/>

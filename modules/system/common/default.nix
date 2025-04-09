@@ -1,12 +1,11 @@
 { pkgs, ... }:
 {
   imports = [
-    ./dev.nix
     ./autologin.nix
     ./boot.nix
-    ./gamescope.nix
     ./linux-cachyos.nix
     ./steam.nix
+    ./nix.nix
   ];
 
   # TODO: move this somewhere?
@@ -71,6 +70,7 @@
     pkgs.cpufrequtils
 
     pkgs.dpms-off
+    pkgs.kdePackages.kdenetwork-filesharing
 
     # Updated Spotube to 4.0.2
     (pkgs.userPkgs.spotube.overrideAttrs (oldAttrs: {

@@ -14,6 +14,7 @@ in
 
   imports = [
     inputs.hydenix.lib.homeModules
+    inputs.nix-index-database.hmModules.nix-index
   ];
 
   options.desktops.hydenix = {
@@ -107,9 +108,11 @@ in
             else if cfg.hostname == "oak" then
               ''
                 # Laptop-specific settings
-                monitor=eDP-1,3200x2000@60,0x0,1
+                monitor=eDP-1,3200x2000@60,0x0,1.33
                 workspace=1,monitor:eDP-1
                 workspace=2,monitor:eDP-1
+
+                env = AQ_DRM_DEVICES,/dev/dri/card2:/dev/dri/card1
               ''
             else
               ''
@@ -127,13 +130,13 @@ in
           # vesktop blur
           windowrulev2 = opacity 0.90 0.90,class:^(vesktop)$
           windowrulev2 = workspace 3,class:^(vesktop)$
-          # Unbind Alt+Return first
-          unbind = Alt, Return
-          $wm=Window Management
-          $d=[$wm]
-          bindd = Alt, Return, $d toggle fullscreen, fullscreen
+          # Alt + Enter to toggle fullscreen
+          bind = ALT, Return, fullscreen, 0
+          # Alt + Tab to cycle between fullscreen windows
+          bind = ALT, Tab, cyclenext
+          bind = ALT, Tab, bringactivetotop
           # Launch vesktop after a delay without blocking boot
-          exec-once = hyprcmd 'dispatch exec "sleep 5 && vesktop"'
+          exec-once = sleep 1 && vesktop
         '';
         force = true;
         mutable = true;
