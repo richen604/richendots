@@ -12,9 +12,9 @@ bind_device() {
     if [ "$from_driver" = "nvidia" ]; then
         # Disable DRM modesetting before unbinding
         if lsmod | grep -q nvidia_drm; then
-            sudo rmmod nvidia_drm
+            # sudo rmmod nvidia_drm
             sudo rmmod nvidia_uvm
-            sudo rmmod nvidia_modeset
+            # sudo rmmod nvidia_modeset
             sudo rmmod nvidia
         fi
     fi
@@ -29,9 +29,9 @@ bind_device() {
         sudo modprobe -r vfio-pci vfio_iommu_type1 vfio
         # Load NVIDIA drivers in correct order
         sudo modprobe nvidia
-        sudo modprobe nvidia_modeset
+        # sudo modprobe nvidia_modeset
         sudo modprobe nvidia_uvm
-        sudo modprobe nvidia_drm modeset=1
+        # sudo modprobe nvidia_drm modeset=1
     elif [ "$to_driver" = "vfio-pci" ]; then
         # NVIDIA drivers are already unloaded above
         sudo modprobe vfio-pci vfio_iommu_type1 vfio

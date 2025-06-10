@@ -1,4 +1,5 @@
 {
+  pkgs,
   ...
 }:
 {
@@ -10,5 +11,6 @@
     ./easyeffects.nix
     ./zsh.nix
     ./dev.nix
+    ./kde-connect.nix
   ];
 }

@@ -82,4 +82,6 @@ in
     ];
     shell = pkgs.zsh;
   };
+
+  system.stateVersion = "25.05";
 }

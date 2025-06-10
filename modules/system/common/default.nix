@@ -72,25 +72,7 @@
     pkgs.dpms-off
     pkgs.kdePackages.kdenetwork-filesharing
 
-    # Updated Spotube to 4.0.2
-    (pkgs.userPkgs.spotube.overrideAttrs (oldAttrs: {
-      version = "4.0.2";
-      passthru.sources =
-        let
-          fetchArtifact =
-            { filename, hash }:
-            pkgs.fetchurl {
-              url = "https://github.com/KRTirtho/spotube/releases/download/v4.0.2/${filename}";
-              inherit hash;
-            };
-        in
-        {
-          "x86_64-linux" = fetchArtifact {
-            filename = "Spotube-linux-x86_64.deb";
-            hash = "sha256-SM/lWUhXe20FCgneegn5As5a53YBsoDIMfIYhRBHWjI="; # Replace with actual hash
-          };
-        };
-    }))
+    pkgs.userPkgs.spotube
   ];
 
 }
