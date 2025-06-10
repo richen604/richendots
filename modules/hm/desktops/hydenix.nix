@@ -50,6 +50,8 @@ in
     hydenix.hm = {
       enable = true;
       editors.default = "nvim";
+      shell.pokego.enable = true;
+      shell.fastfetch.enable = false;
       git = {
         enable = true;
         name = "richen604";
@@ -104,13 +106,26 @@ in
                 workspace=3,monitor:desc:Dell Inc. DELL E2020H BJ7NFJ3,default:true
 
                 env = AQ_DRM_DEVICES,/dev/dri/card1:/dev/dri/card0
+
+                # Enable hardware video acceleration
+                env = LIBVA_DRIVER_NAME,radeonsi
+                env = VDPAU_DRIVER,radeonsi
+
+                # For hardware video acceleration and better performance
+                env = __GLX_VENDOR_LIBRARY_NAME,mesa
+
+                # AMD specific Vulkan settings
+                env = AMD_VULKAN_ICD,RADV
+                env = RADV_PERFTEST,gpl
+
+                # No need to disable hardware cursors on AMD
+                # AMD generally has good hardware cursor support
+                cursor:no_hardware_cursors = false
               ''
             else if cfg.hostname == "oak" then
               ''
                 # Laptop-specific settings
-                monitor=eDP-1,3200x2000@60,0x0,1.33
-                workspace=1,monitor:eDP-1
-                workspace=2,monitor:eDP-1
+                monitor=eDP-1,3200x2000@60,0x0,1.33,vrr,1
 
                 env = AQ_DRM_DEVICES,/dev/dri/card2:/dev/dri/card1
               ''
@@ -137,9 +152,14 @@ in
           bind = ALT, Tab, bringactivetotop
           # Launch vesktop after a delay without blocking boot
           exec-once = sleep 1 && vesktop
+
+          exec-once = sleep 1 && keepassxc
         '';
         force = true;
         mutable = true;
+      };
+      ".config/hypr/nvidia.conf" = lib.mkForce {
+        enable = false;
       };
     };
   };

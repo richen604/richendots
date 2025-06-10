@@ -72,7 +72,6 @@ in
       spice-webdavd.enable = true;
       udev.extraRules = ''
         SUBSYSTEM=="kvmfr", OWNER="richen", GROUP="kvm", MODE="0660"
-        ${builtins.readFile ./scripts/99-vendor-reset.rules}
       '';
     };
 

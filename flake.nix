@@ -4,10 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hydenix = {
-      #url = "github:richen604/hydenix";
+      # url = "github:richen604/hydenix";
       url = "path:/media/backup_drive/Dev/hydenix";
     };
-    chaotic.url = "github:chaotic-cx/nyx/18c577a2a160453f4a6b4050fb0eac7d28b92ead";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
@@ -74,6 +74,7 @@
           user = "root";
           path = inputs.deploy-rs.lib.${system}.activate.nixos inputs.self.nixosConfigurations.${hostname};
           sshUser = "richen";
+          interactiveSudo = true;
           sshOpts = [
             "-p"
             "22"
@@ -88,11 +89,13 @@
       nixosConfigurations = {
         fern = mkHost "fern";
         oak = mkHost "oak";
+        "fern.local" = mkHost "fern";
+        "oak.local" = mkHost "oak";
       };
 
       deploy.nodes = {
-        fern = mkDeployNode "fern";
-        oak = mkDeployNode "oak";
+        fern = mkDeployNode "fern.local";
+        oak = mkDeployNode "oak.local";
       };
 
       packages.${system} = {

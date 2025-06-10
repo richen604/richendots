@@ -22,6 +22,8 @@ in
   config = lib.mkIf cfg.enable {
 
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages_cachyos;
+
+    services.scx.enable = true;
     nix.settings = {
       substituters = [
         "https://chaotic-nyx.cachix.org"
