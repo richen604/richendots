@@ -25,6 +25,11 @@ in
       # Performance mods often need these
       gcc
       glibc
+
+      steam-run
+      protontricks
+      winetricks
+      protonup-qt
     ];
   };
 }

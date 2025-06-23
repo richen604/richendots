@@ -20,31 +20,15 @@ in
     };
 
     programs = {
-      gamemode.enable = true;
-      gamemode.enableRenice = true;
-      gamemode.settings = {
-        general = {
-          inhibit_screensaver = 1;
-        };
-
-        gpu = {
-          apply_gpu_optimisations = "accept-responsibility";
-        };
-
-        custom = {
-          start = "notify-send 'GameMode started'";
-          end = "notify-send 'GameMode ended'";
-        };
-      };
       steam = {
         enable = true;
         remotePlay.openFirewall = true;
         gamescopeSession.enable = true;
+        protontricks.enable = true;
       };
     };
 
     environment.systemPackages = with pkgs; [
-      steam
       mangohud
       gamescope
       # Additional packages for Wayland/Vulkan support
