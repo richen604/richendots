@@ -18,14 +18,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
+    home.packages = with pkgs.userPkgs; [
       code-cursor
       nixfmt-rfc-style
       nil
-      nix-direnv
-      direnv
       nix-output-monitor
       nix-fast-build
+
+      # Node.js ecosystem
+      pnpm
+      npm-check-updates
+      node2nix
+      nodePackages.npm
+      nodePackages.typescript
+      nodePackages.ts-node
+      nodePackages.nodemon
+
+      # Node version management
+      fnm
     ];
 
     programs = {
@@ -37,8 +47,22 @@ in
       };
 
       zsh = {
-        initExtra = pkgs.lib.mkAfter ''
+        initContent = pkgs.lib.mkAfter ''
           source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+
+          # fnm (Fast Node Manager) setup
+          eval "$(fnm env --use-on-cd)"
+
+          # pnpm setup
+          export PNPM_HOME="$HOME/.local/share/pnpm"
+          case ":$PATH:" in
+            *":$PNPM_HOME:"*) ;;
+            *) export PATH="$PNPM_HOME:$PATH" ;;
+          esac
+
+          # npm global packages path
+          export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+          export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
         '';
       };
     };

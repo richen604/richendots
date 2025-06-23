@@ -63,10 +63,6 @@
       fi
     '')
 
-    pkgs.nodejs_20
-    pkgs.nodePackages.pnpm
-    pkgs.pnpm
-
     pkgs.cpufrequtils
 
     pkgs.dpms-off

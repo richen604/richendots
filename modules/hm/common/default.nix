@@ -13,4 +13,6 @@
     ./dev.nix
     ./kde-connect.nix
   ];
+
+  programs.home-manager.enable = true;
 }
