@@ -1,8 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-    # TODO: oak private modules
-    # inputs.richendots-private.nixosModules.oak
+    inputs.richendots-private.nixosModules.oak
     ../../common
     ./powersave.nix
   ];
