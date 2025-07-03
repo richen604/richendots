@@ -4,15 +4,15 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hydenix = {
-      # url = "github:richen604/hydenix";
-      url = "path:/media/backup_drive/Dev/hydenix";
+      url = "github:richen604/hydenix";
+      # url = "path:/media/backup_drive/Dev/hydenix";
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
-      # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/media/backup_drive/Dev/richendots-private";
+      url = "git+ssh://git@github.com/richen604/richendots-private";
+      # url = "path:/media/backup_drive/Dev/richendots-private";
     };
 
     # Nix-index-database - for comma and command-not-found

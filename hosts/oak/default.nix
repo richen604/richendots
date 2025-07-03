@@ -72,6 +72,13 @@ in
     locale = "en_CA.UTF-8";
   };
 
+  # GRUB configuration for high-DPI display
+  # TODO: move this to a module
+  boot.loader.grub = {
+    fontSize = 32; # Larger font for high-DPI screen
+    gfxmodeEfi = "1920x1200"; # Lower resolution for better readability
+  };
+
   users.users.richen = {
     isNormalUser = true;
     initialPassword = "hydenix";
