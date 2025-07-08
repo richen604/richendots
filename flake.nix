@@ -4,15 +4,15 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hydenix = {
-      url = "github:richen604/hydenix";
-      # url = "path:/media/backup_drive/Dev/hydenix";
+      # url = "github:richen604/hydenix";
+      url = "path:/media/backup_drive/Dev/hydenix";
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
-      url = "git+ssh://git@github.com/richen604/richendots-private";
-      # url = "path:/media/backup_drive/Dev/richendots-private";
+      # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      url = "path:/media/backup_drive/Dev/richendots-private";
     };
 
     # Nix-index-database - for comma and command-not-found
@@ -29,6 +29,7 @@
 
   outputs =
     {
+      self,
       ...
     }@inputs:
     let
@@ -56,25 +57,35 @@
 
       isoConfig = inputs.hydenix.lib.iso {
         hydenix-inputs = inputs.hydenix.inputs // inputs.hydenix.lib // inputs.hydenix;
-        flake = inputs.self.outPath;
+        flake = self.outPath;
       };
 
       # All below is for deploy-rs
 
       system = inputs.hydenix.lib.system;
-      pkgs = import inputs.nixpkgs {
+
+      # Unmodified nixpkgs
+      pkgs = import inputs.nixpkgs { inherit system; };
+
+      # nixpkgs with deploy-rs overlay but force the nixpkgs package for binary cache
+      deployPkgs = import inputs.nixpkgs {
         inherit system;
-        overlays = [ inputs.deploy-rs.overlays.default ];
+        overlays = [
+          inputs.deploy-rs.overlays.default
+          (self: super: {
+            deploy-rs = {
+              inherit (pkgs) deploy-rs;
+              lib = super.deploy-rs.lib;
+            };
+          })
+        ];
       };
 
       mkDeployNode = hostname: {
         hostname = hostname;
         profiles.system = {
-          # Change from root to your user
-          user = "root";
-          path = inputs.deploy-rs.lib.${system}.activate.nixos inputs.self.nixosConfigurations.${hostname};
+          path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.${hostname};
           sshUser = "richen";
-          interactiveSudo = true;
           sshOpts = [
             "-p"
             "22"
@@ -89,13 +100,13 @@
       nixosConfigurations = {
         fern = mkHost "fern";
         oak = mkHost "oak";
-        "fern.local" = mkHost "fern";
-        "oak.local" = mkHost "oak";
       };
 
-      deploy.nodes = {
-        fern = mkDeployNode "fern.local";
-        oak = mkDeployNode "oak.local";
+      deploy = {
+        nodes = {
+          fern = mkDeployNode "fern";
+          oak = mkDeployNode "oak";
+        };
       };
 
       packages.${system} = {
@@ -107,27 +118,21 @@
         rb = pkgs.writeShellScriptBin "rb" ''
           host=$1
           case "$host" in
-            "oak") 
-              ${pkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak ;;
-            "fern") 
-              ${pkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern ;;
-            "all") 
-              ${pkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak
-              ${pkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern
+            "oak")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak ;;
+            "fern")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern ;;
+            "all")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern
               ;;
             *) echo "Usage: rb [oak|fern|all]" ;;
           esac
         '';
       };
 
-      # Only check the specific deployment node
-      checks.${system} = {
-        oak-check = inputs.deploy-rs.lib.${system}.deployChecks {
-          nodes.oak = inputs.self.deploy.nodes.oak;
-        };
-        fern-check = inputs.deploy-rs.lib.${system}.deployChecks {
-          nodes.fern = inputs.self.deploy.nodes.fern;
-        };
-      };
+      # Deploy-rs checks
+      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
+
     };
 }
