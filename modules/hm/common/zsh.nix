@@ -20,8 +20,8 @@ in
   config = lib.mkIf cfg.enable {
     programs.zsh = {
       enable = true;
-      enableAutosuggestions = true;
-      enableSyntaxHighlighting = true;
+      syntaxHighlighting.enable = true;
+      autosuggestion.enable = true;
       plugins = lib.mkAfter [
         {
           name = "zsh-nix-shell";

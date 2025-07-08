@@ -83,9 +83,9 @@ in
             if cfg.hostname == "fern" then
               ''
                 # left to right
-                monitor=desc:BNQ BenQ GW2780 ET85P0086404U,1920x1080,-1920x150,1
+                monitor=desc:BNQ BenQ GW2780 ET85P0086404U,1920x1080,-1080x-300,1,transform,1
                 monitor=desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,2560x1440@60,0x0,1
-                monitor=desc:Dell Inc. DELL E2020H BJ7NFJ3,1600x900,2560x450,1
+                monitor=desc:Dell Inc. DELL E2020H BJ7NFJ3,1600x900,2560x0,1,transform,3
 
                 # Workspace Rules using workspace selectors
                 workspace=1,monitor:desc:BNQ BenQ GW2780 ET85P0086404U
@@ -125,7 +125,7 @@ in
             else if cfg.hostname == "oak" then
               ''
                 # Laptop-specific settings
-                monitor=eDP-1,3200x2000@60,0x0,1.33,vrr,1
+                monitor=,3200x2000@60,0x0,1.6,vrr,1
 
                 env = AQ_DRM_DEVICES,/dev/dri/card2:/dev/dri/card1
               ''
