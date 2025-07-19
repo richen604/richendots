@@ -65,6 +65,15 @@ in
       };
   };
 
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 4d --keep 3";
+    flake = "/home/richen/dev/richendots";
+  };
+  # for nh.clean
+  nix.gc.automatic = pkgs.lib.mkForce false;
+
   hydenix = {
     enable = true;
     hostname = "fern";

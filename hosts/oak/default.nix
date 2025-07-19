@@ -79,6 +79,15 @@ in
     gfxmodeEfi = "1920x1200"; # Lower resolution for better readability
   };
 
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 4d --keep 3";
+    # todo: flake path for oak
+  };
+  # for nh.clean
+  nix.gc.automatic = pkgs.lib.mkForce false;
+
   users.users.richen = {
     isNormalUser = true;
     initialPassword = "hydenix";
