@@ -1,5 +1,6 @@
 {
   inputs,
+  config,
   ...
 }:
 let
@@ -36,6 +37,7 @@ in
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs;
+      osConfig = config;
     };
     users."richen" =
       { ... }:
