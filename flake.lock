@@ -203,8 +203,8 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1752796183,
-        "narHash": "sha256-xnjObBR+dIPcVL2MiWEG/52e5CFvESl2T1i0KwWVnMA=",
+        "lastModified": 1753126500,
+        "narHash": "sha256-zUZ+oqLKiq7Mdeozroi2x59nmIHjfPwp08g/VspFCF8=",
         "path": "/media/backup_drive/Dev/hydenix",
         "type": "path"
       },
@@ -492,8 +492,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1752720734,
-        "narHash": "sha256-rcsqXcZZraes1gH9OVq+G8a2qkWR7oqVS6RRk145JNE=",
+        "lastModified": 1753289293,
+        "narHash": "sha256-saTuQl/v3cRBt2xvn/Zc1fvHHFpxim0a7/j3ozKNl2Q=",
         "path": "/media/backup_drive/Dev/richendots-private",
         "type": "path"
       },
