@@ -18,6 +18,10 @@ let
   microphonePreset = pkgs.writeText "microphone-noise-cancellation.json" (
     builtins.toJSON {
       "input" = {
+        # NOTE: To test different noise reduction levels, you can:
+        # 1. Adjust settings in EasyEffects GUI
+        # 2. Export the preset and copy values here
+        # 3. Or create multiple presets with different aggressiveness levels
         "blocklist" = [ ];
         "compressor#0" = {
           "attack" = 5.0;
@@ -74,7 +78,7 @@ let
           "left" = {
             "band0" = {
               "frequency" = 50.0;
-              "gain" = 3.0;
+              "gain" = -6.0; # Reduce low frequencies (explosions, bass)
               "mode" = "RLC (BT)";
               "mute" = false;
               "q" = 0.7;
@@ -85,7 +89,7 @@ let
             };
             "band1" = {
               "frequency" = 90.0;
-              "gain" = 3.0;
+              "gain" = -3.0; # Reduce low-mid frequencies
               "mode" = "RLC (MT)";
               "mute" = false;
               "q" = 0.7;
@@ -96,7 +100,7 @@ let
             };
             "band2" = {
               "frequency" = 425.0;
-              "gain" = -2.0;
+              "gain" = -4.0; # More reduction in mid frequencies where gaming audio is prominent
               "mode" = "BWC (MT)";
               "mute" = false;
               "q" = 0.9999999999999998;
@@ -136,7 +140,7 @@ let
           "right" = {
             "band0" = {
               "frequency" = 50.0;
-              "gain" = 3.0;
+              "gain" = -6.0; # Reduce low frequencies (explosions, bass)
               "mode" = "RLC (BT)";
               "mute" = false;
               "q" = 0.7;
@@ -147,7 +151,7 @@ let
             };
             "band1" = {
               "frequency" = 90.0;
-              "gain" = 3.0;
+              "gain" = -3.0; # Reduce low-mid frequencies
               "mode" = "RLC (MT)";
               "mute" = false;
               "q" = 0.7;
@@ -158,7 +162,7 @@ let
             };
             "band2" = {
               "frequency" = 425.0;
-              "gain" = -2.0;
+              "gain" = -4.0; # More reduction in mid frequencies where gaming audio is prominent
               "mode" = "BWC (MT)";
               "mute" = false;
               "q" = 0.9999999999999998;
@@ -195,21 +199,21 @@ let
         "gate#0" = {
           "attack" = 1.0;
           "bypass" = false;
-          "curve-threshold" = -50.0;
+          "curve-threshold" = -65.0; # Much lower threshold to catch gaming audio
           "curve-zone" = -2.0;
           "dry" = -100.0;
-          "hpf-frequency" = 10.0;
-          "hpf-mode" = "off";
+          "hpf-frequency" = 80.0; # High-pass filter to reduce gaming bass/explosions
+          "hpf-mode" = "on";
           "hysteresis" = true;
-          "hysteresis-threshold" = -3.0;
-          "hysteresis-zone" = -1.0;
+          "hysteresis-threshold" = -8.0; # Wider hysteresis for more aggressive gating
+          "hysteresis-zone" = -3.0;
           "input-gain" = 0.0;
           "lpf-frequency" = 20000.0;
           "lpf-mode" = "off";
-          "makeup" = 1.0;
+          "makeup" = 2.0; # Slightly higher makeup gain
           "output-gain" = 0.0;
-          "reduction" = -15.0;
-          "release" = 200.0;
+          "reduction" = -30.0; # Much more reduction when gate is closed
+          "release" = 300.0; # Longer release to avoid cutting off speech
           "sidechain" = {
             "input" = "Internal";
             "lookahead" = 0.0;
@@ -219,6 +223,7 @@ let
             "source" = "Middle";
             "stereo-split-source" = "Left/Right";
           };
+
           "stereo-split" = false;
           "wet" = -1.0;
         };
@@ -253,26 +258,26 @@ let
         ];
         "rnnoise#0" = {
           "bypass" = false;
-          "enable-vad" = false;
+          "enable-vad" = true;
           "input-gain" = 0.0;
           "model-path" = "";
-          "output-gain" = 0.0;
+          "output-gain" = -25;
           "release" = 20.0;
-          "vad-thres" = 50.0;
-          "wet" = 0.0;
+          "vad-thres" = 50; # Voice Activity Detection: much more aggressive for nearby gaming noise
+          "wet" = -1.0;
         };
         "speex#0" = {
           "bypass" = false;
           "enable-agc" = false;
-          "enable-denoise" = false;
-          "enable-dereverb" = false;
+          "enable-denoise" = true; # Enable additional denoising
+          "enable-dereverb" = true; # Enable dereverb to reduce room reflections
           "input-gain" = 0.0;
-          "noise-suppression" = -70;
+          "noise-suppression" = -80; # Maximum noise suppression for gaming audio
           "output-gain" = 0.0;
           "vad" = {
             "enable" = true;
-            "probability-continue" = 90;
-            "probability-start" = 95;
+            "probability-continue" = 85; # Lower to be more selective about continuing speech
+            "probability-start" = 98; # Higher to require clearer speech to start
           };
         };
       };
@@ -291,6 +296,12 @@ in
       calf # Additional audio plugins
       lsp-plugins # More audio plugins
       rnnoise # RNNoise library for noise cancellation
+      distrho-ports # Additional audio effects (corrected name)
+      x42-plugins # Professional audio plugins with advanced filters
+      zam-plugins # More audio processing plugins
+      # Add noise profiling tools
+      sox # For audio analysis and processing
+      audacity # For noise profiling if needed
     ];
 
     # Enable EasyEffects service

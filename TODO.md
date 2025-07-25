@@ -11,14 +11,12 @@
 - Install USBs: [hostname]-seed (fern-seed, oak-seed, cedar-seed)
 - VMs: [hostname]-vm (fern-vm, oak-vm, cedar-vm)
 
-- [ ] pam-rssh
 - [ ] vscode-server
 - [ ] declarative cursor extensions / settings
 - [ ] cursor fhs
-- [ ] auto gc (with nh)
 - [ ] make cursor look better? idk
 - [ ] obsidian:
-  - [ ] make it look like this (feeds?) https://github.com/glanceapp/glance
+  - [ ] make it look like this (feeds?) <https://github.com/glanceapp/glance>
   - [ ] declarative plugins? (just symlink folder idk)
 
 ## future
@@ -28,8 +26,8 @@
 - [ ] hydenix: rofi theme for browser search using unduck shebang
 - [ ] better docs outlining my system setup
 - [ ] neovim setup for astronvim
-- [ ] tmux? https://github.com/fcsonline/tmux-thumbs?tab=readme-ov-file also looks cool
-- [ ] firmware for glove80 https://git.sr.ht/~x10an14/glove80-layout/tree/main/item/flake.nix
+- [ ] tmux? <https://github.com/fcsonline/tmux-thumbs?tab=readme-ov-file> also looks cool
+- [ ] firmware for glove80 <https://git.sr.ht/~x10an14/glove80-layout/tree/main/item/flake.nix>
 - [ ] disko
 - [ ] new desktop setup?
   Focusing on modularity and ease of use.
@@ -95,4 +93,4 @@
     <https://www.reddit.com/r/unixporn/comments/1j9omuu/sway_moved_from_hyprland/>
     <https://github.com/gh0stzk/dotfiles>
   - dumb packages
-    - https://www.one-tab.com/page/PyGYWJTfSjytryvQx2L6kQ 
+    - <https://www.one-tab.com/page/PyGYWJTfSjytryvQx2L6kQ>
