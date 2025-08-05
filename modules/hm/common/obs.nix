@@ -5,9 +5,19 @@
   ...
 }:
 
+/*
+  TODO: feat(obs): add plugins
+  - source record
+  - obs advanced masks
+  - source clone
+  - move transition?
+  - some sort of background blur with nvidia card?
+  - capture audio if it doesnt work
+*/
 let
   cfg = config.modules.common.obs;
 
+  # TODO: feat(obs): fix(obs): contribute to hypr-obs-mouse-follow script (toggle, feature parity with alternatives)
   # Derivation for hypr-obs-mouse-follow script (Wayland/Hyprland compatible)
   hypr-obs-mouse-follow = pkgs.stdenv.mkDerivation {
     pname = "hypr-obs-mouse-follow";

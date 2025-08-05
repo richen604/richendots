@@ -18,6 +18,7 @@ let
   microphonePreset = pkgs.writeText "microphone-noise-cancellation.json" (
     builtins.toJSON {
       "input" = {
+        # TODO: fix(obs): adjust output volume higher for voice
         # NOTE: To test different noise reduction levels, you can:
         # 1. Adjust settings in EasyEffects GUI
         # 2. Export the preset and copy values here

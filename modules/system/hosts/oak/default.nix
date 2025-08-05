@@ -3,7 +3,7 @@
   imports = [
     inputs.richendots-private.nixosModules.oak
     ../../common
-    ./powersave.nix
+    ./powersave
   ];
 
   modules = {

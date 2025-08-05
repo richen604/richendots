@@ -2,6 +2,7 @@
   inputs,
   lib,
   config,
+  pkgs,
   ...
 }:
 
@@ -83,9 +84,9 @@ in
             if cfg.hostname == "fern" then
               ''
                 # left to right
-                monitor=desc:BNQ BenQ GW2780 ET85P0086404U,1920x1080,-1080x-300,1,transform,1
+                monitor=desc:BNQ BenQ GW2780 ET85P0086404U,1920x1080,-1080x-130,1,transform,1
                 monitor=desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,2560x1440@60,0x0,1
-                monitor=desc:Dell Inc. DELL E2020H BJ7NFJ3,1600x900,2560x0,1,transform,3
+                monitor=desc:Dell Inc. DELL E2020H BJ7NFJ3,1600x900,2560x-130,1,transform,3
 
                 # Workspace Rules using workspace selectors
                 workspace=1,monitor:desc:BNQ BenQ GW2780 ET85P0086404U
@@ -151,15 +152,17 @@ in
           bind = ALT, Tab, cyclenext
           bind = ALT, Tab, bringactivetotop
           # Launch vesktop after a delay without blocking boot
-          exec-once = sleep 1 && vesktop
+          exec-once = vesktop
 
-          exec-once = sleep 1 && keepassxc
+          exec-once = keepassxc
         '';
         force = true;
         mutable = true;
       };
       ".config/hypr/nvidia.conf" = lib.mkForce {
-        enable = false;
+        enable = if cfg.hostname == "oak" then true else false;
+        source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/nvidia.conf";
+        force = true;
       };
     };
   };
