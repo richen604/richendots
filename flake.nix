@@ -4,8 +4,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     hydenix = {
-      url = "github:richen604/hydenix";
-      # url = "path:/media/backup_drive/Dev/hydenix";
+      #url = "github:richen604/hydenix?ref=dev";
+      url = "path:/media/backup_drive/Dev/hydenix";
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 

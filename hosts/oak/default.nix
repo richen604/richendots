@@ -26,10 +26,33 @@ in
   imports = [
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
     inputs.hydenix.lib.nixOsModules
+
+    inputs.nixos-hardware.nixosModules.common-pc-laptop
+    inputs.nixos-hardware.nixosModules.common-hidpi
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+
+    inputs.nixos-hardware.nixosModules.common-gpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
     ./hardware-configuration.nix
     ../../modules/system/hosts/oak
     ../common/private.nix
   ];
+
+  # NVIDIA PRIME for hybrid graphics (Intel + NVIDIA)
+  hardware.nvidia.prime = {
+    # Enable NVIDIA Optimus support
+    offload = {
+      enable = true;
+      enableOffloadCmd = true; # Provides nvidia-offload command
+    };
+    # Bus IDs found via: lspci | grep -E "(VGA|3D)"
+    # 0000:00:02.0 VGA compatible controller: Intel Corporation Raptor Lake-P [Iris Xe Graphics] (rev 04)
+    # 0000:01:00.0 VGA compatible controller: NVIDIA Corporation AD107M [GeForce RTX 4060 Max-Q / Mobile] (rev a1)
+    intelBusId = "PCI:0:2:0"; # Intel Raptor Lake-P Iris Xe Graphics
+    nvidiaBusId = "PCI:1:0:0"; # NVIDIA GeForce RTX 4060 Max-Q / Mobile
+  };
+  hardware.nvidia.open = true;
 
   home-manager = {
     useGlobalPkgs = true;
