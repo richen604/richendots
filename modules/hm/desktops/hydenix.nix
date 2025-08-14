@@ -118,6 +118,8 @@ in
           # vesktop blur
           windowrulev2 = opacity 0.90 0.90,class:^(vesktop)$
           windowrulev2 = workspace 3,class:^(vesktop)$
+
+          windowrulev2 = float,center,size 600 400,class:^(org.keepassxc.KeePassXC)$
         '';
         nvidia.enable = false;
         extraConfig = ''
