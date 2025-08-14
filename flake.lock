@@ -367,8 +367,8 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1755125244,
-        "narHash": "sha256-MDLQdlH2WuZmFtijjfGiGFooqMdFkwPFxaxtOs5Bmws=",
+        "lastModified": 1755140592,
+        "narHash": "sha256-ksovPALGZyyVv+rOCreS0SnzLNLaltyiDMDCfoaAy2k=",
         "path": "/media/backup_drive/Dev/hydenix",
         "type": "path"
       },
