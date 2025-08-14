@@ -6,6 +6,7 @@
     ./linux-cachyos.nix
     ./steam.nix
     ./nix.nix
+    ./openrgb.nix
   ];
 
   # TODO: move this somewhere?

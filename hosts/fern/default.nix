@@ -40,7 +40,7 @@ in
       osConfig = config;
     };
     users."richen" =
-      { ... }:
+      { config, ... }:
       {
         imports = [
           ../../modules/hm/users/richen
@@ -51,6 +51,7 @@ in
           hostname = "fern";
         };
 
+        home.stateVersion = "25.05";
         modules = {
           common = {
             easyeffects.enable = true;

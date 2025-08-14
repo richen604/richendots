@@ -64,12 +64,12 @@ in
     home.packages = with pkgs; [
       #obs things
       v4l-utils # Video4Linux utilities
-      hypr-obs-mouse-follow # Wayland/Hyprland compatible mouse follow script
       (wrapOBS {
-        plugins = with obs-studio-plugins; [
-          wlrobs
-          looking-glass-obs
-          obs-pipewire-audio-capture
+        plugins = [
+          obs-studio-plugins.wlrobs
+          obs-studio-plugins.looking-glass-obs
+          obs-studio-plugins.obs-pipewire-audio-capture
+          hypr-obs-mouse-follow # Wayland/Hyprland compatible mouse follow script
         ];
       })
     ];

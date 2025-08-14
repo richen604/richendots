@@ -10,6 +10,7 @@
   ];
 
   modules = {
+    openrgb.enable = true;
     autologin.enable = false;
     boot.enable = true;
     steam.enable = true;

@@ -2,7 +2,6 @@
   inputs,
   lib,
   config,
-  pkgs,
   ...
 }:
 
@@ -34,6 +33,7 @@ in
 
   config = mkIf cfg.enable {
 
+    # FIXME: should use `config.hostname` and no assertions should be made
     assertions = [
       {
         assertion = builtins.elem cfg.hostname [
@@ -50,11 +50,11 @@ in
 
     hydenix.hm = {
       enable = true;
-      editors.default = "nvim";
       shell.pokego.enable = true;
       shell.fastfetch.enable = false;
       git = {
         enable = true;
+        # FIXME: private module, change info
         name = "richen604";
         email = "56615615+richen604@users.noreply.github.com";
       };
@@ -74,11 +74,53 @@ in
           "Catppuccin Mocha"
         ];
       };
-    };
 
-    home.file = {
-      ".config/hypr/userprefs.conf" = lib.mkForce {
-        text = ''
+      hyprland = {
+        animations.preset = "standard";
+        shaders.active = "disable";
+        workflows = {
+          active = "noborders";
+          overrides = {
+            "noborders" = ''
+              $WORKFLOW_ICON=
+              $WORKFLOW_DESCRIPTION = Removes border gaps and shadows for fullscreening applications but keeps existing blur and animations
+
+              decoration {
+                rounding = 0
+                shadow {
+                  enabled = false
+                }
+              }
+              general {
+                gaps_in = 0
+                gaps_out = 0
+                border_size = 1
+              }
+            '';
+          };
+        };
+        keybindings.extraConfig = ''
+          # Alt + Enter to toggle fullscreen
+          bind = ALT, Return, fullscreen, 0
+          # Alt + Tab to cycle between fullscreen windows
+          bind = ALT, Tab, cyclenext
+          bind = ALT, Tab, bringactivetotop
+        '';
+        windowrules.extraConfig = ''
+          # common settings
+          windowrulev2 = opacity 0.90 0.90,class:^(code-oss)$
+          windowrulev2 = opacity 0.90 0.90,class:^(Code)$
+          windowrulev2 = opacity 0.90 0.90,class:^(code)$
+          windowrulev2 = opacity 0.90 0.90,class:^(code-url-handler)$
+          windowrulev2 = opacity 0.90 0.90,class:^(cursor-url-handler)$
+          windowrulev2 = opacity 0.90 0.90,class:^(code-insiders-url-handler)$
+          windowrulev2 = opacity 1 1,class:^(firefox)$
+          # vesktop blur
+          windowrulev2 = opacity 0.90 0.90,class:^(vesktop)$
+          windowrulev2 = workspace 3,class:^(vesktop)$
+        '';
+        nvidia.enable = false;
+        extraConfig = ''
           # Host-specific configuration for ${cfg.hostname}
           ${
             if cfg.hostname == "fern" then
@@ -128,7 +170,7 @@ in
                 # Laptop-specific settings
                 monitor=,3200x2000@60,0x0,1.6,vrr,1
 
-                env = AQ_DRM_DEVICES,/dev/dri/card2:/dev/dri/card1
+                env = AQ_DRM_DEVICES,/dev/dri/card0
               ''
             else
               ''
@@ -136,33 +178,13 @@ in
                 monitor=,preferred,auto,1
               ''
           }
-          # common settings
-          windowrulev2 = opacity 0.90 0.90,class:^(code-oss)$
-          windowrulev2 = opacity 0.90 0.90,class:^(Code)$
-          windowrulev2 = opacity 0.90 0.90,class:^(code-url-handler)$
-          windowrulev2 = opacity 0.90 0.90,class:^(cursor-url-handler)$
-          windowrulev2 = opacity 0.90 0.90,class:^(code-insiders-url-handler)$
-          windowrulev2 = opacity 1 1,class:^(firefox)$
-          # vesktop blur
-          windowrulev2 = opacity 0.90 0.90,class:^(vesktop)$
-          windowrulev2 = workspace 3,class:^(vesktop)$
-          # Alt + Enter to toggle fullscreen
-          bind = ALT, Return, fullscreen, 0
-          # Alt + Tab to cycle between fullscreen windows
-          bind = ALT, Tab, cyclenext
-          bind = ALT, Tab, bringactivetotop
           # Launch vesktop after a delay without blocking boot
           exec-once = vesktop
 
           exec-once = keepassxc
+
+          exec-once = yubikey-touch-detector --libnotify
         '';
-        force = true;
-        mutable = true;
-      };
-      ".config/hypr/nvidia.conf" = lib.mkForce {
-        enable = if cfg.hostname == "oak" then true else false;
-        source = "${pkgs.hydenix.hyde}/Configs/.config/hypr/nvidia.conf";
-        force = true;
       };
     };
   };
