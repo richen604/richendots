@@ -70,9 +70,8 @@ in
         profiles = {
           "default" = {
             extensions = with pkgs.vscode-extensions; [
+              supermaven.supermaven
               github.vscode-pull-request-github
-              github.copilot
-              github.copilot-chat
               github.vscode-github-actions
               github.vscode-pull-request-github
               esbenp.prettier-vscode
@@ -161,7 +160,7 @@ in
               ]
             }
           },
-          "workbench.sideBar.location": "right"
+          "workbench.sideBar.location": "right",
         }
       '';
     };
