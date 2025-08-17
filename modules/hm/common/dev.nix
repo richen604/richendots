@@ -161,6 +161,7 @@ in
             }
           },
           "workbench.sideBar.location": "right",
+          "telemetry.telemetryLevel": "all",
         }
       '';
     };

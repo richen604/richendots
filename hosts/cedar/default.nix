@@ -1,18 +1,17 @@
 {
   inputs,
-  config,
   ...
 }:
 let
-  pkgs = import inputs.hydenix.inputs.hydenix-nixpkgs {
-    inherit (inputs.hydenix.lib) system;
+  pkgs = import inputs.nixpkgs {
+    system = "x86_64-linux";
     config.allowUnfree = true;
     config.allowBroken = true;
     overlays = [
       inputs.hydenix.lib.overlays
       (final: prev: {
         userPkgs = import inputs.nixpkgs {
-          inherit (inputs.hydenix.lib) system;
+          system = "x86_64-linux";
           config.allowUnfree = true;
           config.allowBroken = true;
         };
@@ -41,48 +40,11 @@ in
   nixpkgs.pkgs = pkgs;
 
   imports = [
-    inputs.hydenix.inputs.home-manager.nixosModules.home-manager
-    inputs.hydenix.lib.nixOsModules
     ./hardware-configuration.nix
-    ../../modules/system/hosts/fern
+    ../../modules/system/hosts/cedar
     ../common/private.nix
+    inputs.richendots-private.nixosModules.cedar
   ];
-
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit inputs;
-      osConfig = config;
-    };
-    users."richen" =
-      { config, ... }:
-      {
-        imports = [
-          ../../modules/hm/users/richen
-        ];
-
-        desktops.hydenix = {
-          enable = true;
-          hostname = "fern";
-        };
-
-        home.stateVersion = "25.05";
-        modules = {
-          common = {
-            easyeffects.enable = true;
-            git.enable = true;
-            dev.enable = true;
-            expo-dev.enable = true;
-            obs.enable = true;
-            games.enable = true;
-            zsh.enable = true;
-          };
-          # TODO: make obsidian.nix work on any host
-          obsidian.enable = true;
-        };
-      };
-  };
 
   programs.nh = {
     enable = true;
@@ -93,12 +55,8 @@ in
   # for nh.clean
   nix.gc.automatic = pkgs.lib.mkForce false;
 
-  hydenix = {
-    enable = true;
-    hostname = "fern";
-    timezone = "America/Vancouver";
-    locale = "en_CA.UTF-8";
-  };
+  time.timeZone = "America/Vancouver";
+  i18n.defaultLocale = "en_CA.UTF-8";
 
   users.users.richen = {
     isNormalUser = true;
@@ -109,6 +67,36 @@ in
       "video"
     ];
     shell = pkgs.zsh;
+  };
+
+  boot.loader = {
+    grub = {
+      enable = true;
+      device = "nodev";
+      useOSProber = true;
+      efiSupport = true;
+    };
+    efi = {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = "/boot";
+    };
+  };
+
+  programs.zsh = {
+    enable = true;
+    autosuggestions.enable = true;
+    enableCompletion = true;
+    ohMyZsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "git-extras"
+        "git-flow"
+        "git-prompt"
+        "nix-shell"
+        "zsh-autosuggestions"
+      ];
+    };
   };
 
   system.stateVersion = "25.05";
