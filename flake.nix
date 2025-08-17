@@ -6,6 +6,7 @@
     hydenix = {
       #url = "github:richen604/hydenix?ref=dev";
       url = "path:/media/backup_drive/Dev/hydenix";
+      inputs.hydenix-nixpkgs.follows = "nixpkgs";
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
@@ -36,8 +37,8 @@
       # Create a function to generate host configurations
       mkHost =
         hostname:
-        inputs.hydenix.inputs.hydenix-nixpkgs.lib.nixosSystem {
-          inherit (inputs.hydenix.lib) system;
+        inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             hostname = hostname;
@@ -54,11 +55,6 @@
           inherit inputs hostname;
           nixosConfiguration = mkHost hostname;
         }).config.system.build.vm;
-
-      isoConfig = inputs.hydenix.lib.iso {
-        hydenix-inputs = inputs.hydenix.inputs // inputs.hydenix.lib // inputs.hydenix;
-        flake = self.outPath;
-      };
 
       # All below is for deploy-rs
 
@@ -100,20 +96,25 @@
       nixosConfigurations = {
         fern = mkHost "fern";
         oak = mkHost "oak";
+        cedar = mkHost "cedar";
       };
 
       deploy = {
         nodes = {
           fern = mkDeployNode "fern";
           oak = mkDeployNode "oak";
+          cedar = mkDeployNode "cedar";
         };
       };
 
       packages.${system} = {
         fern-vm = mkVm "fern";
         oak-vm = mkVm "oak";
-        build-iso = isoConfig.build-iso;
-        burn-iso = isoConfig.burn-iso;
+        cedar-vm = mkVm "cedar";
+
+        fern = (mkHost "fern").config.system.build.toplevel;
+        oak = (mkHost "oak").config.system.build.toplevel;
+        cedar = (mkHost "cedar").config.system.build.toplevel;
 
         rb = pkgs.writeShellScriptBin "rb" ''
           host=$1
