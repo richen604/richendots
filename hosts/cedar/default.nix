@@ -17,20 +17,19 @@ let
         };
       })
       (final: prev: {
-        plex = prev.plex.overrideAttrs (oldAttrs: rec {
-          version = "1.42.1.10060-4e8b05daf";
-          src =
-            if prev.stdenv.hostPlatform.system == "aarch64-linux" then
-              prev.fetchurl {
-                url = "https://downloads.plex.tv/plex-media-server-new/${version}/debian/plexmediaserver_${version}_arm64.deb?_gl=1*mn8had*_gcl_au*Mzg4Mjc2MTUuMTc1NTQwNTMzMA..*_ga*MTQ0MTMwODk3NS4xNzU1NDA1MzMw*_ga_G6FQWNSENB*czE3NTU0MDUzMjkkbzEkZzEkdDE3NTU0MDU0MTkkajU3JGwwJGgw";
-                sha256 = "f0c8b1d3e2a4c5f6b7c8d9e0f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s";
-              }
-            else
-              prev.fetchurl {
-                url = "https://downloads.plex.tv/plex-media-server-new/${version}/debian/plexmediaserver_${version}_amd64.deb";
-                sha256 = "3a822dbc6d08a6050a959d099b30dcd96a8cb7266b94d085ecc0a750aa8197f4";
-              };
-        });
+        plex = prev.plex.override {
+          plexRaw = prev.plexRaw.overrideAttrs (old: rec {
+            pname = "plexmediaserver";
+            version = "1.42.1.10060-4e8b05daf";
+            src = prev.fetchurl {
+              url = "https://downloads.plex.tv/plex-media-server-new/${version}/debian/plexmediaserver_${version}_amd64.deb";
+              sha256 = "sha256:1x4ph6m519y0xj2x153b4svqqsnrvhq9n2cxjl50b9h8dny2v0is";
+            };
+            passthru = old.passthru // {
+              inherit version;
+            };
+          });
+        };
       })
     ];
   };
