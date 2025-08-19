@@ -36,15 +36,6 @@
     ];
   };
 
-  fileSystems."/mnt/usb" = {
-    device = "/dev/sda1";
-    fsType = "vfat";
-    options = [
-      "fmask=0022"
-      "dmask=0022"
-    ];
-  };
-
   fileSystems."/mnt/dev" = {
     device = "/dev/disk/by-uuid/163ca32e-ef5d-420f-8917-13163b1fdccc";
     fsType = "ext4";
