@@ -291,14 +291,18 @@
         "nixos-hardware": "nixos-hardware"
       },
       "locked": {
-        "lastModified": 1755405909,
-        "narHash": "sha256-MdIP74bVbKcb3Ao0OTuHWRPG149IpDzo7nR7gZpTc9s=",
-        "path": "/media/backup_drive/Dev/hydenix",
-        "type": "path"
+        "lastModified": 1755566464,
+        "narHash": "sha256-zioTsSCCerF5uLo/y/gOl5AoGX5B1kGmEB1pyJU5hgk=",
+        "owner": "richen604",
+        "repo": "hydenix",
+        "rev": "b8141b74d286f012d50f1ef41e7091f3e3f6802b",
+        "type": "github"
       },
       "original": {
-        "path": "/media/backup_drive/Dev/hydenix",
-        "type": "path"
+        "owner": "richen604",
+        "ref": "dev",
+        "repo": "hydenix",
+        "type": "github"
       }
     },
     "hyq": {
@@ -638,14 +642,18 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1755566085,
-        "narHash": "sha256-zCqIjXWRBxwXCp8YFtsd8XjN+jezoVd1dR8dn2gKBj8=",
-        "path": "/media/backup_drive/Dev/richendots-private",
-        "type": "path"
+        "lastModified": 1755566157,
+        "narHash": "sha256-7ejOuzF9dYtXSLszRmTUesEzOmH+WaYVHlzw+3ZJxFM=",
+        "ref": "main",
+        "rev": "691e534f1ab487f5bf8b483158b669e020b69214",
+        "revCount": 61,
+        "type": "git",
+        "url": "ssh://git@github.com/richen604/richendots-private.git"
       },
       "original": {
-        "path": "/media/backup_drive/Dev/richendots-private",
-        "type": "path"
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/richen604/richendots-private.git"
       }
     },
     "richendots-private-nixpkgs": {
