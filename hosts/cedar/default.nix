@@ -59,6 +59,7 @@ in
 
   users.users.richen = {
     isNormalUser = true;
+    initialPassword = !;
     extraGroups = [
       "wheel"
       "networkmanager"
