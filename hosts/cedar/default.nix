@@ -59,7 +59,6 @@ in
 
   users.users.richen = {
     isNormalUser = true;
-    initialPassword = "hydenix";
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -92,9 +91,8 @@ in
         "git-extras"
         "git-flow"
         "git-prompt"
-        "nix-shell"
-        "zsh-autosuggestions"
       ];
+      theme = "robbyrussell";
     };
   };
 
