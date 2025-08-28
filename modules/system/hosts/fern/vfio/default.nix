@@ -81,7 +81,6 @@ in
       };
       bridges.br0 = {
         interfaces = [ "enp7s0" ];
-        rstp = true;
       };
       firewall = {
         allowedUDPPorts = [
