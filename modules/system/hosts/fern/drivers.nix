@@ -43,11 +43,11 @@ in
           vulkan-validation-layers
           vulkan-tools
           # Mesa (includes RADV - the better AMD Vulkan driver)
-          mesa
+          mesa.drivers
         ];
         extraPackages32 = with pkgs.pkgsi686Linux; [
           # amdvlk  # Remove this line too
-          mesa
+          mesa.drivers
           vulkan-loader
         ];
       };
