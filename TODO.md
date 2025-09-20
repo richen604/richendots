@@ -1,32 +1,32 @@
-# TODO
+# Systemd Journal Error Todo List
 
-## now
+- feat(gpu): Investigate AMD GPU Errors
+  - [ ] Check for newer `linux-firmware` or known issues with `amdgpu` on kernel `6.16.3-zen1`.
+  - [ ] Address `psp reg wait timed out` errors.
+  - [ ] Address `SMU driver if version not matched` error.
 
-## next
+- fix(filesystem): Resolve Filesystem Corruption Warnings
+  - [ ] Address `The disk contains an unclean file system` and `Volume was not properly unmounted` messages on NTFS and FAT partitions.
+  - [ ] Boot into Windows to disable "Fast Startup" and run `chkdsk`.
 
-## backlog
+- feat(kernel): Add Missing Kernel Module
+  - [ ] Add `v4l2loopback` kernel module package to NixOS configuration.
 
-- docs(vm): add note about skipping login for sddm
-  Context: This comment is found in `hosts/vm.nix`. It suggests that the user can set this option to skip login for sddm.
+- fix(sddm): Fix SDDM Login Manager Theme
+  - [ ] Add `QtQuick.VirtualKeyboard.Plugins` dependency.
+  - [ ] Investigate and fix QML assignment errors (`Unable to assign [undefined] to QQuickItem*`).
 
-- feat(obsidian): make obsidian.nix work on any host
-  Context: This TODO is found in `hosts/fern/default.nix` and `hosts/oak/default.nix`. It indicates a need to generalize the obsidian.nix module.
+- fix(polkit): Address Polkit and Permission Errors
+  - [ ] Check Polkit configuration and file permissions for `Error opening rules directory`.
 
-- refactor(nixos): move grub configuration to a dedicated module
-  Context: This TODO is found in `hosts/oak/default.nix`. It suggests that the GRUB configuration for high-DPI display should be moved to a separate module for better organization.
+- fix(home-manager): Fix Home Manager Script Errors
+  - [ ] Add `coreutils` (for `mkdir` and `date`) to `obsidian-todo-linker` script's environment.
+  - [ ] Investigate why `hyde-config` is receiving empty TOML content.
 
-- chore(flake): define flake path for oak
-  Context: This TODO is found in `hosts/oak/default.nix`. It indicates that the flake path for the 'oak' host needs to be defined.
+- fix(syncthing): Resolve Syncthing Warning
+  - [ ] Check integrity of "KeePass Database" folder and potentially recreate the folder marker.
 
-- fix(easyeffects): adjust output volume higher for voice
-  Context: This TODO is found in `modules/hm/common/easyeffects.nix`. It suggests a fix for the output volume in EasyEffects for voice.
-
-- feat(git): integrate with git-timeshift project
-  Context: This TODO is found in `modules/hm/common/git.nix`. It indicates that the `git-picker` script will eventually be part of a `git-timeshift` project.
-
-- feat(kde-connect): setup auto clipboard on android phone
-  Context: This TODO is found in `modules/hm/common/kde-connect.nix`. It suggests setting up auto clipboard functionality on an Android phone, with a reference to an Ask Ubuntu link.
-
+- fix(pam): Address PAM SSH Agent Authentication Failure
 - feat(obs): add plugins
   Context: This TODO is found in `modules/hm/common/obs.nix`. It suggests adding more plugins to OBS, listing examples like source record, obs advanced masks, source clone, move transition, and background blur.
 

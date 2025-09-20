@@ -32,6 +32,7 @@ in
         enable = true;
         enable32Bit = true;
         extraPackages = with pkgs; [
+          (config.boot.kernelPackages.nvidiaPackages.beta)
           # NVIDIA drivers
           nvidia-vaapi-driver
           # Intel drivers
@@ -49,6 +50,7 @@ in
           # amdvlk  # Remove this line too
           mesa.drivers
           vulkan-loader
+          (config.boot.kernelPackages.nvidiaPackages.beta)
         ];
       };
 
@@ -85,45 +87,8 @@ in
     services.xserver = {
       videoDrivers = [
         "amdgpu"
-        "modesetting"
         "nvidia"
       ];
-    };
-
-    # Configure Gamescope with proper PRIME offload support
-    programs.gamescope = {
-      enable = true;
-      args = [
-        "-f"
-        "-W 2560"
-        "-H 1440"
-        "--nested-refresh 60"
-        "--filter linear"
-        "--backend sdl"
-      ];
-      env = {
-        # For Prime render offload on Nvidia laptops
-        __NV_PRIME_RENDER_OFFLOAD = "1";
-        __VK_LAYER_NV_optimus = "NVIDIA_only";
-        __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-        # Keep AMD for Gamescope compositor
-        DRI_PRIME = "0";
-      };
-    };
-
-    environment.variables = {
-      # Simplified Vulkan configuration - let the system auto-detect
-      VULKAN_LOG_LEVEL = "info";
-      # Filter out problematic drivers
-      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json:/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
-      # Force Wayland for Vulkan applications
-      SDL_VIDEODRIVER = "wayland";
-      # Additional Wayland environment variables
-      WAYLAND_DISPLAY = "wayland-1";
-      XDG_SESSION_TYPE = "wayland";
-      # NVIDIA specific variables for better compatibility
-      __GL_SYNC_TO_VBLANK = "0";
-      __GL_VRR_ALLOWED = "1";
     };
 
     # Add system packages for Vulkan debugging and Steam compatibility
@@ -138,17 +103,10 @@ in
       nvidia-system-monitor-qt
       # Wayland-specific tools
       wayland-utils
+      psmisc
     ];
 
     # Ensure proper driver loading
     boot.kernelModules = [ "amdgpu" ];
-
-    # Add udev rules for proper GPU access
-    services.udev.extraRules = ''
-      # AMD GPU
-      KERNEL=="renderD*", GROUP="video", MODE="0666"
-      # NVIDIA GPU  
-      KERNEL=="nvidia*", GROUP="video", MODE="0666"
-    '';
   };
 }

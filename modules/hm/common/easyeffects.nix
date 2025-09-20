@@ -295,7 +295,6 @@ in
     home.packages = with pkgs; [
       easyeffects
       calf # Additional audio plugins
-      lsp-plugins # More audio plugins
       rnnoise # RNNoise library for noise cancellation
       distrho-ports # Additional audio effects (corrected name)
       x42-plugins # Professional audio plugins with advanced filters
@@ -313,8 +312,14 @@ in
 
     # Install community presets and microphone noise cancellation preset
     xdg.configFile = {
-      "easyeffects/output/Perfect EQ.json".source = perfectEq;
-      "easyeffects/input/Microphone Noise Cancellation.json".source = microphonePreset;
+      "easyeffects/output/Perfect EQ.json" = {
+        source = perfectEq;
+        force = true;
+      };
+      "easyeffects/input/Microphone Noise Cancellation.json" = {
+        source = microphonePreset;
+        force = true;
+      };
     };
   };
 }

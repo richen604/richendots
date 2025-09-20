@@ -9,26 +9,38 @@
   <memory unit="KiB">32768000</memory>
   <currentMemory unit="KiB">32768000</currentMemory>
   <memoryBacking>
-    <hugepages/>
+    <!-- Strict hugepage-only configuration to prevent memory overruns -->
+    <hugepages>
+      <page size="2048" unit="KiB" nodeset="0"/>
+    </hugepages>
+    <!-- Use file-based hugepage source for strict NUMA binding -->
+    <source type="file"/>
+    <!-- Prevent memory sharing to avoid leaks -->
+    <nosharepages/>
+    <!-- Disable memory allocation fallback to regular pages -->
+    <discard/>
   </memoryBacking>
   <vcpu placement="static">12</vcpu>
-  <cputune>
-    <vcpupin vcpu="0" cpuset="0"/>
-    <vcpupin vcpu="1" cpuset="1"/>
-    <vcpupin vcpu="2" cpuset="2"/>
-    <vcpupin vcpu="3" cpuset="3"/>
-    <vcpupin vcpu="4" cpuset="4"/>
-    <vcpupin vcpu="5" cpuset="5"/>
-    <vcpupin vcpu="6" cpuset="6"/>
-    <vcpupin vcpu="7" cpuset="7"/>
-    <vcpupin vcpu="8" cpuset="8"/>
-    <vcpupin vcpu="9" cpuset="9"/>
-    <vcpupin vcpu="10" cpuset="10"/>
-    <vcpupin vcpu="11" cpuset="11"/>
-    <emulatorpin cpuset="16-19"/>
-  </cputune>
+<cputune>
+  <!-- VM vCPUs -->
+  <vcpupin vcpu="0" cpuset="4"/>
+  <vcpupin vcpu="1" cpuset="5"/>
+  <vcpupin vcpu="2" cpuset="6"/>
+  <vcpupin vcpu="3" cpuset="7"/>
+  <vcpupin vcpu="4" cpuset="8"/>
+  <vcpupin vcpu="5" cpuset="9"/>
+  <vcpupin vcpu="6" cpuset="10"/>
+  <vcpupin vcpu="7" cpuset="11"/>
+  <vcpupin vcpu="8" cpuset="12"/>
+  <vcpupin vcpu="9" cpuset="13"/>
+  <vcpupin vcpu="10" cpuset="14"/>
+  <vcpupin vcpu="11" cpuset="15"/>
+  
+  <!-- QEMU emulator pinned to leftover E-cores -->
+  <emulatorpin cpuset="17-19"/>
+</cputune>
   <os>
-    <type arch="x86_64" machine="pc-q35-8.0">hvm</type>
+    <type arch="x86_64" machine="pc-q35-10.0">hvm</type>
     <loader readonly="yes" secure="yes" type="pflash" format="raw">/var/libvirt/nix-ovmf/OVMF_CODE.fd</loader>
     <nvram template="/var/libvirt/nix-ovmf/OVMF_VARS.fd" format="raw">/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
     <bootmenu enable="no"/>
@@ -65,18 +77,19 @@
     <smm state="on"/>
     <ioapic driver="kvm"/>
   </features>
-  <cpu mode="host-passthrough" check="none" migratable="off">
-    <topology sockets="1" dies="1" clusters="1" cores="6" threads="2"/>
-    <cache mode="passthrough"/>
-    <maxphysaddr mode="passthrough" limit="40"/>
-    <feature policy="disable" name="aes"/>
-    <feature policy="disable" name="rdtscp"/>
-    <feature policy="require" name="topoext"/>
-    <feature policy="require" name="apic"/>
-    <feature policy="require" name="hypervisor"/>
-    <feature policy="require" name="invtsc"/>
-    <feature policy="require" name="vmx"/>
-  </cpu>
+<cpu mode="host-passthrough" check="none" migratable="off">
+  <topology sockets="1" dies="1" clusters="1" cores="6" threads="2"/>
+  <cache mode="passthrough"/>
+  <maxphysaddr mode="passthrough" limit="40"/>
+  <feature policy="require" name="topoext"/>
+  <feature policy="require" name="apic"/>
+  <feature policy="require" name="hypervisor"/>
+  <feature policy="require" name="invtsc"/>
+  <feature policy="require" name="vmx"/>
+<numa>
+  <cell id="0" cpus="0-11" memory="32768000" unit="KiB"/>
+</numa>
+</cpu>
   <clock offset="localtime">
     <timer name="rtc" present="no" tickpolicy="catchup"/>
     <timer name="pit" present="no" tickpolicy="delay"/>
@@ -221,11 +234,11 @@
       <address type="virtio-serial" controller="0" bus="0" port="1"/>
     </channel>
     <channel type="unix">
-      <source mode="bind"/>
       <target type="virtio" name="org.qemu.guest_agent.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="2"/>
     </channel>
-    <input type="tablet" bus="usb">
-      <address type="usb" bus="0" port="4"/>
+    <input type="mouse" bus="virtio">
+      <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
     </input>
     <input type="mouse" bus="ps2"/>
     <input type="keyboard" bus="ps2"/>
@@ -233,7 +246,6 @@
       <listen type="address" address="127.0.0.1"/>
       <image compression="off"/>
       <gl enable="no"/>
-      <secure-channels>keyboard,mouse</secure-channels>
     </graphics>
     <sound model="ich9">
       <audio id="1"/>
@@ -241,16 +253,9 @@
     </sound>
     <audio id="1" type="spice"/>
     <video>
-      <model type="qxl" ram="65536" vram="65536" vgamem="16384" heads="1" primary="yes"/>
+      <model type="vga" vram="16384" heads="1" primary="yes"/>
       <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
     </video>
-    <hostdev mode="subsystem" type="usb" managed="yes">
-      <source startupPolicy="optional">
-        <vendor id="0x045e"/>
-        <product id="0x028e"/>
-      </source>
-      <address type="usb" bus="0" port="1"/>
-    </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
@@ -269,19 +274,13 @@
       </source>
       <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
     </hostdev>
-    <redirdev bus="usb" type="spicevmc">
-      <address type="usb" bus="0" port="2"/>
-    </redirdev>
-    <redirdev bus="usb" type="spicevmc">
-      <address type="usb" bus="0" port="3"/>
-    </redirdev>
     <watchdog model="itco" action="reset"/>
     <memballoon model="none"/>
   </devices>
   <qemu:commandline>
     <qemu:arg value="-device"/>
-    <qemu:arg value="{&quot;driver&quot;:&quot;ivshmem-plain&quot;,&quot;id&quot;:&quot;shmem0&quot;,&quot;memdev&quot;:&quot;looking-glass&quot;}"/>
+    <qemu:arg value="{'driver':'ivshmem-plain','id':'shmem0','memdev':'looking-glass'}"/>
     <qemu:arg value="-object"/>
-    <qemu:arg value="{&quot;qom-type&quot;:&quot;memory-backend-file&quot;,&quot;id&quot;:&quot;looking-glass&quot;,&quot;mem-path&quot;:&quot;/dev/kvmfr0&quot;,&quot;size&quot;:67108864,&quot;share&quot;:true}"/>
+    <qemu:arg value="{'qom-type':'memory-backend-file','id':'looking-glass','mem-path':'/dev/kvmfr0','size':67108864,'share':true}"/>
   </qemu:commandline>
 </domain>

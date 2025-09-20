@@ -24,6 +24,7 @@
       sunshine.enable = true;
       vfio.enable = true;
     };
+
   };
 
   # TODO: make swap module for fern

@@ -8,19 +8,6 @@
 # TODO: make this module more generic, extendable, move to common
 let
   cfg = config.modules.fern.vfio;
-
-  prime-run = pkgs.writeShellScriptBin "prime-run" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    export DRI_PRIME=1
-    export GBM_BACKEND=nvidia-drm
-    export __GLX_PRIME_RENDER_OFFLOAD=1
-    export LIBVA_DRIVER_NAME=nvidia
-    export WLR_NO_HARDWARE_CURSORS=1
-    exec "$@"
-  '';
 in
 {
   options.modules.fern.vfio = {
@@ -159,6 +146,12 @@ in
         "transparent_hugepage=never" # Disable transparent huge pages
         "mem_sleep_default=deep" # Set default sleep mode to deep sleep
 
+        # Memory Leak Prevention
+        "vm.overcommit_memory=2" # Prevent memory overcommit
+        "vm.swappiness=1" # Minimize swapping
+        "vm.dirty_ratio=5" # Better memory management
+        "vm.dirty_background_ratio=2" # Background writeback threshold
+
         # Boot Optimization
         "fastboot" # Fast boot
         "quiet" # Reduce boot verbosity
@@ -223,6 +216,7 @@ in
     };
 
     virtualisation = {
+
       libvirtd = {
         enable = true;
         hooks = {
@@ -239,7 +233,9 @@ in
               (pkgs.OVMF.override {
                 secureBoot = true;
                 tpmSupport = true;
-              })
+              }
+
+              ).fd
             ];
           };
           swtpm.enable = true;
@@ -258,6 +254,10 @@ in
             ]
             hugetlbfs_mount = "/dev/hugepages"
             bridge_helper = "/run/wrappers/bin/qemu-bridge-helper"
+
+            # Memory management settings for strict hugepage usage
+            memory_backing_dir = "/dev/hugepages"
+            cgroup_controllers = [ "memory" ]
           '';
         };
       };
@@ -287,28 +287,29 @@ in
 
         # Create symlink directory for OVMF files
         mkdir -p /var/libvirt/nix-ovmf
+        rm -rf /var/libvirt/nix-ovmf/OVMF_CODE.fd
+        rm -rf /var/libvirt/nix-ovmf/OVMF_VARS.fd
         ln -sf ${pkgs.OVMF.fd}/FV/OVMF_CODE.fd /var/libvirt/nix-ovmf/OVMF_CODE.fd
         ln -sf ${pkgs.OVMF.fd}/FV/OVMF_VARS.fd /var/libvirt/nix-ovmf/OVMF_VARS.fd
         chown -R richen:kvm /var/libvirt/nix-ovmf
         chmod -R 775 /var/libvirt/nix-ovmf
 
         # Copy OVMF NVRAM template if it doesn't exist
-        if [ ! -f /var/lib/libvirt/qemu/nvram/win11_VARS.fd ]; then
-          cp ${pkgs.OVMF.fd}/FV/OVMF_VARS.fd /var/lib/libvirt/qemu/nvram/win11_VARS.fd
-          chown richen:kvm /var/lib/libvirt/qemu/nvram/win11_VARS.fd
-          chmod 660 /var/lib/libvirt/qemu/nvram/win11_VARS.fd
-        fi
+        rm -rf /var/lib/libvirt/qemu/nvram/win11_VARS.fd
+        cp ${pkgs.OVMF.fd}/FV/OVMF_VARS.fd /var/lib/libvirt/qemu/nvram/win11_VARS.fd
+        chown richen:kvm /var/lib/libvirt/qemu/nvram/win11_VARS.fd
+        chmod 660 /var/lib/libvirt/qemu/nvram/win11_VARS.fd
 
-        # Check if VM already exists
-        if ! ${pkgs.libvirt}/bin/virsh list --all --name | grep -q "^win11$"; then
-          ${pkgs.libvirt}/bin/virsh define ${./scripts/win11.xml}
-        fi
+        # setup win11.xml
+        cp ${./scripts/win11.xml} /var/lib/libvirt/images/win11.xml
+        chown richen:kvm /var/lib/libvirt/images/win11.xml
+
+        ${pkgs.libvirt}/bin/virsh undefine win11 --nvram || true
+        ${pkgs.libvirt}/bin/virsh define /var/lib/libvirt/images/win11.xml
       '';
     };
 
     environment.systemPackages = with pkgs; [
-      # Add prime-run script as package
-      prime-run
       # -------------------- Virtualization & VFIO --------------------
       qemu
       virt-manager # Virtual machine manager
@@ -319,8 +320,6 @@ in
       spice-vdagent # Spice vdagent
       win-virtio # Windows virtio drivers
       win-spice # Windows spice drivers
-      OVMF # UEFI firmware
-      OVMFFull # UEFI firmware (with extra features)
       looking-glass-client # VFIO display
       freerdp3 # RDP client
 

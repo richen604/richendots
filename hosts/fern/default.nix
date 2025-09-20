@@ -92,6 +92,12 @@ in
   # for nh.clean
   nix.gc.automatic = pkgs.lib.mkForce false;
 
+  # for spotify
+  services.flatpak.enable = true;
+  environment.systemPackages = with pkgs; [
+    spicetify-cli
+  ];
+
   hydenix = {
     enable = true;
     hostname = "fern";
