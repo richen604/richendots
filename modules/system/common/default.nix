@@ -70,6 +70,7 @@
     pkgs.kdePackages.kdenetwork-filesharing
 
     pkgs.userPkgs.spotube
+    pkgs.uv
   ];
 
 }

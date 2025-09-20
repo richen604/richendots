@@ -33,6 +33,11 @@ in
 
   config = mkIf cfg.enable {
 
+    # for spotify
+    home.sessionVariables = {
+      XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
+    };
+
     # FIXME: should use `config.hostname` and no assertions should be made
     assertions = [
       {
@@ -74,6 +79,7 @@ in
           "Catppuccin Mocha"
         ];
       };
+      spotify.enable = false;
 
       hyprland = {
         animations.preset = "standard";
@@ -150,7 +156,7 @@ in
                 workspace=2,monitor:desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,default:true
                 workspace=3,monitor:desc:Dell Inc. DELL E2020H BJ7NFJ3,default:true
 
-                env = AQ_DRM_DEVICES,/dev/dri/card1:/dev/dri/card0
+                env = AQ_DRM_DEVICES,/dev/dri/card1
 
                 # Enable hardware video acceleration
                 env = LIBVA_DRIVER_NAME,radeonsi
@@ -166,6 +172,9 @@ in
                 # No need to disable hardware cursors on AMD
                 # AMD generally has good hardware cursor support
                 cursor:no_hardware_cursors = false
+
+                # Disable NVIDIA monitor when it's bound to the host
+                monitor=desc:Dell Inc. Dell S2716DG JCVN087U07EQ,disable
               ''
             else if cfg.hostname == "oak" then
               ''

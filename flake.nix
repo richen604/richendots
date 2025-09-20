@@ -12,8 +12,9 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
-      url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      # url = "path:/media/backup_drive/Dev/richendots-private";
+      #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      url = "path:/media/backup_drive/Dev/richendots-private";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Nix-index-database - for comma and command-not-found
@@ -78,16 +79,10 @@
       };
 
       mkDeployNode = hostname: {
-        hostname = hostname;
+        hostname = "${hostname}.build";
         profiles.system = {
           path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.${hostname};
-          sshUser = "richen";
-          sshOpts = [
-            "-p"
-            "22"
-          ];
-          magicRollback = true;
-          confirmTimeout = 300;
+          user = "root";
         };
       };
 
@@ -123,11 +118,14 @@
               ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak ;;
             "fern")
               ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern ;;
+            "cedar")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#cedar ;;
             "all")
               ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#oak
               ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#fern
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy --skip-checks .#cedar
               ;;
-            *) echo "Usage: rb [oak|fern|all]" ;;
+            *) echo "Usage: rb [oak|fern|cedar|all]" ;;
           esac
         '';
       };
