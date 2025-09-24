@@ -2,7 +2,7 @@
   description = "template for hydenix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/a3f5d83229c23047905ee63df774b46ae31bedfd";
     hydenix = {
       url = "github:richen604/hydenix";
       #url = "path:/media/backup_drive/Dev/hydenix";
