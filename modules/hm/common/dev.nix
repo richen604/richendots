@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 
@@ -18,7 +19,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs.userPkgs; [
+    home.packages = with pkgs; [
       nixfmt-rfc-style
       nil
       nix-output-monitor
@@ -35,6 +36,13 @@ in
 
       # Node version management
       fnm
+
+      # unity
+      unityhub
+      dotnet-sdk_9
+      mono
+      inputs.self.packages.${pkgs.system}.unity-fhs-env
+      godot
     ];
 
     programs = {

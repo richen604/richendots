@@ -64,6 +64,7 @@ in
 
     programs.git = {
       enable = true;
+      lfs.enable = true;
       extraConfig = {
         init.defaultBranch = "main";
         core.editor = "nvim";

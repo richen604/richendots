@@ -97,15 +97,13 @@ bind_to_vfio() {
     # Get NVIDIA processes more reliably
     if nvidia_processes=$(sudo lsof /dev/nvidia* 2>/dev/null | awk 'NR>1 {print $2}' | sort -u | tr '\n' ' ') && [ -n "$nvidia_processes" ]; then
         gum style --foreground "#ff8800" "WARNING: NVIDIA processes detected"
+        ps -p $nvidia_processes --no-headers 2>/dev/null | sed 's/^/  /' | gum style --foreground "#999999"
+        gum style --foreground "#ff8800" "Terminating NVIDIA processes..."
+        debug_log "Killing PIDs: $nvidia_processes"
         if [ -n "$nvidia_processes" ]; then
-            ps -p $nvidia_processes --no-headers 2>/dev/null | sed 's/^/  /' | gum style --foreground "#999999"
-            gum style --foreground "#ff8800" "Terminating NVIDIA processes..."
-            debug_log "Killing PIDs: $nvidia_processes"
-            if [ -n "$nvidia_processes" ]; then
-                sudo kill -9 $nvidia_processes 2>/dev/null || true
-            fi
-            gum style --foreground "#00aa00" "Processes terminated"
+            sudo kill -9 $nvidia_processes 2>/dev/null || true
         fi
+        gum style --foreground "#00aa00" "Processes terminated"
     else
         debug_log "No NVIDIA processes found"
     fi

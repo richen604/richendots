@@ -144,13 +144,6 @@ in
         "default_hugepagesz=2M" # Set default huge page size to 2MB
         "hugepagesz=2M" # Configure huge page size as 2MB
         "transparent_hugepage=never" # Disable transparent huge pages
-        "mem_sleep_default=deep" # Set default sleep mode to deep sleep
-
-        # Memory Leak Prevention
-        "vm.overcommit_memory=2" # Prevent memory overcommit
-        "vm.swappiness=1" # Minimize swapping
-        "vm.dirty_ratio=5" # Better memory management
-        "vm.dirty_background_ratio=2" # Background writeback threshold
 
         # Boot Optimization
         "fastboot" # Fast boot
@@ -158,15 +151,16 @@ in
         "rd.timeout=0" # Reduce initrd timeout
         "rd.systemd.show_status=false" # Hide systemd status during boot
 
+        # RCU Stall Prevention
+        "rcu_nocbs=all" # Move RCU callbacks off all CPUs
+        "rcu_boost=1" # Enable RCU priority boosting
+        "rcu_expedited=1" # Use expedited RCU grace periods
+        "rcutree.rcu_idle_gp_delay=1" # Reduce RCU idle delay
+
         # Performance & Security
-        "mitigations=off" # Disable CPU vulnerabilities mitigations (security trade-off)
-        "nowatchdog" # Disable watchdog timer
-        "nmi_watchdog=0" # Disable NMI watchdog
-        "split_lock_detect=off" # Disable split lock detection
-        "pcie_aspm=off" # Disable PCIe Active State Power Management
-        "amdgpu.dc=1"
-        "amdgpu.powerplay=1"
-        "amdgpu.ppfeaturemask=0xffffffff"
+        # "mitigations=off" # Disable CPU vulnerabilities mitigations (security trade-off)
+        # "nowatchdog" # Disable watchdog timer
+        # "nmi_watchdog=0" # Disable NMI watchdog
         "radeon.modeset=0"
 
         # IOMMU & VFIO
@@ -180,8 +174,6 @@ in
 
         # ACPI & Power Management
         "acpi_osi=Linux" # Set ACPI OS interface to Linux
-        "acpi=force" # Force ACPI
-        "resume_offset=0" # Set resume offset to 0
       ];
       kernelModules = [
         "vfio_pci"
@@ -227,17 +219,6 @@ in
           };
         };
         qemu = {
-          ovmf = {
-            enable = true;
-            packages = [
-              (pkgs.OVMF.override {
-                secureBoot = true;
-                tpmSupport = true;
-              }
-
-              ).fd
-            ];
-          };
           swtpm.enable = true;
           runAsRoot = true;
           package = pkgs.qemu_kvm;
@@ -323,8 +304,6 @@ in
       looking-glass-client # VFIO display
       freerdp3 # RDP client
 
-      udisks # Storage device daemon
-      udiskie # Automounter
       ntfs3g # NTFS filesystem support
       cpuset # CPU management
       kmod # Kernel module management

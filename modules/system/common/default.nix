@@ -6,7 +6,6 @@
     ./linux-cachyos.nix
     ./steam.nix
     ./nix.nix
-    ./openrgb.nix
   ];
 
   # TODO: move this somewhere?
@@ -69,8 +68,19 @@
     pkgs.dpms-off
     pkgs.kdePackages.kdenetwork-filesharing
 
-    pkgs.userPkgs.spotube
+    # python stuff
     pkgs.uv
+
+    # run github actions locally
+    pkgs.act
   ];
+
+  # TODO: break this out into a module
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+  users.users.richen.extraGroups = [ "docker" ];
 
 }
