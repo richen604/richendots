@@ -8,14 +8,6 @@ let
     config.allowUnfree = true;
     config.allowBroken = true;
     overlays = [
-      inputs.hydenix.lib.overlays
-      (final: prev: {
-        userPkgs = import inputs.nixpkgs {
-          system = "x86_64-linux";
-          config.allowUnfree = true;
-          config.allowBroken = true;
-        };
-      })
       (final: prev: {
         plex = prev.plex.override {
           plexRaw = prev.plexRaw.overrideAttrs (old: rec {
@@ -39,6 +31,7 @@ in
   nixpkgs.pkgs = pkgs;
 
   imports = [
+    inputs.home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
     ../../modules/system/hosts/cedar
     ../common/private.nix

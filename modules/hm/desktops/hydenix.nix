@@ -13,8 +13,7 @@ in
 {
 
   imports = [
-    inputs.hydenix.lib.homeModules
-    inputs.nix-index-database.hmModules.nix-index
+    # inputs.nix-index-database.homeModules.nix-index
   ];
 
   options.desktops.hydenix = {
@@ -37,6 +36,23 @@ in
     home.sessionVariables = {
       XDG_DATA_DIRS = "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share";
     };
+
+    home.file.".config/uwsm/env-hyprland.d/hyprland-env.conf".text = ''
+
+      # Host-specific configuration for ${cfg.hostname}
+      ${
+        if cfg.hostname == "fern" then
+          ''
+            export = AQ_DRM_DEVICES,/dev/dri/card1
+          ''
+        else if cfg.hostname == "oak" then
+          ''
+            export = AQ_DRM_DEVICES,/dev/dri/card0
+          ''
+        else
+          ''''
+      }
+    '';
 
     # FIXME: should use `config.hostname` and no assertions should be made
     assertions = [
@@ -156,19 +172,6 @@ in
                 workspace=2,monitor:desc:Dell Inc. Dell S2716DG ##ASMV9wwvvm3d,default:true
                 workspace=3,monitor:desc:Dell Inc. DELL E2020H BJ7NFJ3,default:true
 
-                env = AQ_DRM_DEVICES,/dev/dri/card1
-
-                # Enable hardware video acceleration
-                env = LIBVA_DRIVER_NAME,radeonsi
-                env = VDPAU_DRIVER,radeonsi
-
-                # For hardware video acceleration and better performance
-                env = __GLX_VENDOR_LIBRARY_NAME,mesa
-
-                # AMD specific Vulkan settings
-                env = AMD_VULKAN_ICD,RADV
-                env = RADV_PERFTEST,gpl
-
                 # No need to disable hardware cursors on AMD
                 # AMD generally has good hardware cursor support
                 cursor:no_hardware_cursors = false
@@ -180,8 +183,6 @@ in
               ''
                 # Laptop-specific settings
                 monitor=,3200x2000@60,0x0,1.6,vrr,1
-
-                env = AQ_DRM_DEVICES,/dev/dri/card0
               ''
             else
               ''
@@ -192,7 +193,10 @@ in
           # Launch vesktop after a delay without blocking boot
           exec-once = vesktop
 
-          exec-once = keepassxc
+          exec-once = easyeffects -l "Microphone Noise Cancellation"
+          exec-once = easyeffects -l "Perfect EQ"
+
+          exec-once = keepassxc --minimized
 
           exec-once = yubikey-touch-detector --libnotify
         '';

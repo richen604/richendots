@@ -3,19 +3,12 @@
   ...
 }:
 let
-  pkgs = import inputs.hydenix.inputs.hydenix-nixpkgs {
-    inherit (inputs.hydenix.lib) system;
+  pkgs = import inputs.nixpkgs {
+    system = "x86_64-linux";
     config.allowUnfree = true;
     config.allowBroken = true;
     overlays = [
-      inputs.hydenix.lib.overlays
-      (final: prev: {
-        userPkgs = import inputs.nixpkgs {
-          inherit (inputs.hydenix.lib) system;
-          config.allowUnfree = true;
-          config.allowBroken = true;
-        };
-      })
+      inputs.hydenix.overlays.default
     ];
   };
 in
@@ -25,7 +18,7 @@ in
 
   imports = [
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
-    inputs.hydenix.lib.nixOsModules
+    inputs.hydenix.nixosModules.default
 
     inputs.nixos-hardware.nixosModules.common-pc-laptop
     inputs.nixos-hardware.nixosModules.common-hidpi
@@ -64,6 +57,7 @@ in
       { ... }:
       {
         imports = [
+          inputs.hydenix.homeModules.default
           ../../modules/hm/users/richen
         ];
 

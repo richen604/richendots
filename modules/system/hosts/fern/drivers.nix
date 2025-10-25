@@ -30,9 +30,9 @@ in
     hardware = {
       graphics = {
         enable = true;
+        package = pkgs.mesa;
         enable32Bit = true;
         extraPackages = with pkgs; [
-          (config.boot.kernelPackages.nvidiaPackages.beta)
           # NVIDIA drivers
           nvidia-vaapi-driver
           # Intel drivers
@@ -44,13 +44,20 @@ in
           vulkan-validation-layers
           vulkan-tools
           # Mesa (includes RADV - the better AMD Vulkan driver)
-          mesa.drivers
+          # TODO: Downgraded to 25.1.5 due to a memory leak with looking-glass.
+          # This is handled via an overlay in hosts/fern/default.nix for the 'fern' host.
+          # Remove the overlay once the memory leak is fixed upstream.
+          mesa
+          libva
+          libva-vdpau-driver
         ];
+        package32 = pkgs.pkgsi686Linux.mesa;
         extraPackages32 = with pkgs.pkgsi686Linux; [
           # amdvlk  # Remove this line too
-          mesa.drivers
+          mesa
           vulkan-loader
-          (config.boot.kernelPackages.nvidiaPackages.beta)
+          libva
+          libva-vdpau-driver
         ];
       };
 
@@ -71,7 +78,7 @@ in
         powerManagement.enable = false;
         open = true;
         nvidiaSettings = true;
-        package = config.boot.kernelPackages.nvidiaPackages.beta;
+        # package = lib.mkForce config.boot.kernelPackages.nvidiaPackages.stable;
         prime = {
           offload = {
             enable = true;
@@ -91,6 +98,15 @@ in
       ];
     };
 
+    environment.sessionVariables = {
+      LIBVA_DRIVER_NAME = "radeonsi";
+      LIBVA_DRIVERS_PATH = "/run/opengl-driver/lib/dri";
+      LIBVA_DEVICE = "/dev/dri/renderD128";
+      VDPAU_DRIVER = "radeonsi";
+      __GLX_VENDOR_LIBRARY_NAME = "mesa";
+      AMD_VULKAN_ICD = "RADV";
+    };
+
     # Add system packages for Vulkan debugging and Steam compatibility
     environment.systemPackages = with pkgs; [
       vulkan-tools
@@ -104,6 +120,16 @@ in
       # Wayland-specific tools
       wayland-utils
       psmisc
+
+      (pkgs.writeShellScriptBin "prime-run" ''
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
+        export __NV_PRIME_VK=1
+        export VK_ICD_FILENAMES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json
+        exec "$@"
+      '')
     ];
 
     # Ensure proper driver loading

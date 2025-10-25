@@ -10,7 +10,6 @@
   ];
 
   modules = {
-    openrgb.enable = true;
     autologin.enable = false;
     boot.enable = true;
     steam.enable = true;
@@ -56,8 +55,11 @@
     powertop.enable = false;
   };
 
-  # Simple gaming-friendly tweaks
+  # Simple gaming-friendly tweaks and memory management
   boot.kernel.sysctl = {
     "vm.swappiness" = 1; # Minimize swap usage for gaming
+    "vm.overcommit_memory" = 2; # Prevent memory overcommit
+    "vm.dirty_ratio" = 5; # Better memory management
+    "vm.dirty_background_ratio" = 2; # Background writeback threshold
   };
 }

@@ -23,7 +23,7 @@ in
 
     boot = {
       plymouth.enable = true;
-      kernelPackages = pkgs.linuxPackages_zen;
+      kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
       loader.systemd-boot.enable = pkgs.lib.mkForce false;
       loader = {
         efi = {
@@ -34,7 +34,6 @@ in
           device = "nodev";
           useOSProber = true;
           efiSupport = true;
-          theme = pkgs.hydenix.hyde + /share/grub/themes/Retroboot;
           extraEntries = ''
             menuentry "UEFI Firmware Settings" {
               fwsetup
