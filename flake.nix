@@ -22,8 +22,8 @@
     };
 
     richendots-private = {
-      #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/media/backup_drive/Dev/richendots-private";
+      url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      # url = "path:/media/backup_drive/Dev/richendots-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

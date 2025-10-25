@@ -37,12 +37,11 @@ in
       # Node version management
       fnm
 
-      # unity
-      unityhub
       dotnet-sdk_9
       mono
-      inputs.self.packages.${pkgs.system}.unity-fhs-env
       godot
+      gdtoolkit_4
+      godot-export-templates-bin
     ];
 
     programs = {
