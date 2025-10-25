@@ -705,11 +705,11 @@
         "textfox": "textfox"
       },
       "locked": {
-        "lastModified": 1761418630,
-        "narHash": "sha256-qoBP8Rvv/P4WUbdBsCNbLzBAxpi2SMN7jpDdqOSq0V0=",
+        "lastModified": 1761424530,
+        "narHash": "sha256-Qaw5VErO3anc1g6dzPrc6BX8TF18onXx9yLSX5pI7vc=",
         "ref": "main",
-        "rev": "0d9238b1f285c2d7201a8a540b16415ff7258cdb",
-        "revCount": 67,
+        "rev": "a1b1b342bc686e806a5d6adfc2a8bbe35c9677e9",
+        "revCount": 69,
         "type": "git",
         "url": "ssh://git@github.com/richen604/richendots-private.git"
       },

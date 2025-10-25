@@ -77,30 +77,50 @@ in
         profiles = {
           "default" = {
             extensions = with pkgs.vscode-extensions; [
-              supermaven.supermaven
-              github.vscode-pull-request-github
-              github.vscode-github-actions
-              github.vscode-pull-request-github
-              esbenp.prettier-vscode
-              yoavbls.pretty-ts-errors
-              dbaeumer.vscode-eslint
-              ms-vscode-remote.remote-ssh
-              redhat.vscode-yaml
+              aaron-bond.better-comments
+              alefragnani.project-manager
+              bierner.emojisense
+              bierner.markdown-mermaid
+              bierner.markdown-preview-github-styles
+              catppuccin.catppuccin-vsc-icons
               davidanson.vscode-markdownlint
-              timonwong.shellcheck
-              yzhang.markdown-all-in-one
-              gruntfuggly.todo-tree
+              dbaeumer.vscode-eslint
               donjayamanne.githistory
               eamodio.gitlens
+              ecmel.vscode-html-css
               aaron-bond.better-comments
-              bierner.markdown-mermaid
               enkia.tokyo-night
-              catppuccin.catppuccin-vsc-icons
+              esbenp.prettier-vscode
               firefox-devtools.vscode-firefox-debug
-              bierner.markdown-preview-github-styles
+              geequlim.godot-tools
+              github.copilot
+              github.vscode-github-actions
+              github.vscode-pull-request-github
+              golang.go
+              ibm.output-colorizer
               jnoortheen.nix-ide
-              alefragnani.project-manager
               leonardssh.vscord
+              mads-hartmann.bash-ide-vscode
+              mkhl.shfmt
+              ms-dotnettools.csdevkit
+              ms-dotnettools.csharp
+              ms-dotnettools.vscode-dotnet-runtime
+              ms-python.debugpy
+              ms-python.python
+              ms-python.vscode-pylance
+              ms-vscode.cmake-tools
+              ms-vscode.cpptools
+              ms-vscode.cpptools-extension-pack
+              ms-vscode.makefile-tools
+              ms-vscode-remote.remote-ssh
+              redhat.vscode-yaml
+              saoudrizwan.claude-dev
+              streetsidesoftware.code-spell-checker
+              tamasfe.even-better-toml
+              timonwong.shellcheck
+              yoavbls.pretty-ts-errors
+              yzhang.markdown-all-in-one
+              ziglang.vscode-zig
             ];
           };
         };
