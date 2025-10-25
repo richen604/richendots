@@ -183,6 +183,8 @@ in
               ''
                 # Laptop-specific settings
                 monitor=,3200x2000@60,0x0,1.6,vrr,1
+                env = GDK_SCALE,1.6
+                env = QT_SCALE_FACTOR,1.6
               ''
             else
               ''
