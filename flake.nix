@@ -93,6 +93,14 @@
         profiles.system = {
           path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.${hostname};
           user = "root";
+          sshOpts =
+            if hostname == "cedar" then
+              [
+                "-p"
+                "2222"
+              ]
+            else
+              [ ];
         };
       };
 
