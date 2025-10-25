@@ -705,14 +705,18 @@
         "textfox": "textfox"
       },
       "locked": {
-        "lastModified": 1761415466,
-        "narHash": "sha256-t/uJMBGGVicok0EmFtGwMAv5mj98LEGx47fLPe/Sn3s=",
-        "path": "/media/backup_drive/Dev/richendots-private",
-        "type": "path"
+        "lastModified": 1761418630,
+        "narHash": "sha256-qoBP8Rvv/P4WUbdBsCNbLzBAxpi2SMN7jpDdqOSq0V0=",
+        "ref": "main",
+        "rev": "0d9238b1f285c2d7201a8a540b16415ff7258cdb",
+        "revCount": 67,
+        "type": "git",
+        "url": "ssh://git@github.com/richen604/richendots-private.git"
       },
       "original": {
-        "path": "/media/backup_drive/Dev/richendots-private",
-        "type": "path"
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/richen604/richendots-private.git"
       }
     },
     "richendots-private-nixpkgs": {
