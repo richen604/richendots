@@ -16,6 +16,8 @@
 
   services.code-server = {
     enable = true;
+    user = "richen";
+    group = "users";
     package = pkgs.vscode-with-extensions.override {
       vscode = pkgs.code-server;
       vscodeExtensions = with pkgs.vscode-extensions; [
