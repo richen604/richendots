@@ -21,7 +21,6 @@
 
   # TODO: fix this later
   environment.systemPackages = [
-    pkgs.glxinfo
     pkgs.gamescope
     pkgs.libva-utils
     pkgs.cudaPackages.cuda_cudart

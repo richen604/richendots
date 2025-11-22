@@ -31,8 +31,6 @@ in
       node2nix
       nodePackages.npm
       nodePackages.typescript
-      nodePackages.ts-node
-      nodePackages.nodemon
 
       # Node version management
       fnm
@@ -121,6 +119,8 @@ in
               yoavbls.pretty-ts-errors
               yzhang.markdown-all-in-one
               ziglang.vscode-zig
+              ms-vscode-remote.remote-ssh
+              ms-vscode-remote.remote-ssh-edit
             ];
           };
         };

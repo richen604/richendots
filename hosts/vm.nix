@@ -1,7 +1,6 @@
 {
   nixosConfiguration,
   inputs,
-  hostname,
   ...
 }:
 nixosConfiguration.extendModules {
@@ -64,9 +63,6 @@ nixosConfiguration.extendModules {
           enable = true;
         };
         hardware.graphics.enable = true;
-
-        # Enable verbose logging for home-manager
-        # home-manager.verbose = true;
       }
     )
   ];
