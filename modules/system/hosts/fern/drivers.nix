@@ -113,7 +113,6 @@ in
       vulkan-loader
       vulkan-validation-layers
       mesa-demos
-      glxinfo
       # Additional debugging tools
       radeontop
       nvidia-system-monitor-qt

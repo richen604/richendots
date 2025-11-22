@@ -299,11 +299,6 @@ in
       audacity # For noise profiling if needed
     ];
 
-    # Enable EasyEffects service
-    services.easyeffects = {
-      enable = true;
-    };
-
     # Install community presets and microphone noise cancellation preset
     xdg.configFile = {
       "easyeffects/output/Perfect EQ.json" = {

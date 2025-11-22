@@ -10,14 +10,6 @@ let
     config.allowBroken = true;
     overlays = [
       inputs.hydenix.overlays.default
-      # This new overlay will downgrade mesa
-      (final: prev: {
-        mesa =
-          (import inputs.nixpkgs-mesa-25-1-7 {
-            system = prev.system;
-            config.allowUnfree = true;
-          }).mesa;
-      })
     ];
   };
 in

@@ -299,10 +299,10 @@ in
       spice-gtk # Remote display
       spice-protocol # Spice protocol
       spice-vdagent # Spice vdagent
-      win-virtio # Windows virtio drivers
+      virtio-win # Windows virtio drivers
       win-spice # Windows spice drivers
       looking-glass-client # VFIO display
-      freerdp3 # RDP client
+      freerdp # RDP client
 
       ntfs3g # NTFS filesystem support
       cpuset # CPU management

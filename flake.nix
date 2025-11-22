@@ -16,14 +16,10 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs-mesa-25-1-7 = {
-      url = "github:nixos/nixpkgs/ca3d8cc5c4f3132f5515787507bcf91fd46cd2de";
-      flake = false;
-    };
 
     richendots-private = {
-      url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      # url = "path:/media/backup_drive/Dev/richendots-private";
+      # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      url = "path:/media/backup_drive/Dev/richendots-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -49,7 +45,7 @@
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          # system = "x86_64-linux";
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             hostname = hostname;
@@ -124,6 +120,8 @@
         fern-vm = mkVm "fern";
         oak-vm = mkVm "oak";
         cedar-vm = mkVm "cedar";
+
+        mangowc-vm = mkVm "mangowc";
 
         fern = (mkHost "fern").config.system.build.toplevel;
         oak = (mkHost "oak").config.system.build.toplevel;

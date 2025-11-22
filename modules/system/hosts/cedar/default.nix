@@ -18,6 +18,9 @@
     enable = true;
     user = "richen";
     group = "users";
+    host = "127.0.0.1";
+    port = 8080;
+    auth = "none";
     package = pkgs.vscode-with-extensions.override {
       vscode = pkgs.code-server;
       vscodeExtensions = with pkgs.vscode-extensions; [
@@ -65,6 +68,8 @@
         yoavbls.pretty-ts-errors
         yzhang.markdown-all-in-one
         ziglang.vscode-zig
+        ms-vscode-remote.remote-ssh
+        ms-vscode-remote.remote-ssh-edit
       ];
     };
   };
