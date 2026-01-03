@@ -6,7 +6,7 @@
     hydenix = {
       url = "github:richen604/hydenix";
       # url = "path:/media/backup_drive/Dev/hydenix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
@@ -19,7 +19,7 @@
 
     richendots-private = {
       # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/media/backup_drive/Dev/richendots-private";
+      url = "path:/home/richen/newdev/richendots-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -38,6 +38,8 @@
       url = "github:DreamMaoMao/mango";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    wrappers.url = "github:lassulus/wrappers";
   };
 
   outputs =
@@ -149,10 +151,37 @@
             *) echo "Usage: rb [oak|fern|cedar|all]" ;;
           esac
         '';
+
+        # Wrapped programs namespace
+        wrapped = 
+          let 
+            scope = {
+              inherit inputs pkgs;
+              lib = inputs.nixpkgs.lib;
+            };
+          in
+          {
+          
+          zsh = (
+            import ./hosts/mangowc/wrappers/zsh.nix (scope)
+          );
+          kitty = (
+            import ./hosts/mangowc/wrappers/kitty.nix (scope)
+          );
+          checks = {
+            zsh = import ./hosts/mangowc/wrappers/zsh/check.nix (scope);
+          };
+        };
       };
 
       # Deploy-rs checks
-      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
+      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy // {
+        # Wrapper checks
+        zsh-wrapper-check = import ./hosts/mangowc/wrappers/zsh/check.nix {
+          inherit pkgs;
+          wrappers = inputs.wrappers;
+        };
+      };
 
     };
 }

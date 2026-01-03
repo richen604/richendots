@@ -25,43 +25,6 @@ in
     ../common/private.nix
   ];
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit inputs;
-      osConfig = config;
-    };
-    users."richen" =
-      { config, ... }:
-      {
-        imports = [
-          inputs.hydenix.homeModules.default
-          ../../modules/hm/users/richen
-        ];
-
-        desktops.hydenix = {
-          enable = true;
-          hostname = "fern";
-        };
-
-        home.stateVersion = "25.05";
-        modules = {
-          common = {
-            easyeffects.enable = true;
-            git.enable = true;
-            dev.enable = true;
-            expo-dev.enable = true;
-            obs.enable = true;
-            games.enable = true;
-            zsh.enable = true;
-          };
-          # TODO: make obsidian.nix work on any host
-          obsidian.enable = true;
-        };
-      };
-  };
-
   programs.nh = {
     enable = true;
     clean.enable = true;

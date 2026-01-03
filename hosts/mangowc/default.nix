@@ -3,8 +3,12 @@
   pkgs,
   lib,
   ...
-}:
+}@args:
 
+let
+  myCallPackage = lib.callPackageWith (args);
+  wrap = name: myCallPackage (./wrappers + "/${name}.nix") { };
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -22,12 +26,12 @@
     polkit_gnome
 
     rofi
-    kitty
     grim
     slurp
     firefox
-    zsh
     starship
+    (wrap "kitty")
+    (wrap "zsh")
   ];
 
   users.users.mango = {
@@ -40,42 +44,13 @@
     ];
     home = "/home/mangowc";
     createHome = true;
-    shell = pkgs.zsh;
+    shell = (wrap "zsh") + "/bin/zsh";
     initialPassword = "test";
   };
 
   # shell stuff
   # todo: make wrapped
-  users.defaultUserShell = pkgs.zsh;
-  programs.starship.enable = true;
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-
-    shellAliases = {
-      ll = "ls -l";
-    };
-
-    ohMyZsh = {
-      enable = true;
-      plugins = [
-        "git"
-      ];
-      theme = "starship";
-    };
-
-    promptInit = ''
-      eval "$(starship init zsh)"
-    '';
-
-    histSize = 10000;
-    histFile = "$HOME/.zsh_history";
-    setOptions = [
-      "HIST_IGNORE_ALL_DUPS"
-    ];
-  };
+  users.defaultUserShell = (wrap "zsh") + "/bin/zsh";
   system.userActivationScripts.zshrc = "touch .zshrc";
 
   environment.etc."mango/config.conf".source = ./mango/config.conf;
@@ -93,6 +68,8 @@
       nerd-fonts.gohufont
       nerd-fonts.fira-code
       nerd-fonts.noto
+      # Add powerline fonts for Oh My Zsh themes like Agnoster
+      powerline-fonts
     ];
   };
 
@@ -102,19 +79,5 @@
     packages = with pkgs; [
       nerd-fonts.gohufont
     ];
-  };
-
-  services.greetd = {
-    enable = true;
-    settings = {
-      terminal = {
-        vt = 1;
-      };
-      default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time";
-        user = "greeter";
-      };
-    };
-    useTextGreeter = true;
   };
 }
