@@ -17,7 +17,6 @@ in
 
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
-    mangowc
     waybar
     swaybg
     wl-clipboard
@@ -29,7 +28,7 @@ in
     grim
     slurp
     firefox
-    starship
+    fzf
     (wrap "kitty")
     (wrap "zsh")
   ];
@@ -42,16 +41,17 @@ in
       "input"
       "networkmanager"
     ];
-    home = "/home/mangowc";
+    home = "/home/mango";
     createHome = true;
-    shell = (wrap "zsh") + "/bin/zsh";
-    initialPassword = "test";
+    shell = "${(wrap "zsh")}/bin/zsh";
   };
 
-  # shell stuff
-  # todo: make wrapped
-  users.defaultUserShell = (wrap "zsh") + "/bin/zsh";
-  system.userActivationScripts.zshrc = "touch .zshrc";
+    boot.plymouth = {
+    enable = true;
+    theme = "spinner";
+  };
+
+  users.defaultUserShell = "${(wrap "zsh")}/bin/zsh";
 
   environment.etc."mango/config.conf".source = ./mango/config.conf;
 
@@ -65,19 +65,43 @@ in
     fontDir.enable = true;
     enableDefaultPackages = true;
     packages = with pkgs; [
+      gohufont
       nerd-fonts.gohufont
       nerd-fonts.fira-code
       nerd-fonts.noto
-      # Add powerline fonts for Oh My Zsh themes like Agnoster
-      powerline-fonts
+      terminus_font
     ];
+    fontconfig = {
+      enable = true;
+      antialias = true;
+      hinting = {
+        enable = true;
+        style = "slight";
+      };
+      subpixel = {
+        rgba = "rgb";
+      };
+      defaultFonts = {
+        monospace = [ "GohuFont Nerd Font" "FiraCode Nerd Font" "Noto Sans Mono" ];
+      };
+    };
   };
+  services.getty.autologinUser = "mango";
+
+  # systemd.user.services.mangowc = {
+  #   description = "MangoWM Wayland session";
+  #   wantedBy = [ "default.target" ];
+  #   serviceConfig = {
+  #     ExecStart = "${pkgs.mangowc}/bin/mango";
+  #     Restart = "on-failure";
+  #   };
+  # };
 
   console = {
-    font = "gohufont-uni-14";
+    font = "Terminus32x16";
     keyMap = "us";
     packages = with pkgs; [
-      nerd-fonts.gohufont
+      terminus_font
     ];
   };
 }
