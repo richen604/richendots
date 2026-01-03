@@ -168,9 +168,6 @@
           kitty = (
             import ./hosts/mangowc/wrappers/kitty.nix (scope)
           );
-          checks = {
-            zsh = import ./hosts/mangowc/wrappers/zsh/check.nix (scope);
-          };
         };
       };
 
