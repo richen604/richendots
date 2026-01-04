@@ -51,6 +51,12 @@ nixosConfiguration.extendModules {
           };
         };
 
+        environment.variables = {
+          # Needed for spice clipboard support
+          SPICE_GUEST_ENABLE_COPY_PASTE = "1";
+          WLR_NO_HARDWARE_CURSORS = "1";
+        };
+
         virtualisation.libvirtd.enable = true;
         environment.systemPackages = with pkgs; [
           open-vm-tools
