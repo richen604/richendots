@@ -13,7 +13,10 @@ in
     ./hardware-configuration.nix
   ];
 
-  boot.plymouth = {
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  boot = {
+    plymouth = {
     enable = true;
     theme = "spinner";
   };
