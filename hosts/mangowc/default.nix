@@ -84,7 +84,7 @@ in
     createHome = true;
     shell = "${(wrap "zsh")}/bin/zsh";
   };
-  users.defaultUserShell = "${(wrap "zsh")}/bin/zsh";
+  users.defaultUserShell = "${pkgs.lib.getExe (wrap "zsh")}";
 
  # FONTS --------------------------------------------------------------
   fonts = {
