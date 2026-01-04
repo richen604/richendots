@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   lib,
   ...
@@ -12,7 +11,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.mango.nixosModules.mango
   ];
 
   # Install mangowc and minimal desktop dependencies
@@ -29,6 +27,7 @@ in
     slurp
     firefox
     fzf
+    (wrap "mango")
     (wrap "kitty")
     (wrap "zsh")
   ];
@@ -53,11 +52,7 @@ in
 
   users.defaultUserShell = "${(wrap "zsh")}/bin/zsh";
 
-  environment.etc."mango/config.conf".source = ./mango/config.conf;
-
   environment.etc."mango/wall.png".source = ./swaybg/wall.png;
-
-  programs.mango.enable = true;
 
   services.dbus.enable = true;
 
@@ -87,15 +82,6 @@ in
     };
   };
   services.getty.autologinUser = "mango";
-
-  # systemd.user.services.mangowc = {
-  #   description = "MangoWM Wayland session";
-  #   wantedBy = [ "default.target" ];
-  #   serviceConfig = {
-  #     ExecStart = "${pkgs.mangowc}/bin/mango";
-  #     Restart = "on-failure";
-  #   };
-  # };
 
   console = {
     font = "Terminus32x16";
