@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, richenLib, ... }:
 
 (inputs.wrappers.wrapperModules.kitty.apply {
   pkgs = pkgs;

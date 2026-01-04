@@ -43,6 +43,12 @@
       ...
     }@inputs:
     let
+
+      # TODO: if this is expanded it should be a separate file
+      richenLib = {
+        wrappers = pkgs.callPackage ./wrappers {inherit inputs pkgs richenLib;};
+      };
+
       # Create a function to generate host configurations
       mkHost =
         hostname:
@@ -51,6 +57,7 @@
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             hostname = hostname;
+            inherit richenLib;
           };
           modules = [
             ./hosts/${hostname}
@@ -119,64 +126,38 @@
       };
 
       packages.${system} = {
-        fern-vm = mkVm "fern";
-        oak-vm = mkVm "oak";
-        cedar-vm = mkVm "cedar";
-
-        mangowc-vm = mkVm "mangowc";
-
-        fern = (mkHost "fern").config.system.build.toplevel;
-        oak = (mkHost "oak").config.system.build.toplevel;
-        cedar = (mkHost "cedar").config.system.build.toplevel;
-
-        rb = pkgs.writeShellScriptBin "rb" ''
-          host=$1
-          case "$host" in
-            "oak")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
-            "fern")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
-            "cedar")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
-            "all")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
-              ;;
-            *) echo "Usage: rb [oak|fern|cedar|all]" ;;
-          esac
-        '';
-
+        vm = {
+          fern = mkVm "fern";
+          oak = mkVm "oak";
+          cedar = mkVm "cedar";
+          mango = mkVm "mangowc";
+        };
         # Wrapped programs namespace
-        wrapped = 
-          let 
-            scope = {
-              inherit inputs pkgs;
-              lib = inputs.nixpkgs.lib;
-            };
-          in
-          {
-          
-          zsh = (
-            import ./hosts/mangowc/wrappers/zsh.nix (scope)
-          );
-          mango = (
-            import ./hosts/mangowc/wrappers/mango.nix (scope)
-          );
-          kitty = (
-            import ./hosts/mangowc/wrappers/kitty.nix (scope)
-          );
+        wrapped = {
+          mango = richenLib.wrappers.mango;
+          kitty = richenLib.wrappers.kitty;
+          zsh = richenLib.wrappers.zsh;
+          swaybg = richenLib.wrappers.swaybg;
         };
+        rb = pkgs.writeShellScriptBin "rb" ''
+            host=$1
+            case "$host" in
+              "oak")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
+              "fern")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
+              "cedar")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
+              "all")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
+                ;;
+              *) echo "Usage: rb [oak|fern|cedar|all]" ;;
+            esac
+          '';
       };
-
       # Deploy-rs checks
-      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy // {
-        # Wrapper checks
-        zsh-wrapper-check = import ./hosts/mangowc/wrappers/zsh/check.nix {
-          inherit pkgs;
-          wrappers = inputs.wrappers;
-        };
-      };
-
+      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
     };
 }

@@ -1,12 +1,12 @@
 {
   inputs,
   pkgs,
+  richenLib, 
   lib,
   ...
 }:
 let
   mangoWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-  swaybgWrapper = pkgs.callPackage ../swaybg.nix { inherit inputs; };
 in
 (mangoWrapper.apply {
   pkgs = pkgs;
@@ -15,7 +15,7 @@ in
     # applications
 
     # wallpaper
-    exec-once=${pkgs.lib.getExe (swaybgWrapper)};
+    exec-once=${pkgs.lib.getExe (richenLib.wrappers.swaybg)};
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 
