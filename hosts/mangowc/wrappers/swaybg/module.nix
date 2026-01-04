@@ -8,6 +8,7 @@ inputs.wrappers.lib.wrapModule (
     ...
   }:
   {
+    # TODO: extend swaybg wrapper options
     _class = "wrapper";
 
     options = {
@@ -24,7 +25,7 @@ inputs.wrappers.lib.wrapModule (
     };
     config = {
       flags = {
-        "-i" = toString (config.wallpaper);
+        "-i" = toString config.wallpaper;
         "-m" = config.mode; 
       };
       package = config.pkgs.swaybg;
