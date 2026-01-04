@@ -52,7 +52,6 @@ in
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
     waybar
-    swaybg
     wl-clipboard
     cliphist
     wlsunset
@@ -66,6 +65,7 @@ in
     (wrap "mango")
     (wrap "kitty")
     (wrap "zsh")
+    (wrap "swaybg")
 
     # cursor
     bibata-cursors
@@ -158,10 +158,6 @@ in
     wlr.enable = lib.mkDefault true;
     configPackages = [ (wrap "mango")];
   };
-
-  # Static files
-  # FIXME: wrap swaybg
-  environment.etc."mango/wall.png".source = ./swaybg/wall.png;
 
   console = {
     # FIXME: good terminal font?
