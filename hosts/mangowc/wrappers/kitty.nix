@@ -3,8 +3,7 @@
 (inputs.wrappers.wrapperModules.kitty.apply {
   pkgs = pkgs;
   "kitty.conf".content = ''
-    # kitty configuration for mangowc host
-    # basic config with font and colors
+    shell ${pkgs.lib.getExe (pkgs.callPackage ./zsh.nix {inherit inputs;})}
 
     # font settings
     font_family GohuFont Nerd Font
@@ -21,8 +20,10 @@
     # shell integration
     shell_integration enabled
 
+    window_padding_width 4
+
     # misc
-    confirm_os_close_window 0
+    confirm_os_window_close 0
     cursor_trail 1
     enable_audio_bell no
 
