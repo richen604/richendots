@@ -1,13 +1,9 @@
 {
   pkgs,
   lib,
+  richenLib,
   ...
-}@args:
-
-let
-  myCallPackage = lib.callPackageWith (args);
-  wrap = name: myCallPackage (./wrappers + "/${name}.nix") { };
-in
+}:
 {
   imports = [
     ./hardware-configuration.nix
@@ -62,11 +58,10 @@ in
     slurp
     firefox
     fzf
-    (wrap "mango")
-    (wrap "kitty")
-    (wrap "zsh")
-    (wrap "swaybg")
-
+    richenLib.wrappers.mango
+    richenLib.wrappers.kitty
+    richenLib.wrappers.zsh
+    richenLib.wrappers.swaybg
     # cursor
     bibata-cursors
   ];
@@ -82,9 +77,9 @@ in
     ];
     home = "/home/mango";
     createHome = true;
-    shell = "${(wrap "zsh")}/bin/zsh";
+    shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
   };
-  users.defaultUserShell = "${pkgs.lib.getExe (wrap "zsh")}";
+  users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
  # FONTS --------------------------------------------------------------
   fonts = {
@@ -119,11 +114,11 @@ in
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${(wrap "mango")}/bin/mango";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${pkgs.lib.getExe richenLib.wrappers.mango}";
         user = "greeter";
       };
       initial_session = {
-        command = "${(wrap "mango")}/bin/mango";
+        command = "${pkgs.lib.getExe richenLib.wrappers.mango}";
         user = "mango";
       };
     };
@@ -156,7 +151,7 @@ in
       xdg-desktop-portal-gtk
     ];
     wlr.enable = lib.mkDefault true;
-    configPackages = [ (wrap "mango")];
+    configPackages = [ richenLib.wrappers.mango ];
   };
 
   console = {
