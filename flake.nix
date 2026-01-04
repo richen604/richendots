@@ -160,6 +160,9 @@
           zsh = (
             import ./hosts/mangowc/wrappers/zsh.nix (scope)
           );
+          mango = (
+            import ./hosts/mangowc/wrappers/mango.nix (scope)
+          );
           kitty = (
             import ./hosts/mangowc/wrappers/kitty.nix (scope)
           );
