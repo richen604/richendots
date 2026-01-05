@@ -15,7 +15,9 @@ in
     # applications
 
     # wallpaper
-    exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg};
+    exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg}
+    exec-once=${pkgs.lib.getExe richenLib.wrappers.waybar}
+    exec-once=${pkgs.swaynotificationcenter}/bin/swaync &
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 

@@ -47,7 +47,6 @@
   # PACKAGES --------------------------------------------------------- 
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
-    waybar
     wl-clipboard
     cliphist
     wlsunset
@@ -62,6 +61,9 @@
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
+    richenLib.wrappers.waybar
+    # TODO: wrap swaync
+    swaynotificationcenter
     # cursor
     bibata-cursors
   ];

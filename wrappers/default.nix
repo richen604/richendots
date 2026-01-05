@@ -8,10 +8,12 @@ in
   mango = callPackage ./mango.nix {};
   swaybg = callPackage ./swaybg.nix {};
   zsh = callPackage ./zsh.nix {};
+  waybar = callPackage ./waybar.nix {};
   modules = {
     kitty = callPackage ./kitty/module.nix {};
     mango = callPackage ./mango/module.nix {};
     swaybg = callPackage ./swaybg/module.nix {};
     zsh = callPackage ./zsh/module.nix {};
+    waybar = callPackage ./waybar/module.nix {};
   };
 }
