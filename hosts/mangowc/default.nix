@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  inputs,
   richenLib,
   ...
 }:
@@ -10,6 +11,10 @@
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.substituters = [ "https://cache.nixos.org/" "https://vicinae.cachix.org"];
+  nix.settings.trusted-public-keys = [
+    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+  ];
 
   boot = {
     plymouth = {
@@ -64,6 +69,8 @@
     richenLib.wrappers.waybar
     # TODO: wrap swaync
     swaynotificationcenter
+    # TODO: wrap vicinae, home-manager module will show config
+    inputs.vicinae.packages."x86_64-linux".default
     # cursor
     bibata-cursors
   ];
