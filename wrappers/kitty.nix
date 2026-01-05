@@ -3,7 +3,7 @@
 (inputs.wrappers.wrapperModules.kitty.apply {
   pkgs = pkgs;
   "kitty.conf".content = ''
-    shell ${pkgs.lib.getExe (pkgs.callPackage ./zsh.nix {inherit inputs;})}
+    shell ${pkgs.lib.getExe richenLib.wrappers.zsh};
 
     # font settings
     font_family GohuFont Nerd Font

@@ -15,7 +15,7 @@ in
     # applications
 
     # wallpaper
-    exec-once=${pkgs.lib.getExe (richenLib.wrappers.swaybg)};
+    exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg};
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 
