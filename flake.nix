@@ -35,6 +35,8 @@
     };
 
     wrappers.url = "github:lassulus/wrappers";
+
+    vicinae.url = "github:vicinaehq/vicinae";
   };
 
   outputs =

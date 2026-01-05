@@ -12,12 +12,21 @@ in
   pkgs = pkgs;
   "config.conf".content = ''
 
-    # applications
-
-    # wallpaper
+    # applications auto started
     exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg}
     exec-once=${pkgs.lib.getExe richenLib.wrappers.waybar}
     exec-once=${pkgs.swaynotificationcenter}/bin/swaync &
+    exec-once=${pkgs.lib.getExe inputs.vicinae.packages."x86_64-linux".default} server
+
+    # custom misc
+    # TODO: move as needed
+    # FIXME: vicinae path after wrapped
+    bind=SUPER,A,spawn,${pkgs.lib.getExe inputs.vicinae.packages."x86_64-linux".default} toggle
+    bind = SUPER,V,spawn, vicinae vicinae://extensions/vicinae/clipboard/history
+    # layer rules for vicinae
+    layerrule=blur:1,layer_name:vicinae
+    layerrule=animation_type_open:none,layer_name:vicinae
+    layerrule=animation_type_close:none,layer_name:vicinae
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 
@@ -165,7 +174,6 @@ in
     bind=SUPER,r,reload_config
 
     # menu and terminal
-    bind=SUPER,A,spawn,rofi -show drun
     bind=SUPER,T,spawn,kitty
 
     # exit
@@ -270,10 +278,6 @@ in
     axisbind=SUPER,UP,viewtoleft_have_client
     axisbind=SUPER,DOWN,viewtoright_have_client
 
-
-    # layer rule
-    layerrule=animation_type_open:zoom,layer_name:rofi
-    layerrule=animation_type_close:zoom,layer_name:rofi
 
     # recommended in https://mangowc.vercel.app/docs/faq
     syncobj_enable=1
