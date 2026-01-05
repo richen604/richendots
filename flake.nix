@@ -133,12 +133,7 @@
           mango = mkVm "mangowc";
         };
         # Wrapped programs namespace
-        wrapped = {
-          mango = richenLib.wrappers.mango;
-          kitty = richenLib.wrappers.kitty;
-          zsh = richenLib.wrappers.zsh;
-          swaybg = richenLib.wrappers.swaybg;
-        };
+        wrapped = richenLib.wrappers;
         rb = pkgs.writeShellScriptBin "rb" ''
             host=$1
             case "$host" in
