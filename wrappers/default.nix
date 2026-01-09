@@ -12,6 +12,7 @@ in
 {
   kitty = callPackage ./kitty.nix { };
   mango = callPackage ./mango.nix { };
+  satty = callPackage ./satty.nix { };
   swaybg = callPackage ./swaybg.nix { };
   swaync = callPackage ./swaync.nix { };
   zsh = callPackage ./zsh.nix { };
@@ -20,6 +21,7 @@ in
   modules = {
     kitty = callPackage ./kitty/module.nix { };
     mango = callPackage ./mango/module.nix { };
+    satty = callPackage ./satty/module.nix { };
     swaybg = callPackage ./swaybg/module.nix { };
     swaync = callPackage ./swaync/module.nix { };
     zsh = callPackage ./zsh/module.nix { };
