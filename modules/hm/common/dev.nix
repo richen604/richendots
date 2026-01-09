@@ -39,7 +39,6 @@ in
       mono
       godot
       gdtoolkit_4
-      godot-export-templates-bin
     ];
 
     programs = {
@@ -127,7 +126,7 @@ in
       };
     };
     home.file.".config/Code/User/settings.json" = lib.mkForce {
-      mutable = true;
+      # mutable = true;
       force = true;
       text = ''
         {
@@ -142,7 +141,7 @@ in
           "editor.minimap.side": "left",
           "editor.fontFamily": "'CaskaydiaCove Nerd Font Mono', 'monospace', monospace",
           "extensions.autoUpdate": false,
-          "workbench.statusBar.visible": false,
+          "workbench.statusBar.visible": true,
           "terminal.external.linuxExec": "kitty",
           "terminal.explorerKind": "both",
           "terminal.sourceControlRepositoriesKind": "both",
@@ -188,7 +187,7 @@ in
             }
           },
           "workbench.sideBar.location": "right",
-          "telemetry.telemetryLevel": "all",
+          "git.enableSmartCommit": true,
         }
       '';
     };

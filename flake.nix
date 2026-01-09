@@ -2,40 +2,32 @@
   description = "template for hydenix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.follows = "hydenix/nixpkgs";
     hydenix = {
-      url = "github:richen604/hydenix";
-      # url = "path:/media/backup_drive/Dev/hydenix";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      # url = "github:richen604/hydenix";
+      url = "path:/home/richen/newdev/hydenix";
     };
-
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-
     richendots-private = {
-      # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/home/richen/newdev/richendots-private";
+      url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      # url = "path:/home/richen/newdev/richendots-private";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     # Nix-index-database - for comma and command-not-found
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     wrappers.url = "github:lassulus/wrappers";
-
     vicinae.url = "github:vicinaehq/vicinae";
   };
 
@@ -46,16 +38,21 @@
     }@inputs:
     let
 
-      # TODO: if this is expanded it should be a separate file
+      pkgs = import inputs.nixpkgs {
+        system = "x86_64-linux";
+      };
+
+      # todo: if this is expanded it should be a separate file
+      # todo: fix callpackage nonesense
       richenLib = {
-        wrappers = pkgs.callPackage ./wrappers {inherit inputs pkgs richenLib;};
+        wrappers = pkgs.callPackage ./wrappers { inherit inputs pkgs richenLib; };
       };
 
       # Create a function to generate host configurations
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
-          # system = "x86_64-linux";
+          system = "x86_64-linux";
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             hostname = hostname;
@@ -77,9 +74,6 @@
       # All below is for deploy-rs
 
       system = "x86_64-linux";
-
-      # Unmodified nixpkgs
-      pkgs = import inputs.nixpkgs { inherit system; };
 
       # nixpkgs with deploy-rs overlay but force the nixpkgs package for binary cache
       deployPkgs = import inputs.nixpkgs {
@@ -113,6 +107,7 @@
 
     in
     {
+
       nixosConfigurations = {
         fern = mkHost "fern";
         oak = mkHost "oak";
@@ -134,25 +129,27 @@
           cedar = mkVm "cedar";
           mango = mkVm "mangowc";
         };
+
         # Wrapped programs namespace
         wrapped = richenLib.wrappers;
+
         rb = pkgs.writeShellScriptBin "rb" ''
-            host=$1
-            case "$host" in
-              "oak")
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
-              "fern")
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
-              "cedar")
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
-              "all")
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
-                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
-                ;;
-              *) echo "Usage: rb [oak|fern|cedar|all]" ;;
-            esac
-          '';
+          host=$1
+          case "$host" in
+            "oak")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
+            "fern")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
+            "cedar")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
+            "all")
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
+              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
+              ;;
+            *) echo "Usage: rb [oak|fern|cedar|all]" ;;
+          esac
+        '';
       };
       # Deploy-rs checks
       checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;

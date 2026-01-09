@@ -1,22 +1,10 @@
 {
-  inputs,
   config,
+  inputs,
+  pkgs,
   ...
 }:
-let
-  pkgs = import inputs.nixpkgs {
-    system = "x86_64-linux";
-    config.allowUnfree = true;
-    config.allowBroken = true;
-    overlays = [
-      inputs.hydenix.overlays.default
-    ];
-  };
-in
 {
-
-  nixpkgs.pkgs = pkgs;
-
   imports = [
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
     inputs.hydenix.nixosModules.default
@@ -25,15 +13,49 @@ in
     ../common/private.nix
   ];
 
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {
+      inherit inputs;
+      osConfig = config;
+    };
+    users."richen" =
+      { config, ... }:
+      {
+        imports = [
+          inputs.hydenix.homeModules.default
+          ../../modules/hm/users/richen
+        ];
+
+        desktops.hydenix = {
+          enable = true;
+          hostname = "fern";
+        };
+
+        home.stateVersion = "25.05";
+        modules = {
+          common = {
+            git.enable = true;
+            dev.enable = true;
+            obs.enable = true;
+            games.enable = true;
+            zsh.enable = true;
+          };
+          # TODO: make obsidian.nix work on any host
+          obsidian.enable = true;
+        };
+      };
+  };
+
   programs.nh = {
     enable = true;
     clean.enable = true;
     clean.extraArgs = "--keep-since 4d --keep 3";
-    flake = "/home/richen/dev/richendots";
+    flake = "/home/richen/newdev/richendots";
   };
   # for nh.clean
   nix.gc.automatic = pkgs.lib.mkForce false;
-
   # for spotify
   services.flatpak.enable = true;
   environment.systemPackages = with pkgs; [

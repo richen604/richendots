@@ -15,5 +15,6 @@
   programs.firefoxpwa.enable = true;
   modules = {
     kdeconnect.enable = true;
+    common.dev.enable = true;
   };
 }
