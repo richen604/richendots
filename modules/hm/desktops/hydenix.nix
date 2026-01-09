@@ -1,5 +1,4 @@
 {
-  inputs,
   lib,
   config,
   ...
@@ -195,10 +194,7 @@ in
           # Launch vesktop after a delay without blocking boot
           exec-once = vesktop
 
-          exec-once = easyeffects -l "Microphone Noise Cancellation"
-          exec-once = easyeffects -l "Perfect EQ"
-
-          exec-once = keepassxc --minimized
+          exec-once = keepassxc
 
           exec-once = yubikey-touch-detector --libnotify
         '';
