@@ -9,6 +9,7 @@ let
 in
 (vicinae.apply {
   pkgs = pkgs // {
+    # TODO: copy drv for vicinae
     vicinae = inputs.vicinae.packages."x86_64-linux".default;
   };
   settings = {
