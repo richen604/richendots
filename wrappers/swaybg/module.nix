@@ -18,7 +18,13 @@ inputs.wrappers.lib.wrapModule (
         default.path = "";
       };
       mode = lib.mkOption {
-        type = lib.types.enum [ "center" "fill" "fit" "stretch" "tile" ];
+        type = lib.types.enum [
+          "center"
+          "fill"
+          "fit"
+          "stretch"
+          "tile"
+        ];
         description = "Wallpaper display mode (e.g., center, fill, fit, stretch, tile).";
         default = "center";
       };
@@ -26,7 +32,7 @@ inputs.wrappers.lib.wrapModule (
     config = {
       flags = {
         "-i" = toString config.wallpaper;
-        "-m" = config.mode; 
+        "-m" = config.mode;
       };
       package = config.pkgs.swaybg;
     };

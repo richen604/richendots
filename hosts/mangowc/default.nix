@@ -10,22 +10,26 @@
     ./hardware-configuration.nix
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.substituters = [ "https://cache.nixos.org/" "https://vicinae.cachix.org"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+  # TODO: add vicinae cachix to wrapper when created
+  nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
   nix.settings.trusted-public-keys = [
     "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
   ];
 
   boot = {
     plymouth = {
-    enable = true;
-    theme = "rings";
-    themePackages = with pkgs; [
-      # By default we would install all themes
-      (adi1090x-plymouth-themes.override {
-        selected_themes = [ "rings" ];
-      })
-    ];
+      enable = true;
+      theme = "rings";
+      themePackages = with pkgs; [
+        # By default we would install all themes
+        (adi1090x-plymouth-themes.override {
+          selected_themes = [ "rings" ];
+        })
+      ];
     };
     # Enable "Silent boot"
     consoleLogLevel = 3;
@@ -48,8 +52,7 @@
     XCURSOR_SIZE = "24";
   };
 
-
-  # PACKAGES --------------------------------------------------------- 
+  # PACKAGES ---------------------------------------------------------
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
     wl-clipboard
@@ -69,8 +72,7 @@
     richenLib.wrappers.waybar
     # TODO: wrap swaync
     swaynotificationcenter
-    # TODO: wrap vicinae, home-manager module will show config
-    inputs.vicinae.packages."x86_64-linux".default
+    richenLib.wrappers.vicinae
     # cursor
     bibata-cursors
   ];
@@ -90,7 +92,7 @@
   };
   users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
- # FONTS --------------------------------------------------------------
+  # FONTS --------------------------------------------------------------
   fonts = {
     fontDir.enable = true;
     enableDefaultPackages = true;
@@ -112,7 +114,11 @@
         rgba = "rgb";
       };
       defaultFonts = {
-        monospace = [ "GohuFont Nerd Font" "FiraCode Nerd Font" "Noto Sans Mono" ];
+        monospace = [
+          "GohuFont Nerd Font"
+          "FiraCode Nerd Font"
+          "Noto Sans Mono"
+        ];
       };
     };
   };
@@ -148,11 +154,11 @@
           "gtk"
         ];
         # except those
-        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
-        "org.freedesktop.impl.portal.ScreenCast" = ["wlr"];
-        "org.freedesktop.impl.portal.ScreenShot" = ["wlr"];
+        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+        "org.freedesktop.impl.portal.ScreenShot" = [ "wlr" ];
         # wlr does not have this interface
-        "org.freedesktop.impl.portal.Inhibit" = [];
+        "org.freedesktop.impl.portal.Inhibit" = [ ];
       };
     };
     extraPortals = with pkgs; [

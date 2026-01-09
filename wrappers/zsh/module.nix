@@ -254,18 +254,20 @@ inputs.wrappers.lib.wrapModule (
       };
 
       plugins = lib.mkOption {
-        type = lib.types.listOf (lib.types.submodule {
-          options = {
-            name = lib.mkOption {
-              type = lib.types.str;
-              description = "Name of the plugin.";
+        type = lib.types.listOf (
+          lib.types.submodule {
+            options = {
+              name = lib.mkOption {
+                type = lib.types.str;
+                description = "Name of the plugin.";
+              };
+              src = lib.mkOption {
+                type = lib.types.path;
+                description = "Path to the plugin source.";
+              };
             };
-            src = lib.mkOption {
-              type = lib.types.path;
-              description = "Path to the plugin source.";
-            };
-          };
-        });
+          }
+        );
         default = [ ];
         description = "List of zsh plugins to enable.";
         example = [
