@@ -3,7 +3,6 @@ inputs.wrappers.lib.wrapModule (
   {
     config,
     lib,
-    pkgs,
     wlib,
     ...
   }:
