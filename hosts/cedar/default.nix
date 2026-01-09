@@ -38,6 +38,10 @@ in
     inputs.richendots-private.nixosModules.cedar
   ];
 
+  environment.systemPackages = with pkgs; [
+    nixfmt-rfc-style
+  ];
+
   programs.nh = {
     enable = true;
     clean.enable = true;
