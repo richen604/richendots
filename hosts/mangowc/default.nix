@@ -56,6 +56,7 @@
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
     wl-clipboard
+    libnotify
     cliphist
     wlsunset
     polkit_gnome
@@ -71,7 +72,7 @@
     richenLib.wrappers.swaybg
     richenLib.wrappers.waybar
     # TODO: wrap swaync
-    swaynotificationcenter
+    richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     # cursor
     bibata-cursors
