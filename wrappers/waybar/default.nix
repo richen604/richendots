@@ -1,4 +1,9 @@
-{ inputs, pkgs, richenLib, ... }:
+{
+  inputs,
+  pkgs,
+  richenLib,
+  ...
+}:
 
 (inputs.wrappers.wrapperModules.waybar.apply {
   pkgs = pkgs;
@@ -83,13 +88,19 @@
       markup = true;
       "on-click" = "activate";
       "on-click-right" = "close";
-      "ignore-list" = ["Rofi" "wofi"];
+      "ignore-list" = [
+        "Rofi"
+        "wofi"
+      ];
     };
     backlight = {
       interval = 2;
       device = "amdgpu_bl0";
       format = "{icon} {percent}%";
-      "format-icons" = ["󰖔" "󰖨"];
+      "format-icons" = [
+        "󰖔"
+        "󰖨"
+      ];
       "on-scroll-up" = "brightnessctl set +1%";
       "on-scroll-down" = "brightnessctl set 1%-";
       "smooth-scrolling-threshold" = 1;
@@ -130,9 +141,9 @@
       format = "{icon} {volume}%";
       tooltip = false;
       "format-muted" = " Muted";
-      "on-click" = "${pkgs.pamixer} -t";
-      "on-scroll-up" = "${pkgs.pamixer} -i 2";
-      "on-scroll-down" = "${pkgs.pamixer} -d 2";
+      "on-click" = "${pkgs.lib.getExe pkgs.pamixer} -t";
+      "on-scroll-up" = "${pkgs.lib.getExe pkgs.pamixer} -i 2";
+      "on-scroll-down" = "${pkgs.lib.getExe pkgs.pamixer} -d 2";
       "scroll-step" = 5;
       "format-icons" = {
         headphone = "";
@@ -141,22 +152,26 @@
         phone = "";
         portable = "";
         car = "";
-        default = ["" "" ""];
+        default = [
+          ""
+          ""
+          ""
+        ];
       };
     };
     "custom/power" = {
       format = "";
       tooltip = false;
-      "on-click" = "${pkgs.wlogout} -b 6 --protocol layer-shell";
+      "on-click" = "${pkgs.lib.getExe pkgs.wlogout} -b 6 --protocol layer-shell";
     };
     "pulseaudio#microphone" = {
       format = "{format_source}";
       "format-source" = " {volume}%";
       tooltip = false;
       "format-source-muted" = " Muted";
-      "on-click" = "${pkgs.pamixer} --default-source -t";
-      "on-scroll-up" = "${pkgs.pamixer} --default-source -i 2";
-      "on-scroll-down" = "${pkgs.pamixer} --default-source -d 2";
+      "on-click" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -t";
+      "on-scroll-up" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -i 2";
+      "on-scroll-down" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -d 2";
       "scroll-step" = 5;
     };
     "custom/playerctl" = {
@@ -184,7 +199,13 @@
         critical = 10;
       };
       format = "{icon}";
-      "format-icons" = ["" "" "" "" ""];
+      "format-icons" = [
+        ""
+        ""
+        ""
+        ""
+        ""
+      ];
       "max-length" = 25;
     };
   };
@@ -348,7 +369,7 @@
       border: none;
       padding-top: 1px;
     }
-    
+
     #window {
       background: none;
       margin-left: 0px;

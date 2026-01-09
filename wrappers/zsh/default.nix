@@ -8,7 +8,7 @@ let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (zshWrapper.apply {
-  pkgs = pkgs; 
+  pkgs = pkgs;
   shellAliases = {
     ll = "ls -la";
     la = "ls -A";
@@ -21,6 +21,7 @@ in
     mv = "mv -i";
     rm = "rm -i";
   };
+  # TODO: direnv integration
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
     source ${toString ./.p10k.zsh}
@@ -31,10 +32,10 @@ in
   enableGlobalCompInit = true;
   enableLsColors = true;
   loginShellInit = ''
-      # Powerlevel10k instant prompt
-      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-      fi
+    # Powerlevel10k instant prompt
+    if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+      source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+    fi
   '';
   ohMyZsh = {
     enable = true;
@@ -48,7 +49,7 @@ in
       "gitfast"
     ];
   };
-  plugins= [
+  plugins = [
     {
       name = "zsh-nix-shell";
       src = pkgs.zsh-nix-shell;

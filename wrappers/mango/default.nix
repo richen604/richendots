@@ -1,7 +1,7 @@
 {
   inputs,
   pkgs,
-  richenLib, 
+  richenLib,
   lib,
   ...
 }:
@@ -16,13 +16,13 @@ in
     exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg}
     exec-once=${pkgs.lib.getExe richenLib.wrappers.waybar}
     exec-once=${pkgs.swaynotificationcenter}/bin/swaync &
-    exec-once=${pkgs.lib.getExe inputs.vicinae.packages."x86_64-linux".default} server
+    exec-once=${pkgs.lib.getExe richenLib.wrappers.vicinae} server
 
     # custom misc
     # TODO: move as needed
     # FIXME: vicinae path after wrapped
-    bind=SUPER,A,spawn,${pkgs.lib.getExe inputs.vicinae.packages."x86_64-linux".default} toggle
-    bind = SUPER,V,spawn, vicinae vicinae://extensions/vicinae/clipboard/history
+    bind=SUPER,A,spawn,${pkgs.lib.getExe richenLib.wrappers.vicinae} toggle
+    bind = SUPER,V,spawn, ${pkgs.lib.getExe richenLib.wrappers.vicinae} vicinae://extensions/vicinae/clipboard/history
     # layer rules for vicinae
     layerrule=blur:1,layer_name:vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
