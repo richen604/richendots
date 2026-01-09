@@ -71,9 +71,9 @@
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
     richenLib.wrappers.waybar
-    # TODO: wrap swaync
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
+    richenLib.wrappers.satty
     # cursor
     bibata-cursors
   ];
