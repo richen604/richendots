@@ -33,7 +33,6 @@
 
   outputs =
     {
-      self,
       ...
     }@inputs:
     let
@@ -45,25 +44,39 @@
           "aarch64-linux"
         ] (system: f system);
 
-      pkgs = import inputs.nixpkgs {
-        system = "x86_64-linux";
-      };
-
-      # todo: if this is expanded it should be a separate file
-      # todo: fix callpackage nonesense
-      richenLib = {
-        wrappers = pkgs.callPackage ./wrappers { inherit inputs pkgs richenLib; };
-      };
+      # flatten nested attribute sets with dash separators
+      flattenAttrs =
+        let
+          go =
+            prefix: set:
+            inputs.nixpkgs.lib.concatMapAttrs (
+              name: value:
+              let
+                key = if prefix == "" then name else "${prefix}-${name}";
+              in
+              if inputs.nixpkgs.lib.isDerivation value then
+                { ${key} = value; }
+              else if inputs.nixpkgs.lib.isAttrs value then
+                go key value
+              else
+                { }
+            ) set;
+        in
+        go "";
 
       # Create a function to generate host configurations
       mkHost =
-        hostname:
+        hostname: system:
+        let
+          pkgs = import inputs.nixpkgs { inherit system; };
+          richenLib = {
+            wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
+          };
+        in
         inputs.nixpkgs.lib.nixosSystem {
-
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
-            hostname = hostname;
-            inherit richenLib;
+            inherit hostname richenLib;
           };
           modules = [
             ./hosts/${hostname}
@@ -72,22 +85,21 @@
 
       # Create VM variant function
       mkVm =
-        hostname:
+        hostname: system:
         (import ./hosts/vm.nix {
           inherit inputs hostname;
-          nixosConfiguration = mkHost hostname;
+          nixosConfiguration = mkHost hostname system;
         }).config.system.build.vm;
-
-      system = "x86_64-linux";
 
       # nixpkgs with deploy-rs overlay but force the nixpkgs package for binary cache
       # todo: unify with above pkgs definition
       deployPkgs = import inputs.nixpkgs {
+        system = "x86_64-linux";
         overlays = [
           inputs.deploy-rs.overlays.default
           (self: super: {
             deploy-rs = {
-              inherit (pkgs) deploy-rs;
+              inherit (inputs.deploy-rs.packages.${self.stdenv.hostPlatform.system}) deploy-rs;
               lib = super.deploy-rs.lib;
             };
           })
@@ -97,7 +109,7 @@
       mkDeployNode = hostname: {
         hostname = "${hostname}.build";
         profiles.system = {
-          path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.${hostname};
+          path = deployPkgs.deploy-rs.lib.activate.nixos inputs.self.nixosConfigurations.${hostname};
           user = "root";
           sshOpts =
             if hostname == "cedar" then
@@ -114,9 +126,9 @@
     {
 
       nixosConfigurations = {
-        fern = mkHost "fern";
-        oak = mkHost "oak";
-        cedar = mkHost "cedar";
+        fern = mkHost "fern" "x86_64-linux";
+        oak = mkHost "oak" "x86_64-linux";
+        cedar = mkHost "cedar" "x86_64-linux";
       };
 
       deploy = {
@@ -131,17 +143,17 @@
         system:
         let
           pkgs = import inputs.nixpkgs { inherit system; };
+          wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
         in
-        {
+        flattenAttrs {
           vm = {
-            fern = mkVm "fern";
-            oak = mkVm "oak";
-            cedar = mkVm "cedar";
-            mango = mkVm "mangowc";
+            fern = mkVm "fern" system;
+            oak = mkVm "oak" system;
+            cedar = mkVm "cedar" system;
+            mango = mkVm "mangowc" system;
           };
 
-          # Wrapped programs namespace
-          wrapped = richenLib.wrappers;
+          wrapped = wrappers;
 
           rb = pkgs.writeShellScriptBin "rb" ''
             host=$1
@@ -163,6 +175,6 @@
         }
       );
       # Deploy-rs checks
-      checks = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
+      checks = forEachSystem (system: inputs.deploy-rs.lib.${system}.deployChecks inputs.self.deploy);
     };
 }
