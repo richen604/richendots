@@ -19,6 +19,9 @@ inputs.wrappers.lib.wrapModule (
     };
 
     config = {
+      filesToPatch = [
+        "share/wayland-sessions/mango.desktop"
+      ];
       flags = {
         "-c" = toString config."config.conf".path;
       };
