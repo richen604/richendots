@@ -38,6 +38,13 @@
     }@inputs:
     let
 
+      forEachSystem =
+        f:
+        inputs.nixpkgs.lib.genAttrs [
+          "x86_64-linux"
+          "aarch64-linux"
+        ] (system: f system);
+
       pkgs = import inputs.nixpkgs {
         system = "x86_64-linux";
       };
@@ -52,7 +59,7 @@
       mkHost =
         hostname:
         inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             hostname = hostname;
@@ -71,13 +78,11 @@
           nixosConfiguration = mkHost hostname;
         }).config.system.build.vm;
 
-      # All below is for deploy-rs
-
       system = "x86_64-linux";
 
       # nixpkgs with deploy-rs overlay but force the nixpkgs package for binary cache
+      # todo: unify with above pkgs definition
       deployPkgs = import inputs.nixpkgs {
-        inherit system;
         overlays = [
           inputs.deploy-rs.overlays.default
           (self: super: {
@@ -122,36 +127,42 @@
         };
       };
 
-      packages.${system} = {
-        vm = {
-          fern = mkVm "fern";
-          oak = mkVm "oak";
-          cedar = mkVm "cedar";
-          mango = mkVm "mangowc";
-        };
+      packages = forEachSystem (
+        system:
+        let
+          pkgs = import inputs.nixpkgs { inherit system; };
+        in
+        {
+          vm = {
+            fern = mkVm "fern";
+            oak = mkVm "oak";
+            cedar = mkVm "cedar";
+            mango = mkVm "mangowc";
+          };
 
-        # Wrapped programs namespace
-        wrapped = richenLib.wrappers;
+          # Wrapped programs namespace
+          wrapped = richenLib.wrappers;
 
-        rb = pkgs.writeShellScriptBin "rb" ''
-          host=$1
-          case "$host" in
-            "oak")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
-            "fern")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
-            "cedar")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
-            "all")
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
-              ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
-              ;;
-            *) echo "Usage: rb [oak|fern|cedar|all]" ;;
-          esac
-        '';
-      };
+          rb = pkgs.writeShellScriptBin "rb" ''
+            host=$1
+            case "$host" in
+              "oak")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak ;;
+              "fern")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern ;;
+              "cedar")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar ;;
+              "all")
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#oak
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#fern
+                ${deployPkgs.deploy-rs.deploy-rs}/bin/deploy .#cedar
+                ;;
+              *) echo "Usage: rb [oak|fern|cedar|all]" ;;
+            esac
+          '';
+        }
+      );
       # Deploy-rs checks
-      checks.${system} = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
+      checks = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
     };
 }
