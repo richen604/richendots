@@ -4,6 +4,7 @@ inputs.wrappers.lib.wrapModule (
     config,
     lib,
     wlib,
+    pkgs,
     ...
   }:
   let
@@ -125,6 +126,9 @@ inputs.wrappers.lib.wrapModule (
     };
     config = {
       package = config.pkgs.vicinae;
+      filesToPatch = [
+        "share/systemd/user/vicinae.service"
+      ];
       env =
         config.envVar
         // {
