@@ -14,11 +14,6 @@
     "nix-command"
     "flakes"
   ];
-  # TODO: add vicinae cachix to wrapper when created
-  nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
-  nix.settings.trusted-public-keys = [
-    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
-  ];
 
   boot = {
     plymouth = {
@@ -60,8 +55,6 @@
     cliphist
     wlsunset
     polkit_gnome
-
-    rofi
     grim
     slurp
     firefox
@@ -76,6 +69,12 @@
     richenLib.wrappers.satty
     # cursor
     bibata-cursors
+  ];
+
+  # vicinae cachix settings
+  nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
+  nix.settings.trusted-public-keys = [
+    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
   ];
 
   # USERS -------------------------------------------------------------
