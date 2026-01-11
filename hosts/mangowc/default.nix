@@ -2,7 +2,6 @@
   pkgs,
   lib,
   hostname,
-  inputs,
   richenLib,
   ...
 }:
@@ -21,6 +20,8 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  services.flatpak.enable = true;
 
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
@@ -80,6 +81,16 @@
     NIXOS_OZONE_WL = "1";
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "24";
+    MOZ_ENABLE_WAYLAND = "1";
+  };
+
+  xdg.mime.defaultApplications = {
+    "text/plain" = "org.kde.dolphin.desktop";
+    "inode/directory" = "org.kde.dolphin.desktop";
+    "application/pdf" = "org.mozilla.firefox.desktop";
+    "text/html" = "org.mozilla.firefox.desktop";
+    "x-scheme-handler/http" = "org.mozilla.firefox.desktop";
+    "x-scheme-handler/https" = "org.mozilla.firefox.desktop";
   };
 
   # PACKAGES ---------------------------------------------------------
@@ -93,6 +104,13 @@
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
+    vesktop
+    kdePackages.dolphin
+    fastfetch
+    # todo: hjem rum has a vscode module
+    vscode-fhs
+    # todo: impl keybinds for wf-recorder
+    wf-recorder
 
     killall # Process termination utility
     wl-clipboard # Wayland clipboard utilities
@@ -127,7 +145,6 @@
     bibata-cursors
     networkmanager
     networkmanagerapplet
-
     brightnessctl # screen brightness control
     udiskie # manage removable media
     ntfs3g # ntfs support
@@ -144,6 +161,39 @@
     pavucontrol
     pamixer
     playerctl
+
+    # qt deps
+    kdePackages.qt6ct
+    kdePackages.qtbase
+    kdePackages.qtwayland
+    kdePackages.qtstyleplugin-kvantum
+    kdePackages.breeze-icons
+    kdePackages.qtimageformats
+    kdePackages.qtsvg
+    kdePackages.qtwayland
+    kdePackages.qtimageformats # Image format support for Qt5
+    kdePackages.ffmpegthumbs # Video thumbnail support
+    kdePackages.kde-cli-tools # KDE command line utilities
+    kdePackages.kdegraphics-thumbnailers # KDE graphics thumbnails
+    kdePackages.kimageformats # Additional image format support for KDE
+    kdePackages.qtsvg # SVG support
+    kdePackages.kio # KDE I/O framework
+    kdePackages.kio-extras # Additional KDE I/O protocols
+    kdePackages.kwayland # KDE Wayland integration
+
+    # gtk deps
+    gtk3
+    gtk4
+    glib
+    gsettings-desktop-schemas
+    gnome-settings-daemon
+    gnome-tweaks
+    gnomeExtensions.window-gestures
+    nwg-look
+    adwaita-icon-theme
+    emote
+
+    spicetify-cli
   ];
 
   # gaming
@@ -288,6 +338,7 @@
     ];
     wlr.enable = lib.mkDefault true;
     configPackages = [ richenLib.wrappers.mango ];
+    xdgOpenUsePortal = true;
   };
 
   console = {
