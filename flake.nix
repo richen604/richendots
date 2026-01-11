@@ -27,8 +27,18 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     wrappers.url = "github:lassulus/wrappers";
     vicinae.url = "github:vicinaehq/vicinae";
+    hjem-rum = {
+      url = "github:snugnug/hjem-rum";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.hjem.follows = "hjem";
+    };
+    hjem = {
+      url = "github:feel-co/hjem";
+      inputs.nixpkgs.follows = "hjem-rum/hjem";
+    };
   };
 
   outputs =
@@ -129,6 +139,7 @@
         fern = mkHost "fern" "x86_64-linux";
         oak = mkHost "oak" "x86_64-linux";
         cedar = mkHost "cedar" "x86_64-linux";
+        mangowc = mkHost "mangowc" "x86_64-linux";
       };
 
       deploy = {
