@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  hostname,
   inputs,
   richenLib,
   ...
@@ -9,6 +10,22 @@
   imports = [
     ./hardware-configuration.nix
   ];
+
+  boot = {
+    loader.grub = {
+      enable = true;
+      device = "nodev";
+      efiSupport = true;
+      useOSProber = true;
+    };
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  time.timeZone = "America/Vancouver";
+  i18n.defaultLocale = "en_CA.UTF-8";
+  networking.hostName = hostname;
+  system.stateVersion = "26.05";
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -38,6 +55,24 @@
     ];
   };
 
+  programs.nix-ld.enable = true;
+  programs.dconf.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  services = {
+    dbus.enable = true;
+    upower.enable = true;
+    openssh.enable = true;
+    libinput.enable = true;
+  };
+  # For trash-cli to work properly
+  services.gvfs.enable = true;
+  security.polkit.enable = true;
+  security.pam.services.swaylock = { };
+  security.rtkit.enable = true;
+
   # Global environment variables
   environment.variables = {
     XDG_CURRENT_DESKTOP = "mango";
@@ -50,15 +85,6 @@
   # PACKAGES ---------------------------------------------------------
   # Install mangowc and minimal desktop dependencies
   environment.systemPackages = with pkgs; [
-    wl-clipboard
-    libnotify
-    cliphist
-    wlsunset
-    polkit_gnome
-    grim
-    slurp
-    firefox
-    fzf
     richenLib.wrappers.mango
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
@@ -67,9 +93,106 @@
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
-    # cursor
+
+    killall # Process termination utility
+    wl-clipboard # Wayland clipboard utilities
+    wl-clip-persist # Keep Wayland clipboard even after programs close
+    cliphist # clipboard manager
+    gnumake # Build automation tool
+    git # distributed version control system
+    fzf # command line fuzzy finder
+    polkit_gnome # authentication agent for privilege escalation
+    dbus # inter-process communication daemon
+    upower # power management/battery status daemon
+    mesa # OpenGL implementation and GPU drivers
+    dconf # configuration storage system
+    dconf-editor # dconf editor
+    xdg-utils # Collection of XDG desktop integration tools
+    desktop-file-utils # for updating desktop database
+    hicolor-icon-theme # Base fallback icon theme
+    kdePackages.ark # kde file archiver
+    wayland # for wayland support
+    egl-wayland # for wayland support
+    xwayland # for x11 support
+    gobject-introspection # for python packages
+    trash-cli # cli to manage trash files
+    gawk # awk implementation
+    coreutils # coreutils implementation
+    bash-completion # Add bash-completion package
+    libnotify
+    wlsunset
+    grim
+    slurp
+    firefox
     bibata-cursors
+    networkmanager
+    networkmanagerapplet
+
+    brightnessctl # screen brightness control
+    udiskie # manage removable media
+    ntfs3g # ntfs support
+    exfat # exFAT support
+    libinput-gestures # actions touchpad gestures using libinput
+    libinput # libinput library
+    lm_sensors # system sensors
+    pciutils # pci utils
+    bluez
+    bluez-tools
+    blueman
+    pipewire
+    wireplumber
+    pavucontrol
+    pamixer
+    playerctl
   ];
+
+  # gaming
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    gamescopeSession.enable = true;
+    localNetworkGameTransfers.openFirewall = true;
+  };
+
+  # audio
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";
+        Experimental = true;
+      };
+    };
+  };
+  services.pipewire.enable = true;
+  services.pipewire.alsa.enable = true;
+  services.pipewire.alsa.support32Bit = true;
+  services.pipewire.pulse.enable = true;
+  services.pipewire.wireplumber.enable = true;
+  services.blueman.enable = true;
+
+  # networking
+  networking.networkmanager.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [
+      # SSH
+      22
+    ];
+    allowedUDPPorts = [
+      # DHCP
+      68
+      546
+    ];
+  };
+
+  nix.settings.auto-optimise-store = true;
 
   # vicinae cachix settings
   nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
@@ -140,10 +263,8 @@
   };
 
   # Mango compositor requirements
-  security.polkit.enable = lib.mkDefault true;
   programs.xwayland.enable = lib.mkDefault true;
   services.graphical-desktop.enable = lib.mkDefault true;
-  services.dbus.enable = true;
 
   # XDG Portal configuration
   xdg.portal = {
