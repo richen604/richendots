@@ -17,7 +17,8 @@
     reload_style_on_change = true;
     height = 45;
     "modules-left" = [
-      "dwl/tags"
+      # "dwl/tags"
+      "ext/workspaces"
       "wlr/taskbar"
       "dwl/window"
     ];
@@ -34,10 +35,15 @@
     ];
     "dwl/tags" = {
       "num-tags" = 9;
-      "hide-vacant" = true;
     };
     "dwl/window" = {
       format = "{}";
+    };
+    "ext/workspaces" = {
+      "format" = "{icon}";
+      "ignore-hidden" = true;
+      "on-click" = "activate";
+      "sort-by-id" = true;
     };
     "custom/notification" = {
       tooltip = false;
@@ -210,6 +216,7 @@
     };
   };
   "style.css".content = ''
+
     @define-color bar-background rgba(0, 0, 0, 0.1);
     @define-color background rgba(14,18,15,0.4);
     @define-color foreground rgba(170,240,188,0.8);
@@ -264,12 +271,10 @@
 
 
     #tags {
-
       margin-left: 4px;
       padding-left: 10px;
       padding-right: 6px;
       background: none;
-
     }
 
     #tags button {
@@ -351,10 +356,57 @@
     }
 
     #workspaces {
-      background: none;
+      border-radius: 4px;
       margin-left: 4px;
+      padding-left: 10px;
       padding-right: 6px;
-      padding-left: 4px;
+      background: transparent;
+    }
+
+    #workspaces button {
+      border: none;
+      background: none;
+      box-shadow: inherit;
+      text-shadow: inherit;
+      color: @foreground;
+      padding: 1px;
+      padding-left: 3px;
+      padding-right: 3px;
+      margin-right: 1px;
+      margin-left: 1px;
+    }
+
+    #workspaces button.hidden {
+      color: transparent;
+      background-color: transparent;
+    }
+
+    #workspaces button.visible {
+      color: @foreground;
+    }
+
+    #workspaces button:hover {
+      color: @active-foreground;
+    }
+
+    #workspaces button.active {
+      background-color: @active-background;
+      color: @active-foreground;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding-top: 1px;
+      padding-bottom: 0px;
+      border-radius: 3px;
+    }
+
+    #workspaces button.urgent {
+      background-color: #ef5e5e;
+      color: @active-foreground;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding-top: 1px;
+      padding-bottom: 0px;
+      border-radius: 3px;
     }
 
     #language {
