@@ -22,7 +22,6 @@ in
     exec-once=${pkgs.lib.getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store &
     exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
     exec-once=${pkgs.lib.getExe pkgs.wlsunset} -l 49.2 -L 123.1
-    exec-once=gsettings set org.gnome.desktop.interface text-scaling-factor 1.4
     exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
     exec-once=${pkgs.lib.getExe' pkgs.udiskie "udiskie"} -t &
     exec-once=${pkgs.lib.getExe' pkgs.networkmanagerapplet "nm-applet"} &
@@ -32,24 +31,10 @@ in
     cursor_size=24
     env=XCURSOR_SIZE,24
 
-    # fcitx5 im
-    env=GTK_IM_MODULE,fcitx
-    env=QT_IM_MODULE,fcitx
-    env=SDL_IM_MODULE,fcitx
-    env=XMODIFIERS,@im=fcitx
-    env=GLFW_IM_MODULE,ibus
-
-    # scale factor about qt (herr is 1.4)
-    env=QT_QPA_PLATFORMTHEME,qt5ct
-    env=QT_AUTO_SCREEN_SCALE_FACTOR,1
-    env=QT_QPA_PLATFORM,Wayland;xcb
-    env=QT_WAYLAND_FORCE_DPI,140
-
     # custom misc
     # TODO: move as needed
-    # FIXME: vicinae path after wrapped
     bind=SUPER,A,spawn,${pkgs.lib.getExe richenLib.wrappers.vicinae} toggle
-    bind = SUPER,V,spawn, ${pkgs.lib.getExe richenLib.wrappers.vicinae} vicinae://extensions/vicinae/clipboard/history
+    bind=SUPER,V,spawn, ${pkgs.lib.getExe richenLib.wrappers.vicinae} vicinae://extensions/vicinae/clipboard/history
     # layer rules for vicinae
     layerrule=blur:1,layer_name:vicinae
     layerrule=animation_type_open:none,layer_name:vicinae

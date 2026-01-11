@@ -30,10 +30,14 @@ in
     };
     font = {
       normal = {
-        size = 12;
-        normal = "Maple Nerd Font";
+        size = 14;
+        normal = "Gohu Font 14 Nerd Font";
       };
     };
+  };
+  envVar = {
+    USE_LAYER_SHELL = "1";
+    QT_SCALE_FACTOR = "1.5";
   };
   themes = {
     forest-green = {

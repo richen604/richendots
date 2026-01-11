@@ -11,11 +11,11 @@
     shell ${pkgs.lib.getExe richenLib.wrappers.zsh}
 
     # font settings
-    font_family GohuFont Nerd Font
+    font_family Gohu Font 14 Nerd Font
     bold_font auto
     italic_font auto
     bold_italic_font auto
-    font_size 16.0
+    font_size 14.0
 
     # cursor settings
     cursor_shape block

@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  inputs,
   hostname,
   richenLib,
   ...
@@ -8,6 +9,52 @@
 {
   imports = [
     ./hardware-configuration.nix
+    inputs.hjem.nixosModules.default
+  ];
+
+  # USERS -------------------------------------------------------------
+  users.users.richen = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "video"
+      "input"
+      "networkmanager"
+    ];
+    home = "/home/richen";
+    createHome = true;
+    shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
+  };
+  users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
+
+  hjem = {
+    extraModules = [ inputs.hjem-rum.hjemModules.default ];
+    users.richen = {
+      user = "richen";
+      directory = "/home/richen";
+      clobberFiles = true;
+    };
+  };
+
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style = "adwaita-dark";
+  };
+  programs.dconf.profiles.user.databases = [
+    {
+      settings = {
+        "org/gnome/desktop/interface" = {
+          gtk-theme = "catppuccin-mocha-green-compact";
+          color-scheme = "prefer-dark";
+          font-name = "Gohu Font 14 Nerd Font";
+          cursor-theme = "Bibata-Modern-Ice";
+          icon-theme = "Papirus-Dark";
+          font-antialiasing = "rgba";
+          font-hinting = "full";
+        };
+      };
+    }
   ];
 
   boot = {
@@ -82,6 +129,7 @@
     XCURSOR_THEME = "Bibata-Modern-Ice";
     XCURSOR_SIZE = "24";
     MOZ_ENABLE_WAYLAND = "1";
+    GTK_THEME = "catppuccin-mocha-green-compact";
   };
 
   xdg.mime.defaultApplications = {
@@ -95,7 +143,20 @@
 
   # PACKAGES ---------------------------------------------------------
   # Install mangowc and minimal desktop dependencies
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = [
+    pkgs.bibata-cursors
+    (pkgs.catppuccin-papirus-folders.override {
+      accent = "green";
+      flavor = "mocha";
+    })
+    # todo: greenify gtk host + drv
+    (pkgs.catppuccin-gtk.override {
+      accents = [ "green" ];
+      size = "compact";
+      variant = "mocha";
+    })
+
+    pkgs.kdePackages.kdeconnect-kde
     richenLib.wrappers.mango
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
@@ -104,96 +165,96 @@
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
-    vesktop
-    kdePackages.dolphin
-    fastfetch
+    pkgs.vesktop
+    pkgs.kdePackages.dolphin
+    pkgs.fastfetch
     # todo: hjem rum has a vscode module
-    vscode-fhs
+    pkgs.vscode-fhs
     # todo: impl keybinds for wf-recorder
-    wf-recorder
+    pkgs.wf-recorder
+    pkgs.git # distributed version control system
 
-    killall # Process termination utility
-    wl-clipboard # Wayland clipboard utilities
-    wl-clip-persist # Keep Wayland clipboard even after programs close
-    cliphist # clipboard manager
-    gnumake # Build automation tool
-    git # distributed version control system
-    fzf # command line fuzzy finder
-    polkit_gnome # authentication agent for privilege escalation
-    dbus # inter-process communication daemon
-    upower # power management/battery status daemon
-    mesa # OpenGL implementation and GPU drivers
-    dconf # configuration storage system
-    dconf-editor # dconf editor
-    xdg-utils # Collection of XDG desktop integration tools
-    desktop-file-utils # for updating desktop database
-    hicolor-icon-theme # Base fallback icon theme
-    kdePackages.ark # kde file archiver
-    wayland # for wayland support
-    egl-wayland # for wayland support
-    xwayland # for x11 support
-    gobject-introspection # for python packages
-    trash-cli # cli to manage trash files
-    gawk # awk implementation
-    coreutils # coreutils implementation
-    bash-completion # Add bash-completion package
-    libnotify
-    wlsunset
-    grim
-    slurp
-    firefox
-    bibata-cursors
-    networkmanager
-    networkmanagerapplet
-    brightnessctl # screen brightness control
-    udiskie # manage removable media
-    ntfs3g # ntfs support
-    exfat # exFAT support
-    libinput-gestures # actions touchpad gestures using libinput
-    libinput # libinput library
-    lm_sensors # system sensors
-    pciutils # pci utils
-    bluez
-    bluez-tools
-    blueman
-    pipewire
-    wireplumber
-    pavucontrol
-    pamixer
-    playerctl
+    pkgs.killall # Process termination utility
+    pkgs.wl-clipboard # Wayland clipboard utilities
+    pkgs.wl-clip-persist # Keep Wayland clipboard even after programs close
+    pkgs.cliphist # clipboard manager
+    pkgs.gnumake # Build automation tool
+    pkgs.fzf # command line fuzzy finder
+    pkgs.polkit_gnome # authentication agent for privilege escalation
+    pkgs.dbus # inter-process communication daemon
+    pkgs.upower # power management/battery status daemon
+    pkgs.mesa # OpenGL implementation and GPU drivers
+    pkgs.dconf # configuration storage system
+    pkgs.dconf-editor # dconf editor
+    pkgs.xdg-utils # Collection of XDG desktop integration tools
+    pkgs.desktop-file-utils # for updating desktop database
+    pkgs.hicolor-icon-theme # Base fallback icon theme
+    pkgs.kdePackages.ark # kde file archiver
+    pkgs.wayland # for wayland support
+    pkgs.egl-wayland # for wayland support
+    pkgs.xwayland # for x11 support
+    pkgs.gobject-introspection # for python packages
+    pkgs.trash-cli # cli to manage trash files
+    pkgs.gawk # awk implementation
+    pkgs.coreutils # coreutils implementation
+    pkgs.bash-completion # Add bash-completion package
+    pkgs.libnotify
+    pkgs.wlsunset
+    pkgs.grim
+    pkgs.slurp
+    pkgs.firefox
+    pkgs.bibata-cursors
+    pkgs.networkmanager
+    pkgs.networkmanagerapplet
+    pkgs.brightnessctl # screen brightness control
+    pkgs.udiskie # manage removable media
+    pkgs.ntfs3g # ntfs support
+    pkgs.exfat # exFAT support
+    pkgs.libinput-gestures # actions touchpad gestures using libinput
+    pkgs.libinput # libinput library
+    pkgs.lm_sensors # system sensors
+    pkgs.pciutils # pci utils
+    pkgs.bluez
+    pkgs.bluez-tools
+    pkgs.blueman
+    pkgs.pipewire
+    pkgs.wireplumber
+    pkgs.pavucontrol
+    pkgs.pamixer
+    pkgs.playerctl
 
     # qt deps
-    kdePackages.qt6ct
-    kdePackages.qtbase
-    kdePackages.qtwayland
-    kdePackages.qtstyleplugin-kvantum
-    kdePackages.breeze-icons
-    kdePackages.qtimageformats
-    kdePackages.qtsvg
-    kdePackages.qtwayland
-    kdePackages.qtimageformats # Image format support for Qt5
-    kdePackages.ffmpegthumbs # Video thumbnail support
-    kdePackages.kde-cli-tools # KDE command line utilities
-    kdePackages.kdegraphics-thumbnailers # KDE graphics thumbnails
-    kdePackages.kimageformats # Additional image format support for KDE
-    kdePackages.qtsvg # SVG support
-    kdePackages.kio # KDE I/O framework
-    kdePackages.kio-extras # Additional KDE I/O protocols
-    kdePackages.kwayland # KDE Wayland integration
+    pkgs.kdePackages.qt6ct
+    pkgs.kdePackages.qtbase
+    pkgs.kdePackages.qtwayland
+    pkgs.kdePackages.qtstyleplugin-kvantum
+    pkgs.kdePackages.breeze-icons
+    pkgs.kdePackages.qtimageformats
+    pkgs.kdePackages.qtsvg
+    pkgs.kdePackages.qtwayland
+    pkgs.kdePackages.qtimageformats # Image format support for Qt5
+    pkgs.kdePackages.ffmpegthumbs # Video thumbnail support
+    pkgs.kdePackages.kde-cli-tools # KDE command line utilities
+    pkgs.kdePackages.kdegraphics-thumbnailers # KDE graphics thumbnails
+    pkgs.kdePackages.kimageformats # Additional image format support for KDE
+    pkgs.kdePackages.qtsvg # SVG support
+    pkgs.kdePackages.kio # KDE I/O framework
+    pkgs.kdePackages.kio-extras # Additional KDE I/O protocols
+    pkgs.kdePackages.kwayland # KDE Wayland integration
 
     # gtk deps
-    gtk3
-    gtk4
-    glib
-    gsettings-desktop-schemas
-    gnome-settings-daemon
-    gnome-tweaks
-    gnomeExtensions.window-gestures
-    nwg-look
-    adwaita-icon-theme
-    emote
+    pkgs.gtk3
+    pkgs.gtk4
+    pkgs.glib
+    pkgs.gsettings-desktop-schemas
+    pkgs.gnome-settings-daemon
+    pkgs.gnome-tweaks
+    pkgs.gnomeExtensions.window-gestures
+    pkgs.nwg-look
+    pkgs.adwaita-icon-theme
+    pkgs.emote
 
-    spicetify-cli
+    pkgs.spicetify-cli
   ];
 
   # gaming
@@ -250,48 +311,20 @@
     "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
   ];
 
-  # USERS -------------------------------------------------------------
-  users.users.mango = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "video"
-      "input"
-      "networkmanager"
-    ];
-    home = "/home/mango";
-    createHome = true;
-    shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
-  };
-  users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
-
   # FONTS --------------------------------------------------------------
   fonts = {
     fontDir.enable = true;
     enableDefaultPackages = true;
     packages = with pkgs; [
-      gohufont
       nerd-fonts.gohufont
-      nerd-fonts.fira-code
-      nerd-fonts.noto
       terminus_font
     ];
     fontconfig = {
       enable = true;
-      antialias = true;
-      hinting = {
-        enable = true;
-        style = "slight";
-      };
-      subpixel = {
-        rgba = "rgb";
-      };
       defaultFonts = {
-        monospace = [
-          "GohuFont Nerd Font"
-          "FiraCode Nerd Font"
-          "Noto Sans Mono"
-        ];
+        monospace = [ "Gohu Font 14 Nerd Font" ];
+        sansSerif = [ "Gohu Font 14 Nerd Font" ];
+        serif = [ "Gohu Font 14 Nerd Font" ];
       };
     };
   };
@@ -307,7 +340,7 @@
       };
       initial_session = {
         command = "${pkgs.lib.getExe richenLib.wrappers.mango}";
-        user = "mango";
+        user = "richen";
       };
     };
   };
