@@ -315,14 +315,17 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1767641898,
-        "narHash": "sha256-j+/ICAiH4ALGm7d91TIMVJ+99o7zZjKzTeHs503lyew=",
-        "path": "/home/richen/newdev/hydenix",
-        "type": "path"
+        "lastModified": 1767469777,
+        "narHash": "sha256-qYDTc7rhJ7mUOYtNCqVQZqad/tdweldlmPzAEyz6sTo=",
+        "owner": "richen604",
+        "repo": "hydenix",
+        "rev": "4948c21ded5bb8eeeb6d153aa433397f8a45f6c0",
+        "type": "github"
       },
       "original": {
-        "path": "/home/richen/newdev/hydenix",
-        "type": "path"
+        "owner": "richen604",
+        "repo": "hydenix",
+        "type": "github"
       }
     },
     "hyq": {
