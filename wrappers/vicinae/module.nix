@@ -143,7 +143,7 @@ inputs.wrappers.lib.wrapModule (
         }
         // lib.optionalAttrs (themeFiles != [ ]) {
           # we need to add custom themes dir to XDG_DATA_DIRS
-          XDG_DATA_DIRS = "${themesPackage}/share";
+          XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
         };
     };
   }
