@@ -30,14 +30,14 @@ in
     };
     font = {
       normal = {
-        size = 14;
-        normal = "Gohu Font 14 Nerd Font";
+        size = 10;
+        normal = "Gohu Font 11 Nerd Font";
       };
     };
   };
   envVar = {
     USE_LAYER_SHELL = "1";
-    QT_SCALE_FACTOR = "1.5";
+    QT_SCALE_FACTOR = "1.2";
   };
   themes = {
     forest-green = {
