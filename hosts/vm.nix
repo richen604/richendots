@@ -21,8 +21,8 @@ nixosConfiguration.extendModules {
         # Rest of VM configuration
         virtualisation.vmVariant = {
           virtualisation = {
-            memorySize = 4096;
-            cores = 2;
+            memorySize = 14096;
+            cores = 4;
             diskSize = 10240;
             qemu = {
               options = [
