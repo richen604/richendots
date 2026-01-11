@@ -2,21 +2,10 @@
 
 ## now
 
-hjem
+hjem:
 
-hydenix programs / modules i want to keep
-programs:
-
-```nix
-environment.packages = [
-
-
-  # maybe
-  hypridle
-];
-```
-
-modules:
+- vscode
+- keepassxc
 
 ## next
 
