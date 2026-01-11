@@ -4,8 +4,8 @@
   inputs = {
     nixpkgs.follows = "hydenix/nixpkgs";
     hydenix = {
-      # url = "github:richen604/hydenix";
-      url = "path:/home/richen/newdev/hydenix";
+      url = "github:richen604/hydenix";
+      # url = "path:/home/richen/newdev/hydenix";
     };
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager = {
