@@ -171,6 +171,10 @@
     # todo: impl keybinds for wf-recorder
     pkgs.wf-recorder
     pkgs.git # distributed version control system
+    pkgs.firefox
+    pkgs.neovim
+    pkgs.tmux
+    pkgs.less
 
     pkgs.killall # Process termination utility
     pkgs.wl-clipboard # Wayland clipboard utilities
