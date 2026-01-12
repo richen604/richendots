@@ -28,7 +28,7 @@ let
 in
 {
 
-  nixpkgs.pkgs = pkgs;
+  nixpkgs.pkgs = pkgs.lib.mkForce pkgs;
 
   imports = [
     inputs.home-manager.nixosModules.home-manager

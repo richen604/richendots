@@ -78,12 +78,16 @@
       mkHost =
         hostname: system:
         let
-          pkgs = import inputs.nixpkgs { inherit system; };
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
           richenLib = {
             wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
           };
         in
         inputs.nixpkgs.lib.nixosSystem {
+          inherit pkgs system;
           specialArgs = {
             inputs = inputs // inputs.richendots-private.inputs;
             inherit hostname richenLib;
@@ -153,7 +157,10 @@
       packages = forEachSystem (
         system:
         let
-          pkgs = import inputs.nixpkgs { inherit system; };
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
           wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
         in
         flattenAttrs {
