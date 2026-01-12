@@ -54,7 +54,6 @@ in
       # [possible values: save-to-clipboard, save-to-file, exit]
       actions-on-escape = [
         "save-to-clipboard"
-        "save-to-file"
         "exit"
       ];
       # request no window decoration. Please note that the compositor has the final say in this. At this point. requires xdg-decoration-unstable-v1.
@@ -85,8 +84,7 @@ in
     };
     # Font to use for text annotations
     font = {
-      family = "Roboto";
-      style = "Regular";
+      family = "Gohu Font 14 Nerd Font";
       # # specify fallback fonts (NEXTRELEASE)
       # # Please note, there is no default setting for these and the fonts listed below
       # # are not shipped with Satty but need to be available on the system.

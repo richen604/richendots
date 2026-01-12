@@ -40,6 +40,33 @@ in
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
     bind=SUPER,E,spawn,${pkgs.lib.getExe' pkgs.kdePackages.dolphin "dolphin"}
+    bind=SUPER,C,spawn,${pkgs.lib.getExe pkgs.vscode-fhs} 
+    bind=SUPER,P,spawn,${pkgs.writeScriptBin "screenshot" ''
+      #!/usr/bin/env bash
+      GEOM=$(${pkgs.lib.getExe pkgs.slurp}) || exit 1
+      mkdir -p ~/Pictures/Screenshots
+      ${pkgs.lib.getExe pkgs.grim} -g "$GEOM" - | ${pkgs.lib.getExe richenLib.wrappers.satty} --filename -
+    ''}/bin/screenshot
+    bind=SUPER+SHIFT,P,spawn,${pkgs.writeScriptBin "screenrecord-start" ''
+      #!/usr/bin/env bash
+      mkdir -p ~/Videos/Recordings
+      GEOM=$(${pkgs.lib.getExe pkgs.slurp}) || exit 1
+      FILENAME=~/Videos/Recordings/$(date +%y%m%d_%Hh%Mm%Ss)_recording.mp4
+      ${pkgs.lib.getExe pkgs.wf-recorder} -g "$GEOM" -f "$FILENAME" &
+      WF_PID=$!
+      echo $WF_PID > /tmp/wf-recorder.pid
+      notify-send "Recording started" "Saving to $FILENAME"
+    ''}/bin/screenrecord-start
+    bind=SUPER+SHIFT,O,spawn,${pkgs.writeScriptBin "screenrecord-stop" ''
+      #!/usr/bin/env bash
+      if [ -f /tmp/wf-recorder.pid ]; then
+        kill -INT $(cat /tmp/wf-recorder.pid)
+        rm /tmp/wf-recorder.pid
+        notify-send "Recording stopped" "Saved to ~/Videos/Recordings/"
+      else
+        notify-send "No recording in progress" "No PID file found"
+      fi
+    ''}/bin/screenrecord-stop
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 
@@ -290,7 +317,6 @@ in
     # Axis Bindings
     axisbind=SUPER,UP,viewtoleft_have_client
     axisbind=SUPER,DOWN,viewtoright_have_client
-
 
     # recommended in https://mangowc.vercel.app/docs/faq
     syncobj_enable=1
