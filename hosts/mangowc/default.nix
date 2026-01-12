@@ -66,8 +66,6 @@
     };
   };
 
-  nixpkgs.config.allowUnfree = true;
-
   services.flatpak.enable = true;
 
   time.timeZone = "America/Vancouver";

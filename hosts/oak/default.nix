@@ -13,9 +13,7 @@ let
   };
 in
 {
-
-  nixpkgs.pkgs = pkgs;
-
+  nixpkgs.pkgs = pkgs.lib.mkForce pkgs;
   imports = [
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
     inputs.hydenix.nixosModules.default
