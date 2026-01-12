@@ -39,9 +39,9 @@
     cursor                  #1E3734 
     cursor_text_color       #FFFFFF
 
-    active_tab_foreground     #0E120F
+    active_tab_foreground     #578F65
     active_tab_background     #142825
-    inactive_tab_foreground   #142825
+    inactive_tab_foreground   #295233
     inactive_tab_background   #0E120F
 
     # black
