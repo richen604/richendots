@@ -67,11 +67,33 @@ in
         notify-send "No recording in progress" "No PID file found"
       fi
     ''}/bin/screenrecord-stop
+    # pseudo hyprland like secret tag
+    bind=SUPER,S,view,9
+    bind=SUPER+ALT,S,tagsilent,9
+
+    # ============================================
+    # GAMEMODE SETTINGS - Toggle these manually
+    # ============================================
+    # Normal Mode: animations=1, blur=1, opacity=0.9/0.8, radius=6, border=4, gaps=5/5/10/10
+    # Game Mode:   animations=0, blur=0, opacity=1.0/1.0, radius=0, border=1, gaps=0/0/0/0
+    # After editing, rebuild with: nixos-rebuild switch
+
+    animations=0              # Game mode: 0
+    layer_animations=0        # Game mode: 0
+    blur=0                    # Game mode: 0
+    focused_opacity=1       # Game mode: 1.0
+    unfocused_opacity=1     # Game mode: 1.0
+    border_radius=0           # Game mode: 0
+    borderpx=1                # Game mode: 0
+    gappih=0                  # Game mode: 0
+    gappiv=0                  # Game mode: 0
+    gappoh=0                 # Game mode: 0
+    gappov=0                 # Game mode: 0
+    # ============================================
 
     # More option see https://github.com/DreamMaoMao/mango/wiki/
 
     # Window effect
-    blur=1
     blur_layer=0
     blur_optimized=1
     blur_params_num_passes = 2
@@ -90,15 +112,10 @@ in
     shadows_position_y = 0
     shadowscolor= 0x000000ff
 
-    border_radius=6
     no_radius_when_single=0
-    focused_opacity=0.9
-    unfocused_opacity=0.8
 
     # Animation Configuration(support type:zoom,slide)
     # tag_animation_direction: 0-horizontal,1-vertical
-    animations=1
-    layer_animations=1
     animation_type_open=slide
     animation_type_close=slide
     animation_fade_in=1
@@ -178,13 +195,8 @@ in
     mouse_natural_scrolling=0
 
     # Appearance
-    gappih=5
-    gappiv=5
-    gappoh=10
-    gappov=10
-    scratchpad_width_ratio=0.8
-    scratchpad_height_ratio=0.9
-    borderpx=4
+    scratchpad_width_ratio=1
+    scratchpad_height_ratio=1
     rootcolor=0x201b14ff
     bordercolor=0x444444ff
     focuscolor=0xc9b890ff
@@ -204,7 +216,7 @@ in
     tagrule=id:6,layout_name:tile
     tagrule=id:7,layout_name:tile
     tagrule=id:8,layout_name:tile
-    tagrule=id:9,layout_name:tile
+    tagrule=id:9,layout_name:scroller
 
     # Key Bindings
     # key name refer to `xev` or `wev` command output,
@@ -234,16 +246,16 @@ in
     bind=SUPER+SHIFT,Right,exchange_client,right
 
     # switch window status
-    bind=SUPER,g,toggleglobal,
+    # bind=SUPER,g,toggleglobal,
     bind=ALT,Tab,toggleoverview,
-    bind=ALT,backslash,togglefloating,
-    bind=ALT,a,togglemaximizescreen,
-    bind=ALT,f,togglefullscreen,
-    bind=ALT+SHIFT,f,togglefakefullscreen,
-    bind=SUPER,i,minimized,
+    bind=SUPER,W,togglefloating,
+    bind=SUPER,F,togglemaximizescreen,
+    bind=ALT,RETURN,togglefullscreen,
+    bind=ALT+SHIFT,RETURN,togglefakefullscreen,
+    bind=SUPER,M,minimized,
     bind=SUPER,o,toggleoverlay,
-    bind=SUPER+SHIFT,I,restore_minimized
-    bind=ALT,z,toggle_scratchpad
+    bind=SUPER+SHIFT,M,restore_minimized
+    bind=SUPER,I,toggle_scratchpad
 
     # scroller layout
     bind=ALT,e,set_proportion,1.0
