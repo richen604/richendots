@@ -20,11 +20,14 @@ in
     cp = "cp -i";
     mv = "mv -i";
     rm = "rm -i";
+    vim = "nvim";
   };
   # TODO: direnv integration
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
     source ${toString ./.p10k.zsh}
+    bindkey '\e[1;3C' forward-word   # Ctrl+Right
+    bindkey '\e[1;3D' backward-word  # Ctrl+Left
   '';
   histSize = 10000;
   enableCompletion = true;
@@ -37,6 +40,15 @@ in
       source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
     fi
   '';
+  sessionVariables = {
+    # todo: may need fixing when neovim and firefox is wrapped
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    BROWSER = "firefox";
+    PAGER = "less";
+    LANG = "en_US.UTF-8";
+    LC_ALL = "en_US.UTF-8";
+  };
   ohMyZsh = {
     enable = true;
     plugins = [
