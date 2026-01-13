@@ -2,7 +2,6 @@
   inputs,
   pkgs,
   richenLib,
-  lib,
   ...
 }:
 let
@@ -29,6 +28,7 @@ in
 
     # cursor size
     cursor_size=24
+    cursor_theme=Bibata-Modern-Ice
     env=XCURSOR_SIZE,24
 
     # custom misc
@@ -40,7 +40,7 @@ in
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
     bind=SUPER,E,spawn,${pkgs.lib.getExe' pkgs.kdePackages.dolphin "dolphin"}
-    bind=SUPER,C,spawn,${pkgs.lib.getExe pkgs.vscode-fhs} 
+    bind=SUPER,C,spawn,code 
     bind=SUPER,P,spawn,${pkgs.writeScriptBin "screenshot" ''
       #!/usr/bin/env bash
       GEOM=$(${pkgs.lib.getExe pkgs.slurp}) || exit 1
