@@ -2,8 +2,6 @@
 
 ## now
 
-- convert hm modules to nixos
-
 ## next
 
 - refactor wrappers folder

@@ -123,6 +123,16 @@
       '';
     };
   };
+
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      looking-glass-obs
+      obs-pipewire-audio-capture
+    ];
+    enableVirtualCamera = true;
+  };
   programs.vscode = {
     enable = true;
     extensions = [
