@@ -38,6 +38,8 @@
   };
   users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
+  xdg.icons.fallbackCursorThemes = [ "Bibata-Modern-Ice" ];
+
   hjem = {
     users.richen = {
       user = "richen";
@@ -158,7 +160,7 @@
 
   qt = {
     enable = true;
-    platformTheme = "gnome";
+    platformTheme = "gtk2";
     style = "adwaita-dark";
   };
   programs.dconf.profiles.user.databases = [
@@ -219,6 +221,7 @@
     kernelParams = [
       "quiet"
       "splash"
+      "console=/dev/null"
       "boot.shell_on_fail"
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
