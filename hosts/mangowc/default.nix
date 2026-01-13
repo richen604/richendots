@@ -12,6 +12,15 @@
     inputs.hjem.nixosModules.default
   ];
 
+  # turn off bloat
+  documentation = {
+    enable = false;
+    man.enable = false;
+    info.enable = false;
+    doc.enable = false;
+    dev.enable = false;
+  };
+
   # USERS -------------------------------------------------------------
   users.users.richen = {
     isNormalUser = true;
