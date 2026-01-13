@@ -39,12 +39,121 @@
   users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
   hjem = {
-    extraModules = [ inputs.hjem-rum.hjemModules.default ];
     users.richen = {
       user = "richen";
       directory = "/home/richen";
       clobberFiles = true;
+      # todo: wrap vscode w/ portable mode?
+      xdg.config.files."Code/User/settings.json".source = pkgs.writeText "vscode-settings.json" ''
+         {
+          "workbench.colorTheme": "Tokyo Night",
+          "window.menuBarVisibility": "toggle",
+          "editor.fontSize": 15,
+          "editor.scrollbar.vertical": "hidden",
+          "editor.scrollbar.verticalScrollbarSize": 0,
+          "security.workspace.trust.untrustedFiles": "newWindow",
+          "security.workspace.trust.startupPrompt": "never",
+          "security.workspace.trust.enabled": false,
+          "editor.minimap.side": "left",
+          "editor.fontFamily": "'Gohu Font 14 Nerd Font', 'monospace', monospace",
+          "extensions.autoUpdate": false,
+          "workbench.statusBar.visible": true,
+          "terminal.external.linuxExec": "kitty",
+          "terminal.explorerKind": "both",
+          "terminal.sourceControlRepositoriesKind": "both",
+          "telemetry.telemetryLevel": "off",
+          "workbench.activityBar.location": "top",
+          "window.customTitleBarVisibility": "auto",
+          "workbench.iconTheme": "catppuccin-mocha",
+          "editor.cursorSmoothCaretAnimation": "on",
+          "editor.autoIndent": "full",
+          "editor.formatOnSave": true,
+          "nix.enableLanguageServer": true,
+          "nix.formatterPath": "nixfmt",
+          "nix.serverPath": "nil",
+          "nix.hiddenLanguageServerErrors": [
+            "textDocument/definition",
+            "textDocument/formatting",
+            "textDocument/documentSymbol"
+          ],
+          "nix.serverSettings": {
+            "nil": {
+              "formatting": {
+                "command": ["nixfmt"]
+              }
+            }
+          },
+          "markdownlint.config": {
+            "MD033": {
+              "allowed_elements": [
+                "nobr",
+                "sup",
+                "a",
+                "div",
+                "img",
+                "br",
+                "video",
+                "kbd",
+                "sub",
+                "section",
+                "details",
+                "summary"
+              ]
+            }
+          },
+          "workbench.sideBar.location": "right",
+          "git.enableSmartCommit": true,
+          "github.copilot.nextEditSuggestions.enabled": true,
+          "todo-tree.general.tags": [
+            "BUG",
+            "HACK",
+            "FIXME",
+            "TODO",
+            "XXX",
+            "[ ]",
+            "[x]",
+            "todo",
+            "fixme",
+            "bug"
+          ],
+          "editor.minimap.enabled": false
+        }
+      '';
     };
+  };
+  programs.vscode = {
+    enable = true;
+    extensions = [
+      pkgs.vscode-extensions.aaron-bond.better-comments
+      pkgs.vscode-extensions.bierner.markdown-mermaid
+      pkgs.vscode-extensions.bierner.markdown-preview-github-styles
+      pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
+      pkgs.vscode-extensions.davidanson.vscode-markdownlint
+      pkgs.vscode-extensions.dbaeumer.vscode-eslint
+      pkgs.vscode-extensions.ecmel.vscode-html-css
+      pkgs.vscode-extensions.enkia.tokyo-night
+      pkgs.vscode-extensions.esbenp.prettier-vscode
+      pkgs.vscode-extensions.geequlim.godot-tools
+      pkgs.vscode-extensions.github.copilot
+      pkgs.vscode-extensions.github.vscode-github-actions
+      pkgs.vscode-extensions.github.vscode-pull-request-github
+      pkgs.vscode-extensions.ibm.output-colorizer
+      pkgs.vscode-extensions.jnoortheen.nix-ide
+      pkgs.vscode-extensions.leonardssh.vscord
+      pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
+      pkgs.vscode-extensions.mkhl.shfmt
+      pkgs.vscode-extensions.ms-python.python
+      pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
+      pkgs.vscode-extensions.redhat.vscode-yaml
+      pkgs.vscode-extensions.saoudrizwan.claude-dev
+      pkgs.vscode-extensions.streetsidesoftware.code-spell-checker
+      pkgs.vscode-extensions.tamasfe.even-better-toml
+      pkgs.vscode-extensions.timonwong.shellcheck
+      pkgs.vscode-extensions.yoavbls.pretty-ts-errors
+      pkgs.vscode-extensions.yzhang.markdown-all-in-one
+      pkgs.vscode-extensions.ziglang.vscode-zig
+      pkgs.vscode-extensions.gruntfuggly.todo-tree
+    ];
   };
 
   qt = {
@@ -348,6 +457,7 @@
     dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true;
     localNetworkGameTransfers.openFirewall = true;
+    protontricks.enable = true;
   };
 
   # audio
@@ -425,11 +535,11 @@
     };
   };
 
-  # Mango compositor requirements
+  # mango compositor requirements
   programs.xwayland.enable = lib.mkDefault true;
   services.graphical-desktop.enable = lib.mkDefault true;
 
-  # XDG Portal configuration
+  # xdg portal configuration
   xdg.portal = {
     enable = lib.mkDefault true;
     config = {
