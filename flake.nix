@@ -30,14 +30,9 @@
 
     wrappers.url = "github:lassulus/wrappers";
     vicinae.url = "github:vicinaehq/vicinae";
-    hjem-rum = {
-      url = "github:snugnug/hjem-rum";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hjem.follows = "hjem";
-    };
     hjem = {
       url = "github:feel-co/hjem";
-      inputs.nixpkgs.follows = "hjem-rum/hjem";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -83,7 +78,7 @@
             config.allowUnfree = true;
           };
           richenLib = {
-            wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
+            wrappers = pkgs.callPackage ./wrappers { inherit inputs pkgs; };
           };
         in
         inputs.nixpkgs.lib.nixosSystem {
@@ -161,7 +156,7 @@
             inherit system;
             config.allowUnfree = true;
           };
-          wrappers = pkgs.callPackage ./wrappers { inherit inputs; };
+          wrappers = pkgs.callPackage ./wrappers { inherit inputs pkgs; };
         in
         flattenAttrs {
           vm = {
