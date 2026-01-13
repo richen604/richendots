@@ -29,6 +29,8 @@
       "video"
       "input"
       "networkmanager"
+      # todo: should be in a dev module
+      "docker"
     ];
     home = "/home/richen";
     createHome = true;
@@ -92,7 +94,6 @@
       enable = true;
       theme = "rings";
       themePackages = with pkgs; [
-        # By default we would install all themes
         (adi1090x-plymouth-themes.override {
           selected_themes = [ "rings" ];
         })
@@ -122,13 +123,11 @@
     openssh.enable = true;
     libinput.enable = true;
   };
-  # For trash-cli to work properly
   services.gvfs.enable = true;
   security.polkit.enable = true;
   security.pam.services.swaylock = { };
   security.rtkit.enable = true;
 
-  # Global environment variables
   environment.variables = {
     XDG_CURRENT_DESKTOP = "mango";
     XDG_SESSION_TYPE = "wayland";
@@ -149,9 +148,9 @@
   };
 
   # PACKAGES ---------------------------------------------------------
-  # Install mangowc and minimal desktop dependencies
   environment.systemPackages = [
     pkgs.bibata-cursors
+    # todo: maybe tela-green instead
     (pkgs.catppuccin-papirus-folders.override {
       accent = "green";
       flavor = "mocha";
@@ -200,6 +199,7 @@
     pkgs.xdg-utils # Collection of XDG desktop integration tools
     pkgs.desktop-file-utils # for updating desktop database
     pkgs.hicolor-icon-theme # Base fallback icon theme
+    # todo: set xdg mine defaults for ark
     pkgs.kdePackages.ark # kde file archiver
     pkgs.wayland # for wayland support
     pkgs.egl-wayland # for wayland support
@@ -266,7 +266,12 @@
     pkgs.emote
 
     pkgs.spicetify-cli
-  ];
+  # docker
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
 
   # gaming
   programs.gamescope = {
