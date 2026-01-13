@@ -1,7 +1,6 @@
 {
   inputs,
   pkgs,
-  lib,
   ...
 }:
 let
@@ -22,12 +21,31 @@ in
     rm = "rm -i";
     vim = "nvim";
   };
-  # TODO: direnv integration
+  interactiveShellInit = ''
+    eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
+  '';
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
     source ${toString ./.p10k.zsh}
-    bindkey '\e[1;3C' forward-word   # Ctrl+Right
-    bindkey '\e[1;3D' backward-word  # Ctrl+Left
+
+    bindkey '\e[1;3C' forward-word   # Alt+Right
+    bindkey '\e[1;3D' backward-word  # Alt+Left
+
+    # makes shell slow, consider enabling only when needed
+    source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+
+    # todo: ideally this would be per project but npx might require this
+    # fnm (Fast Node Manager) setup
+    eval "$(fnm env --use-on-cd)"
+    # pnpm setup
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+    case ":$PATH:" in
+      *":$PNPM_HOME:"*) ;;
+      *) export PATH="$PNPM_HOME:$PATH" ;;
+    esac
+    # npm global packages path
+    export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+    export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
   '';
   histSize = 10000;
   enableCompletion = true;
@@ -41,13 +59,29 @@ in
     fi
   '';
   sessionVariables = {
-    # todo: may need fixing when neovim and firefox is wrapped
     EDITOR = "nvim";
     VISUAL = "nvim";
     BROWSER = "firefox";
     PAGER = "less";
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
+    DIRENV_CONFIG = toString (
+      pkgs.linkFarm "direnv" [
+        {
+          name = "direnvrc";
+          path = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
+        }
+        {
+          name = "direnv.toml";
+          path = pkgs.writeText "direnv.toml" ''
+            # silent mode
+            [global]
+            log_format="-"
+            log_filter="^$"
+          '';
+        }
+      ]
+    );
   };
   ohMyZsh = {
     enable = true;
