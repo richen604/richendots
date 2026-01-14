@@ -14,12 +14,15 @@ let
 
   wrappers = {
     kitty = callPackage ./kitty.nix { };
-    mango = callPackage ./mango.nix { };
-    satty = callPackage ./satty.nix { };
-    swaybg = callPackage ./swaybg.nix { };
-    swaync = callPackage ./swaync.nix { };
-    zsh = callPackage ./zsh.nix { };
+    mango = callPackage ./mango { };
+    satty = callPackage ./satty { };
+    swaybg = callPackage ./swaybg { };
+    swaync = callPackage ./swaync { };
+    zsh = callPackage ./zsh { };
     waybar = callPackage ./waybar.nix { };
+    vicinae = callPackage ./vicinae { };
+    firefox = callPackage ./firefox { };
+
     keepassxc = callPackage ./keepassxc { };
   };
 in
