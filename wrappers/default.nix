@@ -20,8 +20,7 @@ let
     swaync = callPackage ./swaync.nix { };
     zsh = callPackage ./zsh.nix { };
     waybar = callPackage ./waybar.nix { };
-    vicinae = callPackage ./vicinae.nix { };
-    firefox = callPackage ./firefox.nix { };
+    keepassxc = callPackage ./keepassxc { };
   };
 in
 wrappers
