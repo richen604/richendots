@@ -20,9 +20,6 @@
 wrap:
 - keepassxc
 - git
-- [firefox (textfox + addons)](https://github.com/joonnna/nixos/blob/57a93b4b780a401e0b0125a4c0d01b8f62f16207/hm/firefox.nix#L12)
-  - https://github.com/NixOS/nixpkgs/blob/d2857cb4762e5e54b0f5c13d785ce0d15945e592/doc/packages/firefox.section.md?plain=1#L5
-  - hjem for chrome & user.js
 
 ## future
 

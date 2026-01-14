@@ -21,6 +21,7 @@ let
     zsh = callPackage ./zsh.nix { };
     waybar = callPackage ./waybar.nix { };
     vicinae = callPackage ./vicinae.nix { };
+    firefox = callPackage ./firefox.nix { };
   };
 in
 wrappers

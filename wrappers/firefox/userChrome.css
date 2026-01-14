@@ -1,0 +1,1527 @@
+/* FOLLOWING STYLES GRABBED FROM https://github.com/adriankarlen/textfox AND PLACED IN ORDER */
+
+.browserContainer,
+.browser-toolbox-background {
+  background: var(--tf-bg) !important;
+}
+
+browser {
+  border-radius: var(--tf-rounding);
+}
+
+#tabbrowser-tabbox {
+  margin: 8px !important;
+  border: var(--border-width) solid var(--tf-border);
+  border-radius: var(--tf-rounding);
+  padding: 8px !important;
+  transition: border-color var(--tf-border-transition);
+  &:hover {
+    border-color: var(--tf-accent) !important;
+    &::before {
+      color: var(--tf-accent);
+    }
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    content: "main";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -1.75rem 0rem;
+    padding: 0 4px;
+  }
+}
+
+:root[inFullscreen="true"] {
+  #tabbrowser-tabbox {
+    margin: 0 !important;
+    border: none;
+    padding: 0 !important;
+    transition: none;
+    &::before {
+      display: none;
+    }
+  }
+}
+
+#browser:not(.browser-toolbox-background) {
+  :root[lwtheme] & {
+    background-color: var(--lwt-accent-color) !important;
+    background-image: var(--lwt-accent-color) !important;
+  }
+}
+
+findbar {
+  margin: 1rem 0rem 0rem !important;
+  border: var(--border-width) solid var(--tf-border) !important;
+  background: var(--tf-bg) !important;
+  border-radius: var(--tf-rounding);
+  padding: 8px 0 !important;
+  transition: border-color var(--tf-border-transition);
+  &:hover {
+    color: var(--tf-accent);
+    border-color: var(--tf-accent) !important;
+    &::before {
+      color: var(--tf-accent);
+    }
+  }
+
+  &::before {
+    display: var(--tf-display-titles);
+    content: "find";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -1.75rem 0.75rem;
+    padding: 0 4px;
+  }
+}
+
+.findbar-textbox {
+  border: var(--border-width) solid var(--tf-border) !important;
+  background: var(--tf-bg) !important;
+}
+
+.findbar-container > checkbox {
+  text-transform: var(--tf-text-transform);
+}
+
+/*
+ * ─[ MENU ]─────────────────────────────────────────────────────────────
+*/
+
+/* icons color */
+#appMenu-multiView .subviewbutton::before,
+#appMenu-proton-update-banner::before,
+#protections-popup-tp-switch-breakage-link::before,
+#downloadsHistory .button-icon,
+#PanelUI-fxa-menu-syncnow-button::before,
+.subviewbutton:not(#appMenu-proton-update-banner) > image {
+  fill: currentColor !important;
+  fill-opacity: var(--toolbarbutton-icon-fill-opacity) !important;
+  -moz-context-properties: fill, fill-opacity, stroke !important;
+}
+
+/* text padding */
+#appMenu-multiView .toolbarbutton-text,
+#customizationui-widget-panel .toolbarbutton-text,
+#identity-popup-clear-sitedata-button .toolbarbutton-text,
+#unified-extensions-manage-extensions .toolbarbutton-text,
+#widget-overflow .toolbarbutton-text,
+#protections-popup-tp-switch-breakage-link .toolbarbutton-text,
+#downloadsPanel #downloadsHistory .button-text,
+.protections-popup-footer-button-label {
+  padding-left: 6px !important;
+}
+
+/* security popup */
+#protections-popup-tp-switch-breakage-link::before {
+  content: url("chrome://global/skin/icons/help.svg");
+  scale: 1.1;
+}
+#protections-popup-settings-button {
+  list-style-image: url("chrome://global/skin/icons/settings.svg");
+}
+
+/* extensions popup */
+#unified-extensions-manage-extensions {
+  list-style-image: url("chrome://mozapps/skin/extensions/extension.svg");
+}
+
+/* main menu */
+#appMenu-fxa-separator {
+  border-image: none !important;
+}
+#appMenu-new-private-window-button2 {
+  list-style-image: url("chrome://browser/skin/privateBrowsing.svg");
+}
+#appMenu-bookmarks-button {
+  list-style-image: url("chrome://browser/skin/bookmark.svg");
+}
+#appMenu-history-button {
+  list-style-image: url("chrome://browser/skin/history.svg");
+}
+#appMenu-downloads-button {
+  list-style-image: url("chrome://browser/skin/downloads/downloads.svg");
+}
+#appMenu-passwords-button {
+  list-style-image: url("chrome://browser/skin/login.svg");
+}
+#appMenu-extensions-themes-button {
+  list-style-image: url("chrome://mozapps/skin/extensions/extension.svg");
+}
+#appMenu-print-button2 {
+  list-style-image: url("chrome://global/skin/icons/print.svg");
+}
+#appMenu-find-button2 {
+  list-style-image: url("chrome://global/skin/icons/search-glass.svg");
+}
+#appMenu-settings-button {
+  list-style-image: url("chrome://global/skin/icons/settings.svg");
+}
+#appMenu-help-button2 {
+  list-style-image: url("chrome://global/skin/icons/help.svg");
+}
+#PanelUI-fxa-menu-syncnow-button {
+  padding-left: 11.3px !important;
+}
+#PanelUI-fxa-menu-syncnow-button::before {
+  content: url("chrome://browser/skin/sync.svg");
+  width: 13px;
+  height: 15px;
+  scale: 1.5;
+  padding-right: 5px;
+}
+#PanelUI-fxa-menu-sync-prefs-button {
+  list-style-image: url("chrome://global/skin/icons/settings.svg");
+}
+#panelMenuBookmarkThisPage {
+  list-style-image: url("chrome://browser/skin/bookmark-hollow.svg");
+}
+#panelMenuBookmarkThisPage[starred] {
+  list-style-image: url("chrome://browser/skin/bookmark.svg");
+}
+#panelMenu_searchBookmarks {
+  list-style-image: url("chrome://global/skin/icons/search-glass.svg");
+}
+#panelMenu_showAllBookmarks {
+  list-style-image: url("chrome://browser/skin/bookmark-star-on-tray.svg");
+}
+
+#appMenuSearchHistory {
+  list-style-image: url("chrome://global/skin/icons/search-glass.svg");
+}
+#PanelUI-historyMore {
+  list-style-image: url("chrome://browser/skin/history.svg");
+}
+#appMenuRecentlyClosedWindows {
+  list-style-image: url("chrome://browser/skin/window.svg");
+}
+#appmenu-moreTools-button,
+#overflowMenu-customize-button {
+  list-style-image: url("chrome://browser/skin/customize.svg");
+}
+
+#appmenu-developer-tools-view .subviewbutton:nth-last-child(1),
+#PanelUI-developer-tools-view .subviewbutton:nth-last-child(1) {
+  list-style-image: url("chrome://mozapps/skin/extensions/extension.svg");
+}
+#appmenu-developer-tools-view .subviewbutton:last-child {
+  margin-bottom: 6px !important;
+}
+
+#appMenu_menu_openHelp {
+  list-style-image: url("chrome://global/skin/icons/help.svg");
+}
+#appMenu_helpSafeMode {
+  list-style-image: url("chrome://devtools/skin/images/debugging-workers.svg");
+}
+#appMenu_troubleShooting {
+  list-style-image: url("chrome://global/skin/icons/more.svg");
+}
+#appMenu-report-broken-site-button,
+#appMenu_help_reportSiteIssue {
+  list-style-image: url("chrome://global/skin/icons/lightbulb.svg");
+}
+#appMenu_menu_HelpPopup_reportPhishingtoolmenu {
+  list-style-image: url("chrome://global/skin/icons/warning.svg");
+}
+#appMenu_aboutName {
+  list-style-image: url("chrome://global/skin/icons/info.svg");
+}
+
+#downloadsHistory {
+  list-style-image: url("chrome://browser/skin/downloads/downloads.svg");
+}
+
+/*
+ * ─[ CONTEXT MENU ]─────────────────────────────────────────────────────
+*/
+:is(
+    #toolbar-context-menu,
+    #contentAreaContextMenu,
+    #unified-extensions-context-menu,
+    #downloadsContextMenu,
+    #placesContext,
+    #sidebarMenu-popup,
+    #BMB_bookmarksPopup,
+    #toolbar-menubar menupopup,
+    #PlacesToolbar menupopup
+  )
+  :is(menuitem, menu) {
+  /* icons color and position */
+  fill: currentColor !important;
+  fill-opacity: var(--toolbarbutton-icon-fill-opacity) !important;
+  -moz-context-properties: fill, fill-opacity, stroke !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 5px !important;
+  background-position-y: center !important;
+  background-size: 16px !important;
+
+  /* various paddings/margins tweaks */
+  &:not(.menuitem-iconic, .menu-iconic, [type="checkbox"], [type="radio"])
+    > label {
+    margin-inline-start: 21px !important;
+  }
+
+  .menu-iconic-left {
+    width: 22px !important;
+    padding-inline-end: 6px !important;
+    margin-inline: 0px !important;
+  }
+
+  .menu-iconic-text {
+    margin-inline-start: -1px !important;
+  }
+  &:not(:is(menu, [acceltext])) {
+    padding-right: 0px !important;
+  }
+}
+
+menupopup,
+panel {
+  --panel-background: var(--tf-bg) !important;
+  --panel-border-radius: var(--tf-rounding) !important;
+  --panel-border-color: var(--tf-accent) !important;
+  --panel-separator-color: var(--tf-border) !important;
+}
+slot[part="content"] {
+  border-width: var(--border-width) !important;
+}
+
+#appMenu-popup {
+  #shadow-root {
+    > * {
+      border-width: 2px !important;
+    }
+  }
+}
+
+menu,
+menuitem {
+  &:where([_moz-menuactive]:not([disabled="true"])) {
+    background: var(--tab-selected-bgcolor) !important;
+  }
+  &:where([_moz-menuactive="true"][disabled="true"]) {
+    background: var(--tab-hover-background-color) !important;
+  }
+}
+
+.menupopup-arrowscrollbox {
+  border-width: var(--border-width) !important;
+}
+
+menuitem {
+  border-radius: var(--tf-rounding) !important;
+}
+
+/* fix urlbar being too high in ff 128 */
+* {
+  --urlbar-toolbar-height: 32px !important;
+  --urlbar-container-height: 32px !important;
+}
+
+/* hide stuff */
+#userContext-icons,
+#translations-button-icon,
+#tracking-protection-icon-container,
+#star-button-box,
+.urlbar-page-action:not([hidden="true"]) {
+  display: var(--tf-display-urlbar-icons);
+}
+
+/* configurable navigation buttons */
+#back-button,
+#forward-button {
+  display: var(--tf-display-nav-buttons);
+}
+
+/* 
+   hide elements of the identity box when:
+   the page is secure (using https) and the domain is verified
+   or when mixed content is blocked
+*/
+#identity-box[pageproxystate="valid"] {
+  &.verifiedDomain {
+    #identity-permission-box:not([hasSharingIcon]),
+    #permissions-granted-icon {
+      display: var(--tf-display-urlbar-icons) !important;
+    }
+    #permissions-granted-icon + box:has(image[sharing="true"]) {
+      margin-left: -4px;
+    }
+    #identity-icon {
+      list-style-image: unset !important;
+    }
+  }
+  &.mixedActiveBlocked {
+    #permissions-granted-icon,
+    #identity-permission-box:not([hasSharingIcon]) {
+      display: var(--tf-display-urlbar-icons) !important;
+    }
+    #permissions-granted-icon + box:has(image[sharing="true"]) {
+      margin-left: -4px;
+    }
+  }
+}
+
+#navigator-toolbox {
+  border-bottom: var(--border-width) !important;
+}
+
+#nav-bar {
+  margin: var(--tf-navbar-margin);
+  padding: var(--tf-navbar-padding) !important;
+  border-top: var(--border-width) !important;
+  border-style: solid !important;
+  border-width: var(--border-width);
+  border-color: var(--tf-border) !important;
+  border-radius: var(--tf-rounding);
+  transition: border-color var(--tf-border-transition) !important;
+  &:hover,
+  &:focus {
+    border-color: var(--tf-accent) !important;
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    content: "navbar";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -16px 8px;
+    padding: 0 2px;
+  }
+  &:hover::before {
+    color: var(--tf-accent);
+  }
+
+  &:not([urlbar-exceeds-toolbar-bounds]) {
+    overflow: unset !important;
+  }
+}
+#PersonalToolbar {
+  margin: 8px 8px 2px;
+  padding: 4px !important;
+  border-top: var(--border-width) !important;
+  border-style: solid !important;
+  border-width: var(--border-width);
+  border-color: var(--tf-border) !important;
+  border-radius: var(--tf-rounding);
+  transition: border-color var(--tf-border-transition) !important;
+  &:hover,
+  &:focus {
+    border-color: var(--tf-accent) !important;
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    content: "bookmarks";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -1.25rem 0.4rem;
+    padding: 0 2px;
+  }
+  &:hover::before {
+    color: var(--tf-accent);
+  }
+}
+
+#PlacesToolbarItems {
+  display: flex;
+  justify-content: center;
+}
+
+toolbarbutton.bookmark-item:not(.subviewbutton) {
+  padding: 8px !important;
+}
+
+:root[tabsintitlebar] #toolbar-menubar[autohide="true"] {
+  --tab-min-height: fit-content !important;
+  min-height: fit-content !important;
+  padding-top: 3px !important;
+}
+
+.browser-toolbar {
+  &:not(.titlebar-color) {
+    background-color: transparent !important;
+  }
+}
+
+@media (-moz-bool-pref: "sidebar.revamp") {
+  #nav-bar::before {
+    margin: -1.35rem 0.75rem;
+    left: 0;
+  }
+
+  .titlebar-spacer[type="pre-tabs"],
+  .titlebar-spacer[type="post-tabs"] {
+    width: 0 !important;
+  }
+}
+
+:root {
+  --toolbar-color: currentColor !important;
+  --link-color: var(--tf-accent) !important;
+  --urlbarView-highlight-background: var(
+    --toolbar-field-background-color
+  ) !important;
+  --toolbox-non-lwt-bgcolor: var(--tf-bg) !important;
+  --toolbar-field-background-color: var(--tf-bg) !important;
+
+  /* borders */
+  --border-width: var(--tf-border-width) !important;
+  --border-radius-small: var(--tf-rounding) !important;
+  --border-radius-medium: var(--tf-rounding) !important;
+  --toolbarbutton-border-radius: var(--tf-rounding) !important;
+  --tab-border-radius: var(--tf-rounding) !important;
+
+  /* tabs */
+  --tab-selected-outline-color: transparent !important;
+  --tab-selected-bgcolor: color-mix(
+    in hsl,
+    var(--toolbar-field-color) 8%,
+    var(--toolbar-bgcolor)
+  ) !important;
+  --tab-hover-background-color: color-mix(
+    in hsl,
+    var(--toolbar-field-color) 4%,
+    var(--toolbar-bgcolor)
+  ) !important;
+  --tab-min-height: 29px !important;
+
+  /* buttons */
+  --toolbarbutton-hover-background: var(
+    --tab-hover-background-color
+  ) !important;
+  --button-background-color-active: var(
+    --tab-hover-background-color
+  ) !important;
+
+  /* containers */
+  [data-color="yellow"],
+  .identity-color-yellow {
+    --color: #f6c177 !important;
+    --identity-tab-color: #f6c177 !important;
+    --identity-icon-color: #f6c177 !important;
+  }
+  [data-color="purple"],
+  .identity-color-purple {
+    --color: #c4a7e7 !important;
+    --identity-tab-color: #c4a7e7 !important;
+    --identity-icon-color: #c4a7e7 !important;
+  }
+  [data-color="blue"],
+  .identity-color-blue {
+    --color: #9ccfd8 !important;
+    --identity-tab-color: #9ccfd8 !important;
+    --identity-icon-color: #9ccfd8 !important;
+  }
+  [data-color="turquoise"],
+  .identity-color-turquoise {
+    --color: #9ccfd8 !important;
+    --identity-tab-color: #9ccfd8 !important;
+    --identity-icon-color: #9ccfd8 !important;
+  }
+  [data-color="green"],
+  .identity-color-green {
+    --color: #3e8fb0 !important;
+    --identity-tab-color: #3e8fb0 !important;
+    --identity-icon-color: #3e8fb0 !important;
+  }
+  [data-color="orange"],
+  .identity-color-orange {
+    --color: #f6c177 !important;
+    --identity-tab-color: #f6c177 !important;
+    --identity-icon-color: #f6c177 !important;
+  }
+  [data-color="red"],
+  .identity-color-red {
+    --color: #eb6f92 !important;
+    --identity-tab-color: #eb6f92 !important;
+    --identity-icon-color: #eb6f92 !important;
+  }
+  [data-color="pink"],
+  .identity-color-pink {
+    --color: #ea9a97 !important;
+    --identity-tab-color: #ea9a97 !important;
+    --identity-icon-color: #ea9a97 !important;
+  }
+
+  /* opacity */
+  --inactive-titlebar-opacity: 1 !important;
+}
+
+#sidebar-box {
+  margin: 8px;
+  border: var(--border-width) solid var(--tf-border);
+  border-radius: var(--tf-rounding) !important;
+  transition: border-color var(--tf-border-transition);
+  background: var(--tf-bg) !important;
+  &:hover {
+    border-color: var(--tf-accent) !important;
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    z-index: 1;
+    font-size: var(--tf-font-size);
+    content: "tabs";
+    color: var(--lwt-text-color);
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -0.85rem 0.85rem;
+    padding: 0 4px;
+  }
+  &:hover::before {
+    color: var(--tf-accent);
+  }
+}
+
+#sidebar {
+  border-radius: var(--tf-rounding) !important;
+}
+
+#sidebar-header {
+  display: none;
+}
+
+#sidebar-splitter {
+  display: none;
+}
+
+@media (-moz-bool-pref: "sidebar.revamp") {
+  #sidebar {
+    box-shadow: none !important;
+  }
+  #sidebar-main {
+    :root[lwtheme] & {
+      background-color: var(--tf-bg) !important;
+      background-image: unset !important;
+    }
+  }
+  #sidebar-box {
+    font-size: unset !important;
+    padding: 8px !important;
+    &::before {
+      margin: -20px 4px;
+      margin: -1.75rem 0rem;
+      content: "tool";
+    }
+  }
+
+  .tools-and-extensions {
+    display: var(--tf-display-sidebar-tools) !important;
+    margin: 8px;
+    border: var(--border-width) solid var(--tf-border);
+    border-radius: var(--tf-rounding) !important;
+    transition: border-color var(--tf-border-transition);
+    &:hover {
+      border-color: var(--tf-accent) !important;
+    }
+    &::before {
+      content: "tools";
+      color: var(--lwt-text-color);
+      background-color: var(--tf-bg);
+      margin: -1rem 0.75rem 0rem;
+      padding: 0 4px;
+    }
+    &:hover::before {
+      color: var(--tf-accent);
+    }
+  }
+  #tabbrowser-tabs[orient="vertical"] {
+    &:not([expanded]) {
+      #vertical-pinned-tabs-container,
+      .tab-stack {
+        width: 100% !important;
+      }
+    }
+  }
+}
+
+/*Floorp sidebar fix*/
+#sidebar-select-box {
+  background-color: var(--lwt-accent-color) !important;
+  background-image: var(--lwt-accent-color) !important;
+}
+
+box#vertical-tabs {
+  margin: 8px !important;
+  border: var(--border-width) solid var(--tf-border);
+  border-radius: var(--tf-rounding);
+  padding: 8px 0px !important;
+  transition: border-color var(--tf-border-transition);
+  min-width: 51px;
+  &:hover,
+  &:focus {
+    border-color: var(--tf-accent) !important;
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    content: "tabs";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -1.75rem 0.4rem;
+    padding: 0 2px;
+  }
+  &:hover::before {
+    color: var(--tf-accent);
+  }
+}
+
+/* hide window controls */
+.titlebar-buttonbox-container {
+  display: var(--tf-display-window-controls);
+}
+
+#TabsToolbar {
+  display: var(--tf-display-horizontal-tabs);
+  margin: 8px 8px 2px;
+  border-top: var(--border-width) !important;
+  border-style: solid !important;
+  border-width: var(--border-width);
+  border-color: var(--tf-border) !important;
+  border-radius: var(--tf-rounding);
+  transition: border-color var(--tf-border-transition) !important;
+  &:hover,
+  &:focus {
+    border-color: var(--tf-accent) !important;
+    &::before {
+      color: var(--tf-accent);
+    }
+  }
+  &::before {
+    display: var(--tf-display-titles);
+    content: "tabs";
+    background-color: var(--tf-bg);
+    position: absolute;
+    margin: -1rem 0.75rem;
+    padding: 0 2px;
+  }
+
+  #firefox-view-button[open] > .toolbarbutton-icon,
+  .tab-background:is([selected], [multiselected]) {
+    box-shadow: none !important;
+    background-color: var(--tab-selected-bgcolor) !important;
+  }
+  .tabbrowser-tab:hover
+    > .tab-stack
+    > .tab-background:not([selected], [multiselected]) {
+    background-color: var(--tab-hover-background-color) !important;
+  }
+}
+
+:root:not([privatebrowsingmode], [firefoxviewhidden])
+  :is(toolbarbutton, toolbarpaletteitem)
+  + #tabbrowser-tabs,
+:root[privatebrowsingmode]:not([firefoxviewhidden])
+  :is(
+    toolbarbutton:not(#firefox-view-button),
+    toolbarpaletteitem:not(#wrapper-firefox-view-button)
+  )
+  + #tabbrowser-tabs {
+  border-inline-start: none !important;
+  padding-inline-start: 0 !important;
+}
+
+.toolbar-items {
+  margin: 3px;
+}
+
+tabs {
+  text-transform: var(--tf-text-transform);
+}
+
+#urlbar {
+  text-align: center;
+}
+
+#urlbar-background {
+  background-color: transparent !important;
+  border: unset !important;
+  box-shadow: unset !important;
+}
+.urlbarView {
+  text-align: start;
+  margin-top: 4px;
+  background-color: var(--tf-bg);
+  border: var(--border-width) solid var(--tf-accent) !important;
+  border-radius: 0 0 var(--tf-rounding) var(--tf-rounding);
+}
+.urlbarView-body-inner {
+  #urlbar[open] > .urlbarView > .urlbarView-body-outer > & {
+    border-top: unset !important;
+  }
+}
+.urlbarView:not([noresults]) > .search-one-offs:not([hidden]) {
+  border-top: var(--border-width) solid var(--tf-accent) !important;
+}
+
+/* sideberry */
+
+@-moz-document regexp("^moz-extension://.*?/sidebar/sidebar.html")
+{
+  /* wrap start */
+
+  #root.root {
+    --general-border-radius: var(--tf-rounding) !important;
+    --general-margin: 8px !important;
+    --tabs-font: var(--tf-font-size) var(--tf-font-family) !important;
+
+    --button-size: 35px;
+    --pin-favicon-size: 30px;
+
+    --nav-btn-margin: calc(var(--tf-margin) / 2) !important;
+    --nav-btn-width: var(--button-size) !important;
+    --nav-btn-height: var(--button-size) !important;
+    --nav-btn-len-margin: calc(var(--tf-rounding) / 4) !important;
+
+    --audio-btn-round-margin: calc(var(--tf-rounding) / 2) !important;
+
+    --tabs-audio-btn-width: 22px !important;
+    --tabs-margin: 6px !important;
+    --tabs-height: var(--button-size) !important;
+    --tabs-inner-gap: calc(var(--tf-margin) / 2) !important;
+    --tabs-border-radius: var(--tf-rounding) !important;
+
+    --frame-el-overlay-selected-border: var(--s-toolbar-fg) !important;
+    --frame-el-overlay-hover-bg: color-mix(
+      in hsl,
+      currentColor 4%,
+      var(--toolbar-bg)
+    ) !important;
+    --toolbar-el-overlay-selected-border: var(--s-toolbar-fg) !important;
+    --status-notice: var(--s-toolbar-fg) !important;
+  }
+
+  /*
+   * ─[ pinned tabs ]──────────────────────────────────────────────────────
+  */
+
+  /* size calculation */
+  .PinnedTabsBar .tab-wrapper .Tab {
+    --n: 3;
+    --m: 1;
+
+    width: calc(
+      100vw / var(--n) - var(--tabs-margin) * (1 / var(--n) + 1)
+    ) !important;
+
+    height: calc(((100vw - var(--tabs-margin)) / 3.6) / var(--m)) !important;
+  }
+
+  /* full-width titles */
+  #root[data-pinned-tabs-list="true"] .PinnedTabsBar .tab-wrapper .Tab {
+    --n: 1 !important;
+    --m: 1.4 !important;
+  }
+
+  /* 1 pinned tab */
+  .PinnedTabsBar .tab-wrapper:nth-child(1):last-child .Tab {
+    --n: 1;
+    --m: 1.4;
+  }
+
+  /* 2 tabs in bottom row */
+  .PinnedTabsBar:has(.tab-wrapper:nth-child(3n + 2):last-child)
+    .tab-wrapper:nth-last-child(-n + 2)
+    .Tab {
+    --n: 2;
+    --m: 1.2;
+  }
+
+  /* 4 tabs in bottom row */
+  .PinnedTabsBar:has(.tab-wrapper:nth-child(3n + 4):last-child)
+    .tab-wrapper:nth-last-child(-n + 4)
+    .Tab {
+    --n: 4;
+    --m: 1.3;
+  }
+
+  /* audio icon */
+  .Tab[data-pin="true"] > .body > .audio {
+    background: transparent !important;
+    box-shadow: none !important;
+    right: var(--audio-btn-round-margin) !important;
+    top: var(--audio-btn-round-margin) !important;
+  }
+
+  /* bigger favicon */
+  .Tab[data-pin="true"] :is(.fav, .fav-icon) {
+    width: var(--pin-favicon-size) !important;
+    height: var(--pin-favicon-size) !important;
+  }
+
+  /* shadow, outline and background */
+  .Tab[data-pin="true"] .body {
+    background-color: var(--toolbar-bg) !important;
+  }
+
+  /* remove bottom margin */
+  .PinnedTabsBar {
+    margin-bottom: 0px !important;
+  }
+
+  /*
+   * ─[ general tab stuff ]────────────────────────────────────────────────
+  */
+  .Tab[data-active="true"] .body {
+    box-shadow: none !important;
+    background-color: color-mix(
+      in hsl,
+      currentColor 8%,
+      var(--toolbar-bg)
+    ) !important;
+
+    & .title {
+      color: var(--s-popup-fg) !important;
+    }
+  }
+
+  .Tab .body {
+    text-transform: var(--tf-text-transform);
+    & .title {
+      color: color-mix(in hsl, var(--s-popup-fg) 50%, transparent) !important;
+    }
+  }
+
+  /*
+   * ─[ other ]────────────────────────────────────────────────────────────
+  */
+
+  /* consistent navbar background */
+  #nav_bar {
+    background-color: transparent !important;
+  }
+
+  /* padding */
+  #nav_bar {
+    padding-top: var(--nav-btn-margin) !important;
+    padding-bottom: var(--general-margin) !important;
+  }
+
+  .BottomBar {
+    padding: var(--nav-btn-margin) !important;
+  }
+
+  /* popup */
+  .popup {
+    margin: var(--tabs-margin) !important;
+  }
+  .popup-container {
+    background-color: transparent !important;
+  }
+
+  /* search */
+  #search_bar {
+    margin: 4px !important;
+  }
+  #search_bar[data-showed="false"] {
+    display: none !important;
+  }
+  #search_bar .clear-btn {
+    margin-inline-end: var(--general-margin);
+  }
+
+  .NavigationBar {
+    box-shadow: none !important;
+  }
+
+  /* accent colored selection */
+  ::selection {
+    background: color-mix(
+      in hsl,
+      var(--s-toolbar-fg) 20%,
+      transparent
+    ) !important;
+  }
+
+  /* notification */
+  .notification {
+    border-radius: var(--tf-rounding) !important;
+    &::after {
+      top: calc(var(--tf-rounding) / 4 + 3px) !important;
+      right: calc(var(--tf-rounding) / 4 + 3px) !important;
+    }
+  }
+} /* wrap end */
+
+/* about.css */
+@-moz-document url-prefix(about:) {
+  * {
+    font-family: var(--tf-font-family) !important;
+  }
+}
+
+/* newtab.css */
+@-moz-document url("about:home"), url("about:newtab") {
+  body {
+    &.lightWallpaper {
+      color-scheme: light !important;
+    }
+    &.darkWallpaper {
+      color-scheme: dark !important;
+    }
+    --newtab-background-color-secondary: color-mix(
+      in srgb,
+      var(--newtab-wallpaper-color) 90%,
+      var(--newtab-contextual-text-primary-color)
+    ) !important;
+    --newtab-border-color: color-mix(
+      in srgb,
+      var(--newtab-wallpaper-color) 50%,
+      var(--newtab-contextual-text-primary-color)
+    ) !important;
+    --newtab-element-hover-color: color-mix(
+      in srgb,
+      var(--newtab-wallpaper-color) 70%,
+      var(--newtab-contextual-text-primary-color)
+    ) !important;
+
+    --newtab-weather-background-color: transparent !important;
+  }
+
+  /* replace firefox logo */
+  .logo-and-wordmark {
+    .logo {
+      display: none !important;
+    }
+    .wordmark {
+      background: unset !important;
+      width: unset !important;
+      height: auto !important;
+      &::before {
+        content: var(--tf-newtab-logo);
+        white-space: pre-wrap;
+        display: block;
+        color: var(--newtab-contextual-text-primary-color);
+        font-size: var(--tf-font-size);
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* search bar */
+  .search-wrapper {
+    .search-handoff-button,
+    input {
+      border: var(--border-width) solid var(--newtab-border-color) !important;
+      border-radius: var(--tf-rounding) !important;
+      box-shadow: none !important;
+      &:hover {
+        background-color: var(--newtab-element-hover-color) !important;
+      }
+    }
+    .search-inner-wrapper {
+      margin-top: 4lh !important;
+    }
+  }
+
+  /* links */
+  .top-site-outer {
+    .tile {
+      box-shadow: none !important;
+      border-radius: var(--tf-rounding) !important;
+      border: var(--border-width) solid var(--newtab-border-color) !important;
+      &:hover {
+        background-color: var(--newtab-element-hover-color) !important;
+      }
+    }
+    .top-site-icon {
+      background-color: transparent !important;
+    }
+  }
+  .context-menu {
+    box-shadow: none !important;
+    border-radius: var(--tf-rounding) !important;
+    border: var(--border-width) solid var(--newtab-border-color) !important;
+  }
+
+  /* history */
+  .card-outer {
+    border-radius: var(--tf-rounding) !important;
+    border: var(--border-width) solid var(--newtab-border-color);
+    .card {
+      border-radius: var(--tf-rounding) !important;
+    }
+    .card-preview-image-outer {
+      border-radius: var(--tf-rounding) var(--tf-rounding) 0 0 !important;
+    }
+    .card-context {
+      display: none !important;
+    }
+  }
+}
+
+/* default.css */
+:root {
+  --tf-font-family: "SF Mono", Consolas, monospace; /* Font family of config */
+  --tf-font-size: 14px; /* Font size of config */
+  --tf-accent: var(
+    --toolbarbutton-icon-fill
+  ); /* Accent color used, eg: color when hovering a container  */
+  --tf-bg: var(
+    --lwt-accent-color,
+    -moz-dialog
+  ); /* Background color of all elements, tab colors derive from this */
+  --tf-border: var(
+    --arrowpanel-border-color,
+    --toolbar-field-background-color
+  ); /* Border color when not hovered */
+  --tf-border-transition: 0.2s ease; /* Smooth color transitions for borders */
+  --tf-border-width: 2px; /* Width of borders */
+  --tf-rounding: 0px; /* Border radius used through out the config */
+  --tf-margin: 0.8rem; /* Margin used between elements in sidebery */
+  --tf-text-transform: none; /* Text transform to use */
+  --tf-display-horizontal-tabs: block; /* If horizontal tabs should be shown, none = hidden, block = shown */
+  --tf-display-window-controls: none; /* If the window controls should be shown (won't work with sidebery and hidden horizontal tabs), none = hidden, flex = shown */
+  --tf-display-nav-buttons: none; /* If the navigation buttons (back, forward) should be shown, none = hidden, flex = shown */
+  --tf-display-urlbar-icons: none; /* If the icons inside the url bar should be shown, none = hidden, flex = shown */
+  --tf-display-sidebar-tools: flex; /* If the "Customize sidebar" button on the sidebar should be shown, none = hidden, flex = shown */
+  --tf-display-titles: flex; /* If titles (tabs, navbar, main etc.) should be shown, none = hidden, flex = shown */
+  --tf-newtab-logo: "           __            __                             ______/  |          /  |                           /      \______  $$/   _______ $$ |____    ______   _______  /$$$$$$  |______   __    __/      \ /  | /       |$$      \  /      \ /       \ $$ |_ $$//      \ /  \  /  |/$$$$$$  |$$ |/$$$$$$$/ $$$$$$$  |/$$$$$$  |$$$$$$$  |$$   |  /$$$$$$  |$$  \/$$/$$ |  $$/ $$ |$$ |      $$ |  $$ |$$    $$ |$$ |  $$ |$$$$/   $$ |  $$ | $$  $$<$$ |      $$ |$$ \_____ $$ |  $$ |$$$$$$$$/ $$ |  $$ |$$ |    $$ \__$$ | /$$$$  \$$ |      $$ |$$       |$$ |  $$ |$$       |$$ |  $$ |$$ |    $$    $$/ /$$/ $$  |$$/       $$/  $$$$$$$/ $$/   $$/  $$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/   $$/";
+  --tf-navbar-margin: 8px 8px 2px; /* navbar margin */
+  --tf-navbar-padding: 4px; /* navbar padding */
+  --tf-bookmarks-alignment: center; /* alignment of bookmarks in the bookmarks toolbar (if you have many bookmarks, left is recommended) */
+}
+
+* {
+  font-family: var(--tf-font-family);
+  font-size: var(--tf-font-size);
+}
+
+body {
+  background-color: var(--tf-bg);
+}
+
+::placeholder {
+  text-transform: var(--tf-text-transform);
+}
+
+/* FOLLOWING STYLES COPIED FROM https://github.com/rose-pine/firefox */
+
+#fullscr-toggler {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+:root {
+  --uc-bg-color: #1f1d29;
+  --uc-show-new-tab-button: none;
+  --uc-show-tab-separators: none;
+  --uc-tab-separators-color: none;
+  --uc-tab-separators-width: none;
+  --uc-tab-fg-color: #9bced7;
+  --autocomplete-popup-background: var(--mff-bg) !important;
+  --default-arrowpanel-background: var(--mff-bg) !important;
+  --default-arrowpanel-color: #fefefa !important;
+  --lwt-toolbarbutton-icon-fill: var(--mff-icon-color) !important;
+  --panel-disabled-color: #f9f9fa80;
+  --toolbar-bgcolor: var(--mff-bg) !important;
+  --urlbar-separator-color: transparent !important;
+  --mff-bg: #1f1d29;
+  --mff-icon-color: #9bced7;
+  --mff-nav-toolbar-padding: 8px;
+  --mff-sidebar-bg: var(--mff-bg);
+  --mff-sidebar-color: #f1ca93;
+  --mff-tab-border-radius: 0px;
+  --mff-tab-color: #ea6f91;
+  --mff-tab-font-family: "FiraCode Nerd Font";
+  --mff-tab-font-size: 11pt;
+  --mff-tab-font-weight: 400;
+  --mff-tab-height: 32px;
+  --mff-tab-pinned-bg: #9bced7;
+  --mff-tab-selected-bg: #403c58;
+  --mff-tab-soundplaying-bg: #9c89b8;
+  --mff-urlbar-color: #98c1d9;
+  --mff-urlbar-focused-color: #403c58;
+  --mff-urlbar-font-family: "Fira Code";
+  --mff-urlbar-font-size: 11pt;
+  --mff-urlbar-font-weight: 700;
+  --mff-urlbar-results-color: #f1ca93;
+  --mff-urlbar-results-font-family: "Fira Code";
+  --mff-urlbar-results-font-size: 11pt;
+  --mff-urlbar-results-font-weight: 700;
+  --mff-urlbar-results-url-color: #98c1d9;
+}
+
+#back-button > .toolbarbutton-icon {
+  --backbutton-background: transparent !important;
+  border: none !important;
+}
+
+#back-button {
+  list-style-image: url("left-arrow.svg") !important;
+}
+
+#forward-button {
+  list-style-image: url("right-arrow.svg") !important;
+}
+
+/* Options with pixel amounts could need to be adjusted, as this only works for my laptop's display */
+#titlebar {
+  -moz-box-ordinal-group: 0 !important;
+}
+
+.tabbrowser-tab:not([fadein]),
+#tracking-protection-icon-container,
+#identity-box {
+  display: none !important;
+  border: none !important;
+}
+#urlbar-background,
+.titlebar-buttonbox-container,
+#nav-bar,
+.tabbrowser-tab:not([selected]) .tab-background {
+  background: var(--uc-bg-color) !important;
+  border: none !important;
+}
+#urlbar[breakout][breakout-extend] {
+  top: calc(
+    (var(--urlbar-toolbar-height) - var(--urlbar-height)) / 2
+  ) !important;
+  left: 0 !important;
+  width: 100% !important;
+}
+
+#urlbar[breakout][breakout-extend] > #urlbar-input-container {
+  height: var(--urlbar-height) !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+}
+
+#urlbar-background {
+  box-shadow: none !important;
+}
+/*#tabs-newtab-button {
+  display: var(--uc-show-new-tab-button) !important;
+}*/
+.tabbrowser-tab::after {
+  border-left: var(--uc-tab-separators-width) solid
+    var(--uc-tab-separators-color) !important;
+  display: var(--uc-show-tab-separators) !important;
+}
+.tabbrowser-tab[first-visible-tab][last-visible-tab] {
+  background-color: var(--uc-bar-bg-color) !important;
+}
+.tab-close-button.close-icon {
+  display: none !important;
+}
+.tabbrowser-tab:hover .tab-close-button.close-icon {
+  display: block !important;
+}
+#urlbar-input {
+  text-align: center !important;
+}
+#urlbar-input:focus {
+  text-align: left !important;
+}
+#urlbar-container {
+  margin-left: 3vw !important;
+}
+.tab-text.tab-label {
+  color: var(--uc-tab-fg-color) !important;
+}
+#navigator-toolbox {
+  border-bottom: 0px solid #ea6f91 !important;
+  background: var(--uc-bg-color) !important;
+}
+
+.urlbar-icon > image {
+  fill: var(--mff-icon-color) !important;
+  color: var(--mff-icon-color) !important;
+}
+
+.toolbarbutton-text {
+  color: var(--mff-icon-color) !important;
+}
+.urlbar-icon {
+  color: var(--mff-icon-color) !important;
+}
+
+/*================ DARK THEME ================*/
+@media (prefers-color-scheme: dark) {
+  :root[style*="--lwt-accent-color:rgb(12, 12, 13);"] {
+    --base_color1: var(--dark_color1);
+    --base_color2: var(--dark_color2);
+    --base_color3: var(--dark_color3);
+    --base_color4: var(--dark_color4);
+
+    --outer_color1: var(--word_color1);
+    --outer_color2: var(--word_color2);
+    --outer_color3: var(--word_color3);
+
+    --orbit_color: var(--dark_color3);
+  }
+}
+
+/*================== FIREFOX BG COLOR ==================*/
+@-moz-document url("about:newtab"),
+  url("about:home"),
+  url("about:blank"),
+  url("about:support"),
+  url("about:config") {
+  :root[lwt-newtab-brighttext]:not(#ublock0-epicker) {
+    background-color: var(--dark_color1) !important;
+    --in-content-page-background: var(--dark_color1) !important;
+
+    --newtab-background-color: var(--dark_color1) !important;
+    --newtab-background-color-secondary: var(--dark_color1) !important;
+  }
+
+  [lwt-newtab-brighttext] .wordmark {
+    fill: #fefafe !important;
+  }
+
+  [lwt-newtab-brighttext] .SnippetBaseContainer {
+    background-color: var(--dark_color2) !important;
+    color: var(--word_color3) !important;
+  }
+
+  [lwt-newtab-brighttext] .ASRouterButton {
+    border-radius: 3px !important;
+  }
+}
+
+/*================== SEARCH BAR ==================*/
+[lwt-newtab-brighttext] .search-wrapper .search-inner-wrapper:hover input,
+[lwt-newtab-brighttext] .search-wrapper .search-inner-wrapper:active input,
+[lwt-newtab-brighttext] .search-wrapper input:focus {
+  border-color: var(--dark_color4) !important;
+}
+[lwt-newtab-brighttext] .search-wrapper .search-button,
+[lwt-newtab-brighttext] .search-wrapper .search-button {
+  transition: all 0.3s ease !important;
+  fill: var(--word_color3) !important;
+}
+[lwt-newtab-brighttext] .search-wrapper .search-button:focus,
+[lwt-newtab-brighttext] .search-wrapper .search-button:hover {
+  background-color: var(--dark_color4) !important;
+}
+
+/*================== READER VIEW ==================*/
+@-moz-document url-prefix("about:reader") {
+  html {
+    background: var(--base_color1);
+  }
+  toolbar > reader-toolbar {
+    border-radius: 3px !important;
+  }
+
+  /*Dark*/
+  body.loaded.dark {
+    --toolbar-bgcolor: var(--dark_color2) !important;
+    --toolbar-border: var(--dark_color1) !important;
+    --toolbar-hover: var(--dark_color3) !important;
+    --popup-bgcolor: var(--dark_color2) !important;
+    --popup-border: var(--dark_color3) !important;
+    --font-color: var(--word_color3) !important;
+    --icon-fill: var(--word_color3) !important;
+    background: var(--dark_color1) !important;
+    --blue-40: var(--word_color1) !important;
+    --blue-40-a30: rgba(144, 89, 255, 0.3) !important;
+    --active-color: var(--word_color1) !important;
+  }
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════
+ * THEME CONFIGURATION - Centralized Variables
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────────
+   * COLORS
+   * ───────────────────────────────────────────────────────────────────── */
+
+  --theme-bg: #0e120f; /* Main background */
+  --theme-bg-secondary: #142825; /* Secondary background */
+  --theme-border: #295233; /* Border color */
+  --theme-accent: #9ae6ad; /* Accent/highlight color */
+  --theme-accent-alt: #578f65; /* Alternative accent */
+  --theme-icon: #9ae6d0; /* Icon color */
+  --theme-text: #ccfff9; /* Text color */
+  --theme-text-alt: #aaf0e7; /* Alternative text */
+
+  /* Tab-specific colors */
+  --theme-tab-selected: #1e3734;
+  --theme-tab-pinned: #578f65;
+  --theme-tab-sound: #9ae6da;
+
+  /* Container colors */
+  --theme-container-yellow: #aaf0dc;
+  --theme-container-purple: #9ae6d0;
+  --theme-container-blue: #9ae6da;
+  --theme-container-turquoise: #9ae6da;
+  --theme-container-green: #9ae6ad;
+  --theme-container-orange: #aaf0e5;
+  --theme-container-red: #578f65;
+  --theme-container-pink: #ccfff9;
+
+  /* ─────────────────────────────────────────────────────────────────────
+   * TYPOGRAPHY
+   * ───────────────────────────────────────────────────────────────────── */
+
+  --theme-font-family: "Gohu Font 14 Nerd Font", monospace;
+  --theme-font-size: 14px;
+  --theme-font-size-large: 11pt;
+  --theme-font-weight-normal: 400;
+  --theme-font-weight-bold: 700;
+  --theme-text-transform: none;
+
+  /* ─────────────────────────────────────────────────────────────────────
+   * SPACING & BORDERS
+   * ───────────────────────────────────────────────────────────────────── */
+
+  --theme-border-width: 2px;
+  --theme-border-radius: 0px;
+  --theme-border-transition: 0.2s ease;
+  --theme-spacing: 8px;
+  --theme-spacing-small: 4px;
+  --theme-margin: 0.8rem;
+
+  /* ─────────────────────────────────────────────────────────────────────
+   * DISPLAY TOGGLES
+   * ───────────────────────────────────────────────────────────────────── */
+
+  --theme-display-horizontal-tabs: block;
+  --theme-display-window-controls: none;
+  --theme-display-nav-buttons: none;
+  --theme-display-urlbar-icons: none;
+  --theme-display-sidebar-tools: flex;
+  --theme-display-titles: flex;
+  --theme-display-new-tab-button: block;
+  --theme-display-tab-separators: block;
+
+  /* ─────────────────────────────────────────────────────────────────────
+   * MISC
+   * ───────────────────────────────────────────────────────────────────── */
+
+  --theme-tab-height: 32px;
+  --theme-tab-min-height: 29px;
+  --theme-bookmarks-alignment: left;
+  --theme-newtab-logo: "@textfox-logo@";
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════
+ * LEGACY VARIABLE MAPPINGS - Maps old variable names to new consolidated ones
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+:root {
+  /* Legacy color mappings */
+  --dark_color1: var(--theme-bg) !important;
+  --dark_color2: var(--theme-bg-secondary) !important;
+  --dark_color3: var(--theme-border) !important;
+  --dark_color4: var(--theme-accent) !important;
+  --base_color1: var(--theme-bg) !important;
+  --base_color2: var(--theme-bg-secondary) !important;
+  --base_color3: var(--theme-border) !important;
+  --base_color4: var(--theme-accent-alt) !important;
+  --word_color1: #ffffff !important;
+  --word_color2: var(--theme-text) !important;
+  --word_color3: var(--theme-text-alt) !important;
+  --other_color1: var(--theme-accent) !important;
+  --other_color2: var(--theme-icon) !important;
+  --other_color3: var(--theme-text-alt) !important;
+  --outer_color1: #ffffff !important;
+  --outer_color2: var(--theme-text) !important;
+  --outer_color3: var(--theme-text-alt) !important;
+  --orbit_color: #9795a3 !important;
+
+  /* Textfox variable mappings */
+  --tf-font-family: var(--theme-font-family) !important;
+  --tf-font-size: var(--theme-font-size) !important;
+  --tf-accent: var(--theme-accent) !important;
+  --tf-bg: var(--theme-bg) !important;
+  --tf-border: var(--theme-border) !important;
+  --tf-border-transition: var(--theme-border-transition) !important;
+  --tf-border-width: var(--theme-border-width) !important;
+  --tf-rounding: var(--theme-border-radius) !important;
+  --tf-margin: var(--theme-margin) !important;
+  --tf-text-transform: var(--theme-text-transform) !important;
+  --tf-display-horizontal-tabs: var(--theme-display-horizontal-tabs) !important;
+  --tf-display-window-controls: var(--theme-display-window-controls) !important;
+  --tf-display-nav-buttons: var(--theme-display-nav-buttons) !important;
+  --tf-display-urlbar-icons: var(--theme-display-urlbar-icons) !important;
+  --tf-display-sidebar-tools: var(--theme-display-sidebar-tools) !important;
+  --tf-display-titles: var(--theme-display-titles) !important;
+  --tf-newtab-logo: var(--theme-newtab-logo) !important;
+  --tf-navbar-margin: var(--theme-spacing) var(--theme-spacing) 2px !important;
+  --tf-navbar-padding: var(--theme-spacing-small) !important;
+
+  /* Rose Pine / MFF variable mappings */
+  --uc-bg-color: var(--theme-bg) !important;
+  --uc-show-new-tab-button: var(--theme-display-new-tab-button) !important;
+  --uc-show-tab-separators: var(--theme-display-tab-separators) !important;
+  --uc-tab-fg-color: var(--theme-icon) !important;
+  --mff-bg: var(--theme-bg) !important;
+  --mff-icon-color: var(--theme-icon) !important;
+  --mff-nav-toolbar-padding: var(--theme-spacing) !important;
+  --mff-sidebar-bg: var(--theme-bg) !important;
+  --mff-sidebar-color: var(--theme-text) !important;
+  --mff-tab-border-radius: var(--theme-border-radius) !important;
+  --mff-tab-color: var(--theme-accent) !important;
+  --mff-tab-font-family: var(--theme-font-family) !important;
+  --mff-tab-font-size: var(--theme-font-size-large) !important;
+  --mff-tab-font-weight: var(--theme-font-weight-normal) !important;
+  --mff-tab-height: var(--theme-tab-height) !important;
+  --mff-tab-pinned-bg: var(--theme-tab-pinned) !important;
+  --mff-tab-selected-bg: var(--theme-tab-selected) !important;
+  --mff-tab-soundplaying-bg: var(--theme-tab-sound) !important;
+  --mff-urlbar-color: var(--theme-icon) !important;
+  --mff-urlbar-focused-color: var(--theme-bg-secondary) !important;
+  --mff-urlbar-font-family: var(--theme-font-family) !important;
+  --mff-urlbar-font-size: var(--theme-font-size-large) !important;
+  --mff-urlbar-font-weight: var(--theme-font-weight-bold) !important;
+  --mff-urlbar-results-color: var(--theme-text) !important;
+  --mff-urlbar-results-font-family: var(--theme-font-family) !important;
+  --mff-urlbar-results-font-size: var(--theme-font-size-large) !important;
+  --mff-urlbar-results-font-weight: var(--theme-font-weight-bold) !important;
+  --mff-urlbar-results-url-color: var(--theme-icon) !important;
+
+  /* Container color applications */
+  [data-color="yellow"],
+  .identity-color-yellow {
+    --color: var(--theme-container-yellow) !important;
+    --identity-tab-color: var(--theme-container-yellow) !important;
+    --identity-icon-color: var(--theme-container-yellow) !important;
+  }
+  [data-color="purple"],
+  .identity-color-purple {
+    --color: var(--theme-container-purple) !important;
+    --identity-tab-color: var(--theme-container-purple) !important;
+    --identity-icon-color: var(--theme-container-purple) !important;
+  }
+  [data-color="blue"],
+  .identity-color-blue {
+    --color: var(--theme-container-blue) !important;
+    --identity-tab-color: var(--theme-container-blue) !important;
+    --identity-icon-color: var(--theme-container-blue) !important;
+  }
+  [data-color="turquoise"],
+  .identity-color-turquoise {
+    --color: var(--theme-container-turquoise) !important;
+    --identity-tab-color: var(--theme-container-turquoise) !important;
+    --identity-icon-color: var(--theme-container-turquoise) !important;
+  }
+  [data-color="green"],
+  .identity-color-green {
+    --color: var(--theme-container-green) !important;
+    --identity-tab-color: var(--theme-container-green) !important;
+    --identity-icon-color: var(--theme-container-green) !important;
+  }
+  [data-color="orange"],
+  .identity-color-orange {
+    --color: var(--theme-container-orange) !important;
+    --identity-tab-color: var(--theme-container-orange) !important;
+    --identity-icon-color: var(--theme-container-orange) !important;
+  }
+  [data-color="red"],
+  .identity-color-red {
+    --color: var(--theme-container-red) !important;
+    --identity-tab-color: var(--theme-container-red) !important;
+    --identity-icon-color: var(--theme-container-red) !important;
+  }
+  [data-color="pink"],
+  .identity-color-pink {
+    --color: var(--theme-container-pink) !important;
+    --identity-tab-color: var(--theme-container-pink) !important;
+    --identity-icon-color: var(--theme-container-pink) !important;
+  }
+}
