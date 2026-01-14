@@ -294,7 +294,6 @@
     # todo: custom scripts with nom post flakes?
     # pkgs.nix-output-monitor
 
-    pkgs.kdePackages.kdeconnect-kde
     richenLib.wrappers.mango
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
@@ -303,13 +302,13 @@
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
+    richenLib.wrappers.firefox
+
     pkgs.vesktop
     pkgs.kdePackages.dolphin
     pkgs.fastfetch
     # todo: wrap git
     pkgs.git
-    # todo: wrap firefox
-    pkgs.firefox
     # todo: wrap neovim
     pkgs.neovim
     # todo: wrap tmux
@@ -399,6 +398,7 @@
 
     pkgs.spicetify-cli
     pkgs.tealdeer
+    pkgs.kdePackages.kdeconnect-kde
 
     # TODO: fix reboot-to and move this somewhere else
     (pkgs.writeScriptBin "reboot-to" ''

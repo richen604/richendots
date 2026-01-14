@@ -1,0 +1,97 @@
+{
+  "policies": {
+     "Preferences": {
+      "privacy.globalprivacycontrol.enabled": true,
+      "media.eme.enabled": true,
+
+      "browser.aboutConfig.showWarning": false,
+      "browser.warnOnQuitShortcut": false,
+      "browser.link.open_newwindow.override.external": 7,
+      "media.webspeech.synth.dont_notify_on_error": true,
+
+      "browser.urlbar.suggest.calculator": true,
+      "browser.urlbar.unitConversion.enabled": true,
+      "browser.urlbar.trimHttps": true,
+      "browser.urlbar.suggest.searches": true,
+
+      "browser.toolbars.bookmarks.visibility": "never",
+
+      "services.sync.engine.tabs": false,
+
+      "media.ffmpeg.vaapi.enabled": true,
+      "layers.acceleration.force-enabled": true,
+      "gfx.webrender.all": true,
+
+      "browser.in-content.dark-mode": true,
+      "ui.systemUsesDarkTheme": true,
+      "widget.use-xdg-desktop-portal.file-picker": 1,
+
+      "extensions.autoDisableScopes": 0,
+      "extensions.update.enabled": false
+    },
+    "DontCheckDefaultBrowser": true,
+    "DisableFirefoxScreenshots": true,
+    "DisableFirefoxStudies": true,
+    "DisableTelemetry": true,
+    "DisplayBookmarksToolbar": "never",
+    "DisplayMenuBar": "never",
+    "OverrideFirstRunPage": "",
+    "PictureInPicture": {
+      "Enabled": false
+    },
+    "GenerativeAI": {
+      "Enabled": false
+    },
+    "PromptForDownloadLocation": false,
+    "HardwareAcceleration": true,
+    "TranslateEnabled": true,
+    "Homepage": {
+      "StartPage": "previous-session"
+    },
+    "UserMessaging": {
+      "SkipOnboarding": true,
+      "UrlbarInterventions": false
+    },
+    "FirefoxSuggest": {
+      "ImproveSuggest": false,
+      "SponsoredSuggestions": false,
+      "WebSuggestions": false
+    },
+    "EnableTrackingProtection": {
+      "Cryptomining": true,
+      "Fingerprinting": true,
+      "EmailTracking": true,
+      "Value": true
+    },
+    "FirefoxHome": {
+      "Search": true,
+      "TopSites": false,
+      "SponsoredTopSites": false,
+      "Highlights": false,
+      "Pocket": false,
+      "SponsoredPocket": false,
+      "Stories": false,
+      "SponsoredStories": false,
+      "Snippets": false
+    },
+    "SearchEngines": {
+      "Remove": [
+        "DuckDuckGo",
+        "Bing",
+        "eBay",
+        "Amazon.com",
+        "Wikipedia (en)",
+        "Google",
+        "Perplexity"
+      ],
+      "Default": "Google (udm14)",
+      "Add": [
+        {
+          "Name": "Google (udm14)",
+          "IconURL": "https://www.google.com/favicon.ico",
+          "URLTemplate": "https://www.google.com/search?q={searchTerms}&udm=14"
+        }
+      ]
+    }
+  }
+}
