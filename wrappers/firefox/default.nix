@@ -1,14 +1,11 @@
 { pkgs, ... }:
 /*
   todo: firefox style: search bar theming
-  todo: firefox style: revise ascii for textfox
   todo: firefox style: clean up and consolidate variables
-  todo: firefox feat: las wrapper with theme options, features, sideberry enable etc
-  todo: firefox style: confirm fonts work
-  todo: firefox style: fix url moves to top when focused
+  todo: firefox style: fix search moves to top when focused
 
   Mostly inspired by textfox, pruned a bunch of stuff I didn't like or need.
-  https://github.com/adriankarlen/textfox
+  give them a star here https://github.com/adriankarlen/textfox
 */
 let
   basePolicies = builtins.fromJSON (builtins.readFile ./policies.json);
@@ -18,7 +15,7 @@ let
     policies = basePolicies.policies // extensionPolicies.policies;
   };
 
-  # shamelessly renaming textfox ascii art
+  # shamelessly replacing ascii art
   text = ''
                __            __                             ______                    
                /  |          /  |                           /      \                   
