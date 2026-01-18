@@ -7,7 +7,6 @@
 - refactor wrappers folder
 - review and convert fern modules
 - review and convert oak modules
-- convert hm from priv modules
 - add priv modules
 - richenLib own file
 - new structure
@@ -18,11 +17,13 @@
 - break out mangowc into extendable configurations per host (fern/oak)
 
 wrap:
-- keepassxc
-- git
+- nvim with mnw
+- tmux
+- swaylock
 
 ## future
 
+- more runtime packages for required applications w/ las wrappers
 - disko configurations
 - nixos-anywhere support + dev-shell
 - npins & a post flake world
