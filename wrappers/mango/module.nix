@@ -1,4 +1,6 @@
 { inputs, ... }:
+# todo: mango module: autostart.sh option
+# todo: mango module: rfc42 compliance, settings + configFile option
 inputs.wrappers.lib.wrapModule (
   {
     config,
