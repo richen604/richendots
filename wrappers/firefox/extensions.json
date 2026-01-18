@@ -20,10 +20,6 @@
         "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/decentraleyes/latest.xpi",
         "installation_mode": "force_installed"
       },
-      "FirefoxColor@mozilla.com": {
-        "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/firefox-color/latest.xpi",
-        "installation_mode": "force_installed"
-      },
       "keepassxc-browser@keepassxc.org": {
         "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/keepassxc-browser/latest.xpi",
         "installation_mode": "force_installed"
