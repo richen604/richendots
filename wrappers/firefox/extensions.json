@@ -1,9 +1,7 @@
 {
   "policies": {
     "ExtensionSettings": {
-      "*": {
-        "installation_mode": "blocked"
-      },
+    
       "addon@darkreader.org": {
         "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/darkreader/latest.xpi",
         "installation_mode": "force_installed"
@@ -42,6 +40,10 @@
       },
       "{d7742d87-e61d-4b78-b8a1-b469842139fa}": {
         "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/vimium/latest.xpi",
+        "installation_mode": "force_installed"
+      },
+      "vimium-c@gdh1995.cn": {
+        "install_url": "https://addons.mozilla.org/en-CA/firefox/downloads/latest/vimium-c/latest.xpi",
         "installation_mode": "force_installed"
       }
     }
