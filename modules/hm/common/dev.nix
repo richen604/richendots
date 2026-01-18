@@ -51,8 +51,6 @@ in
 
       zsh = {
         initContent = pkgs.lib.mkAfter ''
-          source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-
           # fnm (Fast Node Manager) setup
           eval "$(fnm env --use-on-cd)"
 
