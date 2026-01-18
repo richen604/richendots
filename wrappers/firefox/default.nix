@@ -2,7 +2,6 @@
 /*
   todo: firefox: search bar theming
   todo: firefox: clean up and consolidate variables
-  todo: firefox: fix search moves to top when focused
   todo: firefox: font consolidation
     - some sites like gh still fallback to liberation mono, etc
 
@@ -53,6 +52,7 @@ pkgs.wrapFirefox pkgs.firefox-unwrapped {
     pref("svg.context-properties.content.enabled", true);
     // CSS's `:has()` selector 
     pref("layout.css.has-selector.enabled", true);
+    pref("browser.display.use_document_fonts", 0);
 
     // Auto-load userChrome.css
     try {
