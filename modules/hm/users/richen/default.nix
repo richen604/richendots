@@ -8,7 +8,6 @@
     ../../common
     ../../desktops
     ./obsidian.nix
-    inputs.richendots-private.userModules.richen
   ];
 
   # todo: move this at some point

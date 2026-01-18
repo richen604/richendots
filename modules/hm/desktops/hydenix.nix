@@ -30,6 +30,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    hydenix.hm.firefox.enable = mkForce false;
 
     # for spotify
     home.sessionVariables = {

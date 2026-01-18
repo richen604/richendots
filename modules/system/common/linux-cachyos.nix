@@ -10,7 +10,6 @@ let
   cfg = config.modules.linux-cachyos;
 in
 {
-  imports = [ inputs.chaotic.nixosModules.default ];
   options.modules.linux-cachyos = {
     enable = lib.mkOption {
       type = lib.types.bool;
