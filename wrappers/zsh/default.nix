@@ -9,17 +9,45 @@ in
 (zshWrapper.apply {
   pkgs = pkgs;
   shellAliases = {
-    ll = "ls -la";
-    la = "ls -A";
-    l = "ls -CF";
     grep = "grep --color=auto";
-    fgrep = "fgrep --color=auto";
-    egrep = "egrep --color=auto";
-    mkdir = "mkdir -p";
+    mkdir = "mkdir -pv";
     cp = "cp -i";
     mv = "mv -i";
     rm = "rm -i";
     vim = "nvim";
+    v = "nvim";
+
+    # navigation
+    ".." = "cd ..";
+    "..." = "cd ../..";
+    "...." = "cd ../../..";
+
+    # listing
+    ls = "eza --color=auto";
+    ll = "eza -lh --color=auto --group-directories-first";
+    la = "eza -la --color=auto --group-directories-first";
+    lt = "eza -lh --color=auto --tree";
+
+    # viewing / prettified cat
+    cat = "bat --color=always";
+    less = "less -R";
+    tree = "tree -C";
+
+    # git shortcuts
+    gst = "git status -sb";
+    gl = "git log --oneline --graph --decorate";
+    ga = "git add";
+    gc = "git commit";
+    gp = "git push";
+    gco = "git checkout";
+    gcb = "git checkout -b";
+    gbr = "git branch -a";
+
+    # System
+    h = "htop";
+    df = "df -h";
+    du = "du -h --max-depth=1";
+    free = "free -h";
   };
   interactiveShellInit = ''
     eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
@@ -30,9 +58,6 @@ in
 
     bindkey '\e[1;3C' forward-word   # Alt+Right
     bindkey '\e[1;3D' backward-word  # Alt+Left
-
-    # makes shell slow, consider enabling only when needed
-    source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
 
     # todo: ideally this would be per project but npx might require this
     # fnm (Fast Node Manager) setup
@@ -65,6 +90,7 @@ in
     PAGER = "less";
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
+    NIXPKGS_ALLOW_UNFREE = "1";
     DIRENV_CONFIG = toString (
       pkgs.linkFarm "direnv" [
         {
