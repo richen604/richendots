@@ -1249,11 +1249,7 @@ body {
 }
 
 /*================== FIREFOX BG COLOR ==================*/
-@-moz-document url("about:newtab"),
-  url("about:home"),
-  url("about:blank"),
-  url("about:support"),
-  url("about:config") {
+@-moz-document url-prefix(about:) {
   :root[lwt-newtab-brighttext]:not(#ublock0-epicker) {
     background-color: var(--dark_color1) !important;
     --in-content-page-background: var(--dark_color1) !important;
@@ -1356,8 +1352,8 @@ body {
    * TYPOGRAPHY
    * ───────────────────────────────────────────────────────────────────── */
 
-  --theme-font-family: "Gohu Font 14 Nerd Font", monospace;
-  --theme-font-size: 14px;
+  --theme-font-family: "GohuFont uni14 Nerd Font Propo";
+  --theme-font-size: 16px;
   --theme-font-size-large: 11pt;
   --theme-font-weight-normal: 400;
   --theme-font-weight-bold: 700;
@@ -1378,14 +1374,15 @@ body {
    * DISPLAY TOGGLES
    * ───────────────────────────────────────────────────────────────────── */
 
-  --theme-display-horizontal-tabs: block;
-  --theme-display-window-controls: none;
-  --theme-display-nav-buttons: none;
-  --theme-display-urlbar-icons: none;
-  --theme-display-sidebar-tools: flex;
-  --theme-display-titles: flex;
-  --theme-display-new-tab-button: block;
-  --theme-display-tab-separators: block;
+  /* ! because i do not ship ./icons with this userChrome (and removed the refs) most of the options here won't work */
+  --theme-display-horizontal-tabs: block; /* block or none */
+  --theme-display-window-controls: none; /* flex or none */
+  --theme-display-nav-buttons: none; /* flex or none */
+  --theme-display-urlbar-icons: none; /* flex or none */
+  --theme-display-sidebar-tools: none; /* flex or none */
+  --theme-display-titles: none; /* flex or none */
+  --theme-display-new-tab-button: flex; /* flex or none */
+  --theme-display-tab-separators: flex; /* flex or none */
 
   /* ─────────────────────────────────────────────────────────────────────
    * MISC
