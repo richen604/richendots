@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, richenLib, ... }:
 
 {
+  # todo: this should be a shell
   # Inits some required packages for richendots-private
   environment.systemPackages = with pkgs; [
     # YubiKey management tools
@@ -11,7 +12,7 @@
     # Age encryption with YubiKey support
     age # Core age encryption
     age-plugin-yubikey # YubiKey plugin for age
-    keepassxc
+    richenLib.wrappers.keepassxc
     pam_u2f
   ];
 }
