@@ -1,8 +1,10 @@
 { pkgs, ... }:
 /*
-  todo: firefox style: search bar theming
-  todo: firefox style: clean up and consolidate variables
-  todo: firefox style: fix search moves to top when focused
+  todo: firefox: search bar theming
+  todo: firefox: clean up and consolidate variables
+  todo: firefox: fix search moves to top when focused
+  todo: firefox: font consolidation
+    - some sites like gh still fallback to liberation mono, etc
 
   Mostly inspired by textfox, pruned a bunch of stuff I didn't like or need.
   give them a star here https://github.com/adriankarlen/textfox

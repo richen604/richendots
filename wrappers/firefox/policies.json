@@ -84,12 +84,12 @@
         "Google",
         "Perplexity"
       ],
-      "Default": "Google (udm14)",
+      "Default": "Rebang",
       "Add": [
         {
-          "Name": "Google (udm14)",
-          "IconURL": "https://www.google.com/favicon.ico",
-          "URLTemplate": "https://www.google.com/search?q={searchTerms}&udm=14"
+          "Name": "Rebang",
+          "IconURL": "https://www.rebang.online/favicon.icon",
+          "URLTemplate": "https://www.rebang.online/?q={searchTerms}"
         }
       ]
     }
