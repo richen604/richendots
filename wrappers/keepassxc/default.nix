@@ -3,6 +3,8 @@
   pkgs,
   ...
 }:
+# todo: keepassxc: ssh agent perhaps?
+# todo: auto locking timeout?
 let
   keepassxcWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
