@@ -2,6 +2,7 @@
   config,
   inputs,
   pkgs,
+  richenLib,
   ...
 }:
 {
@@ -58,8 +59,10 @@
   nix.gc.automatic = pkgs.lib.mkForce false;
   # for spotify
   services.flatpak.enable = true;
-  environment.systemPackages = with pkgs; [
-    spicetify-cli
+  environment.systemPackages = [
+    pkgs.spicetify-cli
+    richenLib.wrappers.firefox
+    richenLib.wrappers.keepassxc
   ];
 
   hydenix = {
@@ -78,6 +81,51 @@
       "video"
     ];
     shell = pkgs.zsh;
+  };
+
+  # FONTS --------------------------------------------------------------
+
+  environment.etc."gtk-3.0/gtk.css".text = ''
+    label, entry, textview, button {
+      font-weight: 600;
+    }
+  '';
+
+  environment.etc."gtk-4.0/gtk.css".text = ''
+    label, entry, textview, button {
+      font-weight: 600;
+    }
+  '';
+
+  fonts = {
+    fontDir.enable = true;
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      nerd-fonts.gohufont
+      terminus_font
+    ];
+    fontconfig = {
+      enable = true;
+      localConf = ''
+        <?xml version="1.0"?>
+        <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+        <fontconfig>
+          <match target="font">
+            <test name="family" compare="contains">
+              <string>Gohu</string>
+            </test>
+            <edit name="embolden" mode="assign">
+              <bool>true</bool>
+            </edit>
+          </match>
+        </fontconfig>
+      '';
+      defaultFonts = {
+        monospace = [ "GohuFont uni14 Nerd Font Propo" ];
+        sansSerif = [ "GohuFont uni14 Nerd Font Propo" ];
+        serif = [ "GohuFont uni14 Nerd Font Propo" ];
+      };
+    };
   };
 
   system.stateVersion = "25.05";
