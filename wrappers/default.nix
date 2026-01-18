@@ -22,8 +22,9 @@ let
     waybar = callPackage ./waybar.nix { };
     vicinae = callPackage ./vicinae { };
     firefox = callPackage ./firefox { };
-
     keepassxc = callPackage ./keepassxc { };
+    git = callPackage ./git.nix { };
+    udiskie = callPackage ./udiskie { };
   };
 in
 wrappers
