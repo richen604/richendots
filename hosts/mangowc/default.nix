@@ -21,6 +21,38 @@
     dev.enable = false;
   };
 
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      looking-glass-obs
+      obs-pipewire-audio-capture
+    ];
+    enableVirtualCamera = true;
+  };
+  services.flatpak.enable = true;
+
+  # docker
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
+  # gaming
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    gamescopeSession.enable = true;
+    localNetworkGameTransfers.openFirewall = true;
+    protontricks.enable = true;
+  };
+
   # USERS -------------------------------------------------------------
   users.users.richen = {
     isNormalUser = true;
@@ -33,6 +65,7 @@
       "docker"
     ];
     home = "/home/richen";
+    initialPassword = "test";
     createHome = true;
     shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
   };
@@ -45,94 +78,73 @@
       user = "richen";
       directory = "/home/richen";
       clobberFiles = true;
-      # todo: wrap vscode w/ portable mode?
-      xdg.config.files."Code/User/settings.json".source = pkgs.writeText "vscode-settings.json" ''
-         {
-          "workbench.colorTheme": "Tokyo Night",
-          "window.menuBarVisibility": "toggle",
-          "editor.fontSize": 15,
-          "editor.scrollbar.vertical": "hidden",
-          "editor.scrollbar.verticalScrollbarSize": 0,
-          "security.workspace.trust.untrustedFiles": "newWindow",
-          "security.workspace.trust.startupPrompt": "never",
-          "security.workspace.trust.enabled": false,
-          "editor.minimap.side": "left",
-          "editor.fontFamily": "'Gohu Font 14 Nerd Font', 'monospace', monospace",
-          "extensions.autoUpdate": false,
-          "workbench.statusBar.visible": true,
-          "terminal.external.linuxExec": "kitty",
-          "terminal.explorerKind": "both",
-          "terminal.sourceControlRepositoriesKind": "both",
-          "telemetry.telemetryLevel": "off",
-          "workbench.activityBar.location": "top",
-          "window.customTitleBarVisibility": "auto",
-          "workbench.iconTheme": "catppuccin-mocha",
-          "editor.cursorSmoothCaretAnimation": "on",
-          "editor.autoIndent": "full",
-          "editor.formatOnSave": true,
-          "nix.enableLanguageServer": true,
-          "nix.formatterPath": "nixfmt",
-          "nix.serverPath": "nil",
-          "nix.hiddenLanguageServerErrors": [
-            "textDocument/definition",
-            "textDocument/formatting",
-            "textDocument/documentSymbol"
-          ],
-          "nix.serverSettings": {
-            "nil": {
-              "formatting": {
-                "command": ["nixfmt"]
+      # todo: future: wrap vscode w/ portable mode?
+      files.".config/Code/User/settings.json" = {
+        type = "copy";
+        permissions = "0644";
+        source = pkgs.writeText "vscode-settings.json" ''
+           {
+            "workbench.colorTheme": "Tokyo Night",
+            "window.menuBarVisibility": "toggle",
+            "editor.fontSize": 17,
+            "editor.fontWeight": "700",
+            "editor.lineHeight": 1.3,
+            "editor.scrollbar.vertical": "hidden",
+            "editor.scrollbar.verticalScrollbarSize": 0,
+            "security.workspace.trust.untrustedFiles": "newWindow",
+            "security.workspace.trust.startupPrompt": "never",
+            "security.workspace.trust.enabled": false,
+            "editor.minimap.side": "left",
+            "editor.fontFamily": "'GohuFont uni14 Nerd Font Propo'",
+            "extensions.autoUpdate": true,
+            "workbench.statusBar.visible": true,
+            "terminal.external.linuxExec": "kitty",
+            "terminal.explorerKind": "both",
+            "terminal.sourceControlRepositoriesKind": "both",
+            "telemetry.telemetryLevel": "off",
+            "workbench.activityBar.location": "top",
+            "window.customTitleBarVisibility": "auto",
+            "workbench.iconTheme": "catppuccin-mocha",
+            "editor.cursorSmoothCaretAnimation": "on",
+            "editor.autoIndent": "full",
+            "editor.formatOnSave": true,
+            "nix.enableLanguageServer": true,
+            "nix.formatterPath": "nixfmt",
+            "nix.serverPath": "nil",
+            "nix.hiddenLanguageServerErrors": [
+              "textDocument/definition",
+              "textDocument/formatting",
+              "textDocument/documentSymbol"
+            ],
+            "nix.serverSettings": {
+              "nil": {
+                "formatting": {
+                  "command": ["nixfmt"]
+                }
               }
-            }
-          },
-          "markdownlint.config": {
-            "MD033": {
-              "allowed_elements": [
-                "nobr",
-                "sup",
-                "a",
-                "div",
-                "img",
-                "br",
-                "video",
-                "kbd",
-                "sub",
-                "section",
-                "details",
-                "summary"
-              ]
-            }
-          },
-          "workbench.sideBar.location": "right",
-          "git.enableSmartCommit": true,
-          "github.copilot.nextEditSuggestions.enabled": true,
-          "todo-tree.general.tags": [
-            "BUG",
-            "HACK",
-            "FIXME",
-            "TODO",
-            "XXX",
-            "[ ]",
-            "[x]",
-            "todo",
-            "fixme",
-            "bug"
-          ],
-          "editor.minimap.enabled": false
-        }
-      '';
+            },
+            "workbench.sideBar.location": "right",
+            "git.enableSmartCommit": true,
+            "github.copilot.nextEditSuggestions.enabled": true,
+            "todo-tree.general.tags": [
+              "BUG",
+              "HACK",
+              "FIXME",
+              "TODO",
+              "XXX",
+              "[ ]",
+              "[x]",
+              "todo",
+              "fixme",
+              "bug"
+            ],
+            "editor.minimap.enabled": false
+          }
+        '';
+      };
     };
   };
 
-  programs.obs-studio = {
-    enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      looking-glass-obs
-      obs-pipewire-audio-capture
-    ];
-    enableVirtualCamera = true;
-  };
   programs.vscode = {
     enable = true;
     extensions = [
@@ -158,7 +170,6 @@
       pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
       pkgs.vscode-extensions.redhat.vscode-yaml
       pkgs.vscode-extensions.saoudrizwan.claude-dev
-      pkgs.vscode-extensions.streetsidesoftware.code-spell-checker
       pkgs.vscode-extensions.tamasfe.even-better-toml
       pkgs.vscode-extensions.timonwong.shellcheck
       pkgs.vscode-extensions.yoavbls.pretty-ts-errors
@@ -179,8 +190,9 @@
         "org/gnome/desktop/interface" = {
           gtk-theme = "catppuccin-mocha-green-compact";
           color-scheme = "prefer-dark";
-          font-name = "Gohu Font 14 Nerd Font";
+          font-name = "GohuFont uni14 Nerd Font Propo";
           cursor-theme = "Bibata-Modern-Ice";
+          cursor-size = "24";
           icon-theme = "Papirus-Dark";
           font-antialiasing = "rgba";
           font-hinting = "full";
@@ -202,8 +214,6 @@
       '';
     };
   };
-
-  services.flatpak.enable = true;
 
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
@@ -303,12 +313,18 @@
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
     richenLib.wrappers.firefox
+    richenLib.wrappers.keepassxc
+    richenLib.wrappers.git
 
+    pkgs.bat # cat alternative
+    pkgs.eza # ls alternative
+    pkgs.tree # directory tree viewer
+    pkgs.htop # interactive process viewer
+    # todo: remove vesktop when migrated to equicord
     pkgs.vesktop
+    pkgs.equicord
     pkgs.kdePackages.dolphin
     pkgs.fastfetch
-    # todo: wrap git
-    pkgs.git
     # todo: wrap neovim
     pkgs.neovim
     # todo: wrap tmux
@@ -344,7 +360,6 @@
     pkgs.wlsunset
     pkgs.grim
     pkgs.slurp
-    pkgs.firefox
     pkgs.bibata-cursors
     pkgs.networkmanager
     pkgs.networkmanagerapplet
@@ -364,6 +379,7 @@
     pkgs.pavucontrol
     pkgs.pamixer
     pkgs.playerctl
+    pkgs.unzip
 
     # qt deps
     pkgs.kdePackages.qt6ct
@@ -450,28 +466,154 @@
     pkgs.fnm
     pkgs.godot
     pkgs.gdtoolkit_4
+
+    # i don't want to add declarative flatpak, so here's a semi useful spotify wrapper
+    # todo: spotify wrapped: grab exactly the configs required and apply them manually
+    # todo: spotify wrapped: clean up vars
+    (pkgs.writeShellScriptBin "spotify-spicetified" ''
+      #!/usr/bin/env sh
+      set -e
+
+      APP_ID="com.spotify.Client"
+      SPOTIFY_PATH="$HOME/.var/app/$APP_ID"
+      SPICETIFY_DIR="$HOME/.config/spicetify"
+      PREFS="$SPOTIFY_PATH/config/spotify/prefs"
+      TIMEOUT=30
+
+      echo "==> Checking Flathub repository..."
+      ${pkgs.flatpak}/bin/flatpak remote-add --user --if-not-exists flathub \
+        https://flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+
+      echo "==> Checking Spotify installation..."
+      if ! ${pkgs.flatpak}/bin/flatpak info --user "$APP_ID" >/dev/null 2>&1; then
+        echo "==> Installing Spotify from Flathub..."
+        ${pkgs.flatpak}/bin/flatpak install --user -y flathub "$APP_ID"
+
+        echo "==> Initializing Spotify to create config files..."
+        ${pkgs.flatpak}/bin/flatpak run --user "$APP_ID"
+
+        echo "==> Waiting for preferences file ($PREFS)..."
+        ELAPSED=0
+        while [ ! -f "$PREFS" ] && [ $ELAPSED -lt $TIMEOUT ]; do
+          sleep 1
+          ELAPSED=$((ELAPSED + 1))
+        done
+
+
+        echo "==> Configuring Spicetify..."
+        ${pkgs.spicetify-cli}/bin/spicetify config prefs_path "$PREFS"
+
+        echo "==> Creating backup and applying Spicetify..."
+        ${pkgs.spicetify-cli}/bin/spicetify backup || true
+
+        sleep 2
+
+        echo "==> Installing Spicetify Marketplace..."
+        # download uri
+        releases_uri=https://github.com/spicetify/marketplace/releases
+        if [ $# -gt 0 ]; then
+          tag=$1
+        else
+          tag=$(curl -LsH 'Accept: application/json' $releases_uri/latest)
+          tag=''${tag%\,\"update_url*}
+          tag=''${tag##*tag_name\":\"}
+          tag=''${tag%\"}
+        fi
+
+        tag=''${tag#v}
+
+        echo "FETCHING Version $tag"
+
+        download_uri=$releases_uri/download/v$tag/marketplace.zip
+        default_color_uri="https://raw.githubusercontent.com/spicetify/marketplace/main/resources/color.ini"
+
+        SPICETIFY_CONFIG_DIR="$SPICETIFY_CONFIG"
+        if [ -z "$SPICETIFY_CONFIG_DIR" ]; then
+          SPICETIFY_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/spicetify"
+        fi
+        INSTALL_DIR="$SPICETIFY_CONFIG_DIR/CustomApps"
+
+        if [ ! -d "$INSTALL_DIR" ]; then
+            echo "MAKING FOLDER  $INSTALL_DIR";
+            mkdir -p "$INSTALL_DIR"
+        fi
+
+        TAR_FILE="$INSTALL_DIR/marketplace-dist.zip"
+
+        echo "DOWNLOADING $download_uri"
+        curl --fail --location --progress-bar --output "$TAR_FILE" "$download_uri"
+        cd "$INSTALL_DIR"
+
+        echo "EXTRACTING"
+        unzip -q -d "$INSTALL_DIR/marketplace-tmp" -o "$TAR_FILE"
+
+        cd "$INSTALL_DIR/marketplace-tmp"
+        echo "COPYING"
+        rm -rf "$INSTALL_DIR/marketplace/"
+        mv "$INSTALL_DIR/marketplace-tmp/marketplace-dist" "$INSTALL_DIR/marketplace"
+
+        echo "INSTALLING"
+        cd "$INSTALL_DIR/marketplace"
+
+        # Remove old custom app name if exists
+        ${pkgs.spicetify-cli}/bin/spicetify config custom_apps marketplace
+
+        # Color injection fix
+        ${pkgs.spicetify-cli}/bin/spicetify config inject_css 1
+        ${pkgs.spicetify-cli}/bin/spicetify config replace_colors 1
+
+        current_theme=$(${pkgs.spicetify-cli}/bin/spicetify config current_theme)
+        if [ ''${#current_theme} -le 3 ]; then
+            echo "No theme selected, using placeholder theme"
+            if [ ! -d "$SPICETIFY_CONFIG_DIR/Themes/marketplace" ]; then
+                echo "MAKING FOLDER  $SPICETIFY_CONFIG_DIR/Themes/marketplace";
+                mkdir -p "$SPICETIFY_CONFIG_DIR/Themes/marketplace"
+            fi
+            curl --fail --location --progress-bar --output "$SPICETIFY_CONFIG_DIR/Themes/marketplace/color.ini" "$default_color_uri"
+            ${pkgs.spicetify-cli}/bin/spicetify config current_theme marketplace;
+        fi
+
+        echo "CLEANING UP"
+        rm -rf "$TAR_FILE" "$INSTALL_DIR/marketplace-tmp/"
+
+        echo "==> Applying Spictify TUI theme..."
+        theme_url="https://raw.githubusercontent.com/AvinashReddy3108/spicetify-tui/master/tui"
+
+        # Setup directories to download to
+        spice_dir="$(dirname "$(${pkgs.spicetify-cli}/bin/spicetify -c)")"
+        theme_dir="''${spice_dir}/Themes"
+
+        # Make directories if needed
+        mkdir -p "''${theme_dir}/tui"
+
+        # Download latest tagged files into correct directory
+        echo "Downloading spicetify-tui theme..."
+        ${pkgs.curl}/bin/curl --silent --output "''${theme_dir}/tui/color.ini" "''${theme_url}/color.ini"
+        ${pkgs.curl}/bin/curl --silent --output "''${theme_dir}/tui/user.css" "''${theme_url}/user.css"
+        echo "Done"
+
+        echo "Applying theme..."
+        ${pkgs.spicetify-cli}/bin/spicetify config current_theme tui color_scheme CatppuccinMocha
+        
+        echo "Applying patches..."
+        # Insert patches after existing [Patch] header since CLI doesn't support them
+        CONFIG_FILE="$(${pkgs.spicetify-cli}/bin/spicetify -c)"
+        sed -i '/\[Patch\]/a xpui.js_find_8008 = ,(\\w+=)56,\nxpui.js_repl_8008 = ,''${1}32', "$CONFIG_FILE"
+        
+        sleep 2
+
+        echo "==> Applying Spicetify themes and extensions..."
+        ${pkgs.spicetify-cli}/bin/spicetify apply
+
+        echo "==> Setup complete!"
+        exit 0
+      fi
+
+      echo "==> Launching Spotify..."
+      exec ${pkgs.flatpak}/bin/flatpak run --user "$APP_ID"
+    '')
+
   ];
-
-  # docker
-  virtualisation.docker.enable = true;
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
-
-  # gaming
-  programs.gamescope = {
-    enable = true;
-    capSysNice = true;
-  };
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-    protontricks.enable = true;
-  };
 
   # audio
   hardware.bluetooth = {
@@ -515,6 +657,19 @@
   ];
 
   # FONTS --------------------------------------------------------------
+
+  environment.etc."gtk-3.0/gtk.css".text = ''
+    label, entry, textview, button {
+      font-weight: 600; 
+    }
+  '';
+
+  environment.etc."gtk-4.0/gtk.css".text = ''
+    label, entry, textview, button {
+      font-weight: 600;
+    }
+  '';
+
   fonts = {
     fontDir.enable = true;
     enableDefaultPackages = true;
@@ -524,10 +679,25 @@
     ];
     fontconfig = {
       enable = true;
+      # fixes gohufont not having bold weights
+      localConf = ''
+        <?xml version="1.0"?>
+        <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+        <fontconfig>
+          <match target="font">
+            <test name="family" compare="contains">
+              <string>Gohu</string>
+            </test>
+            <edit name="embolden" mode="assign">
+              <bool>true</bool>
+            </edit>
+          </match>
+        </fontconfig>
+      '';
       defaultFonts = {
-        monospace = [ "Gohu Font 14 Nerd Font" ];
-        sansSerif = [ "Gohu Font 14 Nerd Font" ];
-        serif = [ "Gohu Font 14 Nerd Font" ];
+        monospace = [ "GohuFont uni14 Nerd Font Propo" ];
+        sansSerif = [ "GohuFont uni14 Nerd Font Propo" ];
+        serif = [ "GohuFont uni14 Nerd Font Propo" ];
       };
     };
   };
