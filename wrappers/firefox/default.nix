@@ -1,9 +1,8 @@
 { pkgs, ... }:
 /*
-  todo: firefox: search bar theming
   todo: firefox: clean up and consolidate variables
   todo: firefox: font consolidation
-    - some sites like gh still fallback to liberation mono, etc
+    - fix gh font selection issues
 
   Mostly inspired by textfox, pruned a bunch of stuff I didn't like or need.
   give them a star here https://github.com/adriankarlen/textfox
