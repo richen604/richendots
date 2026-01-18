@@ -2,13 +2,16 @@
 
 ## now
 
+- refactor wrappers folder
+  - modules vs impl
+  - modules don't set wrapper by default allowing extensibility
+  - some sort of recursive imports impl
+
 ## next
 
-- refactor wrappers folder
 - review and convert fern modules
 - review and convert oak modules
 - add priv modules
-- richenLib own file
 - new structure
   - hosts/workflows
   - baseVars, hostVars
@@ -17,9 +20,11 @@
 - break out mangowc into extendable configurations per host (fern/oak)
 
 wrap:
+
 - nvim with mnw
 - tmux
 - swaylock
+- mpv
 
 ## future
 
