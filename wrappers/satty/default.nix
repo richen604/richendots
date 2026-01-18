@@ -84,7 +84,7 @@ in
     };
     # Font to use for text annotations
     font = {
-      family = "Gohu Font 14 Nerd Font";
+      family = "GohuFont uni14 Nerd Font Propo";
       # # specify fallback fonts (NEXTRELEASE)
       # # Please note, there is no default setting for these and the fonts listed below
       # # are not shipped with Satty but need to be available on the system.
