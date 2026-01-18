@@ -4,6 +4,8 @@
   richenLib,
   ...
 }:
+# todo: mango wrapper: runtime applications for auto start
+# todo: mango wrapper: windowrules for the below applications
 let
   mangoWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
@@ -25,6 +27,7 @@ in
     exec-once=${pkgs.lib.getExe' pkgs.udiskie "udiskie"} -t &
     exec-once=${pkgs.lib.getExe' pkgs.networkmanagerapplet "nm-applet"} &
     exec-once=${pkgs.lib.getExe' pkgs.kdePackages.kdeconnect-kde "kdeconnectd"} &
+    exec-once=${pkgs.lib.getExe richenLib.wrappers.keepassxc} --minimize-to-tray &
 
     # cursor size
     cursor_size=24
@@ -70,6 +73,7 @@ in
     # pseudo hyprland like secret tag
     bind=SUPER,S,view,9
     bind=SUPER+ALT,S,tagsilent,9
+    bind=SUPER,B,spawn,${pkgs.lib.getExe richenLib.wrappers.firefox}
 
     # ============================================
     # GAMEMODE SETTINGS - Toggle these manually
