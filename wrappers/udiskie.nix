@@ -3,7 +3,6 @@
   pkgs,
   ...
 }:
-
 (inputs.wrappers.wrapperModules.udiskie.apply {
   pkgs = pkgs;
   settings = {
