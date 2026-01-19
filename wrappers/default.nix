@@ -24,7 +24,7 @@ let
     firefox = callPackage ./firefox { };
     keepassxc = callPackage ./keepassxc { };
     git = callPackage ./git.nix { };
-    udiskie = callPackage ./udiskie { };
+    udiskie = callPackage ./udiskie.nix { };
   };
 in
 wrappers
