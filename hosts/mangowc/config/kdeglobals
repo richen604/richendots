@@ -1,0 +1,15 @@
+[Colors:View]
+BackgroundNormal=#00000000
+
+[General]
+TerminalApplication=kitty
+widgetStyle=kvantum
+
+[Icons]
+Theme=Papirus-Dark
+
+[UiSettings]
+ColorScheme=colors
+
+[Wallet]
+Enabled=false
