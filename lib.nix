@@ -17,39 +17,44 @@ let
     ] (system: f system);
 
   mkHost =
-    hostname: system:
+    hostvars:
     let
       pkgs =
-        if hostname == "fern" then
+        if hostvars.hostname == "fern" then
           (import inputs.hydenix.inputs.nixpkgs {
             config.allowUnfree = true;
             overlays = [ inputs.hydenix.overlays.default ];
-            inherit system;
+            system = hostvars.system;
           })
         else
-          pkgsFor system;
+          pkgsFor hostvars.system;
       richenLib = mkLib pkgs;
     in
     lib.nixosSystem {
-      inherit pkgs system;
+      system = hostvars.system;
+      inherit pkgs;
       specialArgs = {
-        inputs =
-          if (hostname == "fern" || hostname == "oak" || hostname == "cedar") then
-            (inputs // inputs.richendots-private.inputs)
-          else
-            inputs;
-        inherit hostname richenLib;
+        inputs = (inputs // inputs.richendots-private.inputs);
+        hostname = hostvars.hostname;
+        inherit richenLib;
       };
       modules = [
-        ./hosts/${hostname}
+        ./hosts/${hostvars.hostname}
+        ./profiles/common.nix
+        ./profiles/${hostvars.profile}.nix
+        inputs.richendots-private.nixosModules.${hostvars.hostname} or { }
       ];
     };
 
   mkVm =
-    hostname: system:
+    hostvars:
     (import ./hosts/vm.nix {
-      inherit inputs hostname;
-      nixosConfiguration = mkHost hostname system;
+      inherit inputs;
+      nixosConfiguration = mkHost {
+        hostname = hostvars.hostname;
+        system = hostvars.system;
+        profile = hostvars.profile;
+      };
     }).config.system.build.vm;
 
   # main function that generates the richenLib for use elsewhere

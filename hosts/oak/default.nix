@@ -1,95 +1,126 @@
 {
-  inputs,
+  config,
+  pkgs,
+  lib,
   ...
 }:
-let
-  pkgs = import inputs.nixpkgs {
-    system = "x86_64-linux";
-    config.allowUnfree = true;
-    config.allowBroken = true;
-    overlays = [
-      inputs.hydenix.overlays.default
-    ];
-  };
-in
 {
-  nixpkgs.pkgs = pkgs.lib.mkForce pkgs;
   imports = [
-    inputs.hydenix.inputs.home-manager.nixosModules.home-manager
-    inputs.hydenix.nixosModules.default
-
-    inputs.nixos-hardware.nixosModules.common-pc-laptop
-    inputs.nixos-hardware.nixosModules.common-hidpi
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
-
-    inputs.nixos-hardware.nixosModules.common-gpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
-    inputs.nixos-hardware.nixosModules.common-cpu-intel
     ./hardware-configuration.nix
-    ../../modules/system/hosts/oak
-    ../common/private.nix
+
   ];
 
-  # NVIDIA PRIME for hybrid graphics (Intel + NVIDIA)
-  hardware.nvidia.prime = {
-    # Enable NVIDIA Optimus support
-    offload = {
-      enable = true;
-      enableOffloadCmd = true; # Provides nvidia-offload command
+  boot = {
+    plymouth.enable = true;
+    kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
+    loader.systemd-boot.enable = pkgs.lib.mkForce false;
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+      };
+      grub = {
+        enable = true;
+        device = "nodev";
+        useOSProber = true;
+        efiSupport = true;
+        extraEntries = ''
+          menuentry "UEFI Firmware Settings" {
+            fwsetup
+          }
+        '';
+      };
     };
-    # Bus IDs found via: lspci | grep -E "(VGA|3D)"
-    # 0000:00:02.0 VGA compatible controller: Intel Corporation Raptor Lake-P [Iris Xe Graphics] (rev 04)
-    # 0000:01:00.0 VGA compatible controller: NVIDIA Corporation AD107M [GeForce RTX 4060 Max-Q / Mobile] (rev a1)
-    intelBusId = "PCI:0:2:0"; # Intel Raptor Lake-P Iris Xe Graphics
-    nvidiaBusId = "PCI:1:0:0"; # NVIDIA GeForce RTX 4060 Max-Q / Mobile
   };
-  hardware.nvidia.open = true;
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit inputs;
+  # laptop specific
+  services.tlp.enable = true;
+
+  # intel specific
+  hardware.cpu.intel.updateMicrocode = true;
+
+  # we are skipping nvidia from initrd, adding vfio
+  boot.initrd.kernelModules = lib.mkForce [
+    "i915"
+  ];
+
+  powerManagement.enable = true;
+  services.thermald.enable = true;
+  services.auto-cpufreq = {
+    enable = true;
+    settings = {
+      battery = {
+        governor = "powersave";
+        turbo = "never";
+      };
+      charger = {
+        governor = "performance";
+        turbo = "auto";
+      };
     };
-    users."richen" =
-      { ... }:
-      {
-        imports = [
-          inputs.hydenix.homeModules.default
-          ../../modules/hm/users/richen
-        ];
+  };
 
-        desktops.hydenix = {
-          enable = true;
-          hostname = "oak";
-        };
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
 
-        modules = {
-          common = {
-            git.enable = true;
-            dev.enable = true;
-            obs.enable = true;
-            games.enable = true;
-            zsh.enable = true;
-          };
-          # TODO: make obsidian.nix work on any host
-          obsidian.enable = false;
+        nvidia-vaapi-driver
+        vulkan-loader
+        vulkan-validation-layers
+        vulkan-tools
+        libva
+        libva-vdpau-driver
+
+        # intel
+        intel-media-driver
+        intel-compute-runtime
+        vpl-gpu-rt
+      ];
+    };
+
+    # Add Bluetooth configuration
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+          Experimental = true;
         };
       };
+    };
+
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      open = true;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      prime = {
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+        sync.enable = false;
+        intelBusId = "PCI:0:2:0"; # Intel Raptor Lake-P Iris Xe Graphics
+        nvidiaBusId = "PCI:1:0:0"; # NVIDIA GeForce RTX 4060 Max-Q / Mobile
+      };
+    };
   };
 
-  hydenix = {
-    enable = true;
-    hostname = "oak";
-    timezone = "America/Vancouver";
-    locale = "en_CA.UTF-8";
+  services.xserver = {
+    videoDrivers = [
+      "modesetting"
+      "nvidia"
+    ];
   };
 
-  # GRUB configuration for high-DPI display
+  # for high-DPI display
   # TODO: move this to a module
   boot.loader.grub = {
-    fontSize = 32; # Larger font for high-DPI screen
-    gfxmodeEfi = "1920x1200"; # Lower resolution for better readability
+    fontSize = 32;
+    gfxmodeEfi = "1920x1200";
   };
 
   programs.nh = {
@@ -99,7 +130,7 @@ in
     # todo: flake path for oak
   };
   # for nh.clean
-  nix.gc.automatic = pkgs.lib.mkForce false;
+  nix.gc.automatic = lib.mkForce false;
 
   users.users.richen = {
     isNormalUser = true;
@@ -109,6 +140,7 @@ in
       "networkmanager"
       "video"
     ];
-    shell = pkgs.zsh;
   };
+
+  system.stateVersion = "26.05";
 }

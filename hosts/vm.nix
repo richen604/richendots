@@ -1,6 +1,5 @@
 {
   nixosConfiguration,
-  inputs,
   ...
 }:
 nixosConfiguration.extendModules {
@@ -13,11 +12,6 @@ nixosConfiguration.extendModules {
         ...
       }:
       {
-        # Drivers for virtio guest
-        imports = [
-          inputs.nixos-hardware.nixosModules.common-gpu-amd
-          inputs.nixos-hardware.nixosModules.common-cpu-intel
-        ];
         # Rest of VM configuration
         virtualisation.vmVariant = {
           virtualisation = {

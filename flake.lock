@@ -266,22 +266,6 @@
         "type": "github"
       }
     },
-    "nixos-hardware_2": {
-      "locked": {
-        "lastModified": 1768397375,
-        "narHash": "sha256-7QqbFi3ERvKjEdAzEYPv7iSGwpUKSrQW5wPLMFq45AQ=",
-        "owner": "NixOS",
-        "repo": "nixos-hardware",
-        "rev": "efe2094529d69a3f54892771b6be8ee4a0ebef0f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "master",
-        "repo": "nixos-hardware",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1744536153,
@@ -400,8 +384,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1768453845,
-        "narHash": "sha256-dGLsES+dPT4807Idzrixks2akVJlVRPKM0PQwxBPFvg=",
+        "lastModified": 1768523429,
+        "narHash": "sha256-N6GPOb7EJus07lQgHHoLhob7h4basCojPBJuCaXOfzA=",
         "path": "/home/richen/newdev/richendots-private",
         "type": "path"
       },
@@ -415,7 +399,6 @@
         "hjem": "hjem",
         "home-manager": "home-manager",
         "hydenix": "hydenix",
-        "nixos-hardware": "nixos-hardware_2",
         "nixpkgs": [
           "hydenix",
           "nixpkgs"

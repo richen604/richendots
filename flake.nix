@@ -11,7 +11,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
       # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       url = "path:/home/richen/newdev/richendots-private";
@@ -32,10 +32,26 @@
     in
     {
       nixosConfigurations = {
-        fern = richenLib.mkHost "fern" "x86_64-linux";
-        oak = richenLib.mkHost "oak" "x86_64-linux";
-        cedar = richenLib.mkHost "cedar" "x86_64-linux";
-        mangowc = richenLib.mkHost "mangowc" "x86_64-linux";
+        fern = richenLib.mkHost {
+          hostname = "fern";
+          system = "x86_64-linux";
+          profile = "desktop";
+        };
+        oak = richenLib.mkHost {
+          hostname = "oak";
+          system = "x86_64-linux";
+          profile = "laptop";
+        };
+        cedar = richenLib.mkHost {
+          hostname = "cedar";
+          system = "x86_64-linux";
+          profile = "server";
+        };
+        mangowc = richenLib.mkHost {
+          hostname = "mangowc";
+          system = "x86_64-linux";
+          profile = "desktop";
+        };
       };
 
       packages = richenLib.forEachSystem (
@@ -45,10 +61,26 @@
           richenLibInstance = richenLib.mkLib pkgs;
         in
         {
-          vm-fern = richenLib.mkVm "fern" system;
-          vm-oak = richenLib.mkVm "oak" system;
-          vm-cedar = richenLib.mkVm "cedar" system;
-          vm-mango = richenLib.mkVm "mangowc" system;
+          vm-fern = richenLib.mkVm {
+            hostname = "fern";
+            system = system;
+            profile = "desktop";
+          };
+          vm-oak = richenLib.mkVm {
+            hostname = "oak";
+            system = system;
+            profile = "laptop";
+          };
+          vm-cedar = richenLib.mkVm {
+            hostname = "cedar";
+            system = system;
+            profile = "server";
+          };
+          vm-mango = richenLib.mkVm {
+            hostname = "mangowc";
+            system = system;
+            profile = "desktop";
+          };
 
           wrapped-kitty = richenLibInstance.wrappers.kitty;
           wrapped-mango = richenLibInstance.wrappers.mango;
