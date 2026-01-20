@@ -10,8 +10,8 @@
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
     inputs.hydenix.nixosModules.default
     ./hardware-configuration.nix
-    ../../modules/system/hosts/fern
-    ../common/private.nix
+    ./vfio
+    ./drivers.nix
   ];
 
   home-manager = {
@@ -63,6 +63,8 @@
     pkgs.spicetify-cli
     richenLib.wrappers.firefox
     richenLib.wrappers.keepassxc
+    pkgs.mangohud
+    pkgs.gamescope
   ];
 
   hydenix = {
@@ -128,5 +130,78 @@
     };
   };
 
-  system.stateVersion = "25.05";
+  programs = {
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true;
+      protontricks.enable = true;
+    };
+  };
+
+  networking.interfaces.enp7s0.wakeOnLan.enable = true;
+
+  # TODO: make swap module for fern
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 96 * 1024;
+    }
+  ];
+  boot.resumeDevice = "/dev/disk/by-uuid/f3573fb1-5c09-4c7a-b3d4-ef0e73ad547f";
+  boot.kernelParams = [
+    "resume_offset=67471360"
+
+    # TODO: this and below are for gaming performance
+    "mitigations=off" # Small performance boost, zen kernel handles this well
+  ];
+
+  hardware.cpu.intel.updateMicrocode = true;
+  hardware.enableRedistributableFirmware = true;
+
+  # CPU scaling settings
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+    powertop.enable = false;
+  };
+
+  # todo: fern: review below kernel sysctls
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 1; # Minimize swap usage for gaming
+    "vm.overcommit_memory" = 2; # Prevent memory overcommit
+    "vm.dirty_ratio" = 5; # Better memory management
+    "vm.dirty_background_ratio" = 2; # Background writeback threshold
+  };
+
+  hydenix.boot.enable = false;
+
+  boot = {
+    plymouth.enable = true;
+    kernelPackages = pkgs.lib.mkForce pkgs.linuxPackages_6_12;
+    loader.systemd-boot.enable = pkgs.lib.mkForce false;
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+      };
+      grub = {
+        enable = true;
+        device = "nodev";
+        useOSProber = true;
+        efiSupport = true;
+        extraEntries = ''
+          menuentry "UEFI Firmware Settings" {
+            fwsetup
+          }
+        '';
+      };
+    };
+    kernelModules = [
+      "v4l2loopback"
+    ];
+    extraModprobeConfig = ''
+      options v4l2loopback devices=2 video_nr=1,2 card_label="OBS Cam, Virt Cam" exclusive_caps=1
+    '';
+  };
+
+  system.stateVersion = pkgs.lib.mkDefault "26.05";
 }
