@@ -78,69 +78,75 @@
       user = "richen";
       directory = "/home/richen";
       clobberFiles = true;
-      # todo: future: wrap vscode w/ portable mode?
-      files.".config/Code/User/settings.json" = {
-        type = "copy";
-        permissions = "0644";
-        source = pkgs.writeText "vscode-settings.json" ''
-           {
-            "workbench.colorTheme": "Tokyo Night",
-            "window.menuBarVisibility": "toggle",
-            "editor.fontSize": 17,
-            "editor.fontWeight": "700",
-            "editor.lineHeight": 1.3,
-            "editor.scrollbar.vertical": "hidden",
-            "editor.scrollbar.verticalScrollbarSize": 0,
-            "security.workspace.trust.untrustedFiles": "newWindow",
-            "security.workspace.trust.startupPrompt": "never",
-            "security.workspace.trust.enabled": false,
-            "editor.minimap.side": "left",
-            "editor.fontFamily": "'GohuFont uni14 Nerd Font Propo'",
-            "extensions.autoUpdate": true,
-            "workbench.statusBar.visible": true,
-            "terminal.external.linuxExec": "kitty",
-            "terminal.explorerKind": "both",
-            "terminal.sourceControlRepositoriesKind": "both",
-            "telemetry.telemetryLevel": "off",
-            "workbench.activityBar.location": "top",
-            "window.customTitleBarVisibility": "auto",
-            "workbench.iconTheme": "catppuccin-mocha",
-            "editor.cursorSmoothCaretAnimation": "on",
-            "editor.autoIndent": "full",
-            "editor.formatOnSave": true,
-            "nix.enableLanguageServer": true,
-            "nix.formatterPath": "nixfmt",
-            "nix.serverPath": "nil",
-            "nix.hiddenLanguageServerErrors": [
-              "textDocument/definition",
-              "textDocument/formatting",
-              "textDocument/documentSymbol"
-            ],
-            "nix.serverSettings": {
-              "nil": {
-                "formatting": {
-                  "command": ["nixfmt"]
+      files = {
+        # todo: apparently these can go to /share/Kvantum
+        ".config/Kvantum".source = ./config/Kvantum;
+        ".config/kdeglobals".source = ./config/kdeglobals;
+        ".config/qt6ct".source = ./config/qt6ct;
+        # todo: future: wrap vscode w/ portable mode?
+        ".config/Code/User/settings.json" = {
+          type = "copy";
+          permissions = "0644";
+          source = pkgs.writeText "vscode-settings.json" ''
+             {
+              "workbench.colorTheme": "Tokyo Night",
+              "window.menuBarVisibility": "toggle",
+              "editor.fontSize": 17,
+              "editor.fontWeight": "700",
+              "editor.lineHeight": 1.3,
+              "editor.scrollbar.vertical": "hidden",
+              "editor.scrollbar.verticalScrollbarSize": 0,
+              "security.workspace.trust.untrustedFiles": "newWindow",
+              "security.workspace.trust.startupPrompt": "never",
+              "security.workspace.trust.enabled": false,
+              "editor.minimap.side": "left",
+              "editor.fontFamily": "'GohuFont uni14 Nerd Font Propo'",
+              "extensions.autoUpdate": true,
+              "workbench.statusBar.visible": true,
+              "terminal.external.linuxExec": "kitty",
+              "terminal.explorerKind": "both",
+              "terminal.sourceControlRepositoriesKind": "both",
+              "telemetry.telemetryLevel": "off",
+              "workbench.activityBar.location": "top",
+              "window.customTitleBarVisibility": "auto",
+              "workbench.iconTheme": "catppuccin-mocha",
+              "editor.cursorSmoothCaretAnimation": "on",
+              "editor.autoIndent": "full",
+              "editor.formatOnSave": true,
+              "nix.enableLanguageServer": true,
+              "nix.formatterPath": "nixfmt",
+              "nix.serverPath": "nil",
+              "nix.hiddenLanguageServerErrors": [
+                "textDocument/definition",
+                "textDocument/formatting",
+                "textDocument/documentSymbol"
+              ],
+              "nix.serverSettings": {
+                "nil": {
+                  "formatting": {
+                    "command": ["nixfmt"]
+                  }
                 }
-              }
-            },
-            "workbench.sideBar.location": "right",
-            "git.enableSmartCommit": true,
-            "github.copilot.nextEditSuggestions.enabled": true,
-            "todo-tree.general.tags": [
-              "BUG",
-              "HACK",
-              "FIXME",
-              "TODO",
-              "XXX",
-              "[ ]",
-              "[x]",
-              "todo",
-              "fixme",
-              "bug"
-            ],
-            "editor.minimap.enabled": false
-          }
-        '';
+              },
+              "workbench.sideBar.location": "right",
+              "git.enableSmartCommit": true,
+              "github.copilot.nextEditSuggestions.enabled": true,
+              "todo-tree.general.tags": [
+                "BUG",
+                "HACK",
+                "FIXME",
+                "TODO",
+                "XXX",
+                "[ ]",
+                "[x]",
+                "todo",
+                "fixme",
+                "bug"
+              ],
+              "editor.minimap.enabled": false
+            }
+          '';
+        };
       };
     };
   };
@@ -179,11 +185,6 @@
     ];
   };
 
-  qt = {
-    enable = true;
-    platformTheme = "gtk2";
-    style = "adwaita-dark";
-  };
   programs.dconf.profiles.user.databases = [
     {
       settings = {
@@ -273,6 +274,14 @@
     XCURSOR_SIZE = "24";
     MOZ_ENABLE_WAYLAND = "1";
     GTK_THEME = "catppuccin-mocha-green-compact";
+    QT_QPA_PLATFORM = "wayland;xcb";
+    GTK_BACKEND = "wayland;x11";
+    SDL_VIDEODRIVER = "wayland";
+    CLUTTER_BACKEND = "wayland";
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+    QT_QPA_PLATFORMTHEME = "qt6ct";
+    QT_STYLE_OVERRIDE = "kvantum";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 
   xdg.mime.defaultApplications = {
@@ -315,6 +324,7 @@
     richenLib.wrappers.firefox
     richenLib.wrappers.keepassxc
     richenLib.wrappers.git
+    richenLib.wrappers.udiskie
 
     pkgs.bat # cat alternative
     pkgs.eza # ls alternative
@@ -399,6 +409,8 @@
     pkgs.kdePackages.kio # KDE I/O framework
     pkgs.kdePackages.kio-extras # Additional KDE I/O protocols
     pkgs.kdePackages.kwayland # KDE Wayland integration
+    pkgs.kdePackages.plasma-integration
+    pkgs.libsForQt5.qtstyleplugin-kvantum
 
     # gtk deps
     pkgs.gtk3
