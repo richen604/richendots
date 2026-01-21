@@ -887,8 +887,13 @@ tabs {
   --tf-bookmarks-alignment: center; /* alignment of bookmarks in the bookmarks toolbar (if you have many bookmarks, left is recommended) */
 }
 
-* {
-  font-family: var(--tf-font-family);
+svg,
+svg * {
+  font-family: initial !important;
+}
+
+:root {
+  font-family: var(--tf-font-family), system-ui;
   font-size: var(--tf-font-size);
 }
 
