@@ -57,13 +57,11 @@ let
       };
     }).config.system.build.vm;
 
-  # main function that generates the richenLib for use elsewhere
   mkLib = pkgs: {
     vars = {
       username = "richen";
     };
     wrappers = import ./wrappers { inherit inputs pkgs; };
-    # Add any other custom library functions here
     lib = { };
   };
 in

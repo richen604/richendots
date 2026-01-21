@@ -2,20 +2,17 @@
 
 ## now
 
+- baseVars, hostVars init
+- hosts/profiles init
+- expand profiles impl
 - refactor wrappers folder
   - modules vs impl
   - modules don't set wrapper by default allowing extensibility
-  - some sort of recursive imports impl
+  - some sort of recursive imports impl https://github.com/NixOS/nixpkgs/pull/481379/files
 
 ## next
 
-- review and convert fern modules
-- review and convert oak modules
 - add priv modules
-- new structure
-  - hosts/workflows
-  - baseVars, hostVars
-- baseVars, hostVars, workflows?, hosts/config & hosts/hardware-configuration.nix, recursiveImport
 - clean up flake.nix
 - break out mangowc into extendable configurations per host (fern/oak)
 
@@ -24,6 +21,7 @@ wrap:
 - nvim with mnw
 - tmux
 - swaylock
+- hypridle?
 - mpv
 
 ## future
@@ -42,5 +40,6 @@ wrap:
   - make it look like this (feeds?) <https://github.com/glanceapp/glance>
   - declarative plugins?
 wrap:
+- kvantum
 - dolphin
 - spotify + sleek flatpak
