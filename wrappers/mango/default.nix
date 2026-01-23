@@ -1,7 +1,6 @@
 {
   inputs,
   pkgs,
-  richenLib,
   ...
 }:
 # todo: mango wrapper: runtime applications for auto start
@@ -14,20 +13,20 @@ in
   "config.conf".content = ''
 
     # applications auto started
-    exec-once=${pkgs.lib.getExe richenLib.wrappers.swaybg}
-    exec-once=${pkgs.lib.getExe richenLib.wrappers.waybar}
-    exec-once=${richenLib.wrappers.swaync}/bin/swaync &
-    exec-once=${pkgs.lib.getExe richenLib.wrappers.vicinae} server
+    exec-once=swaybg
+    exec-once=waybar
+    exec-once=swaync &
+    exec-once=vicinae server
     # clipboard
-    exec-once=${pkgs.lib.getExe pkgs.wl-clip-persist} --clipboard regular --reconnect-tries 0 &
-    exec-once=${pkgs.lib.getExe' pkgs.wl-clipboard "wl-paste"} --type text --watch cliphist store &
+    exec-once=wl-clip-persist --clipboard regular --reconnect-tries 0 &
+    exec-once=wl-paste --type text --watch cliphist store &
     exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
-    exec-once=${pkgs.lib.getExe pkgs.wlsunset} -l 49.2 -L 123.1
-    exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    exec-once=${pkgs.lib.getExe' pkgs.udiskie "udiskie"} -t &
-    exec-once=${pkgs.lib.getExe' pkgs.networkmanagerapplet "nm-applet"} &
-    exec-once=${pkgs.lib.getExe' pkgs.kdePackages.kdeconnect-kde "kdeconnectd"} &
-    exec-once=${pkgs.lib.getExe richenLib.wrappers.keepassxc} --minimize-to-tray &
+    exec-once=wlsunset -l 49.2 -L 123.1
+    exec-once=/run/current-system/sw/libexec/polkit-gnome-authentication-agent-1 &
+    exec-once=udiskie -t &
+    exec-once=nm-applet &
+    exec-once=kdeconnectd &
+    exec-once=keepassxc --minimize-to-tray &
 
     # cursor size
     cursor_size=24
@@ -36,26 +35,26 @@ in
 
     # custom misc
     # TODO: move as needed
-    bind=SUPER,A,spawn,${pkgs.lib.getExe richenLib.wrappers.vicinae} toggle
-    bind=SUPER,V,spawn, ${pkgs.lib.getExe richenLib.wrappers.vicinae} vicinae://extensions/vicinae/clipboard/history
+    bind=SUPER,A,spawn,vicinae toggle
+    bind=SUPER,V,spawn,vicinae vicinae://extensions/vicinae/clipboard/history
     # layer rules for vicinae
     layerrule=blur:1,layer_name:vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
-    bind=SUPER,E,spawn,${pkgs.lib.getExe' pkgs.kdePackages.dolphin "dolphin"}
+    bind=SUPER,E,spawn,dolphin
     bind=SUPER,C,spawn,code 
     bind=SUPER,P,spawn,${pkgs.writeScriptBin "screenshot" ''
       #!/usr/bin/env bash
-      GEOM=$(${pkgs.lib.getExe pkgs.slurp}) || exit 1
+      GEOM=$(slurp) || exit 1
       mkdir -p ~/Pictures/Screenshots
-      ${pkgs.lib.getExe pkgs.grim} -g "$GEOM" - | ${pkgs.lib.getExe richenLib.wrappers.satty} --filename -
+      grim -g "$GEOM" - | satty --filename -
     ''}/bin/screenshot
     bind=SUPER+SHIFT,P,spawn,${pkgs.writeScriptBin "screenrecord-start" ''
       #!/usr/bin/env bash
       mkdir -p ~/Videos/Recordings
-      GEOM=$(${pkgs.lib.getExe pkgs.slurp}) || exit 1
+      GEOM=$(slurp) || exit 1
       FILENAME=~/Videos/Recordings/$(date +%y%m%d_%Hh%Mm%Ss)_recording.mp4
-      ${pkgs.lib.getExe pkgs.wf-recorder} -g "$GEOM" -f "$FILENAME" &
+      wf-recorder -g "$GEOM" -f "$FILENAME" &
       WF_PID=$!
       echo $WF_PID > /tmp/wf-recorder.pid
       notify-send "Recording started" "Saving to $FILENAME"
@@ -73,7 +72,7 @@ in
     # pseudo hyprland like secret tag
     bind=SUPER,S,view,9
     bind=SUPER+ALT,S,tagsilent,9
-    bind=SUPER,B,spawn,${pkgs.lib.getExe richenLib.wrappers.firefox}
+    bind=SUPER,B,spawn,firefox
 
     # ============================================
     # GAMEMODE SETTINGS - Toggle these manually

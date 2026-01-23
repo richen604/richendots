@@ -6,6 +6,10 @@
   richenLib,
   ...
 }:
+let
+
+  wrappers = richenLib.wrappers { };
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -23,11 +27,6 @@
 
   programs.obs-studio = {
     enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      looking-glass-obs
-      obs-pipewire-audio-capture
-    ];
     enableVirtualCamera = true;
   };
   services.flatpak.enable = true;
@@ -46,11 +45,6 @@
   };
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-    protontricks.enable = true;
   };
 
   # USERS -------------------------------------------------------------
@@ -67,9 +61,9 @@
     home = "/home/richen";
     initialPassword = "test";
     createHome = true;
-    shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
+    shell = "${pkgs.lib.getExe wrappers.zsh}";
   };
-  users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
+  users.defaultUserShell = "${pkgs.lib.getExe wrappers.zsh}";
 
   xdg.icons.fallbackCursorThemes = [ "Bibata-Modern-Ice" ];
 
@@ -155,7 +149,6 @@
     enable = true;
     extensions = [
       pkgs.vscode-extensions.aaron-bond.better-comments
-      pkgs.vscode-extensions.bierner.markdown-mermaid
       pkgs.vscode-extensions.bierner.markdown-preview-github-styles
       pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
       pkgs.vscode-extensions.davidanson.vscode-markdownlint
@@ -172,16 +165,15 @@
       pkgs.vscode-extensions.leonardssh.vscord
       pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
       pkgs.vscode-extensions.mkhl.shfmt
-      pkgs.vscode-extensions.ms-python.python
       pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
       pkgs.vscode-extensions.redhat.vscode-yaml
-      pkgs.vscode-extensions.saoudrizwan.claude-dev
       pkgs.vscode-extensions.tamasfe.even-better-toml
       pkgs.vscode-extensions.timonwong.shellcheck
       pkgs.vscode-extensions.yoavbls.pretty-ts-errors
       pkgs.vscode-extensions.yzhang.markdown-all-in-one
       pkgs.vscode-extensions.ziglang.vscode-zig
       pkgs.vscode-extensions.gruntfuggly.todo-tree
+      pkgs.vscode-extensions.rooveterinaryinc.roo-cline
     ];
   };
 
@@ -313,18 +305,18 @@
     # todo: custom scripts with nom post flakes?
     # pkgs.nix-output-monitor
 
-    richenLib.wrappers.mango
-    richenLib.wrappers.kitty
-    richenLib.wrappers.zsh
-    richenLib.wrappers.swaybg
-    richenLib.wrappers.waybar
-    richenLib.wrappers.swaync
-    richenLib.wrappers.vicinae
-    richenLib.wrappers.satty
-    richenLib.wrappers.firefox
-    richenLib.wrappers.keepassxc
-    richenLib.wrappers.git
-    richenLib.wrappers.udiskie
+    wrappers.mango
+    wrappers.kitty
+    wrappers.zsh
+    wrappers.swaybg
+    wrappers.waybar
+    wrappers.swaync
+    wrappers.vicinae
+    wrappers.satty
+    wrappers.firefox
+    wrappers.keepassxc
+    wrappers.git
+    wrappers.udiskie
 
     pkgs.bat # cat alternative
     pkgs.eza # ls alternative
@@ -358,10 +350,6 @@
     pkgs.hicolor-icon-theme # Base fallback icon theme
     # todo: set xdg mine defaults for ark
     pkgs.kdePackages.ark # kde file archiver
-    pkgs.wayland # for wayland support
-    pkgs.egl-wayland # for wayland support
-    pkgs.xwayland # for x11 support
-    pkgs.gobject-introspection # for python packages
     pkgs.trash-cli # cli to manage trash files
     pkgs.gawk # awk implementation
     pkgs.coreutils # coreutils implementation
@@ -370,7 +358,6 @@
     pkgs.wlsunset
     pkgs.grim
     pkgs.slurp
-    pkgs.bibata-cursors
     pkgs.networkmanager
     pkgs.networkmanagerapplet
     pkgs.brightnessctl # screen brightness control
@@ -390,6 +377,7 @@
     pkgs.pamixer
     pkgs.playerctl
     pkgs.unzip
+    pkgs.wf-recorder
 
     # qt deps
     pkgs.kdePackages.qt6ct
@@ -399,31 +387,31 @@
     pkgs.kdePackages.breeze-icons
     pkgs.kdePackages.qtimageformats
     pkgs.kdePackages.qtsvg
-    pkgs.kdePackages.qtwayland
-    pkgs.kdePackages.qtimageformats # Image format support for Qt5
-    pkgs.kdePackages.ffmpegthumbs # Video thumbnail support
-    pkgs.kdePackages.kde-cli-tools # KDE command line utilities
-    pkgs.kdePackages.kdegraphics-thumbnailers # KDE graphics thumbnails
-    pkgs.kdePackages.kimageformats # Additional image format support for KDE
-    pkgs.kdePackages.qtsvg # SVG support
-    pkgs.kdePackages.kio # KDE I/O framework
-    pkgs.kdePackages.kio-extras # Additional KDE I/O protocols
-    pkgs.kdePackages.kwayland # KDE Wayland integration
+    pkgs.kdePackages.ffmpegthumbs
+    pkgs.kdePackages.kde-cli-tools
+    pkgs.kdePackages.kdegraphics-thumbnailers
+    pkgs.kdePackages.kimageformats
+    pkgs.kdePackages.kio
+    pkgs.kdePackages.kio-fuse
+    pkgs.kdePackages.kio-extras
+    pkgs.kdePackages.kwayland
     pkgs.kdePackages.plasma-integration
+    pkgs.kdePackages.dolphin-plugins
     pkgs.libsForQt5.qtstyleplugin-kvantum
+
+    # file previews / thumbnailers
+    pkgs.icoutils
+    pkgs.kdePackages.kdesdk-thumbnailers
+    pkgs.libappimage
+    pkgs.resvg
+    pkgs.taglib
 
     # gtk deps
     pkgs.gtk3
     pkgs.gtk4
     pkgs.glib
-    pkgs.gsettings-desktop-schemas
-    pkgs.gnome-settings-daemon
-    pkgs.gnome-tweaks
-    pkgs.gnomeExtensions.window-gestures
     pkgs.nwg-look
     pkgs.adwaita-icon-theme
-    pkgs.emote
-
     pkgs.spicetify-cli
     pkgs.tealdeer
     pkgs.kdePackages.kdeconnect-kde
@@ -464,20 +452,18 @@
     pkgs.cpufrequtils
 
     pkgs.dpms-off
-    pkgs.kdePackages.kdenetwork-filesharing
+    # todo dev shells
     # python stuff
-    pkgs.uv
+    # pkgs.uv
+    # dev
+    # pkgs.pnpm
+    # pkgs.nodePackages.npm
+    # pkgs.fnm
+    # pkgs.godot
+    # pkgs.gdtoolkit_4
 
     # gaming
     pkgs.steam-run
-    pkgs.protonup-qt
-
-    # dev
-    pkgs.pnpm
-    pkgs.nodePackages.npm
-    pkgs.fnm
-    pkgs.godot
-    pkgs.gdtoolkit_4
 
     # i don't want to add declarative flatpak, so here's a semi useful spotify wrapper
     # todo: spotify wrapped: grab exactly the configs required and apply them manually
@@ -720,11 +706,11 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${pkgs.lib.getExe richenLib.wrappers.mango}";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd mango";
         user = "greeter";
       };
       initial_session = {
-        command = "${pkgs.lib.getExe richenLib.wrappers.mango}";
+        command = "mango";
         user = "richen";
       };
     };
@@ -755,7 +741,7 @@
       xdg-desktop-portal-gtk
     ];
     wlr.enable = lib.mkDefault true;
-    configPackages = [ richenLib.wrappers.mango ];
+    configPackages = [ wrappers.mango ];
     xdgOpenUsePortal = true;
   };
 

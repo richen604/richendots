@@ -52,14 +52,9 @@ in
   interactiveShellInit = ''
     eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
   '';
-  promptInit = ''
-    source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-    source ${toString ./.p10k.zsh}
 
-    bindkey '\e[1;3C' forward-word   # Alt+Right
-    bindkey '\e[1;3D' backward-word  # Alt+Left
-
-    # todo: ideally this would be per project but npx might require this
+  /*
+    todo: ideally this would be per project but npx might require this
     # fnm (Fast Node Manager) setup
     eval "$(fnm env --use-on-cd)"
     # pnpm setup
@@ -71,6 +66,14 @@ in
     # npm global packages path
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
     export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+  */
+  promptInit = ''
+    source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+    source ${toString ./.p10k.zsh}
+
+    bindkey '\e[1;3C' forward-word   # Alt+Right
+    bindkey '\e[1;3D' backward-word  # Alt+Left
+
   '';
   histSize = 10000;
   enableCompletion = true;

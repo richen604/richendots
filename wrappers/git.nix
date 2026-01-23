@@ -5,7 +5,9 @@
 }:
 # some of the options from https://jvns.ca/blog/2024/02/16/popular-git-config-options/
 (inputs.wrappers.wrapperModules.git.apply {
-  pkgs = pkgs;
+  pkgs = pkgs // {
+    git = pkgs.gitMinimal;
+  };
   settings = {
     core = {
       editor = "nvim";

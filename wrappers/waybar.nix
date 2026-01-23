@@ -1,7 +1,6 @@
 {
   inputs,
   pkgs,
-  richenLib,
   ...
 }:
 
@@ -59,10 +58,10 @@
         "dnd-inhibited-none" = "";
       };
       "return-type" = "json";
-      "exec-if" = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
-      exec = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
-      "on-click" = "sleep 0.1s && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-      "on-click-right" = "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+      "exec-if" = "which swaync-client";
+      exec = "swaync-client -swb";
+      "on-click" = "sleep 0.1s && swaync-client -t -sw";
+      "on-click-right" = "swaync-client -d -sw";
       escape = true;
     };
     "keyboard-state" = {
@@ -147,9 +146,9 @@
       format = "{icon} {volume}%";
       tooltip = false;
       "format-muted" = " Muted";
-      "on-click" = "${pkgs.lib.getExe pkgs.pamixer} -t";
-      "on-scroll-up" = "${pkgs.lib.getExe pkgs.pamixer} -i 2";
-      "on-scroll-down" = "${pkgs.lib.getExe pkgs.pamixer} -d 2";
+      "on-click" = "pamixer -t";
+      "on-scroll-up" = "pamixer -i 2";
+      "on-scroll-down" = "pamixer -d 2";
       "scroll-step" = 5;
       "format-icons" = {
         headphone = "";
@@ -168,30 +167,30 @@
     "custom/power" = {
       format = "";
       tooltip = false;
-      "on-click" = "${pkgs.lib.getExe pkgs.wlogout} -b 6 --protocol layer-shell";
+      "on-click" = "wlogout -b 6 --protocol layer-shell";
     };
     "pulseaudio#microphone" = {
       format = "{format_source}";
       "format-source" = " {volume}%";
       tooltip = false;
       "format-source-muted" = " Muted";
-      "on-click" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -t";
-      "on-scroll-up" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -i 2";
-      "on-scroll-down" = "${pkgs.lib.getExe pkgs.pamixer} --default-source -d 2";
+      "on-click" = "pamixer --default-source -t";
+      "on-scroll-up" = "pamixer --default-source -i 2";
+      "on-scroll-down" = "pamixer --default-source -d 2";
       "scroll-step" = 5;
     };
     "custom/playerctl" = {
       format = "{2} <span>{0}</span>";
       "return-type" = "json";
-      exec = "${pkgs.playerctl} -p spotify metadata -f '{\"text\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"tooltip\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F";
+      exec = "playerctl -p spotify metadata -f '{\"text\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"tooltip\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F";
       tooltip = false;
-      "on-click-middle" = "${pkgs.playerctl} -p spotify previous";
-      "on-click" = "${pkgs.playerctl} -p spotify play-pause";
-      "on-click-right" = "${pkgs.playerctl} -p spotify next";
-      "on-click-forward" = "${pkgs.playerctl} -p spotify position 10+";
-      "on-click-backward" = "${pkgs.playerctl} -p spotify position 10-";
-      "on-scroll-up" = "${pkgs.playerctl} -p spotify volume 0.02+";
-      "on-scroll-down" = "${pkgs.playerctl} -p spotify volume 0.02-";
+      "on-click-middle" = "playerctl -p spotify previous";
+      "on-click" = "playerctl -p spotify play-pause";
+      "on-click-right" = "playerctl -p spotify next";
+      "on-click-forward" = "playerctl -p spotify position 10+";
+      "on-click-backward" = "playerctl -p spotify position 10-";
+      "on-scroll-up" = "playerctl -p spotify volume 0.02+";
+      "on-scroll-down" = "playerctl -p spotify volume 0.02-";
       "format-icons" = {
         Paused = " ";
         Playing = " ";
