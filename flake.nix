@@ -11,7 +11,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     richendots-private = {
       # url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       url = "path:/home/richen/newdev/richendots-private";
@@ -58,7 +57,8 @@
         system:
         let
           pkgs = richenLib.pkgsFor system;
-          richenLibInstance = richenLib.mkLib pkgs;
+          _richenLib = richenLib.mkLib pkgs;
+          wrappers = _richenLib.wrappers;
         in
         {
           vm-fern = richenLib.mkVm {
@@ -81,19 +81,22 @@
             system = system;
             profile = "desktop";
           };
+        }
+        // (wrappers { })
+      );
 
-          wrapped-kitty = richenLibInstance.wrappers.kitty;
-          wrapped-mango = richenLibInstance.wrappers.mango;
-          wrapped-satty = richenLibInstance.wrappers.satty;
-          wrapped-swaybg = richenLibInstance.wrappers.swaybg;
-          wrapped-swaync = richenLibInstance.wrappers.swaync;
-          wrapped-zsh = richenLibInstance.wrappers.zsh;
-          wrapped-waybar = richenLibInstance.wrappers.waybar;
-          wrapped-vicinae = richenLibInstance.wrappers.vicinae;
-          wrapped-firefox = richenLibInstance.wrappers.firefox;
-          wrapped-keepassxc = richenLibInstance.wrappers.keepassxc;
-          wrapped-git = richenLibInstance.wrappers.git;
-          wrapped-udiskie = richenLibInstance.wrappers.udiskie;
+      devShells = richenLib.forEachSystem (
+        system:
+        let
+          pkgs = richenLib.pkgsFor system;
+          _richenLib = richenLib.mkLib pkgs;
+          wrappers = _richenLib.wrappers;
+        in
+        {
+          wrappers = pkgs.mkShellNoCC {
+            allowSubstitutes = false;
+            packages = builtins.attrValues (wrappers { });
+          };
         }
       );
     };

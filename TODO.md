@@ -2,19 +2,18 @@
 
 ## now
 
-- baseVars, hostVars init
-- hosts/profiles init
-- expand profiles impl
-- refactor wrappers folder
-  - modules vs impl
-  - modules don't set wrapper by default allowing extensibility
-  - some sort of recursive imports impl https://github.com/NixOS/nixpkgs/pull/481379/files
+- recurse wrappers as modules
+- recurse and refactor host modules
+- recurse profiles
 
 ## next
 
+- upwrap mangowc for easy config
+- mangowc hotreload inotify
 - add priv modules
 - clean up flake.nix
 - break out mangowc into extendable configurations per host (fern/oak)
+- expand profiles impl
 
 wrap:
 
@@ -26,7 +25,6 @@ wrap:
 
 ## future
 
-- more runtime packages for required applications w/ las wrappers
 - disko configurations
 - nixos-anywhere support + dev-shell
 - npins & a post flake world
@@ -39,7 +37,4 @@ wrap:
 - obsidian:
   - make it look like this (feeds?) <https://github.com/glanceapp/glance>
   - declarative plugins?
-wrap:
-- kvantum
-- dolphin
-- spotify + sleek flatpak
+- improve spicetify flatpak

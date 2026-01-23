@@ -1,15 +1,12 @@
 {
   inputs,
   pkgs,
-  richenLib,
   ...
 }:
 
 (inputs.wrappers.wrapperModules.kitty.apply {
   pkgs = pkgs;
   "kitty.conf".content = ''
-    shell ${pkgs.lib.getExe richenLib.wrappers.zsh}
-
     # font settings
     font_family GohuFont uni14 Nerd Font Propo
     bold_font auto
