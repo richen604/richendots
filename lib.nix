@@ -73,7 +73,6 @@ let
               )
             ) files
           );
-
       };
     in
     self;

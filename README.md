@@ -4,27 +4,26 @@
 
 my personal nixos config
 
-> [!WARNING] you will not be able to fork this config, as it mostly uses private imports
-> for a config you CAN use, check out [hydenix](https://github.com/richen604/hydenix)
-
 ---
 
 ![screenshot](./assets/screenshot.png)
 
 ---
 
-features:
+#### features:
 
-- flakes, home-manager
-- multi-host & multi-user
+- flakes
+- wrapped programs using [Lassulus/wrappers](https://github.com/Lassulus/wrappers)
+- `5.5s` eval (on my machine)
+- multi host & single user
+- profiles (common, desktop, laptop, server)
 - 5 hosts
   - fern - desktop 🌿
   - oak - laptop 🌳
   - cedar - server 🪵
   - willow - cloud vm 🌾
   - ivy - phone 🍃
-- desktops - system wide configurations
-  - [hydenix](https://github.com/richen604/hydenix)
-- private imports
-  - host spec modules
-  - sops-nix
+
+> [!NOTE] note:
+> some modules, packages, and options are obfuscated from private imports </br>
+> the configuration will not build from a clone/fork without `inputs.richendots-private` removed from `./lib.nix`
