@@ -18,6 +18,7 @@
   wayland,
   libxml2,
   glaze,
+  ...
 }:
 gcc15Stdenv.mkDerivation (finalAttrs: {
   pname = "vicinae";
