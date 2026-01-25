@@ -1,7 +1,4 @@
 { pkgs, richenLib, ... }:
-let
-  wrappers = richenLib.wrappers { };
-in
 {
   # todo: this should be a shell
   # Inits some required packages for richendots-private
@@ -13,7 +10,7 @@ in
     # Age encryption with YubiKey support
     age # Core age encryption
     age-plugin-yubikey # YubiKey plugin for age
-    wrappers.keepassxc
+    richenLib.wrappers.keepassxc
     pam_u2f
   ];
 }

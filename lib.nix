@@ -57,7 +57,6 @@ let
         };
 
         wrappers =
-          _:
           let
             files = self.lib.listFilesRecursiveCond ./wrappers (
               filename: lib.hasSuffix ".nix" filename && filename != "module.nix"

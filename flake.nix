@@ -82,7 +82,7 @@
             profile = "desktop";
           };
         }
-        // (wrappers { })
+        // wrappers
       );
 
       devShells = richenLib.forEachSystem (
@@ -95,7 +95,7 @@
         {
           wrappers = pkgs.mkShellNoCC {
             allowSubstitutes = false;
-            packages = builtins.attrValues (wrappers { });
+            packages = builtins.attrValues wrappers;
           };
         }
       );
