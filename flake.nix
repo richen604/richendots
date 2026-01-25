@@ -17,7 +17,6 @@
     };
 
     wrappers.url = "github:lassulus/wrappers";
-    vicinae.url = "github:vicinaehq/vicinae";
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
