@@ -8,8 +8,7 @@ let
 in
 (vicinae.apply {
   pkgs = pkgs // {
-    # TODO: copy drv for vicinae
-    vicinae = inputs.vicinae.packages."x86_64-linux".default;
+    vicinae = pkgs.callPackage ./package.nix { };
   };
   settings = {
     close_on_focus_loss = false;
