@@ -6,10 +6,6 @@
   richenLib,
   ...
 }:
-let
-
-  wrappers = richenLib.wrappers { };
-in
 {
   imports = [
     ./hardware-configuration.nix
@@ -62,9 +58,9 @@ in
     home = "/home/richen";
     initialPassword = "test";
     createHome = true;
-    shell = "${pkgs.lib.getExe wrappers.zsh}";
+    shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
   };
-  users.defaultUserShell = "${pkgs.lib.getExe wrappers.zsh}";
+  users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
   xdg.icons.fallbackCursorThemes = [ "Bibata-Modern-Ice" ];
 
@@ -306,18 +302,18 @@ in
     # todo: custom scripts with nom post flakes?
     # pkgs.nix-output-monitor
 
-    wrappers.mango
-    wrappers.kitty
-    wrappers.zsh
-    wrappers.swaybg
-    wrappers.waybar
-    wrappers.swaync
-    wrappers.vicinae
-    wrappers.satty
-    wrappers.firefox
-    wrappers.keepassxc
-    wrappers.git
-    wrappers.udiskie
+    richenLib.wrappers.mango
+    richenLib.wrappers.kitty
+    richenLib.wrappers.zsh
+    richenLib.wrappers.swaybg
+    richenLib.wrappers.waybar
+    richenLib.wrappers.swaync
+    richenLib.wrappers.vicinae
+    richenLib.wrappers.satty
+    richenLib.wrappers.firefox
+    richenLib.wrappers.keepassxc
+    richenLib.wrappers.git
+    richenLib.wrappers.udiskie
 
     pkgs.bat # cat alternative
     pkgs.eza # ls alternative
@@ -744,7 +740,7 @@ in
       xdg-desktop-portal-gtk
     ];
     wlr.enable = lib.mkDefault true;
-    configPackages = [ wrappers.mango ];
+    configPackages = [ richenLib.wrappers.mango ];
     xdgOpenUsePortal = true;
   };
 
