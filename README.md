@@ -14,7 +14,7 @@ my personal nixos config
 
 - flakes
 - wrapped programs using [Lassulus/wrappers](https://github.com/Lassulus/wrappers)
-- `5.5s` eval (on my machine)
+- `4.66s` eval (on my machine)
 - multi host & single user
 - profiles (common, desktop, laptop, server)
 - 5 hosts
