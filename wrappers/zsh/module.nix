@@ -7,6 +7,7 @@ inputs.wrappers.lib.wrapModule (
     wlib,
     ...
   }:
+  # todo: zsh wrapper: completions do not work without nixos option environment.pathsToLink = [ "/share/zsh" ];
   {
     _class = "wrapper";
 
@@ -242,17 +243,6 @@ inputs.wrappers.lib.wrapModule (
         };
       };
 
-      defaultKeymap = lib.mkOption {
-        type = lib.types.enum [
-          "emacs"
-          "vi"
-          "viins"
-          "vicmd"
-        ];
-        default = "emacs";
-        description = "The default keymap to use.";
-      };
-
       plugins = lib.mkOption {
         type = lib.types.listOf (
           lib.types.submodule {
@@ -289,6 +279,17 @@ inputs.wrappers.lib.wrapModule (
             {
               name = ".zshenv";
               path = config.pkgs.writeText ".zshenv" ''
+                # Only execute this file once per shell.
+                if [ -n "''${__ETC_ZSHENV_SOURCED-}" ]; then return; fi
+                __ETC_ZSHENV_SOURCED=1
+
+                HELPDIR="${config.pkgs.zsh}/share/zsh/$ZSH_VERSION/help"
+
+                # Tell zsh how to find installed completions.
+                for p in ''${(z)NIX_PROFILES}; do
+                    fpath=($p/share/zsh/site-functions $p/share/zsh/$ZSH_VERSION/functions $p/share/zsh/vendor-completions $fpath)
+                done
+
                 # Configure session variables.
                 ${lib.concatStringsSep "\n" (
                   lib.mapAttrsToList (
@@ -302,18 +303,37 @@ inputs.wrappers.lib.wrapModule (
 
                 # Custom shell initialization.
                 ${config.shellInit}
+
+                # Read system-wide modifications.
+                if test -f /etc/zprofile.local; then
+                    . /etc/zprofile.local
+                fi
               '';
             }
             {
               name = ".zprofile";
               path = config.pkgs.writeText ".zprofile" ''
+                # Only execute this file once per shell.
+                if [ -n "''${__ETC_ZPROFILE_SOURCED-}" ]; then return; fi
+                __ETC_ZPROFILE_SOURCED=1
+
                 # Login shell initialization.
                 ${config.loginShellInit}
+
+                # Read system-wide modifications.
+                if test -f /etc/zprofile.local; then
+                    . /etc/zprofile.local
+                fi
               '';
             }
             {
               name = ".zshrc";
               path = config.pkgs.writeText ".zshrc" ''
+
+                # Only execute this file once per shell.
+                if [ -n "$__ETC_ZSHRC_SOURCED" -o -n "$NOSYSZSHRC" ]; then return; fi
+                __ETC_ZSHRC_SOURCED=1
+
                 # Configure history.
                 SAVEHIST=${toString config.histSize}
                 HISTSIZE=${toString config.histSize}
@@ -324,20 +344,6 @@ inputs.wrappers.lib.wrapModule (
 
                 # configure sane keyboard defaults
                 . ${./zinputrc}
-
-                # Configure keymap.
-                ${
-                  if config.defaultKeymap == "emacs" then
-                    "bindkey -e"
-                  else if config.defaultKeymap == "vi" then
-                    "bindkey -v"
-                  else if config.defaultKeymap == "viins" then
-                    "bindkey -v"
-                  else if config.defaultKeymap == "vicmd" then
-                    "bindkey -v"
-                  else
-                    "bindkey -e"
-                }
 
                 # Configure completion system.
                 ${lib.optionalString config.enableCompletion ''
@@ -451,6 +457,19 @@ inputs.wrappers.lib.wrapModule (
 
                 # Initialize prompt.
                 ${config.promptInit}
+
+                # Disable some features to support TRAMP.
+                if [ "$TERM" = dumb ]; then
+                    unsetopt zle prompt_cr prompt_subst
+                    unset RPS1 RPROMPT
+                    PS1='$ '
+                    PROMPT='$ '
+                fi
+
+                # Read system-wide modifications.
+                if test -f /etc/zshrc.local; then
+                    . /etc/zshrc.local
+                fi
               '';
             }
           ]

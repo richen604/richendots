@@ -20,6 +20,7 @@ in
     # clipboard
     exec-once=wl-clip-persist --clipboard regular --reconnect-tries 0 &
     exec-once=wl-paste --type text --watch cliphist store &
+    exec-once=wl-paste --type image --watch cliphist store &
     exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
     exec-once=wlsunset -l 49.2 -L 123.1
     exec-once=/run/current-system/sw/libexec/polkit-gnome-authentication-agent-1 &
@@ -27,6 +28,7 @@ in
     exec-once=nm-applet &
     exec-once=kdeconnectd &
     exec-once=keepassxc --minimize-to-tray &
+    exec-once=blueman-applet &
 
     # cursor size
     cursor_size=24

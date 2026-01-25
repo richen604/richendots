@@ -21,9 +21,17 @@ wrap:
 - nvim with mnw
 - tmux
 - mpv
+- wlogout?
 
 ## future
 
+- global color palette
+- firefox: wrapper should be private
+- firefox: migrate password manager fully, migrate from sync 
+- firefox: <https://codeberg.org/librewolf/settings/src/branch/master/librewolf.cfg> 
+  - cfg should be a separate file import for better viewing
+  - remove options for RFP, webgl, 
+  - remove "startup.homepage_*
 - disko configurations
 - nixos-anywhere support + dev-shell
 - add extensions support for vicinae wrapper
