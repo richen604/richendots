@@ -23,6 +23,7 @@ in
     info.enable = false;
     doc.enable = false;
     dev.enable = false;
+    nixos.enable = false;
   };
 
   programs.obs-studio = {
@@ -325,13 +326,13 @@ in
     # todo: remove vesktop when migrated to equicord
     pkgs.vesktop
     pkgs.equicord
-    pkgs.kdePackages.dolphin
     pkgs.fastfetch
     # todo: wrap neovim
     pkgs.neovim
     # todo: wrap tmux
     pkgs.tmux
     pkgs.less
+    pkgs.wlogout
 
     pkgs.killall # Process termination utility
     pkgs.wl-clipboard # Wayland clipboard utilities
@@ -399,7 +400,8 @@ in
     pkgs.kdePackages.dolphin-plugins
     pkgs.libsForQt5.qtstyleplugin-kvantum
 
-    # file previews / thumbnailers
+    # dolphin
+    pkgs.kdePackages.dolphin
     pkgs.icoutils
     pkgs.kdePackages.kdesdk-thumbnailers
     pkgs.libappimage
@@ -610,8 +612,9 @@ in
       echo "==> Launching Spotify..."
       exec ${pkgs.flatpak}/bin/flatpak run --user "$APP_ID"
     '')
-
   ];
+
+  environment.pathsToLink = [ "/share/zsh" ];
 
   # audio
   hardware.bluetooth = {
