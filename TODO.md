@@ -2,9 +2,7 @@
 
 ## now
 
-- recurse wrappers as modules
-- swaylock
-- hypridle?
+- swayidle?
 - upwrap mangowc for easy config with hjem
 - break out mangowc into extendable configurations per host (fern/oak)
 - mangowc hotreload inotify
@@ -15,6 +13,7 @@
 - recurse and refactor host modules
 - add priv modules
 - clean up flake.nix
+- include all extraPackages to wrappers
 
 wrap:
 
@@ -25,6 +24,7 @@ wrap:
 
 ## future
 
+- recurse wrappers as modules
 - global color palette
 - firefox: wrapper should be private
 - firefox: migrate password manager fully, migrate from sync 

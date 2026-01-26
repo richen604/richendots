@@ -4,8 +4,9 @@
   ...
 }:
 (inputs.wrappers.wrapperModules.swaylock.apply {
-  pkgs = pkgs;
-  package = pkgs.lib.mkForce pkgs.swaylock-effects;
+  pkgs = pkgs // {
+    swaylock = pkgs.swaylock-effects;
+  };
   settings = {
     daemonize = true;
     clock = true;
@@ -13,11 +14,11 @@
     image = toString ./swaybg/wall.png;
     effect-blur = "5x5";
     effect-vignette = "1:1";
-    font = "GohuFont 14 Nerd Font Propo";
+    font = "GohuFont uni14 Nerd Font Propo";
     font-size = 50;
     indicator = true;
-    indicator-radius = 200;
-    indicator-thickness = 15;
+    indicator-radius = 180;
+    indicator-thickness = 14;
     color = "0E131080";
     line-color = "0E1310";
     ring-color = "295239";
@@ -39,8 +40,8 @@
     line-clear-color = "0E1310";
     line-wrong-color = "0E1310";
     bs-hl-color = "578F86";
-    datestr = "%b-%d-%Y";
-    timestr = "%H:%M:%S";
+    datestr = "%b-%d";
+    timestr = "%H:%M";
     ignore-empty-password = true;
   };
 }).wrapper
