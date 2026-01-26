@@ -132,16 +132,14 @@ inputs.wrappers.lib.wrapModule (
       env =
         config.envVar
         // {
-          XDG_CONFIG_HOME =
-            "$XDG_CONFIG_HOME:"
-            + toString (
-              config.pkgs.linkFarm "vicinae-xdg-config" [
-                {
-                  name = "vicinae/settings.json";
-                  path = jsonFormat.generate "vicinae-settings" config.settings;
-                }
-              ]
-            );
+          XDG_CONFIG_HOME = toString (
+            config.pkgs.linkFarm "vicinae-xdg-config" [
+              {
+                name = "vicinae/settings.json";
+                path = jsonFormat.generate "vicinae-settings" config.settings;
+              }
+            ]
+          );
         }
         // lib.optionalAttrs (themeFiles != [ ]) {
           # we need to add custom themes dir to XDG_DATA_DIRS
