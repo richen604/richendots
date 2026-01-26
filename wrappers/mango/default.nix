@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  richenLib,
   ...
 }:
 # todo: mango wrapper: runtime applications for auto start
@@ -9,6 +10,17 @@ let
   mangoWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (mangoWrapper.apply {
+  extraPackages = with richenLib.wrappers; [
+    zsh
+    swaybg
+    waybar
+    swaync
+    vicinae
+    udiskie
+    keepassxc
+    satty
+    firefox
+  ];
   pkgs = pkgs;
   "config.conf".content = ''
 
