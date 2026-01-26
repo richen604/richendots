@@ -276,10 +276,11 @@
   xdg.mime.defaultApplications = {
     "text/plain" = "org.kde.dolphin.desktop";
     "inode/directory" = "org.kde.dolphin.desktop";
-    "application/pdf" = "org.mozilla.firefox.desktop";
-    "text/html" = "org.mozilla.firefox.desktop";
-    "x-scheme-handler/http" = "org.mozilla.firefox.desktop";
-    "x-scheme-handler/https" = "org.mozilla.firefox.desktop";
+
+    "application/pdf" = "firefox.desktop";
+    "text/html" = "firefox.desktop";
+    "x-scheme-handler/http" = "firefox.desktop";
+    "x-scheme-handler/https" = "firefox.desktop";
   };
 
   # PACKAGES ---------------------------------------------------------
@@ -545,7 +546,6 @@
   programs.xwayland.enable = lib.mkDefault true;
   services.graphical-desktop.enable = lib.mkDefault true;
 
-  # xdg portal configuration
   xdg.portal = {
     enable = lib.mkDefault true;
     config = {
@@ -567,7 +567,6 @@
     ];
     wlr.enable = lib.mkDefault true;
     configPackages = [ richenLib.wrappers.mango ];
-    xdgOpenUsePortal = true;
   };
 
   console = {
