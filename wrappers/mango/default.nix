@@ -20,6 +20,7 @@ in
     keepassxc
     satty
     firefox
+    swaylock
   ];
   pkgs = pkgs;
   "config.conf".content = ''
@@ -87,6 +88,7 @@ in
     bind=SUPER,S,view,9
     bind=SUPER+ALT,S,tagsilent,9
     bind=SUPER,B,spawn,firefox
+    bind=SUPER,L,spawn,swaylock
 
     # ============================================
     # GAMEMODE SETTINGS - Toggle these manually
