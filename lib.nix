@@ -68,6 +68,7 @@ let
               lib.nameValuePair (nameFromPath path) (
                 pkgs.callPackage path {
                   inherit inputs;
+                  richenLib = self;
                 }
               )
             ) files
