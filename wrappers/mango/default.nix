@@ -10,17 +10,18 @@ let
   mangoWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (mangoWrapper.apply {
-  extraPackages = with richenLib.wrappers; [
-    zsh
-    swaybg
-    waybar
-    swaync
-    vicinae
-    udiskie
-    keepassxc
-    satty
-    firefox
-    swaylock
+  extraPackages = [
+    richenLib.wrappers.zsh
+    richenLib.wrappers.swaybg
+    richenLib.wrappers.waybar
+    richenLib.wrappers.swaync
+    richenLib.wrappers.vicinae
+    richenLib.wrappers.udiskie
+    richenLib.wrappers.keepassxc
+    richenLib.wrappers.satty
+    richenLib.wrappers.firefox
+    richenLib.wrappers.swaylock
+    richenLib.wrappers.swayidle
   ];
   pkgs = pkgs;
   "config.conf".content = ''
@@ -42,6 +43,7 @@ in
     exec-once=kdeconnectd &
     exec-once=keepassxc --minimize-to-tray &
     exec-once=blueman-applet &
+    exec-once=swayidle &
 
     # cursor size
     cursor_size=24
