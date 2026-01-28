@@ -59,7 +59,8 @@ let
         wrappers =
           let
             files = self.lib.listFilesRecursiveCond ./wrappers (
-              filename: lib.hasSuffix ".nix" filename && filename != "module.nix"
+              filename:
+              lib.hasSuffix ".nix" filename && filename != "module.nix" && lib.hasPrefix "_" filename == false
             );
           in
           lib.listToAttrs (

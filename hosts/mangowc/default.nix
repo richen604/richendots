@@ -44,6 +44,9 @@
     enable = true;
   };
 
+  environment.etc."mango/config.conf".source =
+    pkgs.writeText "config.conf" richenLib.wrappers.mango-desktop.passthru.config;
+
   # USERS -------------------------------------------------------------
   users.users.richen = {
     isNormalUser = true;
@@ -215,6 +218,8 @@
     "flakes"
   ];
 
+  nix.settings.allow-import-from-derivation = false;
+
   boot = {
     plymouth = {
       enable = true;
@@ -303,7 +308,7 @@
     # todo: custom scripts with nom post flakes?
     # pkgs.nix-output-monitor
 
-    richenLib.wrappers.mango
+    richenLib.wrappers.mango-desktop
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
@@ -331,6 +336,7 @@
     pkgs.less
     pkgs.wlogout
 
+    pkgs.wlr-randr # Wayland display configuration tool
     pkgs.killall # Process termination utility
     pkgs.wl-clipboard # Wayland clipboard utilities
     pkgs.wl-clip-persist # Keep Wayland clipboard even after programs close
@@ -560,7 +566,7 @@
       xdg-desktop-portal-gtk
     ];
     wlr.enable = lib.mkDefault true;
-    configPackages = [ richenLib.wrappers.mango ];
+    # configPackages = [ richenLib.wrappers.mango ];
   };
 
   console = {
