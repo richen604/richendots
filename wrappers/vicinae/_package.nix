@@ -28,7 +28,7 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
     owner = "vicinaehq";
     repo = "vicinae";
     rev = "92cb677fca1513266bc63235e2d01a28f165ee41"; # From manifest.yaml
-    hash = "sha256-YXFSCJ4q1XIom4/CzCy4ASt7RDjxSkIWH6MqrCg+PNY="; # From nix-prefetch-github
+    hash = "sha256-YXFSCJ4q1XIom4/CzCy4ASt7RDjxSkIWH6MqrCg+PNY=";
   };
 
   apiDeps = fetchNpmDeps {

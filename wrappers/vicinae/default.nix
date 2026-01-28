@@ -8,7 +8,7 @@ let
 in
 (vicinae.apply {
   pkgs = pkgs // {
-    vicinae = pkgs.callPackage ./package.nix { };
+    vicinae = pkgs.callPackage ./_package.nix { };
   };
   settings = {
     close_on_focus_loss = false;
