@@ -10,11 +10,11 @@ my personal nixos config
 
 ---
 
-#### features:
+## features
 
 - flakes
 - wrapped programs using [Lassulus/wrappers](https://github.com/Lassulus/wrappers)
-- `4.66s` eval (on my machine)
+- `4.5s` eval (on my machine)
 - multi host & single user
 - profiles (common, desktop, laptop, server)
 - 5 hosts
@@ -24,6 +24,6 @@ my personal nixos config
   - willow - cloud vm 🌾
   - ivy - phone 🍃
 
-> [!NOTE] note:
+> [!TIP]
 > some modules, packages, and options are obfuscated from private imports </br>
 > the configuration will not build from a clone/fork without `inputs.richendots-private` removed from `./lib.nix`

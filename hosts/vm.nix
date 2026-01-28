@@ -15,6 +15,13 @@ nixosConfiguration.extendModules {
         # Rest of VM configuration
         virtualisation.vmVariant = {
           virtualisation = {
+            # todo: dev mode with editable shared folders
+            # sharedDirectories = {
+            #   flake = {
+            #     source = "/home/richen/newdev/richendots";
+            #     target = "/mnt/richendots";
+            #   };
+            # };
             memorySize = 14096;
             cores = 4;
             diskSize = 10240;
