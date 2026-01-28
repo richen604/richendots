@@ -474,12 +474,6 @@
 
   nix.settings.auto-optimise-store = true;
 
-  # vicinae cachix settings
-  nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
-  nix.settings.trusted-public-keys = [
-    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
-  ];
-
   # FONTS --------------------------------------------------------------
 
   environment.etc."gtk-3.0/gtk.css".text = ''
