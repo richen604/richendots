@@ -27,14 +27,14 @@ in
     # 10 minutes
     {
       type = "timeout";
-      timeout = 10;
+      timeout = 300;
       command = "swaylock";
     }
 
     # 25 minutes - turn off all monitors
     {
       type = "timeout";
-      timeout = 15;
+      timeout = 1500;
       command = toString dpmsOff;
       resume = toString dpmsOn;
     }
