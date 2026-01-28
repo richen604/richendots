@@ -155,12 +155,6 @@
     "mitigations=off" # Small performance boost, zen kernel handles this well
   ];
 
-  # vicinae cachix settings
-  nix.settings.extra-substituters = [ "https://vicinae.cachix.org" ];
-  nix.settings.trusted-public-keys = [
-    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
-  ];
-
   hardware.cpu.intel.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
 
