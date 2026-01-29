@@ -10,7 +10,7 @@
   hardware.cpu.intel.updateMicrocode = true;
 
   # amd specific
-  hardware.amdgpu.initrd.enable = lib.mkDefault true;
+  hardware.amdgpu.initrd.enable = true;
 
   # we are skipping nvidia from initrd, adding vfio
   boot.initrd.kernelModules = lib.mkForce [
