@@ -2,11 +2,10 @@
 
 ## now
 
-- break out mangowc into extendable configurations per host (fern/oak)
+- add priv modules
 
 ## next
 
-- add priv modules
 - clean up flake.nix
 
 wrap:
