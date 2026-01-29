@@ -8,7 +8,17 @@ let
   mangoBase = ./_base-config.nix;
   mangoModule = pkgs.callPackage ./module.nix { inherit inputs richenLib; };
   config = ''
-    exec-once=kitty
+    # Tag rules
+    # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
+    tagrule=id:1,layout_name:scroller
+    tagrule=id:2,layout_name:scroller
+    tagrule=id:3,layout_name:scroller
+    tagrule=id:4,layout_name:scroller
+    tagrule=id:5,layout_name:scroller
+    tagrule=id:6,layout_name:scroller
+    tagrule=id:7,layout_name:scroller
+    tagrule=id:8,layout_name:scroller
+    tagrule=id:9,layout_name:scroller
   '';
   fullConfig = mangoBase + "\n" + config;
 in
@@ -27,7 +37,7 @@ in
     richenLib.wrappers.swayidle-laptop
   ];
   pkgs = pkgs;
-  configFile = toString "/etc/mango/config.conf";
+  configFile = "/etc/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
