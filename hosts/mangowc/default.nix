@@ -45,7 +45,7 @@
   };
 
   environment.etc."mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango-desktop.passthru.config;
+    pkgs.writeText "config.conf" richenLib.wrappers.mango.passthru.config;
 
   # USERS -------------------------------------------------------------
   users.users.richen = {
@@ -308,7 +308,7 @@
     # todo: custom scripts with nom post flakes?
     # pkgs.nix-output-monitor
 
-    richenLib.wrappers.mango-desktop
+    richenLib.wrappers.mango
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
@@ -566,7 +566,6 @@
       xdg-desktop-portal-gtk
     ];
     wlr.enable = lib.mkDefault true;
-    # configPackages = [ richenLib.wrappers.mango ];
   };
 
   console = {
