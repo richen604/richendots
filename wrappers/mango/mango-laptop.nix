@@ -9,7 +9,6 @@ let
   mangoModule = pkgs.callPackage ./module.nix { inherit inputs richenLib; };
   config = ''
     exec-once=kitty
-    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   '';
   fullConfig = mangoBase + "\n" + config;
 in
