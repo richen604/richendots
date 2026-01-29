@@ -2,10 +2,7 @@
 
 ## now
 
-- recurse wrappers as modules
-- upwrap mangowc for easy config
 - break out mangowc into extendable configurations per host (fern/oak)
-- mangowc hotreload inotify
 
 ## next
 

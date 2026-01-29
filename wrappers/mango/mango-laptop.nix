@@ -24,7 +24,7 @@ in
     richenLib.wrappers.satty
     richenLib.wrappers.firefox
     richenLib.wrappers.swaylock
-    richenLib.wrappers.swayidle
+    richenLib.wrappers.swayidle-laptop
   ];
   pkgs = pkgs;
   configFile = toString "/etc/mango/config.conf";
