@@ -1,0 +1,60 @@
+:root {
+  /*
+   --bg-[p|s|t|q]  : background color for primary, secondary, tertiary, quaternary themes
+   --txt-[p|s|t|q] : text color for each theme
+   --acc-[p|s|t|q]1-9 : accent color scale (1-9) for each theme
+   */
+  --mode: "dark";
+
+  /* primary */
+  --bg-p: #0E1310;
+  --txt-p: #FFFFFF;
+  --acc-p1: #295239;
+  --acc-p2: #3A6B4E;
+  --acc-p3: #4B7D5F;
+  --acc-p4: #578F6D;
+  --acc-p5: #65A37E;
+  --acc-p6: #7AC297;
+  --acc-p7: #9AE6B8;
+  --acc-p8: #AAF0C6;
+  --acc-p9: #CCFFE0;
+
+  /* secondary */
+  --bg-s: #10221F;
+  --txt-s: #FFFFFF;
+  --acc-s1: #29524B;
+  --acc-s2: #3A6B63;
+  --acc-s3: #4B7D75;
+  --acc-s4: #578F86;
+  --acc-s5: #65A399;
+  --acc-s6: #7AC2B6;
+  --acc-s7: #9AE6D9;
+  --acc-s8: #AAF0E4;
+  --acc-s9: #CCFFF7;
+
+  /* tertiary */
+  --bg-t: #1F3734;
+  --txt-t: #FFFFFF;
+  --acc-t1: #29524D;
+  --acc-t2: #3A6B65;
+  --acc-t3: #4B7D77;
+  --acc-t4: #578F88;
+  --acc-t5: #65A39B;
+  --acc-t6: #7AC2B9;
+  --acc-t7: #9AE6DC;
+  --acc-t8: #AAF0E7;
+  --acc-t9: #CCFFF9;
+
+  /* quaternary */
+  --bg-q: #3C504C;
+  --txt-q: #FFFFFF;
+  --acc-q1: #295249;
+  --acc-q2: #3A6B61;
+  --acc-q3: #4B7D73;
+  --acc-q4: #578F84;
+  --acc-q5: #65A397;
+  --acc-q6: #7AC2B3;
+  --acc-q7: #9AE6D6;
+  --acc-q8: #AAF0E2;
+  --acc-q9: #CCFFF5;
+}
