@@ -131,6 +131,9 @@
     pkgs.wf-recorder
     pkgs.dpms-off
 
+    # gaming
+    pkgs.steam-run
+
     # custom scripts
     (pkgs.callPackage ./scripts/spotify-spicetified.nix { })
   ];
