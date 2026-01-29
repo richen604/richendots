@@ -7,30 +7,10 @@
 {
   imports = [
     ./hardware-configuration.nix
-
+    ../../profiles/common.nix
+    ../../profiles/common-gui.nix
+    ../../profiles/laptop.nix
   ];
-
-  boot = {
-    plymouth.enable = true;
-    kernelPackages = lib.mkForce pkgs.linuxPackages_6_12;
-    loader.systemd-boot.enable = pkgs.lib.mkForce false;
-    loader = {
-      efi = {
-        canTouchEfiVariables = true;
-      };
-      grub = {
-        enable = true;
-        device = "nodev";
-        useOSProber = true;
-        efiSupport = true;
-        extraEntries = ''
-          menuentry "UEFI Firmware Settings" {
-            fwsetup
-          }
-        '';
-      };
-    };
-  };
 
   # laptop specific
   services.tlp.enable = true;
@@ -38,8 +18,7 @@
   # intel specific
   hardware.cpu.intel.updateMicrocode = true;
 
-  # we are skipping nvidia from initrd, adding vfio
-  boot.initrd.kernelModules = lib.mkForce [
+  boot.initrd.kernelModules = [
     "i915"
   ];
 
@@ -79,18 +58,6 @@
       ];
     };
 
-    # Add Bluetooth configuration
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-          Experimental = true;
-        };
-      };
-    };
-
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
@@ -116,13 +83,6 @@
     ];
   };
 
-  # for high-DPI display
-  # TODO: move this to a module
-  boot.loader.grub = {
-    fontSize = 32;
-    gfxmodeEfi = "1920x1200";
-  };
-
   programs.nh = {
     enable = true;
     clean.enable = true;
@@ -131,16 +91,6 @@
   };
   # for nh.clean
   nix.gc.automatic = lib.mkForce false;
-
-  users.users.richen = {
-    isNormalUser = true;
-    initialPassword = "hydenix";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-    ];
-  };
 
   system.stateVersion = "26.05";
 }

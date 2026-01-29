@@ -5,7 +5,7 @@
   ...
 }:
 let
-  mangoBase = ./_base-config.nix;
+  mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
   mangoModule = pkgs.callPackage ./module.nix { inherit inputs richenLib; };
   config = ''
     # Tag rules
