@@ -67,12 +67,12 @@
     pkgs.bash-completion
     pkgs.unzip
     pkgs.cpufrequtils
-    pkgs.steam-run
 
     # network/hardware
     pkgs.networkmanager
     pkgs.lm_sensors
     pkgs.pciutils
+    pkgs.wpa_supplicant
 
     # filesystem
     pkgs.ntfs3g
@@ -148,7 +148,6 @@
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = hostname;
-  system.stateVersion = "26.05";
 
   # fonts
   environment.etc."gtk-3.0/gtk.css".text = ''
