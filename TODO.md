@@ -6,11 +6,8 @@
 
 ## next
 
-- expand profiles impl
-- recurse and refactor host modules
 - add priv modules
 - clean up flake.nix
-- include all extraPackages to wrappers
 
 wrap:
 
@@ -21,7 +18,7 @@ wrap:
 
 ## future
 
-
+- include all extraPackages to wrappers
 - global color palette
 - firefox: wrapper should be private
 - firefox: migrate password manager fully, migrate from sync 
@@ -40,5 +37,6 @@ wrap:
   - declarative plugins?
 - improve spicetify flatpak (config with hjem + declarative flatpak?)
 - spicetify color palette
+- green vscode theme that doesn't look like garbage
 - some qol scripts / menus for vicinae
-- npins & a post flake world
+- npins & a post flake world?
