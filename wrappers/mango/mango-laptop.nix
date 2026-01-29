@@ -39,7 +39,7 @@ in
     richenLib.wrappers.swayidle-laptop
   ];
   pkgs = pkgs;
-  configFile = "/etc/mango/config.conf";
+  configFile = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
