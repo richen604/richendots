@@ -184,7 +184,8 @@ let
     no_border_when_single=0
     axis_bind_apply_timeout=100
     focus_on_activate=1
-    inhibit_regardless_of_visibility=0
+    # todo: currently doesnt work
+    # inhibit_regardless_of_visibility=0
     sloppyfocus=1
     warpcursor=1
     focus_cross_monitor=0
@@ -196,7 +197,6 @@ let
 
     # Recommended in https://mangowc.vercel.app/docs/faq
     syncobj_enable=1
-    adaptive_sync=1
   '';
 
   # ============================================
