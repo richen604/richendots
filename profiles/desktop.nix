@@ -16,7 +16,7 @@
       user = "greeter";
     };
     initial_session = {
-      command = "${pkgs.dbus}/bin/dbus-run-session ${richenLib.wrappers.mango}/bin/mango";
+      command = "${richenLib.wrappers.mango}/bin/mango";
       user = "richen";
     };
   };
