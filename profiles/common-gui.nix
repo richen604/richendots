@@ -254,19 +254,7 @@
   };
 
   # GRAPHICS / DISPLAY MANAGER ----------------------------------------
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd mango";
-        user = "greeter";
-      };
-      initial_session = {
-        command = "mango";
-        user = "richen";
-      };
-    };
-  };
+  services.greetd.enable = true;
 
   # mango compositor requirements
   programs.xwayland.enable = true;
