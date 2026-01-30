@@ -22,6 +22,12 @@
     "i915"
   ];
 
+  # attempt to fix acpi issues
+  boot.kernelParams = [
+    "acpi_osi="
+    "acpi_no_timer_override"
+  ];
+
   powerManagement.enable = true;
   services.thermald.enable = true;
   # services.auto-cpufreq = {
