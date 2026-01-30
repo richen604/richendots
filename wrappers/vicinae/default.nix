@@ -7,9 +7,7 @@ let
   vicinae = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (vicinae.apply {
-  pkgs = pkgs // {
-    vicinae = pkgs.callPackage ./_package.nix { };
-  };
+  pkgs = pkgs;
   settings = {
     close_on_focus_loss = false;
     consider_preedit = true;
