@@ -150,10 +150,10 @@
   boot = {
     plymouth = {
       enable = true;
-      theme = "green_blocks";
+      theme = "flame";
       themePackages = with pkgs; [
         (adi1090x-plymouth-themes.override {
-          selected_themes = [ "green_blocks" ];
+          selected_themes = [ "flame" ];
         })
       ];
     };
@@ -162,12 +162,8 @@
     initrd.verbose = false;
     kernelParams = [
       "quiet"
-      "splash"
-      # todo: investigate
-      "console=/dev/null"
-      "boot.shell_on_fail"
       "udev.log_priority=3"
-      "rd.systemd.show_status=auto"
+      "systemd.show_status=auto"
     ];
   };
 
