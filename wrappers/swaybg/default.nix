@@ -9,5 +9,5 @@ in
 (swaybgWrapper.apply {
   pkgs = pkgs;
   wallpaper = toString ./wall.png;
-  mode = "center";
+  mode = "fill";
 }).wrapper
