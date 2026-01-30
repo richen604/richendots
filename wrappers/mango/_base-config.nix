@@ -1,7 +1,5 @@
 {
-  inputs,
   pkgs,
-  richenLib,
   ...
 }:
 # todo: mango wrapper: runtime applications for auto start

@@ -11,7 +11,7 @@ let
 
   pkgsFor =
     system:
-    import inputs.nixpkgs {
+    import inputs.nixpkgs-unstable {
       inherit system;
       config.allowUnfree = true;
     };
