@@ -76,29 +76,7 @@
     pkgs.spicetify-cli
 
     # social apps
-    (pkgs.makeDesktopItem {
-      name = "Vesktop - Wayland";
-      desktopName = "vesktop-wayland.desktop";
-      exec = "${pkgs.vesktop}/bin/vesktop --enable-features=UseOzonePlatform --ozone-platform=wayland %U";
-      icon = "${pkgs.vesktop}/share/icons/hicolor/256x256/apps/vesktop.png";
-      type = "Application";
-      categories = [
-        "Network"
-        "InstantMessaging"
-      ];
-    })
     pkgs.vesktop
-    (pkgs.makeDesktopItem {
-      name = "Equicord";
-      desktopName = "equicord.desktop";
-      exec = "${pkgs.equicord}/bin/equicord --enable-features=UseOzonePlatform --ozone-platform=wayland %U";
-      icon = "${pkgs.equicord}/share/icons/hicolor/256x256/apps/equicord.png";
-      type = "Application";
-      categories = [
-        "Network"
-        "InstantMessaging"
-      ];
-    })
     pkgs.equicord
 
     # other utils
