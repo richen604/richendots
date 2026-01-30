@@ -38,6 +38,8 @@
     };
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+
   hardware = {
     graphics = {
       enable = true;
