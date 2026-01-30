@@ -136,6 +136,11 @@
   ];
   nix.settings.auto-optimise-store = true;
   nix.settings.allow-import-from-derivation = false;
+  nix.settings.trusted-users = [
+    "root"
+    "richen"
+  ];
+
   # turn off bloat
   documentation = {
     enable = false;
