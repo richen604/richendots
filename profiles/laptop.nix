@@ -23,7 +23,7 @@
       user = "greeter";
     };
     initial_session = {
-      command = "${richenLib.wrappers.mango-laptop}/share/wayland-sessions/mango.desktop";
+      command = "${pkgs.dbus}/bin/dbus-run-session ${richenLib.wrappers.mango-laptop}/bin/mango";
       user = "richen";
     };
   };
