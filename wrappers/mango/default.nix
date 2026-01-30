@@ -24,7 +24,7 @@ let
     #left
     monitorrule=name:DP-11,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,vrr:0,rr:1
     #center
-    monitorrule=name:DP-9,width:2560,height:1440,refresh:143.998,x:1080,y:480,scale:1,vrr:1,rr:0
+    monitorrule=name:DP-9,width:2560,height:1440,refresh:143.998,x:1080,y:480,scale:1,vrr:0,rr:0
     #right
     monitorrule=name:DP-10,width:1600,height:900,refresh:60,x:3640,y:320,scale:1,vrr:0,rr:3
 
