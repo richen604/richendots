@@ -16,4 +16,16 @@
     gfxmodeEfi = "1024x768";
   };
 
+  # greetd configuration
+  services.greetd.settings = {
+    default_session = {
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --sessions ${richenLib.wrappers.mango-laptop}/share/wayland-sessions";
+      user = "greeter";
+    };
+    initial_session = {
+      command = "${richenLib.wrappers.mango-laptop}/share/wayland-sessions/mango.desktop";
+      user = "richen";
+    };
+  };
+
 }
