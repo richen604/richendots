@@ -14,6 +14,8 @@
     ./drivers.nix
   ];
 
+  networking.hostName = "fern";
+
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -76,13 +78,11 @@
 
   users.users.richen = {
     isNormalUser = true;
-    initialPassword = "hydenix";
     extraGroups = [
       "wheel"
       "networkmanager"
       "video"
     ];
-    shell = pkgs.zsh;
   };
 
   # FONTS --------------------------------------------------------------
