@@ -334,10 +334,10 @@ let
     bind=ALT+SHIFT,R,togglegaps
 
     # Move window
-    bind=CTRL+SHIFT,Up,movewin,+0,-50
-    bind=CTRL+SHIFT,Down,movewin,+0,+50
-    bind=CTRL+SHIFT,Left,movewin,-50,+0
-    bind=CTRL+SHIFT,Right,movewin,+50,+0
+    bind=SUPER+CTRL+SHIFT,Up,movewin,+0,-50
+    bind=SUPER+CTRL+SHIFT,Down,movewin,+0,+50
+    bind=SUPER+CTRL+SHIFT,Left,movewin,-50,+0
+    bind=SUPER+CTRL+SHIFT,Right,movewin,+50,+0
 
     # Resize window
     bind=CTRL+ALT,Up,resizewin,+0,-50
