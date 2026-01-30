@@ -12,6 +12,8 @@
   networking.networkmanager.enable = true;
   networking.interfaces.wlp3s0.wakeOnLan.enable = true;
 
+  networking.hostName = "cedar";
+
   # todo: unsure if im keeping this
   # services.code-server = {
   #   enable = true;
