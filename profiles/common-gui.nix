@@ -164,7 +164,7 @@
       "quiet"
       "splash"
       # todo: investigate
-      # "console=/dev/null"
+      "console=/dev/null"
       "boot.shell_on_fail"
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
