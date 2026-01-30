@@ -150,10 +150,10 @@
   boot = {
     plymouth = {
       enable = true;
-      theme = "flame";
+      theme = "motion";
       themePackages = with pkgs; [
         (adi1090x-plymouth-themes.override {
-          selected_themes = [ "flame" ];
+          selected_themes = [ "motion" ];
         })
       ];
     };
