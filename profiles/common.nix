@@ -44,7 +44,7 @@
     pkgs.tealdeer
 
     # nix tools
-    pkgs.nixfmt-rfc-style
+    pkgs.nixfmt
     pkgs.nil
 
     # cli utilities
@@ -80,6 +80,7 @@
 
     # custom scripts
     (pkgs.callPackage ./scripts/reboot-to.nix { })
+    (pkgs.callPackage ./scripts/git-commit-date.nix { })
   ];
 
   # required for zsh to catch all completions

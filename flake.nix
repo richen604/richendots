@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.follows = "hydenix/nixpkgs";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     hydenix = {
       url = "github:richen604/hydenix";
       # url = "path:/home/richen/newdev/hydenix";
@@ -19,7 +20,7 @@
     wrappers.url = "github:lassulus/wrappers";
     hjem = {
       url = "github:feel-co/hjem";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 

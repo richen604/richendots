@@ -2,11 +2,12 @@
   inputs,
   pkgs,
   richenLib,
+  stdenv,
   ...
 }:
 let
-  mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
-  mangoModule = pkgs.callPackage ./module.nix { inherit inputs richenLib; };
+  mangoBase = pkgs.callPackage ./_base-config.nix { };
+  mangoModule = pkgs.callPackage ./module.nix { inherit inputs; };
   config = ''
     # Tag rules
     # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
@@ -44,7 +45,9 @@ in
     richenLib.wrappers.swaylock
     richenLib.wrappers.swayidle
   ];
-  pkgs = pkgs;
+  pkgs = pkgs // {
+    mangowc = pkgs.callPackage ./_package.nix { };
+  };
   configFile = "/etc/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;

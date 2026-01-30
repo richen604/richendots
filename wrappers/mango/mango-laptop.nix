@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   richenLib,
+  stdenv,
   ...
 }:
 let
@@ -38,7 +39,9 @@ in
     richenLib.wrappers.swaylock
     richenLib.wrappers.swayidle-laptop
   ];
-  pkgs = pkgs;
+  pkgs = pkgs // {
+    mangowc = pkgs.callPackage ./_package.nix { };
+  };
   configFile = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
