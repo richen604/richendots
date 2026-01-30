@@ -45,7 +45,6 @@
       enable = true;
       enable32Bit = true;
       extraPackages = with pkgs; [
-
         nvidia-vaapi-driver
         vulkan-loader
         vulkan-validation-layers
@@ -61,17 +60,13 @@
     };
 
     nvidia = {
-      modesetting.enable = true;
-      powerManagement.enable = false;
       open = true;
-      nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.stable;
       prime = {
         offload = {
           enable = true;
           enableOffloadCmd = true;
         };
-        sync.enable = false;
         intelBusId = "PCI:0:2:0"; # Intel Raptor Lake-P Iris Xe Graphics
         nvidiaBusId = "PCI:1:0:0"; # NVIDIA GeForce RTX 4060 Max-Q / Mobile
       };
