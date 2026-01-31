@@ -171,6 +171,8 @@
       "systemd.show_status=auto"
     ];
   };
+  # todo: this may be better placed in common.nix
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   # audio and bluetooth
   hardware.bluetooth = {
