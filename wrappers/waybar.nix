@@ -12,7 +12,7 @@
     exclusive = true;
     passthrough = false;
     "gtk-layer-shell" = true;
-    ipc = false;
+    ipc = true;
     reload_style_on_change = true;
     height = 45;
     "modules-left" = [
@@ -21,13 +21,19 @@
       "wlr/taskbar"
       "dwl/window"
     ];
+    "modules-center" = [
+      "custom/playerctl"
+    ];
     "modules-right" = [
       "tray"
       "network"
       "pulseaudio"
+      "pulseaudio#microphone"
+      "keyboard-state"
       "cpu"
       "temperature"
       "backlight"
+      "battery"
       "clock"
       "custom/notification"
       "custom/power"
