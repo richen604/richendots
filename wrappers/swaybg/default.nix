@@ -8,6 +8,6 @@ let
 in
 (swaybgWrapper.apply {
   pkgs = pkgs;
-  wallpaper = toString ./wall.png;
-  mode = "fill";
+  wallpaper = ./wall.png;
+  mode = "center";
 }).wrapper
