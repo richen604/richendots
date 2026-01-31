@@ -29,7 +29,7 @@ let
     monitorrule=name:DP-10,width:1600,height:900,refresh:60,x:3640,y:320,scale:1,vrr:0,rr:3
 
   '';
-  fullConfig = mangoBase + "\n" + config;
+  fullConfig = config + "\n" + mangoBase;
 in
 (mangoModule.apply {
   extraPackages = [
