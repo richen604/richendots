@@ -151,10 +151,10 @@
   boot = {
     plymouth = {
       enable = true;
-      theme = "motion";
+      theme = "liquid";
       themePackages = with pkgs; [
         (adi1090x-plymouth-themes.override {
-          selected_themes = [ "motion" ];
+          selected_themes = [ "liquid" ];
         })
       ];
     };
