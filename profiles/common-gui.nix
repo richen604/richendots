@@ -160,7 +160,8 @@
     };
     # skip grub
     loader.grub.timeoutStyle = "hidden";
-    loader.timeout = 1;
+    loader.timeout = 0;
+    loader.grub.splashImage = null;
     # Enable "Silent boot"
     consoleLogLevel = 3;
     initrd.verbose = false;
