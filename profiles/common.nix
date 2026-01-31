@@ -129,6 +129,8 @@
       546
     ];
   };
+  # prevent wait-online service from delaying boot
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   nix.settings.experimental-features = [
     "nix-command"
