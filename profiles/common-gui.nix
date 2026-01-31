@@ -147,6 +147,7 @@
   security.rtkit.enable = true;
 
   # boot
+  # todo: limine secure boot
   boot = {
     plymouth = {
       enable = true;
@@ -157,6 +158,9 @@
         })
       ];
     };
+    # skip grub
+    loader.grub.timeoutStyle = "hidden";
+    loader.timeout = 1;
     # Enable "Silent boot"
     consoleLogLevel = 3;
     initrd.verbose = false;

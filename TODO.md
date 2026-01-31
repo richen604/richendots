@@ -26,6 +26,7 @@ wrap:
   - remove options for RFP, webgl, 
   - remove "startup.homepage_*
 - disko configurations
+- limine secure boot
 - nixos-anywhere support + dev-shell
 - add extensions support for vicinae wrapper
 - keybinds menu with vicinae?
