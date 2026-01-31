@@ -17,7 +17,7 @@ let
     exec-once=wl-paste --type text --watch cliphist store &
     exec-once=wl-paste --type image --watch cliphist store &
     exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
-    exec-once=wlsunset -l 49.2 -L 123.1
+    exec-once=wlsunset -l 49.2 -L -123.1
     exec-once=/run/current-system/sw/libexec/polkit-gnome-authentication-agent-1 &
     exec-once=udiskie -t &
     exec-once=nm-applet &
@@ -130,13 +130,14 @@ let
   # ============================================
   layouts = ''
     # Scroller Layout Setting
-    scroller_structs=20
-    scroller_default_proportion=0.8
-    scroller_focus_center=0
-    scroller_prefer_center=0
-    edge_scroller_pointer_focus=1
-    scroller_default_proportion_single=1.0
-    scroller_proportion_preset=0.5,0.8,1.0
+    scroller_structs = 8
+    scroller_default_proportion = 0.9
+    scroller_focus_center = 1
+    scroller_prefer_center = 1
+    edge_scroller_pointer_focus = 1
+    scroller_ignore_proportion_single = 0
+    scroller_default_proportion_single = 1.0
+    scroller_proportion_preset = 0.7,0.9,1.0
 
     # Master-Stack Layout Setting
     new_is_master=1
