@@ -21,7 +21,7 @@ let
     tagrule=id:8,layout_name:scroller
     tagrule=id:9,layout_name:scroller
 
-    monitorrule=name:eDP-1,width:3200,height:2000,refresh:120,x:0,y:0,scale:1.5,vrr:0,rr:0
+    monitorrule=name:eDP-1,width:3200,height:2000,refresh:120,x:0,y:0,scale:1,vrr:0,rr:0
   '';
   fullConfig = config + "\n" + mangoBase;
 in
