@@ -40,7 +40,7 @@ in
     richenLib.wrappers.swayidle-laptop
   ];
   pkgs = pkgs // {
-    mangowc = pkgs.callPackage ./_package.nix { };
+    mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };
   configFile = "/etc/mango/config.conf";
   "config.conf".content = fullConfig;

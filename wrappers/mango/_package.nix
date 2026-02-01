@@ -20,18 +20,13 @@
   libGL,
   enableXWayland ? true,
   debug ? false,
-  fetchFromGitHub,
+  inputs,
 }:
 stdenv.mkDerivation {
   pname = "mango";
   version = "nightly";
 
-  src = fetchFromGitHub {
-    owner = "DreamMaoMao";
-    repo = "mango";
-    rev = "master";
-    hash = "sha256-01LQpVwk9uTBuTp+Y4Udtm7da56SazaZM+bJxnUYNR4=";
-  };
+  src = inputs.mango;
 
   mesonFlags = [
     (lib.mesonEnable "xwayland" enableXWayland)
