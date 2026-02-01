@@ -2,21 +2,16 @@
 
 ## now
 
-- add priv modules
-
 ## next
-
-- clean up flake.nix
-
-wrap:
-
-- nvim with mnw
-- tmux
-- mpv
-- wlogout?
 
 ## future
 
+- wrap:
+  - nvim with mnw
+  - tmux
+  - mpv
+  - wlogout
+- clean up flake.nix
 - include all extraPackages to wrappers
 - global color palette
 - firefox: wrapper should be private
