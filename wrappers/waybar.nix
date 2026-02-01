@@ -12,7 +12,7 @@
     exclusive = true;
     passthrough = false;
     "gtk-layer-shell" = true;
-    ipc = true;
+    ipc = false;
     reload_style_on_change = true;
     height = 45;
     "modules-left" = [
@@ -26,9 +26,9 @@
     ];
     "modules-right" = [
       "tray"
-      "network"
+      # "network"
       "pulseaudio"
-      "pulseaudio#microphone"
+      # "pulseaudio#microphone"
       "keyboard-state"
       "cpu"
       "temperature"
@@ -118,8 +118,8 @@
     };
     tray = {
       interval = 1;
-      "icon-size" = 21;
-      spacing = 10;
+      "icon-size" = 28;
+      spacing = 12;
     };
     network = {
       interval = 2;
@@ -203,7 +203,7 @@
       };
     };
     battery = {
-      bat = "hidpp_battery_0";
+      bat = "BAT0";
       interval = 1800;
       states = {
         warning = 20;
@@ -232,9 +232,9 @@
 
     * {
       border: none;
-      font-family: Maple Mono NF CN;
-      font-weight: 800;
-      font-size: 12px;
+      font-family: GohuFont uni14 Nerd Font Propo;
+      font-weight: 700;
+      font-size: 20px;
       min-height: 0;
     }
 
