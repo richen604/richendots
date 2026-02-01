@@ -21,7 +21,7 @@ let
 in
 (swayidleWrapper.apply {
   pkgs = pkgs;
-  extraPackages = [ richenLib.wrappers.swaylock ];
+  extraPackages = [ richenLib.wrappers.swaylock-laptop ];
   extraArgs = [ "-w" ];
   events = [
     # 2 minutes

@@ -36,7 +36,7 @@ in
     richenLib.wrappers.keepassxc
     richenLib.wrappers.satty
     richenLib.wrappers.firefox
-    richenLib.wrappers.swaylock
+    richenLib.wrappers.swaylock-laptop
     richenLib.wrappers.swayidle-laptop
   ];
   pkgs = pkgs // {

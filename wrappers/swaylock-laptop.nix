@@ -16,9 +16,9 @@
     effect-blur = "5x5";
     effect-vignette = "1:1";
     font = "GohuFont uni14 Nerd Font Propo";
-    font-size = 52;
+    font-size = 120;
     indicator = true;
-    indicator-radius = 180;
+    indicator-radius = 220;
     indicator-thickness = 12;
     color = "0E131080";
     line-color = "0E1310";
