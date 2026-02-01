@@ -13,6 +13,11 @@
     gfxmodeEfi = "1920x1080";
   };
 
+  # power management
+  services.tlp.enable = true;
+  powerManagement.enable = true;
+  services.thermald.enable = true;
+
   # greetd configuration
   services.greetd.settings = rec {
     initial_session = {
