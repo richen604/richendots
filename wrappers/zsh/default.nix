@@ -7,6 +7,7 @@ let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (zshWrapper.apply {
+  extraPackages = [ pkgs.direnv ];
   pkgs = pkgs;
   shellAliases = {
     grep = "grep --color=auto";
