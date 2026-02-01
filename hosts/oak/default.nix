@@ -12,20 +12,12 @@
     ../../profiles/laptop.nix
   ];
 
-  networking.hostName = "oak";
-
-  # laptop specific
-  services.tlp.enable = true;
-
   # intel specific
   hardware.cpu.intel.updateMicrocode = true;
 
   boot.initrd.kernelModules = [
     "i915"
   ];
-
-  powerManagement.enable = true;
-  services.thermald.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
 
