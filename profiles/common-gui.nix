@@ -202,7 +202,6 @@
           color-scheme = "prefer-dark";
           font-name = "GohuFont uni14 Nerd Font Propo";
           cursor-theme = "Bibata-Modern-Ice";
-          cursor-size = "24";
           icon-theme = "Papirus-Dark";
           font-antialiasing = "rgba";
           font-hinting = "full";
@@ -218,7 +217,6 @@
     XDG_SESSION_TYPE = "wayland";
     NIXOS_OZONE_WL = "1";
     XCURSOR_THEME = "Bibata-Modern-Ice";
-    XCURSOR_SIZE = "24";
     MOZ_ENABLE_WAYLAND = "1";
     GTK_THEME = "catppuccin-mocha-green-compact";
     QT_QPA_PLATFORM = "wayland;xcb";
@@ -235,7 +233,6 @@
   xdg.mime.defaultApplications = {
     "text/plain" = "org.kde.dolphin.desktop";
     "inode/directory" = "org.kde.dolphin.desktop";
-
     "application/pdf" = "firefox.desktop";
     "text/html" = "firefox.desktop";
     "x-scheme-handler/http" = "firefox.desktop";
