@@ -17,6 +17,7 @@
       # url = "path:/home/richen/newdev/richendots-private";
     };
 
+    mango.url = "github:DreamMaoMao/mango";
     wrappers.url = "github:lassulus/wrappers";
     hjem = {
       url = "github:feel-co/hjem";
