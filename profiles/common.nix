@@ -1,6 +1,6 @@
 {
   pkgs,
-  hostname,
+  hostvars,
   richenLib,
   ...
 }:
@@ -153,7 +153,7 @@
 
   time.timeZone = "America/Vancouver";
   i18n.defaultLocale = "en_CA.UTF-8";
-  networking.hostName = hostname;
+  networking.hostName = hostvars.hostname;
 
   # fonts
   environment.etc."gtk-3.0/gtk.css".text = ''
