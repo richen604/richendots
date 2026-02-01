@@ -222,12 +222,12 @@
     MOZ_ENABLE_WAYLAND = "1";
     GTK_THEME = "catppuccin-mocha-green-compact";
     QT_QPA_PLATFORM = "wayland;xcb";
-    GTK_BACKEND = "wayland;x11";
-    SDL_VIDEODRIVER = "wayland";
-    CLUTTER_BACKEND = "wayland";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_STYLE_OVERRIDE = "kvantum";
+    GTK_BACKEND = "wayland;x11";
+    SDL_VIDEODRIVER = "wayland";
+    CLUTTER_BACKEND = "wayland";
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 
