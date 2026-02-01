@@ -24,12 +24,10 @@ let
     if base == "default" then baseNameOf (dirOf path) else base;
 
   mkLib =
-    pkgs: hostvars:
+    pkgs:
     let
       self = {
         vars.username = "richen";
-
-        scale = factor: baseValue: builtins.ceil (baseValue * factor);
 
         lib = {
           listFilesRecursiveCond =
@@ -70,7 +68,7 @@ let
               path:
               lib.nameValuePair (nameFromPath path) (
                 pkgs.callPackage path {
-                  inherit inputs hostvars;
+                  inherit inputs;
                   richenLib = self;
                 }
               )
@@ -93,7 +91,7 @@ let
         else
           pkgsFor hostvars.system;
 
-      richenLib = mkLib pkgs hostvars;
+      richenLib = mkLib pkgs;
     in
     lib.nixosSystem {
       inherit pkgs;

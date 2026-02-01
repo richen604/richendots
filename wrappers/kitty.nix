@@ -2,14 +2,8 @@
   inputs,
   pkgs,
   richenLib,
-  hostvars,
   ...
 }:
-
-let
-  scale = richenLib.scale (hostvars.scale or 1.0);
-in
-
 (inputs.wrappers.wrapperModules.kitty.apply {
   extraPackages = [ richenLib.wrappers.zsh ];
   pkgs = pkgs;
@@ -20,7 +14,7 @@ in
     bold_font auto
     italic_font auto
     bold_italic_font auto
-    font_size ${toString (scale 16)}
+    font_size 16
 
     # cursor settings
     cursor_shape block
@@ -30,7 +24,7 @@ in
     # shell integration
     shell_integration enabled
 
-    window_padding_width ${toString (scale 4)}
+    window_padding_width 4
 
     # misc
     confirm_os_window_close 0
