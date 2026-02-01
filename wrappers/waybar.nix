@@ -2,14 +2,8 @@
   inputs,
   pkgs,
   richenLib,
-  hostvars,
   ...
 }:
-
-let
-  scale = richenLib.scale (hostvars.scale or 1.0);
-in
-
 (inputs.wrappers.wrapperModules.waybar.apply {
   pkgs = pkgs;
   extraPackages = [ richenLib.wrappers.swaync ];
@@ -21,11 +15,11 @@ in
     "gtk-layer-shell" = true;
     ipc = false;
     reload_style_on_change = false;
-    height = scale 32;
+    height = "32";
     tray = {
       interval = 1;
-      "icon-size" = scale 18;
-      spacing = scale 8;
+      "icon-size" = 18;
+      spacing = 8;
     };
     "modules-left" = [
       # "dwl/tags"
@@ -105,7 +99,7 @@ in
     };
     "wlr/taskbar" = {
       format = "{icon}";
-      "icon-size" = scale 22;
+      "icon-size" = 22;
       "all-outputs" = false;
       "tooltip-format" = "{title}";
       markup = true;
@@ -241,7 +235,7 @@ in
       border: none;
       font-family: GohuFont uni14 Nerd Font Propo;
       font-weight: 700;
-      font-size: ${toString (scale 13)}px;
+      font-size: 13px;
       min-height: 0;
     }
 
