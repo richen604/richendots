@@ -204,10 +204,7 @@ let
   # LAYER RULES
   # ============================================
   layerRules = ''
-    # blur for waybar
-    layerrule=blur:1,layer_name:waybar
     # Layer rules for vicinae
-    layerrule=blur:1,layer_name:vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
   '';
@@ -276,8 +273,8 @@ let
     bind=ALT,Tab,toggleoverview,
     bind=SUPER,W,togglefloating,
     bind=SUPER,F,togglemaximizescreen,
-    bind=ALT,RETURN,togglefullscreen,
-    bind=ALT+SHIFT,RETURN,togglefakefullscreen,
+    bind=ALT,Return,togglefullscreen,
+    bind=ALT+SHIFT,Return,togglefakefullscreen,
     bind=SUPER,M,minimized,
     bind=SUPER,o,toggleoverlay,
     bind=SUPER+SHIFT,M,restore_minimized
