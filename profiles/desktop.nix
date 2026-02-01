@@ -10,15 +10,12 @@
     pkgs.writeText "config.conf" richenLib.wrappers.mango.passthru.config;
 
   # greetd configuration
-  services.greetd.settings = {
-    default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --sessions ${richenLib.wrappers.mango}/share/wayland-sessions";
-      user = "greeter";
-    };
+  services.greetd.settings = rec {
     initial_session = {
       command = "${richenLib.wrappers.mango}/bin/mango";
       user = "richen";
     };
+    default_session = initial_session;
   };
 
 }
