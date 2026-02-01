@@ -7,6 +7,7 @@ let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (zshWrapper.apply {
+  extraPackages = [ pkgs.pokemon-colorscripts ];
   pkgs = pkgs;
   shellAliases = {
     grep = "grep --color=auto";
@@ -49,7 +50,12 @@ in
     du = "du -h --max-depth=1";
     free = "free -h";
   };
-  interactiveShellInit = ''
+  shellInit = ''
+    # Powerlevel10k instant prompt
+    pokemon-colorscripts -r 1,2 --no-title
+    if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+      source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+    fi
     eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
   '';
 
@@ -80,12 +86,6 @@ in
   enableBashCompletion = true;
   enableGlobalCompInit = true;
   enableLsColors = true;
-  loginShellInit = ''
-    # Powerlevel10k instant prompt
-    if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-      source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-    fi
-  '';
   sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
