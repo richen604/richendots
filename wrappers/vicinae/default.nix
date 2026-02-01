@@ -1,10 +1,13 @@
 {
   inputs,
   pkgs,
+  richenLib,
+  hostvars,
   ...
 }:
 let
   vicinae = pkgs.callPackage ./module.nix { inherit inputs; };
+  scale = richenLib.scale (hostvars.scale or 1.0);
 in
 (vicinae.apply {
   pkgs = pkgs;
@@ -33,7 +36,7 @@ in
   };
   envVar = {
     USE_LAYER_SHELL = "1";
-    QT_SCALE_FACTOR = "1.2";
+    QT_SCALE_FACTOR = "${toString (scale 1.2)}";
   };
   themes = {
     forest-green = {
