@@ -1,11 +1,18 @@
 {
   inputs,
   pkgs,
+  richenLib,
+  hostvars,
   ...
 }:
 
+let
+  scale = richenLib.scale (hostvars.scale or 1.0);
+in
+
 (inputs.wrappers.wrapperModules.waybar.apply {
   pkgs = pkgs;
+  extraPackages = [ richenLib.wrappers.swaync ];
   settings = {
     layer = "top";
     position = "top";
@@ -13,8 +20,13 @@
     passthrough = false;
     "gtk-layer-shell" = true;
     ipc = false;
-    reload_style_on_change = true;
-    height = 45;
+    reload_style_on_change = false;
+    height = scale 32;
+    tray = {
+      interval = 1;
+      "icon-size" = scale 18;
+      spacing = scale 8;
+    };
     "modules-left" = [
       # "dwl/tags"
       "ext/workspaces"
@@ -93,7 +105,7 @@
     };
     "wlr/taskbar" = {
       format = "{icon}";
-      "icon-size" = 22;
+      "icon-size" = scale 22;
       "all-outputs" = false;
       "tooltip-format" = "{title}";
       markup = true;
@@ -115,11 +127,6 @@
       "on-scroll-up" = "brightnessctl set +1%";
       "on-scroll-down" = "brightnessctl set 1%-";
       "smooth-scrolling-threshold" = 1;
-    };
-    tray = {
-      interval = 1;
-      "icon-size" = 28;
-      spacing = 12;
     };
     network = {
       interval = 2;
@@ -234,7 +241,7 @@
       border: none;
       font-family: GohuFont uni14 Nerd Font Propo;
       font-weight: 700;
-      font-size: 20px;
+      font-size: ${toString (scale 13)}px;
       min-height: 0;
     }
 

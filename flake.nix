@@ -35,21 +35,25 @@
           hostname = "fern";
           system = "x86_64-linux";
           profile = "desktop";
+          scale = 1;
         };
         oak = richenLib.mkHost {
           hostname = "oak";
           system = "x86_64-linux";
           profile = "laptop";
+          scale = 1.5;
         };
         cedar = richenLib.mkHost {
           hostname = "cedar";
           system = "x86_64-linux";
           profile = "server";
+          scale = 1;
         };
         mangowc = richenLib.mkHost {
           hostname = "mangowc";
           system = "x86_64-linux";
           profile = "desktop";
+          scale = 1;
         };
       };
 
@@ -57,7 +61,7 @@
         system:
         let
           pkgs = richenLib.pkgsFor system;
-          _richenLib = richenLib.mkLib pkgs;
+          _richenLib = richenLib.mkLib pkgs { scale = 1.0; };
           wrappers = _richenLib.wrappers;
         in
         {
@@ -85,18 +89,16 @@
         // wrappers
       );
 
-      devShells = richenLib.forEachSystem (
+      devShell = richenLib.forEachSystem (
         system:
         let
           pkgs = richenLib.pkgsFor system;
-          _richenLib = richenLib.mkLib pkgs;
+          _richenLib = richenLib.mkLib pkgs { scale = 1.0; };
           wrappers = _richenLib.wrappers;
         in
-        {
-          wrappers = pkgs.mkShellNoCC {
-            allowSubstitutes = false;
-            packages = builtins.attrValues wrappers;
-          };
+        pkgs.mkShellNoCC {
+          allowSubstitutes = false;
+          packages = builtins.attrValues wrappers;
         }
       );
 
