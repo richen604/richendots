@@ -27,4 +27,12 @@
     default_session = initial_session;
   };
 
+  # theme settings
+  programs.dconf.profiles.user.databases = [
+    {
+      settings."org/gnome/desktop/interface".cursor-size = "32";
+    }
+  ];
+  environment.variables.XCURSOR_SIZE = "32";
+
 }

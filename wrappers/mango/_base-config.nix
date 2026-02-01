@@ -31,9 +31,7 @@ let
   # ENVIRONMENT & CURSOR
   # ============================================
   environment = ''
-    cursor_size=24
     cursor_theme=Bibata-Modern-Ice
-    env=XCURSOR_SIZE,24
   '';
 
   # ============================================
