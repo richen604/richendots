@@ -4,6 +4,8 @@
 
 ## next
 
+- my custom scripts should also be packages for easier dev
+
 ## future
 
 - wrap:
@@ -12,6 +14,7 @@
   - mpv
   - wlogout
 - clean up flake.nix
+- ambiguity for what is modules/ and what is profiles/
 - include all extraPackages to wrappers
 - global color palette
 - firefox: wrapper should be private
