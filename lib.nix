@@ -109,6 +109,10 @@ let
         ./profiles/${hostvars.profile}.nix
         (inputs.richendots-private.nixosModules.${hostvars.hostname} or { })
       ];
+      # todo: implement after fern migration
+      # ++ lib.optional (
+      #   hostvars.profile == "desktop" || hostvars.profile == "laptop"
+      # ) ./profiles/common-gui.nix;
     };
 
   mkVm =
