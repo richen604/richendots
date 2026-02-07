@@ -4,8 +4,6 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.desktops.hydenix;
 in
@@ -16,21 +14,20 @@ in
   ];
 
   options.desktops.hydenix = {
-    enable = mkOption {
-      type = types.bool;
+    enable = lib.mkOption {
+      type = lib.types.bool;
       default = false;
       description = "Enable Hydenix desktop configuration";
     };
 
-    hostname = mkOption {
-      type = types.str;
+    hostname = lib.mkOption {
+      type = lib.types.str;
       description = "Hostname for Hydenix desktop, used to determine userprefs.conf";
       example = "fern";
     };
   };
 
-  config = mkIf cfg.enable {
-    hydenix.hm.firefox.enable = mkForce false;
+  config = lib.mkIf cfg.enable {
 
     # for spotify
     home.sessionVariables = {
@@ -50,7 +47,7 @@ in
             export = AQ_DRM_DEVICES,/dev/dri/card0
           ''
         else
-          ''''
+          ""
       }
     '';
 
@@ -69,34 +66,21 @@ in
       }
     ];
 
+    hydenix.hm.firefox.enable = false;
+    hydenix.hm.shell.enable = false;
+    hydenix.hm.git.enable = false;
+    hydenix.hm.terminals.enable = false;
+    hydenix.hm.spotify.enable = false;
+    hydenix.hm.editors.enable = false;
+
     hydenix.hm = {
       enable = true;
-      shell.pokego.enable = true;
-      shell.fastfetch.enable = false;
-      git = {
-        enable = true;
-        # FIXME: private module, change info
-        name = "richen604";
-        email = "56615615+richen604@users.noreply.github.com";
-      };
-      terminals.kitty.configText = ''
-        confirm_os_window_close 0
-        font_size 15.0
-      '';
       theme = {
-        active = "BlueSky";
+        active = "Greenify";
         themes = [
-          "BlueSky"
-          "Vanta Black"
-          "Cosmic Blue"
-          "AbyssGreen"
           "Greenify"
-          "Gruvbox Retro"
-          "Catppuccin Mocha"
         ];
       };
-      spotify.enable = false;
-
       hyprland = {
         animations.preset = "standard";
         shaders.active = "disable";
@@ -127,6 +111,8 @@ in
           # Alt + Tab to cycle between fullscreen windows
           bind = ALT, Tab, cyclenext
           bind = ALT, Tab, bringactivetotop
+          unbind = SUPER, T
+          bind = SUPER, T, exec, kitty
         '';
         windowrules.extraConfig = ''
           # common settings
@@ -194,9 +180,6 @@ in
           }
           # Launch vesktop after a delay without blocking boot
           exec-once = vesktop
-
-          exec-once = keepassxc
-
           exec-once = yubikey-touch-detector --libnotify
         '';
       };
