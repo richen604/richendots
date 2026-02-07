@@ -1,5 +1,4 @@
 {
-  config,
   inputs,
   pkgs,
   richenLib,
@@ -9,10 +8,116 @@
   imports = [
     inputs.hydenix.inputs.home-manager.nixosModules.home-manager
     inputs.hydenix.nixosModules.default
+    inputs.hjem.nixosModules.default
     ./hardware-configuration.nix
     ./vfio
     ./drivers.nix
   ];
+  hjem = {
+    users.richen = {
+      user = "richen";
+      directory = "/home/richen";
+      clobberFiles = true;
+      files = {
+        ".config/Code/User/settings.json" = {
+          type = "copy";
+          permissions = "0644";
+          source = pkgs.writeText "vscode-settings.json" ''
+             {
+              "workbench.colorTheme": "Tokyo Night",
+              "window.menuBarVisibility": "toggle",
+              "editor.fontSize": 17,
+              "editor.fontWeight": "700",
+              "editor.lineHeight": 1.3,
+              "editor.scrollbar.vertical": "hidden",
+              "editor.scrollbar.verticalScrollbarSize": 0,
+              "security.workspace.trust.untrustedFiles": "newWindow",
+              "security.workspace.trust.startupPrompt": "never",
+              "security.workspace.trust.enabled": false,
+              "editor.minimap.side": "left",
+              "editor.fontFamily": "'GohuFont uni14 Nerd Font Propo'",
+              "extensions.autoUpdate": true,
+              "workbench.statusBar.visible": true,
+              "terminal.external.linuxExec": "kitty",
+              "terminal.explorerKind": "both",
+              "terminal.sourceControlRepositoriesKind": "both",
+              "telemetry.telemetryLevel": "off",
+              "workbench.activityBar.location": "top",
+              "window.customTitleBarVisibility": "auto",
+              "workbench.iconTheme": "catppuccin-mocha",
+              "editor.cursorSmoothCaretAnimation": "on",
+              "editor.autoIndent": "full",
+              "editor.formatOnSave": true,
+              "nix.enableLanguageServer": true,
+              "nix.formatterPath": "nixfmt",
+              "nix.serverPath": "nil",
+              "nix.hiddenLanguageServerErrors": [
+                "textDocument/definition",
+                "textDocument/formatting",
+                "textDocument/documentSymbol"
+              ],
+              "nix.serverSettings": {
+                "nil": {
+                  "formatting": {
+                    "command": ["nixfmt"]
+                  }
+                }
+              },
+              "workbench.sideBar.location": "right",
+              "git.enableSmartCommit": true,
+              "github.copilot.nextEditSuggestions.enabled": true,
+              "todo-tree.general.tags": [
+                "BUG",
+                "HACK",
+                "FIXME",
+                "TODO",
+                "XXX",
+                "[ ]",
+                "[x]",
+                "todo",
+                "fixme",
+                "bug"
+              ],
+              "editor.minimap.enabled": false
+            }
+          '';
+        };
+      };
+    };
+  };
+
+  # editor
+  programs.vscode = {
+    enable = true;
+    extensions = [
+      pkgs.vscode-extensions.aaron-bond.better-comments
+      pkgs.vscode-extensions.bierner.markdown-preview-github-styles
+      pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
+      pkgs.vscode-extensions.davidanson.vscode-markdownlint
+      pkgs.vscode-extensions.dbaeumer.vscode-eslint
+      pkgs.vscode-extensions.ecmel.vscode-html-css
+      pkgs.vscode-extensions.enkia.tokyo-night
+      pkgs.vscode-extensions.esbenp.prettier-vscode
+      pkgs.vscode-extensions.geequlim.godot-tools
+      pkgs.vscode-extensions.github.copilot
+      pkgs.vscode-extensions.github.vscode-github-actions
+      pkgs.vscode-extensions.github.vscode-pull-request-github
+      pkgs.vscode-extensions.ibm.output-colorizer
+      pkgs.vscode-extensions.jnoortheen.nix-ide
+      pkgs.vscode-extensions.leonardssh.vscord
+      pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
+      pkgs.vscode-extensions.mkhl.shfmt
+      pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
+      pkgs.vscode-extensions.redhat.vscode-yaml
+      pkgs.vscode-extensions.tamasfe.even-better-toml
+      pkgs.vscode-extensions.timonwong.shellcheck
+      pkgs.vscode-extensions.yoavbls.pretty-ts-errors
+      pkgs.vscode-extensions.yzhang.markdown-all-in-one
+      pkgs.vscode-extensions.ziglang.vscode-zig
+      pkgs.vscode-extensions.gruntfuggly.todo-tree
+      pkgs.vscode-extensions.rooveterinaryinc.roo-cline
+    ];
+  };
 
   networking.hostName = "fern";
 
@@ -21,14 +126,13 @@
     useUserPackages = true;
     extraSpecialArgs = {
       inherit inputs;
-      osConfig = config;
     };
     users."richen" =
       { config, ... }:
       {
         imports = [
           inputs.hydenix.homeModules.default
-          ../../modules/hm/users/richen
+          ../../modules/hydenix.nix
         ];
 
         desktops.hydenix = {
@@ -37,17 +141,6 @@
         };
 
         home.stateVersion = "25.05";
-        modules = {
-          common = {
-            git.enable = true;
-            dev.enable = true;
-            obs.enable = true;
-            games.enable = true;
-            zsh.enable = true;
-          };
-          # TODO: make obsidian.nix work on any host
-          obsidian.enable = true;
-        };
       };
   };
 
@@ -65,8 +158,8 @@
     pkgs.spicetify-cli
     richenLib.wrappers.firefox
     richenLib.wrappers.keepassxc
+    richenLib.wrappers.kitty
     pkgs.mangohud
-    pkgs.gamescope
   ];
 
   hydenix = {
