@@ -84,6 +84,20 @@
     # custom scripts
     (pkgs.callPackage ./scripts/reboot-to.nix { })
     (pkgs.callPackage ./scripts/git-commit-date.nix { })
+    (pkgs.writeScriptBin "nixpull" ''
+      #!/usr/bin/env bash
+      PATH=$PATH:${
+        pkgs.lib.makeBinPath [
+          pkgs.coreutils
+          pkgs.openssh
+          pkgs.nix
+          pkgs.jq
+          pkgs.gum
+          pkgs.dix
+        ]
+      }
+      ${builtins.readFile ../modules/nixpull/nixpull.sh}
+    '')
   ];
 
   # required for zsh to catch all completions
@@ -132,7 +146,15 @@
       546
     ];
   };
+  # todo: when fern migrates from hydenix enable this
+  # nix.settings.allow-import-from-derivation = false;
 
+  nix.settings.substituters = [
+    "http://10.0.0.155:5000"
+  ];
+  nix.settings.trusted-public-keys = [
+    "richencache:ibHPYDq1KmrAsoHIU+WI6ViUoIoX0SEY45CvBOaPXUY="
+  ];
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
