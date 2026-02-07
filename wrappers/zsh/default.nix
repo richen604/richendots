@@ -7,7 +7,6 @@ let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
 in
 (zshWrapper.apply {
-  extraPackages = [ pkgs.direnv ];
   pkgs = pkgs;
   shellAliases = {
     grep = "grep --color=auto";
@@ -51,8 +50,11 @@ in
     free = "free -h";
   };
   shellInit = ''
+    # Only show pokemon in interactive shells
+    if [[ $- == *i* ]]; then
+      ${pkgs.pokemon-colorscripts}/bin/pokemon-colorscripts -r 1,2 --no-title
+    fi
     # Powerlevel10k instant prompt
-    ${pkgs.pokemon-colorscripts}/bin/pokemon-colorscripts -r 1,2 --no-title
     if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
       source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
     fi
@@ -75,7 +77,7 @@ in
   */
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-    source ${toString ./.p10k.zsh}
+    source ${./.p10k.zsh}
 
     bindkey '\e[1;3C' forward-word   # Alt+Right
     bindkey '\e[1;3D' backward-word  # Alt+Left
@@ -115,12 +117,9 @@ in
   ohMyZsh = {
     enable = true;
     plugins = [
-      "git"
       "sudo"
-      "vscode"
       "z"
       "fzf"
-      "extract"
       "gitfast"
     ];
   };
