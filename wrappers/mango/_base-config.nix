@@ -25,6 +25,8 @@ let
     exec-once=keepassxc --minimize-to-tray &
     exec-once=blueman-applet &
     exec-once=swayidle &
+    exec-once = vesktop &
+    exec-once = yubikey-touch-detector --libnotify &
   '';
 
   # ============================================
