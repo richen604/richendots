@@ -78,6 +78,9 @@
     pkgs.ntfs3g
     pkgs.exfat
 
+    # direnv
+    pkgs.direnv
+
     # custom scripts
     (pkgs.callPackage ./scripts/reboot-to.nix { })
     (pkgs.callPackage ./scripts/git-commit-date.nix { })
@@ -135,7 +138,6 @@
     "flakes"
   ];
   nix.settings.auto-optimise-store = true;
-  nix.settings.allow-import-from-derivation = false;
   nix.settings.trusted-users = [
     "root"
     "richen"
