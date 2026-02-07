@@ -23,7 +23,7 @@ let
 
     monitorrule=name:eDP-1,width:3200,height:2000,refresh:120,x:0,y:0,scale:1.5,vrr:0,rr:0
 
-    cursor_size=32
+    cursor_size=48
   '';
   fullConfig = config + "\n" + mangoBase;
 in
