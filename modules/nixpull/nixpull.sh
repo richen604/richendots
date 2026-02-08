@@ -109,7 +109,7 @@ check() {
     exit 1
   fi
   
-  current_path=$(cat "$STATE_DIR/current" 2>/dev/null || echo "")
+  current_path=$(readlink /run/current-system 2>/dev/null || echo "")
   
   if [ "$store_path" != "$current_path" ]; then
     gum style --foreground "$COLOR_SUCCESS" --bold "✓ new build available"
@@ -165,7 +165,8 @@ pull() {
     fi
   fi
   
-  gum spin --spinner dot --title "activating..." -- \
+  sudo -v
+  gum spin --spinner dot --title "activating..." --show-output -- \
     sh -c "sudo '$store_path/bin/switch-to-configuration' switch 2>&1 | grep -E '(error|warning|failed)' || true"
   
   echo "$store_path" > "$STATE_DIR/current"
