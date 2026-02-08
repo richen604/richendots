@@ -6,6 +6,8 @@
 }:
 {
 
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+
   # USERS -------------------------------------------------------------
   users.users.richen = {
     isNormalUser = true;
