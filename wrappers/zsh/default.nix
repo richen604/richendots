@@ -5,9 +5,14 @@
 }:
 let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
+  wrapperPackage = pkgs.runCommand "zsh-wrapper" { } ''
+    mkdir -p $out
+    cp ${./.p10k.zsh} $out/.p10k.zsh
+  '';
 in
 (zshWrapper.apply {
   pkgs = pkgs;
+  extraPackages = [ wrapperPackage ];
   shellAliases = {
     grep = "grep --color=auto";
     mkdir = "mkdir -pv";
@@ -16,23 +21,19 @@ in
     rm = "rm -i";
     vim = "nvim";
     v = "nvim";
-
     # navigation
     ".." = "cd ..";
     "..." = "cd ../..";
     "...." = "cd ../../..";
-
     # listing
     ls = "eza --color=auto";
     ll = "eza -lh --color=auto --group-directories-first";
     la = "eza -la --color=auto --group-directories-first";
     lt = "eza -lh --color=auto --tree";
-
     # viewing / prettified cat
     cat = "bat --color=always";
     less = "less -R";
     tree = "tree -C";
-
     # git shortcuts
     gst = "git status -sb";
     gl = "git log --oneline --graph --decorate";
@@ -42,7 +43,6 @@ in
     gco = "git checkout";
     gcb = "git checkout -b";
     gbr = "git branch -a";
-
     # System
     h = "htop";
     df = "df -h";
@@ -77,7 +77,7 @@ in
   */
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-    source ${./.p10k.zsh}
+    source ${wrapperPackage}/.p10k.zsh
 
     bindkey '\e[1;3C' forward-word   # Alt+Right
     bindkey '\e[1;3D' backward-word  # Alt+Left

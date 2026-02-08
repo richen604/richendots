@@ -12,7 +12,7 @@ inputs.wrappers.lib.wrapModule (
 
     options = {
       wallpaper = lib.mkOption {
-        type = lib.types.path;
+        type = wlib.types.file config.pkgs;
         description = "Path to the wallpaper image.";
         default.path = "";
       };
@@ -30,7 +30,7 @@ inputs.wrappers.lib.wrapModule (
     };
     config = {
       flags = {
-        "-i" = toString config.wallpaper;
+        "-i" = toString config.wallpaper.path;
         "-m" = config.mode;
       };
       package = config.pkgs.swaybg;
