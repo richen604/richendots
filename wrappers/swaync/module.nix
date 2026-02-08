@@ -18,6 +18,11 @@ inputs.wrappers.lib.wrapModule (
         description = "swaync settings written as JSON";
         default = { };
       };
+      configFile = lib.mkOption {
+        type = wlib.types.file config.pkgs;
+        default.path = jsonFormat.generate "swaync-config" config.settings;
+        description = "Path to a custom JSON configuration file for swaync. Overrides settings option.";
+      };
       "style.css" = lib.mkOption {
         type = wlib.types.file config.pkgs;
         default.content = "";
@@ -27,19 +32,9 @@ inputs.wrappers.lib.wrapModule (
 
     config = {
       package = config.pkgs.swaynotificationcenter;
-      env = {
-        XDG_CONFIG_HOME = toString (
-          config.pkgs.linkFarm "swaync-config" [
-            {
-              name = "swaync/config.json";
-              path = jsonFormat.generate "swaync-config" config.settings;
-            }
-            {
-              name = "swaync/style.css";
-              path = config."style.css".path;
-            }
-          ]
-        );
+      flags = {
+        "-c" = toString config.configFile.path;
+        "-s" = toString config."style.css".path;
       };
     };
   }

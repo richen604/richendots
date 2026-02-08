@@ -5,6 +5,7 @@
 }:
 let
   swayncWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
+
 in
 (swayncWrapper.apply {
   pkgs = pkgs;
@@ -12,12 +13,12 @@ in
     positionX = "right";
     positionY = "top";
     layer = "overlay";
-    control-center-layer = "top";
+    control-center-layer = "overlay";
     layer-shell = true;
     cssPriority = "application";
-    control-center-margin-top = 0;
-    control-center-margin-bottom = 0;
-    control-center-margin-right = 0;
+    control-center-margin-top = 10;
+    control-center-margin-bottom = 10;
+    control-center-margin-right = 10;
     control-center-margin-left = 0;
     notification-2fa-action = true;
     notification-inline-replies = false;
@@ -27,10 +28,10 @@ in
     timeout = 10;
     timeout-low = 5;
     timeout-critical = 0;
-    fit-to-screen = true;
+    fit-to-screen = false;
     control-center-width = 500;
     control-center-height = 600;
-    notification-window-width = 500;
+    notification-window-width = 400;
     keyboard-shortcuts = true;
     image-visibility = "when-available";
     transition-time = 200;
