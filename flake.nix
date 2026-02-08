@@ -2,26 +2,16 @@
   description = "template for hydenix";
 
   inputs = {
-    nixpkgs.follows = "hydenix/nixpkgs";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    hydenix = {
-      url = "github:richen604/hydenix";
-      # url = "path:/home/richen/newdev/hydenix";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     richendots-private = {
       url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       # url = "path:/home/richen/newdev/richendots-private";
     };
-
     mango.url = "github:DreamMaoMao/mango";
     wrappers.url = "github:lassulus/wrappers";
     hjem = {
       url = "github:feel-co/hjem";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -47,11 +37,6 @@
           system = "x86_64-linux";
           profile = "server";
         };
-        mangowc = richenLib.mkHost {
-          hostname = "mangowc";
-          system = "x86_64-linux";
-          profile = "desktop";
-        };
       };
 
       packages = richenLib.forEachSystem (
@@ -76,11 +61,6 @@
             hostname = "cedar";
             system = system;
             profile = "server";
-          };
-          vm-mango = richenLib.mkVm {
-            hostname = "mangowc";
-            system = system;
-            profile = "desktop";
           };
         }
         // wrappers

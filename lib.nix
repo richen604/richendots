@@ -11,7 +11,7 @@ let
 
   pkgsFor =
     system:
-    import inputs.nixpkgs-unstable {
+    import inputs.nixpkgs {
       inherit system;
       config.allowUnfree = true;
     };
@@ -81,22 +81,12 @@ let
   mkHost =
     hostvars:
     let
-      pkgs =
-        if hostvars.hostname == "fern" then
-          import inputs.hydenix.inputs.nixpkgs {
-            inherit (hostvars) system;
-            config.allowUnfree = true;
-            overlays = [ inputs.hydenix.overlays.default ];
-          }
-        else
-          pkgsFor hostvars.system;
-
+      pkgs = pkgsFor hostvars.system;
       richenLib = mkLib pkgs;
     in
     lib.nixosSystem {
       inherit pkgs;
       system = hostvars.system;
-
       specialArgs = {
         inputs = inputs // inputs.richendots-private.inputs;
         hostname = hostvars.hostname;
@@ -108,11 +98,10 @@ let
         ./profiles/common.nix
         ./profiles/${hostvars.profile}.nix
         (inputs.richendots-private.nixosModules.${hostvars.hostname} or { })
-      ];
-      # todo: implement after fern migration
-      # ++ lib.optional (
-      #   hostvars.profile == "desktop" || hostvars.profile == "laptop"
-      # ) ./profiles/common-gui.nix;
+      ]
+      ++ lib.optional (
+        hostvars.profile == "desktop" || hostvars.profile == "laptop"
+      ) ./profiles/common-gui.nix;
     };
 
   mkVm =
