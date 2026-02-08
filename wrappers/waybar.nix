@@ -15,7 +15,7 @@
     "gtk-layer-shell" = true;
     ipc = false;
     reload_style_on_change = false;
-    height = "32";
+    height = 40;
     tray = {
       interval = 1;
       "icon-size" = 18;
