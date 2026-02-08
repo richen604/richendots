@@ -18,15 +18,15 @@ let
     exec-once=wl-paste --type image --watch cliphist store &
     exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
     exec-once=wlsunset -l 49.2 -L -123.1
-    exec-once=/run/current-system/sw/libexec/polkit-gnome-authentication-agent-1 &
+    exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
     exec-once=udiskie -t &
     exec-once=nm-applet &
     exec-once=kdeconnectd &
     exec-once=keepassxc --minimize-to-tray &
     exec-once=blueman-applet &
     exec-once=swayidle &
-    exec-once = vesktop &
-    exec-once = yubikey-touch-detector --libnotify &
+    exec-once=vesktop &
+    exec-once=yubikey-touch-detector -libnotify &
   '';
 
   # ============================================
@@ -146,11 +146,9 @@ let
     smartgaps=0
 
     # Overview Setting
-    hotarea_size=10
-    enable_hotarea=1
-    ov_tab_mode=0
+    ov_tab_mode=1
     overviewgappi=5
-    overviewgappo=30
+    overviewgappo=15
   '';
 
   # ============================================
@@ -189,12 +187,13 @@ let
     # inhibit_regardless_of_visibility=0
     sloppyfocus=1
     warpcursor=1
-    focus_cross_monitor=0
+    focus_cross_monitor=1
     focus_cross_tag=0
     enable_floating_snap=0
     snap_distance=30
     cursor_size=24
     drag_tile_to_tile=1
+    view_current_to_back=1
 
     # Recommended in https://mangowc.vercel.app/docs/faq
     syncobj_enable=1
@@ -288,48 +287,16 @@ let
     bind=SUPER,n,switch_layout
 
     # Tag switch
-    bind=CTRL,Left,viewtoleft_have_client,0
+    bind=SUPER+CTRL,Left,viewtoleft_have_client,0
     bind=SUPER+CTRL,Right,viewtoright,0
-    bind=CTRL,Right,viewtoright_have_client,0
-    bind=CTRL+SUPER,Left,tagtoleft,0
-    bind=CTRL+SUPER,Right,tagtoright,0
-
-    # Tag view (workspaces)
-    bind=SUPER,1,view,1,0
-    bind=SUPER,2,view,2,0
-    bind=SUPER,3,view,3,0
-    bind=SUPER,4,view,4,0
-    bind=SUPER,5,view,5,0
-    bind=SUPER,6,view,6,0
-    bind=SUPER,7,view,7,0
-    bind=SUPER,8,view,8,0
-    bind=SUPER,9,view,9,0
-
-    # Pseudo hyprland like secret tag
-    bind=SUPER,S,view,9
-    bind=SUPER+ALT,S,tagsilent,9
-
-    # Move client to tag
-    bind=SUPER+Alt,1,tag,1,0
-    bind=SUPER+Alt,2,tag,2,0
-    bind=SUPER+Alt,3,tag,3,0
-    bind=SUPER+Alt,4,tag,4,0
-    bind=SUPER+Alt,5,tag,5,0
-    bind=SUPER+Alt,6,tag,6,0
-    bind=SUPER+Alt,7,tag,7,0
-    bind=SUPER+Alt,8,tag,8,0
-    bind=SUPER+Alt,9,tag,9,0
-
-    # Monitor switch
-    bind=alt+shift,Left,focusmon,left
-    bind=alt+shift,Right,focusmon,right
-    bind=SUPER+Alt,Left,tagmon,left
-    bind=SUPER+Alt,Right,tagmon,right
+    bind=SUPER+CTRL,Right,viewtoright_have_client,0
+    bind=SUPER+CTRL,Left,tagtoleft,0
+    bind=SUPER+CTRL,Right,tagtoright,0
 
     # Gaps
-    bind=ALT+SHIFT,X,incgaps,1
-    bind=ALT+SHIFT,Z,incgaps,-1
-    bind=ALT+SHIFT,R,togglegaps
+    bind=SUPER+ALT+SHIFT,X,incgaps,1
+    bind=SUPER+ALT+SHIFT,Z,incgaps,-1
+    bind=SUPER+ALT+SHIFT,R,togglegaps
 
     # Move window
     bind=SUPER+CTRL+SHIFT,Up,movewin,+0,-50
@@ -338,10 +305,10 @@ let
     bind=SUPER+CTRL+SHIFT,Right,movewin,+50,+0
 
     # Resize window
-    bind=CTRL+ALT,Up,resizewin,+0,-50
-    bind=CTRL+ALT,Down,resizewin,+0,+50
-    bind=CTRL+ALT,Left,resizewin,-50,+0
-    bind=CTRL+ALT,Right,resizewin,+50,+0
+    bind=SUPER+CTRL+ALT,Up,resizewin,+0,-50
+    bind=SUPER+CTRL+ALT,Down,resizewin,+0,+50
+    bind=SUPER+CTRL+ALT,Left,resizewin,-50,+0
+    bind=SUPER+CTRL+ALT,Right,resizewin,+50,+0
 
     # Mouse Button Bindings (NONE mode key only work in ov mode)
     mousebind=SUPER,btn_left,moveresize,curmove

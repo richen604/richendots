@@ -6,9 +6,6 @@
     richenLib.wrappers.mango
   ];
 
-  environment.etc."mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango.passthru.config;
-
   # greetd configuration
   services.greetd.settings = rec {
     initial_session = {
@@ -25,5 +22,8 @@
     }
   ];
   environment.variables.XCURSOR_SIZE = "24";
+
+  hjem.users.richen.files.".config/mango/config.conf".source =
+    pkgs.writeText "config.conf" richenLib.wrappers.mango.passthru.config;
 
 }
