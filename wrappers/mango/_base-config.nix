@@ -141,7 +141,7 @@ let
 
     # Master-Stack Layout Setting
     new_is_master=1
-    default_mfact=0.55
+    default_mfact=0.5
     default_nmaster=1
     smartgaps=0
 
@@ -182,7 +182,7 @@ let
   behavior = ''
     no_border_when_single=0
     axis_bind_apply_timeout=100
-    focus_on_activate=1
+    focus_on_activate=0
     # todo: currently doesnt work
     # inhibit_regardless_of_visibility=0
     sloppyfocus=1
