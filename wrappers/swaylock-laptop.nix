@@ -3,15 +3,23 @@
   pkgs,
   ...
 }:
+let
+  # this is a hack to ensure the wallpaper is in closure
+  wallpaperDrv = pkgs.runCommand "swaylock-wallpaper" { } ''
+    mkdir -p $out
+    cp ${./swaybg/wall.png} $out/wall.png
+  '';
+in
 (inputs.wrappers.wrapperModules.swaylock.apply {
   pkgs = pkgs // {
     swaylock = pkgs.swaylock-effects;
   };
+  extraPackages = [ wallpaperDrv ];
   settings = {
     daemonize = true;
     clock = true;
     # screenshot = true;
-    image = toString ./swaybg/wall.png;
+    image = "${wallpaperDrv}/wall.png";
     scaling = "fill";
     effect-blur = "5x5";
     effect-vignette = "1:1";
