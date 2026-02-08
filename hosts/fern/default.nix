@@ -9,8 +9,6 @@
     ./drivers.nix
   ];
 
-  networking.hostName = "fern";
-
   programs.nh = {
     enable = true;
     clean.enable = true;
@@ -33,8 +31,8 @@
   boot.kernelParams = [
     "resume_offset=67471360"
 
-    # TODO: this and below are for gaming performance
-    "mitigations=off" # Small performance boost, zen kernel handles this well
+    # gaming performance
+    "mitigations=off"
   ];
 
   hardware.cpu.intel.updateMicrocode = true;

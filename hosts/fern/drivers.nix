@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   ...
 }:
 {
@@ -12,22 +11,12 @@
   # amd specific
   hardware.amdgpu.initrd.enable = true;
 
-  # we are skipping nvidia from initrd, adding vfio
-  boot.initrd.kernelModules = lib.mkForce [
-    "amdgpu"
-    "i915"
-    "vfio_pci"
-    "vfio"
-    "vfio_iommu_type1"
-  ];
-
   hardware = {
     graphics = {
       enable = true;
       package = pkgs.mesa;
       enable32Bit = true;
       extraPackages = with pkgs; [
-
         nvidia-vaapi-driver
         vulkan-loader
         vulkan-validation-layers
@@ -40,18 +29,6 @@
         intel-compute-runtime
         vpl-gpu-rt
       ];
-    };
-
-    # Add Bluetooth configuration
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-          Experimental = true;
-        };
-      };
     };
 
     nvidia = {
@@ -89,7 +66,6 @@
     AMD_VULKAN_ICD = "RADV";
   };
 
-  # Add system packages for Vulkan debugging and Steam compatibility
   environment.systemPackages = [
     (pkgs.writeShellScriptBin "prime-run" ''
       export __NV_PRIME_RENDER_OFFLOAD=1
