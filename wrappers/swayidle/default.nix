@@ -21,7 +21,6 @@ let
 in
 (swayidleWrapper.apply {
   pkgs = pkgs;
-  extraPackages = [ richenLib.wrappers.swaylock ];
   extraArgs = [ "-w" ];
   events = [
     # 10 minutes
@@ -35,8 +34,8 @@ in
     {
       type = "timeout";
       timeout = 1500;
-      command = toString dpmsOff;
-      resume = toString dpmsOn;
+      command = "${dpmsOff}/bin/dpms-off";
+      resume = "${dpmsOn}/bin/dpms-on";
     }
 
     # 1 hour
@@ -61,7 +60,7 @@ in
     # after resume, turn monitors back on
     {
       type = "after-resume";
-      command = toString dpmsOn;
+      command = "${dpmsOn}/bin/dpms-on";
     }
 
     # unlock command

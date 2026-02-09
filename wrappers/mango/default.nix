@@ -59,20 +59,6 @@ let
   fullConfig = mangoBase + "\n" + config;
 in
 (mangoModule.apply {
-  extraPackages = [
-    richenLib.wrappers.zsh
-    richenLib.wrappers.swaybg
-    richenLib.wrappers.waybar
-    richenLib.wrappers.swaync
-    richenLib.wrappers.vicinae
-    richenLib.wrappers.udiskie
-    richenLib.wrappers.keepassxc
-    richenLib.wrappers.satty
-    richenLib.wrappers.firefox
-    richenLib.wrappers.swaylock
-    richenLib.wrappers.swayidle
-    pkgs.polkit_gnome
-  ];
   pkgs = pkgs // {
     mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };

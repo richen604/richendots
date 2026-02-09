@@ -5,7 +5,6 @@
 }:
 let
   swayncWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-
 in
 (swayncWrapper.apply {
   pkgs = pkgs;
@@ -15,7 +14,7 @@ in
     layer = "overlay";
     control-center-layer = "overlay";
     layer-shell = true;
-    cssPriority = "application";
+    cssPriority = "user";
     control-center-margin-top = 10;
     control-center-margin-bottom = 10;
     control-center-margin-right = 10;
