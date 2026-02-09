@@ -5,7 +5,6 @@
   ...
 }:
 (inputs.wrappers.wrapperModules.kitty.apply {
-  extraPackages = [ richenLib.wrappers.zsh ];
   pkgs = pkgs;
   "kitty.conf".content = ''
     shell zsh

@@ -6,7 +6,6 @@
 }:
 (inputs.wrappers.wrapperModules.waybar.apply {
   pkgs = pkgs;
-  extraPackages = [ richenLib.wrappers.swaync ];
   settings = {
     layer = "top";
     position = "top";
