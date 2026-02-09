@@ -6,9 +6,6 @@
     richenLib.wrappers.mango-laptop
   ];
 
-  environment.etc."mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango-laptop.passthru.config;
-
   boot.loader.grub = {
     gfxmodeEfi = "1920x1080";
   };
@@ -34,5 +31,8 @@
     }
   ];
   environment.variables.XCURSOR_SIZE = 48;
+
+  hjem.users.richen.files.".config/mango/config.conf".source =
+    pkgs.writeText "config.conf" richenLib.wrappers.mango-laptop.passthru.config;
 
 }
