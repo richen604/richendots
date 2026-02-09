@@ -7,9 +7,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../profiles/common.nix
-    ../../profiles/common-gui.nix
-    ../../profiles/laptop.nix
   ];
 
   # intel specific
