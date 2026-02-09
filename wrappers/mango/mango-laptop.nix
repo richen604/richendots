@@ -47,30 +47,17 @@ let
     bind=SUPER+Alt,8,tag,8,0
     bind=SUPER+Alt,9,tag,9,0
 
-    monitorrule=name:eDP-1,width:3200,height:2000,refresh:120,x:0,y:0,scale:1.5,vrr:0,rr:0
+    monitorrule=name:eDP-1,width:3200,height:2000,refresh:60,x:0,y:0,scale:1.5,vrr:0,rr:0
 
     cursor_size=48
   '';
   fullConfig = config + "\n" + mangoBase;
 in
 (mangoModule.apply {
-  extraPackages = [
-    richenLib.wrappers.zsh
-    richenLib.wrappers.swaybg
-    richenLib.wrappers.waybar
-    richenLib.wrappers.swaync
-    richenLib.wrappers.vicinae
-    richenLib.wrappers.udiskie
-    richenLib.wrappers.keepassxc
-    richenLib.wrappers.satty
-    richenLib.wrappers.firefox
-    richenLib.wrappers.swaylock-laptop
-    richenLib.wrappers.swayidle-laptop
-  ];
   pkgs = pkgs // {
     mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };
-  configFile = "/etc/mango/config.conf";
+  configFile = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
