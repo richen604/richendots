@@ -8,6 +8,10 @@
   # intel specific
   hardware.cpu.intel.updateMicrocode = true;
 
+  boot.initrd.kernelModules = [
+    "i915"
+  ];
+
   # amd specific
   hardware.amdgpu.initrd.enable = true;
 
