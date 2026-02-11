@@ -70,13 +70,13 @@
   # for nh.clean
   nix.gc.automatic = lib.mkForce false;
 
-  # nixpull client configuration
-  services.nixpull = {
-    enable = true;
-    mode = "client";
-    checkInterval = "hourly";
-    enableNotifications = true;
-  };
+  # # nixpull client configuration
+  # services.nixpull = {
+  #   enable = true;
+  #   mode = "client";
+  #   checkInterval = "hourly";
+  #   enableNotifications = true;
+  # };
 
   system.stateVersion = "26.05";
 }

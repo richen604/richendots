@@ -1,6 +1,4 @@
 { inputs, ... }:
-# todo: mango module: autostart.sh option
-# todo: mango module: rfc42 compliance, settings + configFile option
 inputs.wrappers.lib.wrapModule (
   {
     config,
@@ -16,13 +14,14 @@ inputs.wrappers.lib.wrapModule (
       "config.conf" = lib.mkOption {
         type = wlib.types.file config.pkgs;
         default.content = "";
-        description = "Path to the mango configuration file.";
+        description = "path to the mango configuration file.";
       };
+
       configFile = lib.mkOption {
-        # cheating here so we can use an "impure" path
+        # cheating here so i can use a path to .config
         # type = wlib.types.file config.pkgs;
         default = config."config.conf".path;
-        description = "Path to the mango config file to be used instead of the default one.";
+        description = "path to the mango config file to be used instead of the default one.";
       };
     };
 
@@ -30,9 +29,11 @@ inputs.wrappers.lib.wrapModule (
       filesToPatch = [
         "share/wayland-sessions/mango.desktop"
       ];
+
       flags = {
         "-c" = toString config.configFile;
       };
+
       package = config.pkgs.mangowc;
     };
   }

@@ -8,16 +8,16 @@ let
   mangoBase = pkgs.callPackage ./_base-config.nix { };
   mangoModule = pkgs.callPackage ./module.nix { inherit inputs; };
   config = ''
-    # Tag rules - vertical layouts for portrait monitors (DP-6, DP-5)
-    tagrule=id:1,monitor_name:DP-6,layout_name:vertical_tile
-    tagrule=id:2,monitor_name:DP-4,layout_name:tile
-    tagrule=id:3,monitor_name:DP-5,layout_name:vertical_tile
-    tagrule=id:4,monitor_name:DP-6,layout_name:vertical_tile
-    tagrule=id:5,monitor_name:DP-4,layout_name:tile
-    tagrule=id:6,monitor_name:DP-5,layout_name:tile
-    tagrule=id:7,monitor_name:DP-6,layout_name:vertical_tile
-    tagrule=id:8,monitor_name:DP-4,layout_name:tile
-    tagrule=id:9,monitor_name:DP-4,layout_name:scroller
+    # Tag rules
+    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:tile
+    tagrule=id:3,monitor_model:DELL E2020H,layout_name:vertical_tile
+    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:tile
+    tagrule=id:6,monitor_model:DELL E2020H,layout_name:vertical_tile
+    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:tile
+    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
 
     # Pseudo hyprland like secret tag
     bind=SUPER,S,view,9,DP-4
@@ -46,12 +46,16 @@ let
     bind=SUPER+Alt,9,tagcrossmon,9,DP-4
 
     # Monitor rules
-    monitorrule=name:DP-6,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
-    monitorrule=name:DP-4,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
-    monitorrule=name:DP-5,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
+    # monitorrule=name:DP-8,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
+    # monitorrule=name:DP-6,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
+    # monitorrule=name:DP-7,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
+
+    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
+    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
+    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
 
     # Window rules
-    windowrule=tags:3,isopensilent:1,monitor:DP-5,appid:vesktop
+    windowrule=tags:3,isopensilent:1,monitor:DP-7,appid:vesktop
 
     cursor_size=24
   '';
@@ -62,7 +66,7 @@ in
   pkgs = pkgs // {
     mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };
-  configFile = "/home/richen/.config/mango/config.conf";
+  configFile = "$HOME/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
