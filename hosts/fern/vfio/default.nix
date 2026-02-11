@@ -126,40 +126,19 @@
 
   boot = {
     kernelParams = [
-      # Memory Management
-      "default_hugepagesz=2M" # Set default huge page size to 2MB
-      "hugepagesz=2M" # Configure huge page size as 2MB
-      "transparent_hugepage=never" # Disable transparent huge pages
-
-      # Boot Optimization
-      "fastboot" # Fast boot
-      "quiet" # Reduce boot verbosity
-      "rd.timeout=0" # Reduce initrd timeout
-      "rd.systemd.show_status=false" # Hide systemd status during boot
-
-      # RCU Stall Prevention
-      "rcu_nocbs=all" # Move RCU callbacks off all CPUs
-      "rcu_boost=1" # Enable RCU priority boosting
-      "rcu_expedited=1" # Use expedited RCU grace periods
-      "rcutree.rcu_idle_gp_delay=1" # Reduce RCU idle delay
-
-      # Performance & Security
-      # "mitigations=off" # Disable CPU vulnerabilities mitigations (security trade-off)
-      # "nowatchdog" # Disable watchdog timer
-      # "nmi_watchdog=0" # Disable NMI watchdog
-      "radeon.modeset=0"
+      # Memory Management for VFIO
+      "default_hugepagesz=2M"
+      "hugepagesz=2M"
+      "transparent_hugepage=never"
 
       # IOMMU & VFIO
-      "intel_iommu=on" # Enable Intel IOMMU
-      "iommu=pt" # Enable IOMMU pass-through
-      "vfio-pci.ids=10de:2782,10de:22bc" # Specify VFIO PCI device IDs
+      "intel_iommu=on"
+      "iommu=pt"
+      "vfio-pci.ids=10de:2782,10de:22bc"
 
       # KVM Settings
-      "kvm.ignore_msrs=1" # Ignore unhandled Model Specific Registers
-      "kvm.report_ignored_msrs=0" # Don't report ignored MSRs
-
-      # ACPI & Power Management
-      "acpi_osi=Linux" # Set ACPI OS interface to Linux
+      "kvm.ignore_msrs=1"
+      "kvm.report_ignored_msrs=0"
     ];
     kernelModules = [
       "vfio_pci"
