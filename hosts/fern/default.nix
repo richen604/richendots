@@ -1,5 +1,6 @@
 {
   pkgs,
+  richenLib,
   ...
 }:
 {
@@ -7,6 +8,10 @@
     ./hardware-configuration.nix
     ./vfio
     ./drivers.nix
+  ];
+
+  environment.systemPackages = [
+    richenLib.wrappers.swayidle
   ];
 
   programs.nh = {

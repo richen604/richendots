@@ -9,6 +9,10 @@
     ./hardware-configuration.nix
   ];
 
+  environment.systemPackages = [
+    richenLib.wrappers.swayidle-laptop
+  ];
+
   # intel specific
   hardware.cpu.intel.updateMicrocode = true;
 
