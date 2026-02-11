@@ -148,8 +148,7 @@
       546
     ];
   };
-  # todo: when fern migrates from hydenix enable this
-  # nix.settings.allow-import-from-derivation = false;
+  nix.settings.allow-import-from-derivation = false;
 
   nix.settings.substituters = [
     "http://10.0.0.155:5000"

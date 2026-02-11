@@ -37,7 +37,7 @@
     })
     pkgs.hicolor-icon-theme
 
-    # qt deps
+    # qt6 deps
     pkgs.kdePackages.qt6ct
     pkgs.kdePackages.qtbase
     pkgs.kdePackages.qtwayland
@@ -55,6 +55,10 @@
     pkgs.kdePackages.kwayland
     pkgs.kdePackages.plasma-integration
     pkgs.kdePackages.dolphin-plugins
+
+    # qt5 deps (for apps still using Qt5)
+    pkgs.libsForQt5.qt5.qtbase
+    pkgs.libsForQt5.qt5.qtwayland
     pkgs.libsForQt5.qtstyleplugin-kvantum
 
     # dolphin
@@ -165,7 +169,6 @@
     # Enable "Silent boot"
     consoleLogLevel = 3;
     initrd.verbose = false;
-    initrd.systemd.enable = true;
     kernelParams = [
       "quiet"
       "udev.log_priority=3"
