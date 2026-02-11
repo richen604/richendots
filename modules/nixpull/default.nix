@@ -26,170 +26,192 @@
 let
   cfg = config.services.nixpull;
 
-  nixpullPackage = pkgs.callPackage (
-    pkgs.writeScriptBin "nixpull" ''
-      #!/usr/bin/env bash
-      PATH=$PATH:${
-        pkgs.lib.makeBinPath [
-          pkgs.coreutils
-          pkgs.openssh
-          pkgs.nix
-          pkgs.jq
-          pkgs.gum
-          pkgs.dix
-        ]
-      }
-      ${builtins.readFile ./nixpull.sh}
-    ''
-  );
+  nixpullPackage = pkgs.writeShellApplication {
+    name = "nixpull";
+    runtimeInputs = with pkgs; [
+      coreutils
+      openssh
+      nix
+      jq
+      gum
+      dix
+    ];
+    text = builtins.readFile ./nixpull.sh;
+  };
 
 in
 {
   options.services.nixpull = {
     enable = pkgs.lib.mkEnableOption "nixpull system update service";
 
+    user = pkgs.lib.mkOption {
+      type = pkgs.lib.types.str;
+      default = "richen";
+      description = "User to run notifications and other user-level tasks as.";
+    };
+
     mode = pkgs.lib.mkOption {
       type = pkgs.lib.types.enum [
         "server"
         "client"
       ];
-      description = "server: build configs, client: fetch and apply updates";
+      description = ''
+        Operation mode:
+        - server: Builds all configurations in the flake and stores their paths.
+        - client: Fetches the latest build path from the server and applies it.
+      '';
     };
 
     flake = pkgs.lib.mkOption {
       type = pkgs.lib.types.str;
       default = "";
-      description = "Flake reference for nixpull package (server mode only)";
+      example = "/home/user/dots";
+      description = "Path to the flake containing NixOS configurations (server mode only).";
     };
 
     storeDir = pkgs.lib.mkOption {
       type = pkgs.lib.types.str;
       default = "/tmp/nixpull";
-      description = "Directory where build paths are stored";
+      description = "Directory on the server where build paths are stored.";
     };
 
     # Client-specific options
     checkInterval = pkgs.lib.mkOption {
       type = pkgs.lib.types.str;
       default = "hourly";
-      description = "how often to check for updates (client mode). examples: hourly, daily, Mon *-*-* 03:00:00";
+      example = "Mon *-*-* 03:00:00";
+      description = "How often to check for updates (client mode). Uses systemd.time format.";
     };
 
     enableNotifications = pkgs.lib.mkOption {
       type = pkgs.lib.types.bool;
       default = true;
-      description = "Enable desktop notifications when updates are available (client mode only)";
+      description = "Enable desktop notifications when updates are available (client mode only).";
     };
 
     # Server-specific options
     buildInterval = pkgs.lib.mkOption {
       type = pkgs.lib.types.str;
       default = "hourly";
-      description = "how often to build configs (server mode). examples: hourly, daily, Mon *-*-* 03:00:00";
+      example = "daily";
+      description = "How often to build configs (server mode). Uses systemd.time format.";
     };
 
     autoBuild = pkgs.lib.mkOption {
       type = pkgs.lib.types.bool;
       default = false;
-      description = "automatically build configs on schedule (server mode). if false, run 'nixpull build' manually";
+      description = "Automatically build configs on schedule (server mode). If false, run 'nixpull build' manually.";
     };
   };
 
-  config = pkgs.lib.mkIf cfg.enable {
-    environment.systemPackages = [ nixpullPackage ];
-
-    # client mode: check for updates (system timer triggers user service)
-    systemd.timers.nixpull-check = pkgs.lib.mkIf (cfg.mode == "client") {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = cfg.checkInterval;
-        Persistent = true;
-        RandomizedDelaySec = "5m";
-      };
-    };
-
-    # client mode: check for updates (system service)
-    systemd.services.nixpull-check = pkgs.lib.mkIf (cfg.mode == "client") {
-      description = "check for nixos system updates";
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
-      };
-
-      script = ''
-        if ${nixpullPackage}/bin/nixpull check; then
-          echo "update available. run 'nixpull pull' to apply."
-          ${
-            if cfg.enableNotifications then
-              ''
-                # trigger user notification service
-                ${pkgs.systemd}/bin/systemctl --user -M richen@ start nixpull-notify.service
-              ''
-            else
-              ""
+  config = pkgs.lib.mkIf cfg.enable (
+    pkgs.lib.mkMerge [
+      # Validate flake path in server mode
+      (pkgs.lib.mkIf (cfg.mode == "server" && cfg.autoBuild) {
+        assertions = [
+          {
+            assertion = cfg.flake != "";
+            message = "services.nixpull.flake must be set when mode is 'server' and autoBuild is enabled";
           }
-        else
-          echo "no updates available"
-        fi
-      '';
-    };
+        ];
+      })
 
-    # client mode: notification service (runs as user)
-    systemd.user.services.nixpull-notify =
-      pkgs.lib.mkIf (cfg.mode == "client" && cfg.enableNotifications)
-        {
-          description = "notify about nixos system updates";
-          serviceConfig = {
-            Type = "oneshot";
+      {
+        environment.systemPackages = pkgs.lib.mkDefault [ nixpullPackage ];
+
+        # client mode
+        systemd.timers.nixpull-check = pkgs.lib.mkIf (cfg.mode == "client") {
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = cfg.checkInterval;
+            Persistent = true;
+            RandomizedDelaySec = "5m";
           };
-
-          script = ''
-            ${pkgs.libnotify}/bin/notify-send \
-              --app-name="NixPull" \
-              --urgency=normal \
-              --icon=system-software-update \
-              "System Update Available" \
-              "Run 'nixpull pull' to update your system"
-          '';
         };
 
-    # client mode: apply updates service
-    systemd.services.nixpull-apply = pkgs.lib.mkIf (cfg.mode == "client") {
-      description = "apply nixos system update";
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
-      };
-
-      script = ''
-        ${nixpullPackage}/bin/nixpull pull -a
-      '';
-    };
-
-    # server mode: build timer
-    systemd.timers.nixpull-build = pkgs.lib.mkIf (cfg.mode == "server" && cfg.autoBuild) {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = cfg.buildInterval;
-        Persistent = true;
-        RandomizedDelaySec = "5m";
-      };
-    };
-
-    # server mode: build service
-    systemd.services.nixpull-build =
-      pkgs.lib.mkIf (cfg.mode == "server" && cfg.autoBuild && cfg.flake != "")
-        {
-          description = "build all nixos configurations for nixpull";
+        systemd.services.nixpull-check = pkgs.lib.mkIf (cfg.mode == "client") {
+          description = "check for nixos system updates";
           serviceConfig = {
             Type = "oneshot";
             User = "root";
           };
 
           script = ''
-            cd ${cfg.flake}
-            ${nixpullPackage}/bin/nixpull build
+            if ${nixpullPackage}/bin/nixpull check; then
+              echo "update available. run 'nixpull pull' to apply."
+              ${pkgs.lib.optionalString cfg.enableNotifications ''
+                # trigger user notification service
+                ${pkgs.systemd}/bin/systemctl --user -M ${cfg.user}@ start nixpull-notify.service
+              ''}
+            else
+              echo "no updates available"
+            fi
           '';
         };
-  };
+
+        systemd.user.services.nixpull-notify =
+          pkgs.lib.mkIf (cfg.mode == "client" && cfg.enableNotifications)
+            {
+              description = "notify about nixos system updates";
+              serviceConfig.Type = "oneshot";
+              script = ''
+                ${pkgs.libnotify}/bin/notify-send \
+                  --app-name="NixPull" \
+                  --urgency=normal \
+                  --icon=system-software-update \
+                  --action="approve=Apply Update" \
+                  --action="deny=Dismiss" \
+                  "System Update Available" \
+                  "A new system configuration is ready to install" | while read -r action; do
+                    case "$action" in
+                      approve)
+                        ${pkgs.systemd}/bin/systemctl start nixpull-apply.service
+                        ;;
+                      deny)
+                        ${pkgs.libnotify}/bin/notify-send \
+                          --app-name="NixPull" \
+                          --icon=dialog-information \
+                          "Update Dismissed" \
+                          "Run 'nixpull pull' manually when ready"
+                        ;;
+                    esac
+                  done
+              '';
+            };
+
+        systemd.services.nixpull-apply = pkgs.lib.mkIf (cfg.mode == "client") {
+          description = "apply nixos system update";
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+          };
+          script = "${nixpullPackage}/bin/nixpull pull -a";
+        };
+
+        # server mode
+        systemd.timers.nixpull-build = pkgs.lib.mkIf (cfg.mode == "server" && cfg.autoBuild) {
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = cfg.buildInterval;
+            Persistent = true;
+            RandomizedDelaySec = "5m";
+          };
+        };
+
+        systemd.services.nixpull-build =
+          pkgs.lib.mkIf (cfg.mode == "server" && cfg.autoBuild && cfg.flake != "")
+            {
+              description = "build all nixos configurations for nixpull";
+              serviceConfig = {
+                Type = "oneshot";
+                User = "root";
+              };
+              script = ''
+                cd ${cfg.flake}
+                ${nixpullPackage}/bin/nixpull build
+              '';
+            };
+      }
+    ]
+  );
 }
