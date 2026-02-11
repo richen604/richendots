@@ -97,6 +97,8 @@ let
         ./hosts/${hostvars.hostname}
         ./profiles/common.nix
         ./profiles/${hostvars.profile}.nix
+        # todo: recursive import modules?
+        ./modules/nixpull
         (inputs.richendots-private.nixosModules.${hostvars.hostname} or { })
       ]
       ++ lib.optional (
