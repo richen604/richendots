@@ -40,11 +40,6 @@ nixosConfiguration.extendModules {
               ];
             };
           };
-          #! you can set this to skip login for sddm
-          # services.displayManager.autoLogin = {
-          #   enable = true;
-          #   user = "hydenix";
-          # };
           services.xserver = {
             videoDrivers = [
               "virtio"
