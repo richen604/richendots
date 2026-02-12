@@ -5,6 +5,7 @@
   environment.systemPackages = [
     richenLib.wrappers.mango-laptop
     richenLib.wrappers.swaylock-laptop
+    richenLib.wrappers.swayidle-laptop
   ];
 
   boot.loader.grub = {

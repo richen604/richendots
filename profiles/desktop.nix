@@ -5,6 +5,7 @@
   environment.systemPackages = [
     richenLib.wrappers.mango
     richenLib.wrappers.swaylock
+    richenLib.wrappers.swayidle
   ];
 
   # greetd configuration
