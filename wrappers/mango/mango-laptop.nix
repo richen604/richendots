@@ -57,7 +57,7 @@ in
   pkgs = pkgs // {
     mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };
-  configFile = "/home/richen/.config/mango/config.conf";
+  configFile.path = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
