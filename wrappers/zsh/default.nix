@@ -5,14 +5,9 @@
 }:
 let
   zshWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-  wrapperPackage = pkgs.runCommand "zsh-wrapper" { } ''
-    mkdir -p $out
-    cp ${./.p10k.zsh} $out/.p10k.zsh
-  '';
 in
 (zshWrapper.apply {
   pkgs = pkgs;
-  extraPackages = [ wrapperPackage ];
   shellAliases = {
     grep = "grep --color=auto";
     mkdir = "mkdir -pv";
@@ -77,7 +72,7 @@ in
   */
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-    source ${wrapperPackage}/.p10k.zsh
+    source ${./.p10k.zsh}
 
     bindkey '\e[1;3C' forward-word   # Alt+Right
     bindkey '\e[1;3D' backward-word  # Alt+Left
