@@ -10,6 +10,20 @@ my personal nixos config
 
 ---
 
+bar - waybar
+app launcher / clipboard - vicinae
+firefox theme - tweaked textfox
+spotify - spicetify-tui
+discord - vesktop + tweaked system24
+file manager - dolphin + tweaked kvantum
+terminal - kitty
+shell - zsh
+notifications - swaync
+cursor - Bibata-Modern-Ice
+font - GohuFont Nerd Font
+gtk - catppuccin-mocha-green-compact
+icon - Papirus Dark
+
 ## features
 
 - flakes
