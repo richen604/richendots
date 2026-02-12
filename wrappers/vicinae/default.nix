@@ -31,7 +31,7 @@ in
       };
     };
   };
-  envVar = {
+  env = {
     USE_LAYER_SHELL = "1";
     QT_SCALE_FACTOR = "1.2";
   };

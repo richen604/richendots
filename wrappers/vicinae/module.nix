@@ -8,14 +8,18 @@ inputs.wrappers.lib.wrapModule (
     ...
   }:
   let
+    /*
+      useful envs for vicinae
+      USE_LAYER_SHELL = "1";
+      QT_SCALE_FACTOR = "1.5";
+    */
+
     jsonFormat = config.pkgs.formats.json { };
     tomlFormat = config.pkgs.formats.toml { };
-
     themeFiles = lib.mapAttrsToList (name: value: {
       name = name;
       path = tomlFormat.generate "vicinae-theme-${name}" value;
     }) config.themes;
-
     themesPackage = config.pkgs.runCommand "vicinae-custom-themes" { } ''
       mkdir -p $out/share/vicinae/themes
       ${lib.concatMapStringsSep "\n" (theme: ''
@@ -32,7 +36,7 @@ inputs.wrappers.lib.wrapModule (
         description = "Settings written as JSON";
         default = { };
         example = lib.literalExpression ''
-          #nix
+          # nix
           {
             close_on_focus_loss = true;
             consider_preedit = true;
@@ -104,15 +108,6 @@ inputs.wrappers.lib.wrapModule (
           }
         '';
       };
-      envVar = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        description = "List of environment variables to set for Vicinae.";
-        default = { };
-        example = {
-          USE_LAYER_SHELL = "1";
-          QT_SCALE_FACTOR = "1.5";
-        };
-      };
       # todo: implement extensions for vicinae
       # todo: add input for extensions repo to support named extensions
       extensions = lib.mkOption {
@@ -129,22 +124,20 @@ inputs.wrappers.lib.wrapModule (
       filesToPatch = [
         "share/systemd/user/vicinae.service"
       ];
-      env =
-        config.envVar
-        // {
-          XDG_CONFIG_HOME = toString (
-            config.pkgs.linkFarm "vicinae-xdg-config" [
-              {
-                name = "vicinae/settings.json";
-                path = jsonFormat.generate "vicinae-settings" config.settings;
-              }
-            ]
-          );
-        }
-        // lib.optionalAttrs (themeFiles != [ ]) {
-          # we need to add custom themes dir to XDG_DATA_DIRS
-          XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
-        };
+      env = {
+        XDG_CONFIG_HOME = toString (
+          config.pkgs.linkFarm "vicinae-xdg-config" [
+            {
+              name = "vicinae/settings.json";
+              path = jsonFormat.generate "vicinae-settings" config.settings;
+            }
+          ]
+        );
+      }
+      // lib.optionalAttrs (themeFiles != [ ]) {
+        # we need to add custom themes dir to XDG_DATA_DIRS
+        XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
+      };
     };
   }
 )
