@@ -18,9 +18,8 @@ inputs.wrappers.lib.wrapModule (
       };
 
       configFile = lib.mkOption {
-        # cheating here so i can use a path to .config
-        # type = wlib.types.file config.pkgs;
-        default = config."config.conf".path;
+        type = wlib.types.file config.pkgs;
+        default.path = config."config.conf".path;
         description = "path to the mango config file to be used instead of the default one.";
       };
     };
@@ -29,11 +28,9 @@ inputs.wrappers.lib.wrapModule (
       filesToPatch = [
         "share/wayland-sessions/mango.desktop"
       ];
-
       flags = {
-        "-c" = toString config.configFile;
+        "-c" = toString config.configFile.path;
       };
-
       package = config.pkgs.mangowc;
     };
   }

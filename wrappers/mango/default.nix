@@ -47,7 +47,7 @@ let
 
     # Monitor rules
     # monitorrule=name:DP-8,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
-    # monitorrule=name:DP-6,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
+    # monitorrule=name:DP-8,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
     # monitorrule=name:DP-7,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
 
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
@@ -66,7 +66,7 @@ in
   pkgs = pkgs // {
     mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
   };
-  configFile = "$HOME/.config/mango/config.conf";
+  configFile.path = "$HOME/.config/mango/config.conf";
   "config.conf".content = fullConfig;
   passthru.config = fullConfig;
 }).wrapper
