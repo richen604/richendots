@@ -31,6 +31,9 @@ inputs.wrappers.lib.wrapModule (
     };
 
     config = {
+      filesToPatch = [
+        "share/systemd/user/swaync.service"
+      ];
       package = config.pkgs.swaynotificationcenter;
       flags = {
         "-c" = toString config.configFile.path;
