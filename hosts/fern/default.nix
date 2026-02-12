@@ -58,5 +58,13 @@
     "vm.dirty_background_ratio" = 2; # Background writeback threshold
   };
 
+  # nixpull client configuration
+  services.nixpull = {
+    enable = true;
+    mode = "client";
+    checkInterval = "hourly";
+    enableNotifications = true;
+  };
+
   system.stateVersion = pkgs.lib.mkDefault "26.05";
 }

@@ -80,7 +80,7 @@ build() {
   
   for config in $configs; do
     if ! store_path=$(gum spin --spinner dot --title "building $config..." -- \
-      sh -c "nix build '.#nixosConfigurations.$config.config.system.build.toplevel' --refresh --option eval-cache false --print-out-paths --no-link 2>&1 | tail -n1"); then
+      sh -c "nix build '.#nixosConfigurations.$config.config.system.build.toplevel' --print-out-paths --no-link 2>&1 | tail -n1"); then
       gum style --foreground "$COLOR_ERROR" --bold "✗ failed to build $config" >&2
       exit 1
     fi
