@@ -18,10 +18,16 @@ inputs.wrappers.lib.wrapModule (
         description = "settings for satty";
         default = { };
       };
+
+      configFile = lib.mkOption {
+        type = wlib.types.file config.pkgs;
+        default.path = tomlFormat.generate "satty-config" config.settings;
+        description = "Path to a custom TOML configuration file for satty. Overrides settings option.";
+      };
     };
     config = {
       flags = {
-        "-c" = toString (tomlFormat.generate "satty-config" config.settings);
+        "-c" = toString config.configFile.path;
       };
       package = config.pkgs.satty;
     };
