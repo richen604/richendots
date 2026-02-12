@@ -7,12 +7,7 @@
   give them a star here https://github.com/adriankarlen/textfox
 */
 let
-  basePolicies = builtins.fromJSON (builtins.readFile ./policies.json);
-  extensionPolicies = builtins.fromJSON (builtins.readFile ./extensions.json);
-
-  mergedPolicies = basePolicies // {
-    policies = basePolicies.policies // extensionPolicies.policies;
-  };
+  policies = builtins.fromJSON (builtins.readFile ./policies.json);
 
   # shamelessly replacing ascii art
   text = ''
@@ -43,7 +38,7 @@ let
   '';
 in
 pkgs.wrapFirefox pkgs.firefox-unwrapped {
-  extraPolicies = mergedPolicies.policies;
+  extraPolicies = policies;
 
   extraPrefs = ''
     // Fill SVG Color
