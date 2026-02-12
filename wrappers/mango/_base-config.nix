@@ -206,6 +206,8 @@ let
     # Layer rules for vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
+    # Layer rules for waybar
+    layerrule=noanim:1,noblur:1,layer_name:waybar
   '';
 
   # ============================================
