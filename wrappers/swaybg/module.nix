@@ -27,10 +27,19 @@ inputs.wrappers.lib.wrapModule (
         description = "Wallpaper display mode (e.g., center, fill, fit, stretch, tile).";
         default = "center";
       };
+      # hack to ensure wallpaper is in closure
+      wallpaperPkg = lib.mkOption {
+        type = lib.types.package;
+        description = "Package that provides the wallpaper image. this ensures the wallpaper is in the closure.";
+        default = config.pkgs.runCommandLocal "swaybg-wallpaper" { } ''
+          mkdir -p $out
+          cp ${config.wallpaper.path} $out/wall.png
+        '';
+      };
     };
     config = {
       flags = {
-        "-i" = toString config.wallpaper.path;
+        "-i" = toString config.wallpaperPkg + "/wall.png";
         "-m" = config.mode;
       };
       package = config.pkgs.swaybg;
