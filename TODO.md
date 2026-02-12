@@ -2,8 +2,7 @@
 
 ## now
 
-- autostart.sh for mangowc
-- use app2unit for mangowc autostart to see if that restarts things on rebuild
+- theme spicetify tui, copy full css and config for hjem usage. update spicetify tui for this
 
 ## next
 
@@ -30,6 +29,7 @@
   - tmux
   - mpv
   - wlogout
+  - yazi
 - clean up flake.nix
 - global color palette, wall.css to nix
 - firefox: wrapper should be private
@@ -53,3 +53,7 @@
 - green vscode theme that doesn't look like garbage
 - some qol scripts / menus for vicinae
 - npins & a post flake world?
+
+## docs
+
+- <https://wiki.nixos.org/wiki/Yubikey>
