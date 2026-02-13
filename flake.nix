@@ -78,14 +78,5 @@
           packages = builtins.attrValues wrappers;
         }
       );
-
-      nixConfig = {
-        extra-substituters = [
-          "https://cache.nixos.org?priority=10"
-        ];
-        extra-trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        ];
-      };
     };
 }
