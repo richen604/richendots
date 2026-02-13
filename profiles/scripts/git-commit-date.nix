@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-pkgs.writeScriptBin "gct" ''
+pkgs.writeScriptBin "gcd" ''
   #!/usr/bin/env bash
   PATH=$PATH:${
     pkgs.lib.makeBinPath [
