@@ -6,40 +6,6 @@
 
 # todo: fern vfio: make this module more generic, extendable, move to common
 {
-  system.activationScripts = {
-    postActivation = ''
-      # Create directories first
-      mkdir -p /home/richen/.local/bin
-      # Copy VFIO scripts and set permissions
-      cp -f ${./scripts/vfio.sh} /home/richen/.local/bin/vfio
-      cp -f ${./scripts/lg.sh} /home/richen/.local/bin/lg
-      cp -f ${./scripts/start-vfio.sh} /home/richen/.local/bin/start-vfio
-      cp -f ${./scripts/stop-vfio.sh} /home/richen/.local/bin/stop-vfio
-      cp -f ${./scripts/vm.sh} /home/richen/.local/bin/vm
-      cp -f ${./scripts/rdp.sh} /home/richen/.local/bin/rdp
-
-      chown richen:users /home/richen/.local/bin/vfio
-      chown richen:users /home/richen/.local/bin/lg
-      chown richen:users /home/richen/.local/bin/start-vfio
-      chown richen:users /home/richen/.local/bin/stop-vfio
-      chown richen:users /home/richen/.local/bin/vm
-      chown richen:users /home/richen/.local/bin/rdp
-      chmod +x /home/richen/.local/bin/vfio
-      chmod +x /home/richen/.local/bin/lg
-      chmod +x /home/richen/.local/bin/start-vfio
-      chmod +x /home/richen/.local/bin/stop-vfio
-      chmod +x /home/richen/.local/bin/vm
-      chmod +x /home/richen/.local/bin/rdp
-
-      # Create a new directory for environment variables
-      mkdir -p /etc/profile.d
-
-      # Add scripts directory to system-wide PATH via profile.d
-      echo 'export PATH="/home/richen/.local/bin:$PATH"' > /etc/profile.d/vfio-scripts.sh
-      chmod +x /etc/profile.d/vfio-scripts.sh
-    '';
-  };
-
   services = {
     spice-vdagentd.enable = true;
     spice-webdavd.enable = true;
@@ -76,35 +42,6 @@
       "libvirtd"
       "kvm"
       "qemu-libvirtd"
-    ];
-  };
-
-  security = {
-    polkit = {
-      enable = true;
-    };
-    sudo.extraRules = [
-      {
-        groups = [ "wheel" ];
-        commands = [
-          {
-            command = "/home/richen/.local/bin/vfio";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "/home/richen/.local/bin/rdp";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "/home/richen/.local/bin/vm";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "/home/richen/.local/bin/lg";
-            options = [ "NOPASSWD" ];
-          }
-        ];
-      }
     ];
   };
 
@@ -273,5 +210,25 @@
     cpuset # CPU management
     kmod # Kernel module management
     inotify-tools # File change notification
+
+    # scripts
+    (pkgs.writeShellScriptBin "vfio" ''
+      ${builtins.readFile ./scripts/vfio.sh}
+    '')
+    (pkgs.writeShellScriptBin "lg" ''
+      ${builtins.readFile ./scripts/lg.sh}
+    '')
+    (pkgs.writeShellScriptBin "start-vfio" ''
+      ${builtins.readFile ./scripts/start-vfio.sh}
+    '')
+    (pkgs.writeShellScriptBin "stop-vfio" ''
+      ${builtins.readFile ./scripts/stop-vfio.sh}
+    '')
+    (pkgs.writeShellScriptBin "vm" ''
+      ${builtins.readFile ./scripts/vm.sh}
+    '')
+    (pkgs.writeShellScriptBin "rdp" ''
+      ${builtins.readFile ./scripts/rdp.sh}
+    '')
   ];
 }
