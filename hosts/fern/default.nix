@@ -15,8 +15,6 @@
     clean.extraArgs = "--keep-since 4d --keep 3";
     flake = "/home/richen/newdev/richendots";
   };
-  # for nh.clean
-  nix.gc.automatic = pkgs.lib.mkForce false;
 
   networking.interfaces.enp7s0.wakeOnLan.enable = true;
 

@@ -148,23 +148,35 @@
       546
     ];
   };
-  nix.settings.allow-import-from-derivation = false;
-
-  nix.settings.substituters = [
-    "http://10.0.0.155:5000"
-  ];
-  nix.settings.trusted-public-keys = [
-    "richencache:ibHPYDq1KmrAsoHIU+WI6ViUoIoX0SEY45CvBOaPXUY="
-  ];
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  nix.settings.auto-optimise-store = true;
-  nix.settings.trusted-users = [
-    "root"
-    "richen"
-  ];
+  nix = {
+    package = pkgs.lix;
+    gc.automatic = false;
+    settings = {
+      warn-dirty = false;
+      allow-import-from-derivation = false;
+      substituters = [
+        "http://10.0.0.155:5000"
+        "https://cache.nixos.org"
+      ];
+      trusted-public-keys = [
+        "richencache:ibHPYDq1KmrAsoHIU+WI6ViUoIoX0SEY45CvBOaPXUY="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      keep-going = true;
+      log-lines = 20;
+      keep-derivations = true;
+      keep-outputs = true;
+      auto-optimise-store = true;
+      accept-flake-config = true;
+      commit-lockfile-summary = "chore: bump flake.lock";
+      allowed-users = [ "@wheel" ];
+      trusted-users = [ "@wheel" ];
+    };
+  };
 
   # turn off bloat
   documentation = {

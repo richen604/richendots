@@ -36,8 +36,6 @@
     clean.extraArgs = "--keep-since 4d --keep 3";
     flake = "/mnt/dev/richendots";
   };
-  # for nh.clean
-  nix.gc.automatic = pkgs.lib.mkForce false;
 
   # nixpull server configuration
   services.nixpull = {

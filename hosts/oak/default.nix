@@ -62,8 +62,6 @@
     clean.extraArgs = "--keep-since 4d --keep 3";
     flake = "/home/richen/mutagen/richendots";
   };
-  # for nh.clean
-  nix.gc.automatic = lib.mkForce false;
 
   # # nixpull client configuration
   # services.nixpull = {
