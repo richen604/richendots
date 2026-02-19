@@ -131,10 +131,10 @@ let
   layouts = ''
     # Scroller Layout Setting
     scroller_structs = 8
-    scroller_default_proportion = 0.9
+    scroller_default_proportion = 1
     scroller_focus_center = 1
     scroller_prefer_center = 1
-    edge_scroller_pointer_focus = 1
+    edge_scroller_pointer_focus = 0
     scroller_ignore_proportion_single = 0
     scroller_default_proportion_single = 1.0
     scroller_proportion_preset = 0.7,0.9,1.0
@@ -194,6 +194,7 @@ let
     cursor_size=24
     drag_tile_to_tile=1
     view_current_to_back=1
+    enable_hotarea=0
 
     # Recommended in https://mangowc.vercel.app/docs/faq
     syncobj_enable=1
@@ -257,6 +258,9 @@ let
       fi
     ''}/bin/screenrecord-stop
 
+    # toggle waybar
+    bind=SUPER+SHIFT,W,spawn,killall -SIGUSR1 .waybar-wrapped 
+
     # Window focus
     bind=SUPER,Tab,focusstack,next
     bind=SUPER,Left,focusdir,left
@@ -314,14 +318,23 @@ let
 
     # Mouse Button Bindings (NONE mode key only work in ov mode)
     mousebind=SUPER,btn_left,moveresize,curmove
-    mousebind=NONE,btn_middle,togglemaximizescreen,0
     mousebind=SUPER,btn_right,moveresize,curresize
-    mousebind=NONE,btn_left,toggleoverview,1
-    mousebind=NONE,btn_right,killclient,0
+    # todo: none don't currently work, need to investigate
+    # mousebind=NONE,btn_middle,togglemaximizescreen,0
+    # mousebind=NONE,btn_left,toggleoverview,1
+    # mousebind=NONE,btn_right,killclient,0
 
     # Axis Bindings
     axisbind=SUPER,UP,viewtoleft_have_client
     axisbind=SUPER,DOWN,viewtoright_have_client
+
+    # Media Keys
+    bind=NONE,XF86AudioRaiseVolume,spawn,pamixer -i 5
+    bind=NONE,XF86AudioLowerVolume,spawn,pamixer -d 5
+    bind=NONE,XF86AudioMute,spawn,pamixer -t
+    bind=NONE,XF86AudioNext,spawn,playerctl next
+    bind=NONE,XF86AudioPrev,spawn,playerctl previous
+    bind=NONE,XF86AudioPlay,spawn,playerctl play-pause
   '';
 
   # ============================================

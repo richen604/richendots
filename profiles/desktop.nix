@@ -26,6 +26,6 @@
   environment.variables.XCURSOR_SIZE = "24";
 
   hjem.users.richen.files.".config/mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango.passthru.config;
+    pkgs.writeText "config.conf" richenLib.wrappers.mango.config.content;
 
 }

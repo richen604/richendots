@@ -55,7 +55,7 @@ let
     monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
 
     # Window rules
-    windowrule=tags:3,isopensilent:1,monitor:DP-7,appid:vesktop
+    windowrule=tags:3,monitor:DP-5,appid:vesktop
 
     cursor_size=24
   '';
@@ -68,5 +68,4 @@ in
   };
   configFile.path = "$HOME/.config/mango/config.conf";
   "config.conf".content = fullConfig;
-  passthru.config = fullConfig;
 }).wrapper
