@@ -7,14 +7,11 @@
 ## next
 
 - my custom scripts should also be packages for easier dev
-- wipe HOME
 
 ## backlog
 
-- vicinae does not open most apps
 - keepass does not start on boot, windowrule to open it center on fern and oak
 - screenshot should freeze screen
-- fern: right monitor needs to start on tag 3, center tag 2
 - satty shouldnt notify
 - fern: kvm switch messes up monitor dp-* and mango does not support monitor id's i believe
 - fern: plymouth does not run, even with vfio.nix off
@@ -24,6 +21,8 @@
 
 ## future
 
+- keepassxc: not sure if config actually works
+- fern: right monitor needs to start on tag 3, center tag 2
 - wrap:
   - nvim with mnw
   - tmux
@@ -41,7 +40,7 @@
 - disko configurations
 - limine secure boot
 - nixos-anywhere support + dev-shell
-- add extensions support for vicinae wrapper
+- vicinae: add extensions support for vicinae wrapper
 - keybinds menu with vicinae?
 - tmux? <https://github.com/fcsonline/tmux-thumbs?tab=readme-ov-file> also looks cool
 - firmware for glove80 <https://git.sr.ht/~x10an14/glove80-layout/tree/main/item/flake.nix>
@@ -54,6 +53,29 @@
 - some qol scripts / menus for vicinae
 - npins & a post flake world?
 
-## docs
+## nixpull
+
+- rewrite, not bash
+- sqlite state store
+- more robust api, feature agnostic, easily customizable
+- non-nixos targets?
+- full nix module impl
+- pre post etc hooks
+- channels? clients determine branch of build using git
+- git worktrees integration
+- inotify
+- better metadata
+  - host
+  - called
+  - nixpkgs version
+  - channel (?)
+  - human readable timestamp
+  - git rev
+- auto rollback similar to deployrs
+- activation options, `nixpull client test` etc
+- `nh` support
+- fix systemd implementation of activation
+
+## references
 
 - <https://wiki.nixos.org/wiki/Yubikey>
