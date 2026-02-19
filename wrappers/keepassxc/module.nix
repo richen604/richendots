@@ -6,6 +6,7 @@ inputs.wrappers.lib.wrapModule (
     wlib,
     ...
   }:
+  # todo: for browser integration, you have to run `nix run nixpkgs#keepassxc` once and select the browsers you want. for some reason the browser selection is not part of the configuration file
   let
     iniFmt = config.pkgs.formats.ini { };
   in
