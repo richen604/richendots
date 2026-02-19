@@ -108,6 +108,8 @@ in
     # browser integration
     Browser = {
       Enabled = true;
+      CustomBrowserLocation = "";
+      CustomBrowserType = 2;
       ShowNotification = true;
       BestMatchOnly = false;
       UnlockDatabase = true;
