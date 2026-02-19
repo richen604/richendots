@@ -108,6 +108,11 @@ inputs.wrappers.lib.wrapModule (
           }
         '';
       };
+      configFile = lib.mkOption {
+        type = wlib.types.file config.pkgs;
+        description = "Path to a custom vicinae configuration file. This will override the settings option.";
+        default.path = jsonFormat.generate "custom-vicinae-config" config.settings;
+      };
       # todo: implement extensions for vicinae
       # todo: add input for extensions repo to support named extensions
       extensions = lib.mkOption {
@@ -119,25 +124,28 @@ inputs.wrappers.lib.wrapModule (
         default = [ ];
       };
     };
-    config = {
-      package = config.pkgs.vicinae;
-      filesToPatch = [
-        "share/systemd/user/vicinae.service"
-      ];
-      env = {
-        XDG_CONFIG_HOME = toString (
-          config.pkgs.linkFarm "vicinae-xdg-config" [
-            {
-              name = "vicinae/settings.json";
-              path = jsonFormat.generate "vicinae-settings" config.settings;
-            }
-          ]
-        );
-      }
-      // lib.optionalAttrs (themeFiles != [ ]) {
-        # we need to add custom themes dir to XDG_DATA_DIRS
-        XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
+    config =
+      let
+        # vicinae only supports passing a configuration file to the server command
+        vicinaeWrapper = config.pkgs.writeShellScriptBin "vicinae" ''
+          if [[ "''${1:-}" == "server" ]]; then
+            exec ${lib.getExe' config.package "vicinae"} server --config "${config.configFile.path}" "''${@:2}"
+          else
+            exec ${lib.getExe' config.package "vicinae"} "$@"
+          fi
+        '';
+      in
+      {
+        package = config.pkgs.vicinae;
+        extraPackages = [ vicinaeWrapper ];
+        filesToPatch = [
+          "share/systemd/user/vicinae.service"
+        ];
+
+        env = lib.optionalAttrs (themeFiles != [ ]) {
+          # we need to add custom themes dir to XDG_DATA_DIRS
+          XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
+        };
       };
-    };
   }
 )
