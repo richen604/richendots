@@ -38,7 +38,9 @@ in
     gco = "git checkout";
     gcb = "git checkout -b";
     gbr = "git branch -a";
-    # System
+    # various dev
+    dr = "direnv reload";
+    # system
     h = "htop";
     df = "df -h";
     du = "du -h --max-depth=1";
