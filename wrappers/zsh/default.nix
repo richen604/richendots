@@ -9,7 +9,7 @@ in
 (zshWrapper.apply {
   pkgs = pkgs;
   shellAliases = {
-    grep = "grep --color=auto";
+    grep = "rg";
     mkdir = "mkdir -pv";
     cp = "cp -i";
     mv = "mv -i";
@@ -26,7 +26,7 @@ in
     la = "eza -la --color=auto --group-directories-first";
     lt = "eza -lh --color=auto --tree";
     # viewing / prettified cat
-    cat = "bat --color=always";
+    cat = "bat --color=always --paging=never";
     less = "less -R";
     tree = "tree -C";
     # git shortcuts

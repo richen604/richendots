@@ -58,6 +58,7 @@
     pkgs.neovim
     pkgs.tmux
     pkgs.less
+    pkgs.ripgrep
 
     # system utilities
     pkgs.killall
