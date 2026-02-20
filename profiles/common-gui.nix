@@ -307,65 +307,42 @@
         ".config/Code/User/settings.json" = {
           type = "copy";
           permissions = "0644";
-          source = pkgs.writeText "vscode-settings.json" ''
-             {
-              "workbench.colorTheme": "Tokyo Night",
-              "window.menuBarVisibility": "toggle",
-              "editor.fontSize": 17,
-              "editor.fontWeight": "700",
-              "editor.lineHeight": 1.3,
-              "editor.scrollbar.vertical": "hidden",
-              "editor.scrollbar.verticalScrollbarSize": 0,
-              "security.workspace.trust.untrustedFiles": "newWindow",
-              "security.workspace.trust.startupPrompt": "never",
-              "security.workspace.trust.enabled": false,
-              "editor.minimap.side": "left",
-              "editor.fontFamily": "'GohuFont uni14 Nerd Font Propo'",
-              "extensions.autoUpdate": true,
-              "workbench.statusBar.visible": true,
-              "terminal.external.linuxExec": "kitty",
-              "terminal.explorerKind": "both",
-              "terminal.sourceControlRepositoriesKind": "both",
-              "telemetry.telemetryLevel": "off",
-              "workbench.activityBar.location": "top",
-              "window.customTitleBarVisibility": "auto",
-              "workbench.iconTheme": "catppuccin-mocha",
-              "editor.cursorSmoothCaretAnimation": "on",
-              "editor.autoIndent": "full",
-              "editor.formatOnSave": true,
-              "nix.enableLanguageServer": true,
-              "nix.formatterPath": "nixfmt",
-              "nix.serverPath": "nil",
-              "nix.hiddenLanguageServerErrors": [
-                "textDocument/definition",
-                "textDocument/formatting",
-                "textDocument/documentSymbol"
-              ],
-              "nix.serverSettings": {
-                "nil": {
-                  "formatting": {
-                    "command": ["nixfmt"]
-                  }
-                }
-              },
-              "workbench.sideBar.location": "right",
-              "git.enableSmartCommit": true,
-              "github.copilot.nextEditSuggestions.enabled": true,
-              "todo-tree.general.tags": [
-                "BUG",
-                "HACK",
-                "FIXME",
-                "TODO",
-                "XXX",
-                "[ ]",
-                "[x]",
-                "todo",
-                "fixme",
-                "bug"
-              ],
-              "editor.minimap.enabled": false
-            }
-          '';
+          source = ./config/vscode/settings.json;
+        };
+        ".config/spicetify/config-xpui.ini" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/config-xpui.ini;
+        };
+        ".config/spicetify/CustomApps/marketplace/extension.js" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/CustomApps/marketplace/extension.js;
+        };
+        ".config/spicetify/CustomApps/marketplace/index.js" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/CustomApps/marketplace/index.js;
+        };
+        ".config/spicetify/CustomApps/marketplace/manifest.json" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/CustomApps/marketplace/manifest.json;
+        };
+        ".config/spicetify/CustomApps/marketplace/style.css" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/CustomApps/marketplace/style.css;
+        };
+        ".config/spicetify/Themes/tui/color.ini" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/Themes/tui/color.ini;
+        };
+        ".config/spicetify/Themes/tui/user.css" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/spicetify/Themes/tui/user.css;
         };
       };
     };

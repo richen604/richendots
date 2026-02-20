@@ -2,8 +2,6 @@
 
 ## now
 
-- theme spicetify tui, copy full css and config for hjem usage. update spicetify tui for this
-
 ## next
 
 - my custom scripts should also be packages for easier dev
