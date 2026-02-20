@@ -129,15 +129,14 @@ inputs.wrappers.lib.wrapModule (
         # vicinae only supports passing a configuration file to the server command
         vicinaeWrapper = config.pkgs.writeShellScriptBin "vicinae" ''
           if [[ "''${1:-}" == "server" ]]; then
-            exec ${lib.getExe' config.package "vicinae"} server --config "${config.configFile.path}" "''${@:2}"
+            exec ${lib.getExe' config.pkgs.vicinae "vicinae"} server --config "${config.configFile.path}" "''${@:2}"
           else
-            exec ${lib.getExe' config.package "vicinae"} "$@"
+            exec ${lib.getExe' config.pkgs.vicinae "vicinae"} "$@"
           fi
         '';
       in
       {
-        package = config.pkgs.vicinae;
-        extraPackages = [ vicinaeWrapper ];
+        package = vicinaeWrapper;
         filesToPatch = [
           "share/systemd/user/vicinae.service"
         ];
