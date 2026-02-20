@@ -18,7 +18,7 @@ in
       # # Exit directly after save as (NEXTRELEASE)
       # early-exit-save-as = true;
       # Draw corners of rectangles round if the value is greater than 0 (0 disables rounded corners)
-      corner-roundness = 12;
+      corner-roundness = 0;
       # Select the tool on startup [possible values: pointer, crop, line, arrow, rectangle, text, marker, blur, brush]
       initial-tool = "brush";
       # Configure the command to be called on copy, for example `wl-copy`
@@ -31,15 +31,15 @@ in
       # After copying the screenshot, save it to a file as well
       save-after-copy = true;
       # Hide toolbars by default
-      default-hide-toolbars = false;
+      default-hide-toolbars = true;
       # Experimental (since 0.20.0): whether window focus shows/hides toolbars. This does not affect initial state of toolbars, see default-hide-toolbars.
-      focus-toggles-toolbars = false;
+      focus-toggles-toolbars = true;
       # Fill shapes by default (since 0.20.0)
-      default-fill-shapes = false;
+      default-fill-shapes = true;
       # The primary highlighter to use, the other is accessible by holding CTRL at the start of a highlight [possible values: block, freehand]
       primary-highlighter = "block";
       # Disable notifications
-      disable-notifications = false;
+      disable-notifications = true;
       # Actions to trigger on right click (order is important)
       # [possible values: save-to-clipboard, save-to-file, exit]
       actions-on-right-click = [ ];
@@ -104,22 +104,46 @@ in
     color-palette = {
       # These will be shown in the toolbar for quick selection
       palette = [
-        "#00ffff"
-        "#a52a2a"
-        "#dc143c"
-        "#ff1493"
-        "#ffd700"
-        "#008000"
+        "#ff0000" # bright red - high visibility
+        "#7AC297" # grove primary accent (light green)
+        "#0080ff" # bright blue - info
+        "#ffff00" # yellow - warnings
+        "#ff8000" # orange - attention
+        "#9AE6D9" # grove secondary accent (cyan)
+        "#ffffff" # white - light backgrounds
+        "#000000" # black - dark backgrounds
       ];
       # These will be available in the color picker as presets
       # Leave empty to use GTK's default
       custom = [
-        "#00ffff"
-        "#a52a2a"
-        "#dc143c"
-        "#ff1493"
-        "#ffd700"
-        "#008000"
+        # high visibility colors
+        "#ff0000" # bright red
+        "#00ff00" # bright green
+        "#0080ff" # bright blue
+        "#ffff00" # yellow
+        "#ff00ff" # magenta
+        "#ff8000" # orange
+        "#00ffff" # cyan
+        # grove theme - primary greens
+        "#295239" # acc-p1
+        "#4B7D5F" # acc-p3
+        "#65A37E" # acc-p5
+        "#7AC297" # acc-p6
+        "#9AE6B8" # acc-p7
+        "#CCFFE0" # acc-p9
+        # grove theme - secondary/tertiary cyans
+        "#3A6B63" # acc-s2
+        "#65A399" # acc-s5
+        "#7AC2B6" # acc-s6
+        "#9AE6D9" # acc-s7
+        "#AAF0E4" # acc-s8
+        # neutrals
+        "#ffffff" # white
+        "#cccccc" # light gray
+        "#888888" # gray
+        "#444444" # dark gray
+        "#0E1310" # grove bg-p (dark)
+        "#000000" # black
       ];
     };
   };
