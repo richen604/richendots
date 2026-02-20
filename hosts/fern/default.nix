@@ -59,5 +59,46 @@
     enableNotifications = true;
   };
 
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
+  programs.gamemode = {
+    enable = true;
+    settings = {
+      general = {
+        defaultgov = "schedutil";
+        desiredgov = "performance";
+        renice = 10;
+        softrealtime = "auto";
+      };
+      cpu.pin_cores = "yes";
+      gpu = {
+        apply_gpu_optimisations = "accept-responsibility";
+        gpu_device = 1;
+        amd_performance_level = "high";
+      };
+    };
+  };
+  users.users.richen.extraGroups = [ "gamemode" ];
+
+  programs.gamescope = {
+    enable = true;
+    args = [
+      "--output-width 2560"
+      "--output-height 1440"
+      "--nested-refresh 144"
+      "--fullscreen"
+      "--expose-wayland"
+      "--backend=sdl"
+      "--force-grab-cursor"
+      "--immediate-flips"
+      "--rt"
+    ];
+  };
+
   system.stateVersion = pkgs.lib.mkDefault "26.05";
 }
