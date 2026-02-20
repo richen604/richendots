@@ -140,6 +140,8 @@
 
     # custom scripts
     (pkgs.callPackage ./scripts/spotify-spicetified.nix { })
+
+    pkgs.obsidian
   ];
 
   programs.dconf.enable = true;
@@ -255,6 +257,10 @@
   };
   programs.steam = {
     enable = true;
+    extraPackages = with pkgs; [
+      gamemode
+      gamescope
+    ];
   };
 
   # GRAPHICS / DISPLAY MANAGER ----------------------------------------
