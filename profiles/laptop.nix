@@ -6,6 +6,7 @@
     richenLib.wrappers.mango-laptop
     richenLib.wrappers.swaylock-laptop
     richenLib.wrappers.swayidle-laptop
+    richenLib.wrappers.waybar-laptop
   ];
 
   boot.loader.grub = {
@@ -35,6 +36,6 @@
   environment.variables.XCURSOR_SIZE = 48;
 
   hjem.users.richen.files.".config/mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango-laptop.passthru.config;
+    pkgs.writeText "config.conf" richenLib.wrappers.mango-laptop.config.content;
 
 }

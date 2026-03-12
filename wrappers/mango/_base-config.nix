@@ -9,7 +9,7 @@ let
   # AUTOSTART APPLICATIONS
   # ============================================
   autostart = ''
-    exec-once=systemctl start --user waybar.service
+    exec-once=waybar
     exec-once=swaybg
     exec-once=systemctl start --user swaync.service
     exec-once=vicinae server

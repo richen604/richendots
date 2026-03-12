@@ -26,6 +26,8 @@
   };
   users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
 
+  systemd.services.NetworkManager-wait-online.enable = false;
+
   environment.systemPackages = [
     # yubikey tools
     pkgs.yubikey-manager
@@ -59,6 +61,7 @@
     pkgs.tmux
     pkgs.less
     pkgs.ripgrep
+    pkgs.jq
 
     # system utilities
     pkgs.killall
@@ -101,12 +104,24 @@
       }
       ${builtins.readFile ../modules/nixpull/nixpull.sh}
     '')
+
+    pkgs.nodejs
+    pkgs.fnm
   ];
 
   # required for zsh to catch all completions
   environment.pathsToLink = [ "/share/zsh" ];
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      libgcc
+      zlib
+      openssl
+      icu
+    ];
+  };
+  
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
