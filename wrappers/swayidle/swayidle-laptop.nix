@@ -23,17 +23,17 @@ in
   pkgs = pkgs;
   extraArgs = [ "-w" ];
   events = [
-    # 2 minutes
-    {
-      type = "timeout";
-      timeout = 120;
-      command = "swaylock";
-    }
-
-    # 5 minutes - turn off all monitors
+    # 5 minutes
     {
       type = "timeout";
       timeout = 300;
+      command = "swaylock";
+    }
+
+    # 10 minutes - turn off all monitors
+    {
+      type = "timeout";
+      timeout = 600;
       command = toString dpmsOff;
       resume = toString dpmsOn;
     }
@@ -42,7 +42,7 @@ in
     {
       type = "timeout";
       timeout = 600;
-      command = "systemctl hibernate";
+      command = "systemctl poweroff";
     }
 
     # lock screen before system goes to sleep
