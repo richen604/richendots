@@ -15,7 +15,6 @@
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
-    richenLib.wrappers.waybar
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
@@ -135,13 +134,12 @@
     pkgs.wf-recorder
     pkgs.dpms-off
 
-    # gaming
-    pkgs.steam-run
-
     # custom scripts
     (pkgs.callPackage ./scripts/spotify-spicetified.nix { })
 
     pkgs.obsidian
+    pkgs.vscode-fhs
+
   ];
 
   programs.dconf.enable = true;
@@ -177,8 +175,6 @@
       "systemd.show_status=auto"
     ];
   };
-  # todo: this may be better placed in common.nix
-  systemd.services.NetworkManager-wait-online.enable = false;
 
   # audio and bluetooth
   hardware.bluetooth = {
@@ -253,14 +249,22 @@
   # gaming
   programs.gamescope = {
     enable = true;
-    capSysNice = true;
+    capSysNice = false;
+  };
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-cpp;
+    extraRules = [
+      {
+        "name" = "gamescope";
+        "nice" = -20;
+      }
+    ];
   };
   programs.steam = {
     enable = true;
-    extraPackages = with pkgs; [
-      gamemode
-      gamescope
-    ];
+    gamescopeSession.enable = false;
   };
 
   # GRAPHICS / DISPLAY MANAGER ----------------------------------------
@@ -347,37 +351,37 @@
       };
     };
   };
-
   # editor
   programs.vscode = {
-    enable = true;
+    enable = false;
     extensions = [
-      pkgs.vscode-extensions.aaron-bond.better-comments
-      pkgs.vscode-extensions.bierner.markdown-preview-github-styles
-      pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
-      pkgs.vscode-extensions.davidanson.vscode-markdownlint
-      pkgs.vscode-extensions.dbaeumer.vscode-eslint
-      pkgs.vscode-extensions.ecmel.vscode-html-css
-      pkgs.vscode-extensions.enkia.tokyo-night
-      pkgs.vscode-extensions.esbenp.prettier-vscode
-      pkgs.vscode-extensions.geequlim.godot-tools
-      pkgs.vscode-extensions.github.copilot
-      pkgs.vscode-extensions.github.vscode-github-actions
-      pkgs.vscode-extensions.github.vscode-pull-request-github
-      pkgs.vscode-extensions.ibm.output-colorizer
-      pkgs.vscode-extensions.jnoortheen.nix-ide
-      pkgs.vscode-extensions.leonardssh.vscord
-      pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
-      pkgs.vscode-extensions.mkhl.shfmt
-      pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
-      pkgs.vscode-extensions.redhat.vscode-yaml
-      pkgs.vscode-extensions.tamasfe.even-better-toml
-      pkgs.vscode-extensions.timonwong.shellcheck
-      pkgs.vscode-extensions.yoavbls.pretty-ts-errors
-      pkgs.vscode-extensions.yzhang.markdown-all-in-one
-      pkgs.vscode-extensions.ziglang.vscode-zig
-      pkgs.vscode-extensions.gruntfuggly.todo-tree
-      pkgs.vscode-extensions.rooveterinaryinc.roo-cline
+      # todo: setting these declaratively do not allow for ssh installation
+      # pkgs.vscode-extensions.aaron-bond.better-comments
+      # pkgs.vscode-extensions.bierner.markdown-preview-github-styles
+      # pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
+      # pkgs.vscode-extensions.davidanson.vscode-markdownlint
+      # pkgs.vscode-extensions.dbaeumer.vscode-eslint
+      # pkgs.vscode-extensions.ecmel.vscode-html-css
+      # pkgs.vscode-extensions.enkia.tokyo-night
+      # pkgs.vscode-extensions.esbenp.prettier-vscode
+      # pkgs.vscode-extensions.geequlim.godot-tools
+      # pkgs.vscode-extensions.github.copilot
+      # pkgs.vscode-extensions.github.vscode-github-actions
+      # pkgs.vscode-extensions.github.vscode-pull-request-github
+      # pkgs.vscode-extensions.ibm.output-colorizer
+      # pkgs.vscode-extensions.jnoortheen.nix-ide
+      # pkgs.vscode-extensions.leonardssh.vscord
+      # pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
+      # pkgs.vscode-extensions.mkhl.shfmt
+      # pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
+      # pkgs.vscode-extensions.redhat.vscode-yaml
+      # pkgs.vscode-extensions.tamasfe.even-better-toml
+      # pkgs.vscode-extensions.timonwong.shellcheck
+      # pkgs.vscode-extensions.yoavbls.pretty-ts-errors
+      # pkgs.vscode-extensions.yzhang.markdown-all-in-one
+      # pkgs.vscode-extensions.ziglang.vscode-zig
+      # pkgs.vscode-extensions.gruntfuggly.todo-tree
+      # pkgs.vscode-extensions.rooveterinaryinc.roo-cline
     ];
   };
 }

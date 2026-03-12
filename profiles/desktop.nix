@@ -6,6 +6,7 @@
     richenLib.wrappers.mango
     richenLib.wrappers.swaylock
     richenLib.wrappers.swayidle
+    richenLib.wrappers.waybar
   ];
 
   # greetd configuration

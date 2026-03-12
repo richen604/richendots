@@ -124,9 +124,16 @@ bind_to_vfio() {
             echo "  Info: $device not bound to any driver"
         fi
     done
-    
+
     # Unload nvidia modules to prevent rebinding
     gum style --foreground "#0087ff" "Unloading NVIDIA modules..."
+       debug_log "Attempting to unload nvidia_drm"
+    if timeout "$TIMEOUT" sudo rmmod nvidia_drm modeset=0 2>/dev/null; then
+        echo "  Success: nvidia_drm unloaded"
+    else
+        echo "  Info: nvidia_drm (not loaded or in use)"
+    fi
+
     debug_log "Attempting to unload nvidia_uvm"
     if timeout "$TIMEOUT" sudo rmmod nvidia_uvm 2>/dev/null; then
         echo "  Success: nvidia_uvm unloaded"
@@ -323,6 +330,13 @@ bind_to_nvidia() {
         echo "  Success: nvidia_uvm loaded"
     else
         echo "  Warning: nvidia_uvm failed to load"
+    fi
+
+    debug_log "Attempting to load nvidia_drm module"
+    if timeout "$TIMEOUT" sudo modprobe nvidia_drm modeset=0; then
+        echo "  Success: nvidia_drm loaded"
+    else
+        echo "  Warning: nvidia_drm failed to load"
     fi
     
     # Force bind to correct drivers if they didn't bind automatically

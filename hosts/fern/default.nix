@@ -1,7 +1,27 @@
 {
   pkgs,
+  lib,
+  config,
   ...
 }:
+let
+  sunshineSetResolution = pkgs.writeShellScriptBin "sunshine-set-resolution" ''
+    ${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --custom-mode "''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz"
+  '';
+
+  sunshineStartGamescope = pkgs.writeShellScriptBin "sunshine-start-gamescope" ''
+    ${pkgs.gamescope}/bin/gamescope \
+      --output-width "''${SUNSHINE_CLIENT_WIDTH}" \
+      --output-height "''${SUNSHINE_CLIENT_HEIGHT}" \
+      --nested-refresh "''${SUNSHINE_CLIENT_FPS}" \
+      --fullscreen \
+      --expose-wayland \
+      --backend=sdl \
+      --force-grab-cursor \
+      --immediate-flips \
+      --rt &
+  '';
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -64,6 +84,39 @@
     autoStart = true;
     capSysAdmin = true;
     openFirewall = true;
+    applications = {
+      apps = [
+        {
+          name = "Desktop";
+          prep-cmd = [
+            {
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-5";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-5";
+            }
+            {
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-6";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-6";
+            }
+            {
+              do = "${sunshineSetResolution}/bin/sunshine-set-resolution";
+              undo = "${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --off && ${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --on";
+            }
+            {
+              do = "${sunshineStartGamescope}/bin/sunshine-start-gamescope";
+              undo = "pkill gamescope";
+            }
+            {
+              do = "${pkgs.mangowc}/bin/mmsg -d reload_config";
+            }
+          ];
+          exclude-global-prep-cmd = "false";
+          auto-detach = "true";
+        }
+      ];
+    };
+    settings = {
+      capture = "kms";
+    };
   };
 
   programs.gamemode = {
@@ -86,17 +139,22 @@
   users.users.richen.extraGroups = [ "gamemode" ];
 
   programs.gamescope = {
+    # env = {
+    #   __NV_PRIME_RENDER_OFFLOAD = "1";
+    #   __NV_PRIME_RENDER_OFFLOAD_PROVIDER = "NVIDIA-G0";
+    #   __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    # };
     enable = true;
     args = [
-      "--output-width 2560"
-      "--output-height 1440"
-      "--nested-refresh 144"
-      "--fullscreen"
-      "--expose-wayland"
-      "--backend=sdl"
-      "--force-grab-cursor"
-      "--immediate-flips"
-      "--rt"
+      "-W 2560"
+      "-H 1440"
+      "-w 2560"
+      "-h 1440"
+      "-r 144"
+      "-b"
+      # "--backend=sdl"
+      # "--immediate-flips" # may cause tearing
+      "--rt" # realtime scheduling
     ];
   };
 

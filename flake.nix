@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     richendots-private = {
       url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      # url = "path:/home/richen/newdev/richendots-private";
+      #url = "path:/mnt/dev/richendots-private";
     };
     mango.url = "github:DreamMaoMao/mango";
     wrappers.url = "github:lassulus/wrappers";

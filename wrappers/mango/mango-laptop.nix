@@ -59,5 +59,4 @@ in
   };
   configFile.path = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
-  passthru.config = fullConfig;
 }).wrapper
