@@ -145,6 +145,7 @@
     pkgs.ungoogled-chromium
   ];
 
+  services.ratbagd.enable = true;
   programs.dconf.enable = true;
   services.dbus.enable = true;
   services.upower.enable = true;
@@ -152,7 +153,8 @@
   services.gvfs.enable = true;
   security.pam.services.swaylock = { };
   security.rtkit.enable = true;
-
+  hardware.opentabletdriver.enable = true;
+  services.xserver.digimend.enable = true;
   # boot
   # todo: limine secure boot
   boot = {
