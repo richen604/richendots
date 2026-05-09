@@ -16,7 +16,6 @@ let
     exec-once=wl-clip-persist --clipboard regular --reconnect-tries 0
     exec-once=wl-paste --type text --watch cliphist store
     exec-once=wl-paste --type image --watch cliphist store
-    exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
     exec-once=wlsunset -l 49.2 -L -123.1
     exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
     exec-once=udiskie -t
@@ -43,17 +42,17 @@ let
   # Game Mode:   animations=0, blur=0, opacity=1.0/1.0, radius=0, border=1, gaps=0/0/0/0
   # After editing, rebuild with: nixos-rebuild switch
   gamemode = ''
-    animations=0              # Game mode: 0
-    layer_animations=0        # Game mode: 0
-    blur=0                    # Game mode: 0
+    animations=1              # Game mode: 0
+    layer_animations=1        # Game mode: 0
+    blur=1                    # Game mode: 0
     focused_opacity=1         # Game mode: 1.0
     unfocused_opacity=1       # Game mode: 1.0
-    border_radius=0           # Game mode: 0
+    border_radius=6           # Game mode: 0
     borderpx=1                # Game mode: 0
-    gappih=0                  # Game mode: 0
-    gappiv=0                  # Game mode: 0
-    gappoh=0                  # Game mode: 0
-    gappov=0                  # Game mode: 0
+    gappih=3                  # Game mode: 0
+    gappiv=3                  # Game mode: 0
+    gappoh=3                  # Game mode: 0
+    gappov=3                  # Game mode: 0
   '';
 
   # ============================================
@@ -66,7 +65,7 @@ let
     animation_type_close=slide
     animation_fade_in=1
     animation_fade_out=1
-    tag_animation_direction=1
+    tag_animation_direction=0
     zoom_initial_ratio=0.3
     zoom_end_ratio=0.8
     fadein_begin_opacity=0.5
@@ -196,8 +195,7 @@ let
     view_current_to_back=1
     enable_hotarea=0
 
-    # Recommended in https://mangowc.vercel.app/docs/faq
-    syncobj_enable=1
+    idleinhibit_ignore_visible=1
   '';
 
   # ============================================
@@ -223,8 +221,7 @@ let
 
     # Applications
     bind=SUPER,T,spawn,kitty
-    bind=SUPER,E,spawn,dolphin
-    bind=SUPER,C,spawn,code
+    bind=SUPER,E,spawn,zeditor
     bind=SUPER,B,spawn,firefox
     bind=SUPER,L,spawn,swaylock
     bind=SUPER,A,spawn,vicinae toggle
@@ -259,7 +256,7 @@ let
     ''}/bin/screenrecord-stop
 
     # toggle waybar
-    bind=SUPER+SHIFT,W,spawn,killall -SIGUSR1 .waybar-wrapped 
+    bind=SUPER+SHIFT,W,spawn,killall -SIGUSR1 .waybar-wrapped
 
     # Window focus
     bind=SUPER,Tab,focusstack,next
@@ -277,13 +274,12 @@ let
     # Window status
     bind=ALT,Tab,toggleoverview,
     bind=SUPER,W,togglefloating,
-    bind=SUPER,F,togglemaximizescreen,
+    bind=SUPER+SHIFT,F,togglemaximizescreen,
     bind=ALT,Return,togglefullscreen,
     bind=ALT+SHIFT,Return,togglefakefullscreen,
     bind=SUPER,M,minimized,
     bind=SUPER,o,toggleoverlay,
     bind=SUPER+SHIFT,M,restore_minimized
-    bind=SUPER,I,toggle_scratchpad
 
     # Scroller layout
     bind=ALT,e,set_proportion,1.0
@@ -293,28 +289,14 @@ let
     bind=SUPER,n,switch_layout
 
     # Tag switch
-    bind=SUPER+CTRL,Left,viewtoleft_have_client,0
-    bind=SUPER+CTRL,Right,viewtoright,0
-    bind=SUPER+CTRL,Right,viewtoright_have_client,0
-    bind=SUPER+CTRL,Left,tagtoleft,0
-    bind=SUPER+CTRL,Right,tagtoright,0
+    bind=SUPER+ALT,Left,viewtoleft_have_client,0
+    bind=SUPER+ALT,Right,viewtoright_have_client,0
 
-    # Gaps
-    bind=SUPER+ALT+SHIFT,X,incgaps,1
-    bind=SUPER+ALT+SHIFT,Z,incgaps,-1
-    bind=SUPER+ALT+SHIFT,R,togglegaps
-
-    # Move window
-    bind=SUPER+CTRL+SHIFT,Up,movewin,+0,-50
-    bind=SUPER+CTRL+SHIFT,Down,movewin,+0,+50
-    bind=SUPER+CTRL+SHIFT,Left,movewin,-50,+0
-    bind=SUPER+CTRL+SHIFT,Right,movewin,+50,+0
-
-    # Resize window
-    bind=SUPER+CTRL+ALT,Up,resizewin,+0,-50
-    bind=SUPER+CTRL+ALT,Down,resizewin,+0,+50
-    bind=SUPER+CTRL+ALT,Left,resizewin,-50,+0
-    bind=SUPER+CTRL+ALT,Right,resizewin,+50,+0
+    # Monitor switch
+    bind=SUPER+CTRL,Left,focusmon,left
+    bind=SUPER+CTRL,Right,focusmon,right
+    bind=SUPER+CTRL,Up,focusmon,up
+    bind=SUPER+CTRL,Down,focusmon,down
 
     # Mouse Button Bindings (NONE mode key only work in ov mode)
     mousebind=SUPER,btn_left,moveresize,curmove
