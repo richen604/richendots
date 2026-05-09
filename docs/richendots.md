@@ -8,14 +8,14 @@ tags:
 ## now
 
 - [ ] fix: media playing should prevent idle
+- [ ] fix: dolphin doesnt grab default programs, shows 0 programs
+  - try: `XDG_MENU_PREFIX=nixos- kbuildsycoca6 --noincremental`
+  - if that fails, may need to wrap dolphin or add kservice to env
 
 ## next
 
-- [ ] fix: media playing should prevent idle
 - [ ] feat: nixos-anywhere support + dev-shell
 - [ ] fix: git doesnt set the default user, is my git wrapper working?
-- [ ] fix: dolphin doesnt grab default programs, shows 0 programs
-- [ ] fix: kde connect doesnt work
 - [ ] feat: richendots-private should inherit richendots inputs
 
 ## backlog
