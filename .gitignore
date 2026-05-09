@@ -1,3 +1,5 @@
 *.qcow2
 result*
 plans/
+.direnv
+.vscode
