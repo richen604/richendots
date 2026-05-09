@@ -5,9 +5,7 @@
 }:
 # some of the options from https://jvns.ca/blog/2024/02/16/popular-git-config-options/
 (inputs.wrappers.wrapperModules.git.apply {
-  pkgs = pkgs // {
-    git = pkgs.gitMinimal;
-  };
+  pkgs = pkgs;
   settings = {
     core = {
       editor = "nvim";
@@ -27,8 +25,6 @@
       email = "56615615+richen604@users.noreply.github.com";
     };
     rebase.autoStash = true;
-    # redirect github https to ssh
-    "url \"git@github.com:\"".insteadOf = "https://github.com";
     # detect data corruption eagerly
     transfers.fsckObjects = true;
     fetch.fsckObjects = true;
