@@ -137,8 +137,13 @@
     (pkgs.callPackage ./scripts/spotify-spicetified.nix { })
 
     pkgs.obsidian
-    pkgs.vscode-fhs
 
+    pkgs.zed-editor
+
+    pkgs.wayland-pipewire-idle-inhibit
+
+    pkgs.piper
+    pkgs.ungoogled-chromium
   ];
 
   programs.dconf.enable = true;
@@ -306,12 +311,6 @@
         ".config/kdeglobals".source = ./config/kdeglobals;
         ".config/qt6ct".source = ./config/qt6ct;
         ".config/equibop/themes/system24-grove.css".source = ./config/equibop/system24-grove.css;
-        # todo: future: wrap vscode w/ portable mode?
-        ".config/Code/User/settings.json" = {
-          type = "copy";
-          permissions = "0644";
-          source = ./config/vscode/settings.json;
-        };
         ".config/spicetify/config-xpui.ini" = {
           type = "copy";
           permissions = "0644";
@@ -349,38 +348,5 @@
         };
       };
     };
-  };
-  # editor
-  programs.vscode = {
-    enable = false;
-    extensions = [
-      # todo: setting these declaratively do not allow for ssh installation
-      # pkgs.vscode-extensions.aaron-bond.better-comments
-      # pkgs.vscode-extensions.bierner.markdown-preview-github-styles
-      # pkgs.vscode-extensions.catppuccin.catppuccin-vsc-icons
-      # pkgs.vscode-extensions.davidanson.vscode-markdownlint
-      # pkgs.vscode-extensions.dbaeumer.vscode-eslint
-      # pkgs.vscode-extensions.ecmel.vscode-html-css
-      # pkgs.vscode-extensions.enkia.tokyo-night
-      # pkgs.vscode-extensions.esbenp.prettier-vscode
-      # pkgs.vscode-extensions.geequlim.godot-tools
-      # pkgs.vscode-extensions.github.copilot
-      # pkgs.vscode-extensions.github.vscode-github-actions
-      # pkgs.vscode-extensions.github.vscode-pull-request-github
-      # pkgs.vscode-extensions.ibm.output-colorizer
-      # pkgs.vscode-extensions.jnoortheen.nix-ide
-      # pkgs.vscode-extensions.leonardssh.vscord
-      # pkgs.vscode-extensions.mads-hartmann.bash-ide-vscode
-      # pkgs.vscode-extensions.mkhl.shfmt
-      # pkgs.vscode-extensions.ms-vscode-remote.remote-ssh
-      # pkgs.vscode-extensions.redhat.vscode-yaml
-      # pkgs.vscode-extensions.tamasfe.even-better-toml
-      # pkgs.vscode-extensions.timonwong.shellcheck
-      # pkgs.vscode-extensions.yoavbls.pretty-ts-errors
-      # pkgs.vscode-extensions.yzhang.markdown-all-in-one
-      # pkgs.vscode-extensions.ziglang.vscode-zig
-      # pkgs.vscode-extensions.gruntfuggly.todo-tree
-      # pkgs.vscode-extensions.rooveterinaryinc.roo-cline
-    ];
   };
 }

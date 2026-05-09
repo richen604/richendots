@@ -11,21 +11,6 @@
 
   networking.networkmanager.enable = true;
   networking.interfaces.wlp3s0.wakeOnLan.enable = true;
-
-  # todo: unsure if im keeping this
-  # services.code-server = {
-  #   enable = true;
-  #   user = "richen";
-  #   group = "users";
-  #   host = "127.0.0.1";
-  #   port = 8080;
-  #   auth = "none";
-  #   package = pkgs.vscode-with-extensions.override {
-  #     vscode = pkgs.code-server;
-  #     vscodeExtensions = [ ];
-  #   };
-  # };
-
   environment.systemPackages = [
     pkgs.kitty
   ];
