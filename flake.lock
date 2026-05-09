@@ -216,11 +216,11 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1778292863,
-        "narHash": "sha256-g5hdsDD/xxNqu72limvpSNvQphyXXZsdnjfRBogQH4k=",
+        "lastModified": 1778298874,
+        "narHash": "sha256-I/Pi2YIT/Ui4oXvlg+3DChI0APFPx4IGrNRme23Rjlg=",
         "ref": "main",
-        "rev": "e45add8cc901f0eadcc477bcc05826e55f8dc4e5",
-        "revCount": 147,
+        "rev": "81dfeae4fba21b8e43f9ea90ba2c6c598be4f418",
+        "revCount": 148,
         "type": "git",
         "url": "ssh://git@github.com/richen604/richendots-private.git"
       },
