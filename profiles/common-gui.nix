@@ -20,7 +20,6 @@
     richenLib.wrappers.satty
     richenLib.wrappers.firefox
     richenLib.wrappers.keepassxc
-    richenLib.wrappers.git
     richenLib.wrappers.udiskie
 
     # cursor, icon, gtk themes
@@ -250,25 +249,8 @@
   };
   services.flatpak.enable = true;
 
-  # gaming
-  programs.gamescope = {
-    enable = true;
-    capSysNice = false;
-  };
-  services.ananicy = {
-    enable = true;
-    package = pkgs.ananicy-cpp;
-    rulesProvider = pkgs.ananicy-cpp;
-    extraRules = [
-      {
-        "name" = "gamescope";
-        "nice" = -20;
-      }
-    ];
-  };
   programs.steam = {
     enable = true;
-    gamescopeSession.enable = false;
   };
 
   # GRAPHICS / DISPLAY MANAGER ----------------------------------------
@@ -298,6 +280,7 @@
       xdg-desktop-portal-gtk
     ];
     wlr.enable = true;
+    configPackages = [ richenLib.wrappers.mango ];
   };
 
   hjem = {
