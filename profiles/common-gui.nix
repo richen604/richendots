@@ -79,8 +79,7 @@
     pkgs.spicetify-cli
 
     # social apps
-    pkgs.vesktop
-    pkgs.equicord
+    pkgs.equibop
 
     # other utils
     pkgs.kdePackages.kdeconnect-kde
@@ -306,7 +305,7 @@
         ".config/Kvantum".source = ./config/Kvantum;
         ".config/kdeglobals".source = ./config/kdeglobals;
         ".config/qt6ct".source = ./config/qt6ct;
-        ".config/vesktop/themes/system24-grove.css".source = ./config/vesktop/system24-grove.css;
+        ".config/equibop/themes/system24-grove.css".source = ./config/equibop/system24-grove.css;
         # todo: future: wrap vscode w/ portable mode?
         ".config/Code/User/settings.json" = {
           type = "copy";
