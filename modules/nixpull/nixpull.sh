@@ -14,7 +14,7 @@
 set -euo pipefail
 
 SERVER="cedar.build"
-CACHE_URL="http://10.0.0.155:5000"
+CACHE_URL="ssh-ng://10.0.0.155"
 STORE_DIR="/tmp/nixpull"
 STATE_DIR="/tmp/nixpull/state"
 
