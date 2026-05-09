@@ -169,11 +169,17 @@
     allowedTCPPorts = [
       # SSH
       22
+      # KDE Connect
+      1716
     ];
     allowedUDPPorts = [
       # DHCP
       68
       546
+      # KDE Connect
+      1714
+      1715
+      1716
     ];
   };
   nix = {
