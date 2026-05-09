@@ -26,7 +26,7 @@ in
     la = "eza -la --color=auto --group-directories-first";
     lt = "eza -lh --color=auto --tree";
     # viewing / prettified cat
-    cat = "bat --color=always --paging=never";
+    cat = "bat --color=always -pp";
     less = "less -R";
     tree = "tree -C";
     # git shortcuts
