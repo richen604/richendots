@@ -43,6 +43,7 @@
     richenLib.wrappers.zsh
     richenLib.wrappers.keepassxc
     richenLib.wrappers.git
+    richenLib.wrappers.nvim
 
     # other utils
     pkgs.tealdeer
@@ -57,7 +58,6 @@
     pkgs.tree
     pkgs.htop
     pkgs.fastfetch
-    pkgs.neovim
     pkgs.tmux
     pkgs.less
     pkgs.ripgrep
@@ -107,6 +107,11 @@
 
     pkgs.nodejs
     pkgs.fnm
+    pkgs.opencode
+    pkgs.fd
+    pkgs.sshfs
+    pkgs.lazygit
+    pkgs.nixd
   ];
 
   # required for zsh to catch all completions

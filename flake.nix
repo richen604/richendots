@@ -8,6 +8,7 @@
       #url = "path:/mnt/dev/richendots-private";
     };
     mango.url = "github:DreamMaoMao/mango";
+    mnw.url = "github:Gerg-L/mnw";
     wrappers.url = "github:lassulus/wrappers";
     hjem = {
       url = "github:feel-co/hjem";
