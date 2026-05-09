@@ -1,4 +1,6 @@
 *.qcow2
 result*
 plans/
+docs/
+!docs/project6.md
 .direnv
