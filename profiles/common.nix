@@ -73,6 +73,7 @@
     pkgs.bash-completion
     pkgs.unzip
     pkgs.cpufrequtils
+    pkgs.busybox
 
     # network/hardware
     pkgs.networkmanager
@@ -114,6 +115,12 @@
     pkgs.nixd
   ];
 
+  programs.git = {
+    enable = true;
+    package = richenLib.wrappers.git;
+    lfs.enable = true;
+  };
+
   # required for zsh to catch all completions
   environment.pathsToLink = [ "/share/zsh" ];
 
@@ -126,7 +133,7 @@
       icu
     ];
   };
-  
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -216,7 +223,7 @@
   # fonts
   environment.etc."gtk-3.0/gtk.css".text = ''
     label, entry, textview, button {
-      font-weight: 600; 
+      font-weight: 600;
     }
   '';
   environment.etc."gtk-4.0/gtk.css".text = ''
