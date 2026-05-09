@@ -54,8 +54,56 @@ let
     monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0,vrr:1
     monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
 
-    # Window rules
-    windowrule=tags:3,monitor:DP-5,appid:vesktop
+    # ============================================
+    # WINDOW RULES
+    # ============================================
+    windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
+
+    # ============================================
+    # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
+    # ============================================
+    bind=SUPER,1,view,1,1
+    bind=SUPER,2,view,2,1
+    bind=SUPER,3,view,3,1
+    bind=SUPER,4,view,4,1
+    bind=SUPER,5,view,5,1
+    bind=SUPER,6,view,6,1
+    bind=SUPER,7,view,7,1
+    bind=SUPER,8,view,8,1
+    bind=SUPER,9,view,9,1
+
+    # ============================================
+    # MOVE WINDOW TO TAG (without switching view)
+    # ============================================
+    bind=SUPER+ALT,1,tagsilent,1
+    bind=SUPER+ALT,2,tagsilent,2
+    bind=SUPER+ALT,3,tagsilent,3
+    bind=SUPER+ALT,4,tagsilent,4
+    bind=SUPER+ALT,5,tagsilent,5
+    bind=SUPER+ALT,6,tagsilent,6
+    bind=SUPER+ALT,7,tagsilent,7
+    bind=SUPER+ALT,8,tagsilent,8
+    bind=SUPER+ALT,9,tagsilent,9
+
+    # ============================================
+    # TOGGLE TAG ON CURRENT WINDOW
+    # ============================================
+    bind=SUPER+SHIFT,1,view,1
+    bind=SUPER+SHIFT,2,view,2
+    bind=SUPER+SHIFT,3,view,3
+    bind=SUPER+SHIFT,4,view,4
+    bind=SUPER+SHIFT,5,view,5
+    bind=SUPER+SHIFT,6,view,6
+    bind=SUPER+SHIFT,7,view,7
+    bind=SUPER+SHIFT,8,view,8
+    bind=SUPER+SHIFT,9,view,9
+
+    # ============================================
+    # SECRET TAG (main monitor only - not synced)
+    # ============================================
+    # Toggle tag 9 on main monitor only (Hyprland-style secret workspace)
+    bind=SUPER,S,view,9,monitor:model:Dell S2716DG
+    bind=SUPER+ALT,S,tagcrossmon,9,monitor:model:Dell S2716DG
 
     cursor_size=24
   '';

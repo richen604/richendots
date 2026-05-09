@@ -14,7 +14,7 @@ my personal nixos config
 - **app launcher / clipboard** - `vicinae`
 - **firefox theme** - tweaked `textfox`
 - **spotify** - `spicetify-tui`
-- **discord** - `vesktop` + tweaked `system24`
+- **discord** - `equibop` + tweaked `system24`
 - **file manager** - `dolphin` + tweaked `kvantum`
 - **terminal** - `kitty`
 - **shell** - `zsh`
