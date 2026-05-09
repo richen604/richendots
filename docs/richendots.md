@@ -16,7 +16,6 @@ tags:
 - [ ] fix: dolphin doesnt grab default programs, shows 0 programs
 - [ ] fix: kde connect doesnt work
 - [ ] feat: richendots-private should inherit richendots inputs
-- [ ] feat: fern - maybe drop vfio? might need for forgejeo actions runner
 - [ ] feat: run sunshine on startup
 
 ## backlog
@@ -53,7 +52,9 @@ tags:
 ### theming
 
 - [ ] style: theme astronvim to grove theme
-- [ ] grove vscode theme that doesn't look like garbage
+- [ ] grove zed theme that doesn't look like garbage
+- [ ] zed settings with hjem
+  - issue is that they use secrets for servers
 - [ ] finish theming obsidian
 
 ### system polish
