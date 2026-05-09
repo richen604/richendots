@@ -7,7 +7,6 @@
 (inputs.wrappers.wrapperModules.waybar.apply {
   pkgs = pkgs;
   settings = {
-    output = "DP-4";
     layer = "top";
     position = "top";
     exclusive = true;
