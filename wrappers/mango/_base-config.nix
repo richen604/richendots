@@ -21,6 +21,7 @@ let
     exec-once=udiskie -t
     exec-once=nm-applet
     exec-once=kdeconnectd
+    exec-once=sunshine
     exec-once=keepassxc
     exec-once=blueman-applet
     exec-once=swayidle
