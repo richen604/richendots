@@ -202,12 +202,8 @@
   systemd.user.services.wayland-pipewire-idle-inhibit = {
     description = "Inhibit Wayland idling when media is played through pipewire";
     documentation = [ "https://github.com/rafaelrc7/wayland-pipewire-idle-inhibit" ];
-    wantedBy = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-    after = [
-      "pipewire.service"
-      "graphical-session.target"
-    ];
+    wantedBy = [ "pipewire.service.wants" ];
+    after = [ "pipewire.service" ];
 
     serviceConfig = {
       Type = "simple";
