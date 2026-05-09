@@ -25,7 +25,7 @@ let
     exec-once=keepassxc
     exec-once=blueman-applet
     exec-once=swayidle
-    exec-once=vesktop
+    exec-once=equibop
     exec-once=yubikey-touch-detector -libnotify
   '';
 
