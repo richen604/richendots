@@ -189,7 +189,7 @@
       warn-dirty = false;
       allow-import-from-derivation = false;
       substituters = [
-        "ssh-ng://10.0.0.155"
+        "ssh-ng://cedar.build"
         "https://cache.nixos.org"
       ];
       trusted-public-keys = [
