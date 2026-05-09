@@ -23,7 +23,6 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ./vfio
     ./drivers.nix
   ];
 
