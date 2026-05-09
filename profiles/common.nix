@@ -183,7 +183,7 @@
       warn-dirty = false;
       allow-import-from-derivation = false;
       substituters = [
-        "http://10.0.0.155:5000"
+        "ssh-ng://10.0.0.155"
         "https://cache.nixos.org"
       ];
       trusted-public-keys = [
