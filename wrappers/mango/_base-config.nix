@@ -28,6 +28,7 @@ let
     exec-once=swayidle
     exec-once=equibop
     exec-once=yubikey-touch-detector -libnotify
+    exec-once=wayland-pipewire-idle-inhibit -w
   '';
 
   # ============================================

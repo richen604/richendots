@@ -199,16 +199,6 @@
   services.pipewire.wireplumber.enable = true;
   services.blueman.enable = true;
 
-  systemd.user.services.wayland-pipewire-idle-inhibit = {
-    description = "Inhibit Wayland idling when media is played through pipewire";
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.lib.getExe pkgs.wayland-pipewire-idle-inhibit} -b";
-      Restart = "always";
-      RestartSec = "10s";
-    };
-  };
-
   # theme settings
   programs.dconf.profiles.user.databases = [
     {
