@@ -4,7 +4,8 @@
 }:
 let
   sunshineSetResolution = pkgs.writeShellScriptBin "sunshine-set-resolution" ''
-    ${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --custom-mode "''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz"
+    MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
+    ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --custom-mode "''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz"
   '';
 in
 {
@@ -66,16 +67,19 @@ in
           name = "Desktop";
           prep-cmd = [
             {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-5";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-5";
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:BenQ GW2780";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:BenQ GW2780";
             }
             {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-6";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-6";
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:DELL E2020H";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:DELL E2020H";
             }
             {
               do = "${sunshineSetResolution}/bin/sunshine-set-resolution";
-              undo = "${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --off && ${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --on";
+              undo = ''
+                MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
+                ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --off && ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --on
+              '';
             }
             {
               do = "${pkgs.mangowc}/bin/mmsg -d reload_config";
@@ -88,16 +92,19 @@ in
           name = "Steam Big Picture";
           prep-cmd = [
             {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-5";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-5";
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:BenQ GW2780";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:BenQ GW2780";
             }
             {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,DP-6";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,DP-6";
+              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:DELL E2020H";
+              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:DELL E2020H";
             }
             {
               do = "${sunshineSetResolution}/bin/sunshine-set-resolution";
-              undo = "${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --off && ${pkgs.wlr-randr}/bin/wlr-randr --output DP-4 --on";
+              undo = ''
+                MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
+                ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --off && ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --on
+              '';
             }
             {
               do = "${pkgs.mangowc}/bin/mmsg -d reload_config";
