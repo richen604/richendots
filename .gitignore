@@ -1,6 +1,3 @@
 *.qcow2
 result*
-docs
-*.md
-!README.md
 .direnv
