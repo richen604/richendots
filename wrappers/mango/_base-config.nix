@@ -28,7 +28,6 @@ let
     exec-once=swayidle
     exec-once=equibop
     exec-once=yubikey-touch-detector -libnotify
-    exec-once=wayland-pipewire-idle-inhibit -w
   '';
 
   # ============================================
@@ -228,7 +227,7 @@ let
     bind=SUPER,B,spawn,firefox
     bind=SUPER,L,spawn,swaylock
     bind=SUPER,A,spawn,vicinae toggle
-    bind=SUPER,V,spawn,vicinae vicinae://extensions/vicinae/clipboard/history
+    bind=SUPER,V,spawn,vicinae vicinae://launch/clipboard/history
 
     # Screenshots and recording
     bind=SUPER,P,spawn,${pkgs.writeScriptBin "screenshot" ''
