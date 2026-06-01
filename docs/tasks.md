@@ -9,18 +9,14 @@ tags:
 
 Forgejo is authoritative after an item becomes a PRD issue.
 
-- `## milestones` groups local planning items by intended Forgejo milestone.
-- Milestones may include `#### review`, `#### ready`, `#### now`, `#### backlog`, and `#### blocked` when items exist.
-- `#### review`, `#### ready`, and `#### blocked` are Forgejo snapshot lanes after PRDs/PRs exist.
-- `#### now` and `#### backlog` are local planning lanes before PRD creation.
+- Top-level linked milestone sections are ordered by intended project direction.
+- Plain bullets under a milestone are local pre-PRD tasks.
+- `### review`, `### ready`, and `### blocked` are Forgejo snapshot lanes.
+- `## backlog` is separate local inventory and not assigned to a milestone.
 
 ---
 
-## milestones
-
-### eval performance
-
-#### now
+## backlog
 
 - perf: make Firefox optional or switch default browser to Chromium
   - Notes:
@@ -113,9 +109,28 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Only split these services if a no-session or lite-GUI profile is actually useful.
     - Benchmark eval if any session split is made.
 
-### desktop reliability
+- nixpull:
+  - rewrite, keep bash tho
+  - full nix module impl
+  - pre post etc hooks
+  - channels? clients determine branch of build using git
+  - build history, hold multiple builds
+  - git worktrees integration
+  - inotify
+  - better metadata
+    - host
+    - called
+    - nixpkgs version
+    - channel (?)
+    - human readable timestamp
+    - git rev
+    - timestamp
+  - auto rollback similar to deployrs
+  - activation options, `nixpull client test` etc
+  - `nh` support
+  - fix systemd implementation of activation
 
-#### now
+## [desktop reliability](https://git.cedar.richen.sh/richen/richendots/milestones/10)
 
 - fix: media playing should prevent idle
   - Notes:
@@ -222,9 +237,7 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Fix config generation or wrapper placement if settings are not applied.
     - Document any required manual browser-integration step.
 
-### workstation workflow
-
-#### now
+## [workstation workflow](https://git.cedar.richen.sh/richen/richendots/milestones/11)
 
 - fix: git doesnt set the default user, is my git wrapper working?
   - Notes:
@@ -421,9 +434,7 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Keep host-specific behavior explicit.
     - Document how to add more scripts later.
 
-### platform evolution
-
-#### now
+## [platform evolution](https://git.cedar.richen.sh/richen/richendots/milestones/12)
 
 - feat: nixos-anywhere support + dev-shell
   - Notes:
@@ -515,29 +526,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Identify concrete pain points this would solve.
     - Recommend whether to keep flakes, supplement them, or plan a migration.
     - Avoid implementation before the recommendation is accepted.
-
-#### backlog
-
-- nixpull:
-  - rewrite, keep bash tho
-  - full nix module impl
-  - pre post etc hooks
-  - channels? clients determine branch of build using git
-  - build history, hold multiple builds
-  - git worktrees integration
-  - inotify
-  - better metadata
-    - host
-    - called
-    - nixpkgs version
-    - channel (?)
-    - human readable timestamp
-    - git rev
-    - timestamp
-  - auto rollback similar to deployrs
-  - activation options, `nixpull client test` etc
-  - `nh` support
-  - fix systemd implementation of activation
 
 ## references
 
