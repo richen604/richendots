@@ -2,16 +2,11 @@
   pkgs,
   ...
 }:
-let
-  sunshineSetResolution = pkgs.writeShellScriptBin "sunshine-set-resolution" ''
-    MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
-    ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --custom-mode "''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz"
-  '';
-in
 {
   imports = [
     ./hardware-configuration.nix
     ./drivers.nix
+    ../../modules/sunshine-gamestream.nix
   ];
 
   programs.nh = {
@@ -55,79 +50,6 @@ in
     "vm.dirty_ratio" = 5; # Better memory management
     "vm.dirty_background_ratio" = 2; # Background writeback threshold
   };
-
-  services.sunshine = {
-    enable = true;
-    autoStart = true;
-    capSysAdmin = true;
-    openFirewall = true;
-    applications = {
-      apps = [
-        {
-          name = "Desktop";
-          prep-cmd = [
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:BenQ GW2780";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:BenQ GW2780";
-            }
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:DELL E2020H";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:DELL E2020H";
-            }
-            {
-              do = "${sunshineSetResolution}/bin/sunshine-set-resolution";
-              undo = ''
-                MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
-                ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --off && ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --on
-              '';
-            }
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d reload_config";
-            }
-          ];
-          exclude-global-prep-cmd = "false";
-          auto-detach = "true";
-        }
-        {
-          name = "Steam Big Picture";
-          prep-cmd = [
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:BenQ GW2780";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:BenQ GW2780";
-            }
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d disable_monitor,monitor_model:DELL E2020H";
-              undo = "${pkgs.mangowc}/bin/mmsg -d enable_monitor,monitor_model:DELL E2020H";
-            }
-            {
-              do = "${sunshineSetResolution}/bin/sunshine-set-resolution";
-              undo = ''
-                MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
-                ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --off && ${pkgs.wlr-randr}/bin/wlr-randr --output $MAIN_DP --on
-              '';
-            }
-            {
-              do = "${pkgs.mangowc}/bin/mmsg -d reload_config";
-            }
-            {
-              # launch steam in big picture mode
-              do = "${pkgs.steam}/bin/steam steam://open/bigpicture";
-            }
-          ];
-          exclude-global-prep-cmd = "false";
-          auto-detach = "true";
-        }
-      ];
-    };
-    settings = {
-      capture = "kms";
-    };
-  };
-
-  programs.gamemode = {
-    enable = true;
-  };
-  users.users.richen.extraGroups = [ "gamemode" ];
 
   system.stateVersion = pkgs.lib.mkDefault "26.05";
 }
