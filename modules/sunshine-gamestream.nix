@@ -21,6 +21,8 @@ let
       ${pkgs.coreutils}/bin/printf 'SUNSHINE_CLIENT_FPS=%s\n' "''${SUNSHINE_CLIENT_FPS}"
     } > "$STREAM_ENV"
 
+    ${pkgs.systemd}/bin/systemctl --user stop swayidle.service || true
+
     MAIN_DP=$(${pkgs.wlr-randr}/bin/wlr-randr --json | ${pkgs.jq}/bin/jq -r '.[] | select(.description | contains("Dell S2716DG")) | .name')
 
     if [ -z "$MAIN_DP" ]; then
@@ -52,6 +54,7 @@ let
     RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
     ${pkgs.coreutils}/bin/rm -f "$RUNTIME_DIR/sunshine-stream.env"
     ${mango}/bin/mmsg -d reload_config
+    ${pkgs.systemd}/bin/systemctl --user start swayidle.service || true
   '';
   sunshineSteamBigPicture = pkgs.writeShellScriptBin "sunshine-steam-big-picture" ''
     set -uo pipefail
