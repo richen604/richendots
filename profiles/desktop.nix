@@ -18,6 +18,14 @@
     default_session = initial_session;
   };
 
+  systemd.user.services.swayidle = {
+    description = "Idle manager for Wayland";
+    serviceConfig = {
+      ExecStart = "${richenLib.wrappers.swayidle}/bin/swayidle";
+      Restart = "on-failure";
+    };
+  };
+
   # theme settings
   programs.dconf.profiles.user.databases = [
     {
