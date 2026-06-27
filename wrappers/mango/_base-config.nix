@@ -5,6 +5,16 @@
 # todo: mango wrapper: runtime applications for auto start
 # todo: mango wrapper: windowrules for the below applications
 let
+  mangoEnterPassthrough = pkgs.writeShellScriptBin "mango-enter-passthrough" ''
+    export PATH=/run/current-system/sw/bin:$PATH
+    ${pkgs.libnotify}/bin/notify-send "Mango passthrough" "Enabled"
+    mmsg dispatch setkeymode,passthrough
+  '';
+  mangoExitPassthrough = pkgs.writeShellScriptBin "mango-exit-passthrough" ''
+    export PATH=/run/current-system/sw/bin:$PATH
+    ${pkgs.libnotify}/bin/notify-send "Mango passthrough" "Disabled"
+    mmsg dispatch setkeymode,default
+  '';
   # ============================================
   # AUTOSTART APPLICATIONS
   # ============================================
@@ -22,10 +32,9 @@ let
     exec-once=nm-applet
     exec-once=kdeconnectd
     exec-once=kdeconnect-indicator
-    exec-once=sunshine
     exec-once=keepassxc
     exec-once=blueman-applet
-    exec-once=swayidle
+    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP; ${pkgs.systemd}/bin/systemctl --user start swayidle.service'
     exec-once=equibop
     exec-once=yubikey-touch-detector -libnotify
   '';
@@ -190,6 +199,7 @@ let
     warpcursor=1
     focus_cross_monitor=1
     focus_cross_tag=0
+    allow_shortcuts_inhibit=1
     enable_floating_snap=0
     snap_distance=30
     cursor_size=24
@@ -217,6 +227,10 @@ let
   # Key name refer to `xev` or `wev` command output
   # Mod keys name: super,ctrl,alt,shift,none
   keybinds = ''
+    # Passthrough mode lets nested remote sessions receive compositor shortcuts.
+    keymode=default
+    bind=CTRL+SHIFT+ALT,Z,spawn,${mangoEnterPassthrough}/bin/mango-enter-passthrough
+
     # System
     bind=SUPER,r,reload_config
     bind=SUPER,q,killclient,
@@ -319,6 +333,12 @@ let
     bind=NONE,XF86AudioNext,spawn,playerctl next
     bind=NONE,XF86AudioPrev,spawn,playerctl previous
     bind=NONE,XF86AudioPlay,spawn,playerctl play-pause
+
+    keymode=passthrough
+    bind=CTRL+SHIFT+ALT,Z,spawn,${mangoExitPassthrough}/bin/mango-exit-passthrough
+    bind=CTRL+SHIFT+ALT,Escape,spawn,${mangoExitPassthrough}/bin/mango-exit-passthrough
+
+    keymode=default
   '';
 
   # ============================================
