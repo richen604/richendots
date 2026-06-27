@@ -55,9 +55,10 @@
     pkgs.kdePackages.dolphin-plugins
 
     # qt5 deps (for apps still using Qt5)
-    pkgs.libsForQt5.qt5.qtbase
-    pkgs.libsForQt5.qt5.qtwayland
-    pkgs.libsForQt5.qtstyleplugin-kvantum
+    pkgs.qt5.qtbase
+    pkgs.qt5.qtwayland
+    # todo: package gone?
+    # pkgs.qt5.qtstyleplugin-kvantum
 
     # dolphin
     pkgs.kdePackages.dolphin
