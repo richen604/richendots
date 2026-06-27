@@ -46,17 +46,18 @@
         "scenefx": "scenefx"
       },
       "locked": {
-        "lastModified": 1779283336,
-        "narHash": "sha256-pUam1v9SiEHaBp+sk8AdTwp8JMdaucOJRfszhp6HZto=",
+        "lastModified": 1775211290,
+        "narHash": "sha256-yd5GlvjoE37h8i2n5KmITuszExvsiQS3i7QKYsgusIc=",
         "owner": "DreamMaoMao",
         "repo": "mango",
-        "rev": "806f07722449f39658113b8672a7dcde773759ca",
+        "rev": "bb0160d7cf1187f1d3292adbed51d834c6a31471",
         "type": "github"
       },
       "original": {
         "owner": "DreamMaoMao",
         "repo": "mango",
-        "type": "github"
+        "type": "github",
+        "rev": "bb0160d7cf1187f1d3292adbed51d834c6a31471"
       }
     },
     "mnw": {
@@ -237,7 +238,8 @@
         "mnw": "mnw",
         "nixpkgs": "nixpkgs_2",
         "richendots-private": "richendots-private",
-        "wrappers": "wrappers"
+        "wrappers": "wrappers",
+        "sunshineNixpkgs": "sunshineNixpkgs"
       }
     },
     "scenefx": {
@@ -331,6 +333,22 @@
       "original": {
         "owner": "lassulus",
         "repo": "wrappers",
+        "type": "github"
+      }
+    },
+    "sunshineNixpkgs": {
+      "locked": {
+        "lastModified": 1780670869,
+        "narHash": "sha256-vNjd59YIP2eH6wfcjcaNW0ec+xjIe0/ZsjKHycGt/5Y=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "391d69d880514742b8612cbcd6480b5a8c3c08b5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "pull/521906/head",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }
