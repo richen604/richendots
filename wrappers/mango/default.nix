@@ -8,6 +8,8 @@ let
   mangoBase = pkgs.callPackage ./_base-config.nix { };
   mangoModule = pkgs.callPackage ./module.nix { inherit inputs; };
   config = ''
+    exec-once=systemctl --user start sunshine.service
+
     # ============================================
     # TAG RULES - Layout hints per monitor
     # ============================================
@@ -60,9 +62,8 @@ let
     # WINDOW RULES
     # ============================================
     windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
-    windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG,indleinhibit_when_focus:1
-    windowrule=tags:1,appid:gamescope,monitor:model:Dell S2716DG,indleinhibit_when_focus:1
-
+    windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
+    windowrule=tags:1,appid:gamescope,monitor:model:Dell S2716DG
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
     # ============================================
