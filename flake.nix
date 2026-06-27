@@ -3,11 +3,12 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    sunshineNixpkgs.url = "github:NixOS/nixpkgs/pull/521906/head";
     richendots-private = {
       url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       #url = "path:/mnt/dev/richendots-private";
     };
-    mango.url = "github:DreamMaoMao/mango";
+    mango.url = "github:DreamMaoMao/mango/bb0160d7cf1187f1d3292adbed51d834c6a31471";
     mnw.url = "github:Gerg-L/mnw";
     wrappers.url = "github:lassulus/wrappers";
     hjem = {

@@ -6,7 +6,7 @@
   imports = [
     ./hardware-configuration.nix
     ./drivers.nix
-    ../../modules/sunshine-gamestream.nix
+    ../../modules/sunshine
   ];
 
   programs.nh = {
