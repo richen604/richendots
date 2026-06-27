@@ -107,8 +107,9 @@
     '')
 
     pkgs.nodejs
+    pkgs.bun
     pkgs.fnm
-    pkgs.opencode
+    richenLib.wrappers.opencode
     pkgs.fd
     pkgs.sshfs
     pkgs.lazygit
