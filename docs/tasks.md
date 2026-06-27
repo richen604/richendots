@@ -236,6 +236,73 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Compare configured settings against the runtime KeepassXC config file location.
     - Fix config generation or wrapper placement if settings are not applied.
     - Document any required manual browser-integration step.
+## [fern console mode](https://git.cedar.richen.sh/richen/richendots/milestones/17)
+
+- fern: add gaming user and shared game-library access
+  - Notes:
+    - This is the safe foundation for console mode and should not change boot/session behavior yet.
+    - Use a dedicated `gaming` normal user for console mode. Keep `richen` as the admin user.
+    - Add a shared `games` group containing `richen` and `gaming` for the Steam libraries.
+    - Steam libraries live on separate `/media` partitions, `/media/games 1` and `/media/games 2`, so duplicate downloads are not a concern.
+    - This task should validate actual Fern mount/filesystem behavior before changing session or Sunshine ownership.
+  - Decisions:
+    - Do not add `gaming` to `wheel` unless explicitly requested.
+    - Expected `gaming` groups include `video`, `input`, `uinput`, `gamemode`, and audio-related access as needed.
+  - Agent tasks:
+    - Add `gaming` user with home `/home/gaming`.
+    - Add shared `games` group and include both `richen` and `gaming`.
+    - Inspect actual Fern mount/filesystem details for `/media/games 1` and `/media/games 2`.
+    - Ensure `gaming` can read/write both Steam library paths without breaking `richen` access.
+    - Validate with `id gaming` and a write/read check against both game library mounts.
+
+- fern: run Sunshine as gaming host session
+  - Notes:
+    - This task changes Fern toward console-host boot but should not implement the final Steam/gamescope app yet.
+    - Use one NixOS system config, not NixOS specialisations, unless later work proves gaming mode needs materially different kernel/GPU/system service configuration.
+    - Use `greetd`, not `getty.autologinUser`, for the default gaming login/session.
+    - Default boot should enter a lightweight long-lived `gaming-host-session` with no desktop compositor.
+    - `gaming-host-session` starts Sunshine as `gaming` and waits so Fern is reachable from Moonlight.
+    - Keep MangoWC installed/configured for `richen`, but do not run MangoWC and top-level gamescope simultaneously on the same DRM seat/output.
+  - Decisions:
+    - Run Sunshine as `gaming` for console mode so it launches and controls the gaming session cleanly.
+    - Keep Sunshine `capture = "kms"` and `encoder = "vaapi"` initially.
+    - Override Fern's greetd settings only in the Fern host/module layer, not in shared `profiles/desktop.nix` or laptop/Oak config.
+    - Keep a manual or SSH-based Mango recovery path for `richen` first; add a polished mode switcher only after gaming mode is stable.
+  - Agent tasks:
+    - Check whether the pinned NixOS `services.sunshine` module exposes a user option.
+    - If no service-user option exists, provide or launch an explicit `gaming` user service.
+    - Split or parameterize the Sunshine module so Fern console mode does not rely on Mango autostart from `richen`.
+    - Add a `gaming-host-session` wrapper that starts `sunshine.service` and remains alive.
+    - Override Fern's `greetd` default/initial session to run `gaming-host-session` as `gaming`.
+    - Keep GRUB/recovery visible and avoid `console=/dev/null` until SSH/recovery is proven reliable.
+    - Validate reboot, `gaming` autologin, Sunshine reachability from Moonlight, `richen` SSH/admin access, and Mango fallback/recovery.
+
+- fern: launch top-level gamescope Steam session from Sunshine
+  - Notes:
+    - This task implements the final streaming experience after the `gaming` host session exists.
+    - The final gaming path should avoid MangoWC nesting: no `MangoWC -> gamescope -> Steam` for normal streaming.
+    - Client-controlled resolution is important. Do not boot directly into long-lived `gamescope + steam -gamepadui` if dynamic Moonlight resolution is required, because gamescope would start before Sunshine knows `SUNSHINE_CLIENT_WIDTH`, `SUNSHINE_CLIENT_HEIGHT`, and `SUNSHINE_CLIENT_FPS`.
+    - Preferred architecture is on-demand top-level gamescope launched by Sunshine per stream, using the client resolution/FPS that Sunshine exposes.
+    - Current nested `Steam Gamepad UI` Sunshine app was a diagnostic bridge and should be removed or replaced once top-level on-demand gamescope works.
+  - Decisions:
+    - Start with conservative gamescope/Steam flags.
+    - Do not initially enable HDR flags, Steam Deck spoof flags, `steam -pipewire-dmabuf`, or log redirection to `/dev/null`.
+    - Keep `capture = "kms"` and `encoder = "vaapi"` while validating the new session model.
+  - Target architecture:
+    - Moonlight connects and selects the Steam/Gamepad UI Sunshine app.
+    - Sunshine prep writes `$XDG_RUNTIME_DIR/sunshine-stream.env` from `SUNSHINE_CLIENT_WIDTH`, `SUNSHINE_CLIENT_HEIGHT`, and `SUNSHINE_CLIENT_FPS`.
+    - Sunshine starts an on-demand top-level gamescope session using those dimensions.
+    - Gamescope runs `steam -gamepadui` and owns the gaming display/session for the stream.
+    - Sunshine undo stops the gamescope Steam unit/session and removes the stream env file.
+  - Agent tasks:
+    - Replace Mango-specific Sunshine prep for console-mode apps. Existing prep uses `wlr-randr`, `mmsg`, and `swayidle`; it should not run blindly when Mango is not running.
+    - Add a console-mode prep script that only records requested client width/height/FPS and performs safe stream setup.
+    - Add a console-mode undo script that stops the gamescope Steam session and cleans up `$XDG_RUNTIME_DIR/sunshine-stream.env`.
+    - Add an on-demand gamescope Steam wrapper using `--steam`, `-e`, `-f`, `-W`, `-H`, `-r`, and `--xwayland-count 2`, followed by `steam -gamepadui`.
+    - Remove or replace the current nested `Steam Gamepad UI` Sunshine app after the top-level on-demand gamescope path works.
+    - Validate Moonlight launch, requested client resolution/FPS, game launch from `/media/games 1` or `/media/games 2`, controller input, Oak keyboard passthrough, audio routing, disconnect/reconnect behavior, and cleanup after disconnect.
+  - Open question:
+    - Does Sunshine KMS capture behave correctly when no compositor is running at boot and gamescope starts on demand?
 
 ## [workstation workflow](https://git.cedar.richen.sh/richen/richendots/milestones/11)
 
