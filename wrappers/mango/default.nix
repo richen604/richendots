@@ -10,59 +10,18 @@ let
   config = ''
     exec-once=systemctl --user start sunshine.service
 
-    # ============================================
-    # TAG RULES - Layout hints per monitor
-    # ============================================
-    # Tag 1 - Main
-    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:1,monitor_model:DELL E2020H,layout_name:scroller
+    # Tag rules
+    # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
+    tagrule=id:1,layout_name:scroller
+    tagrule=id:2,layout_name:scroller
+    tagrule=id:3,layout_name:scroller
+    tagrule=id:4,layout_name:scroller
+    tagrule=id:5,layout_name:scroller
+    tagrule=id:6,layout_name:scroller
+    tagrule=id:7,layout_name:scroller
+    tagrule=id:8,layout_name:scroller
+    tagrule=id:9,layout_name:scroller
 
-    # Tag 2-9 - Projects (same layout as Tag 1)
-    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:2,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:3,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:3,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:4,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:4,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:5,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:6,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:6,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:7,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:7,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:8,monitor_model:DELL E2020H,layout_name:scroller
-
-    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
-
-    # ============================================
-    # MONITOR RULES
-    # ============================================
-    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
-    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:144,x:1080,y:0,rr:0
-    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
-
-    # ============================================
-    # WINDOW RULES
-    # ============================================
-    windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
-    windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
     # ============================================
@@ -102,12 +61,9 @@ let
     bind=SUPER+SHIFT,8,view,8
     bind=SUPER+SHIFT,9,view,9
 
-    # ============================================
-    # SECRET TAG (main monitor only - not synced)
-    # ============================================
-    # Toggle tag 9 on main monitor only (Hyprland-style secret workspace)
-    bind=SUPER,S,view,9,monitor:model:Dell S2716DG
-    bind=SUPER+ALT,S,tagcrossmon,9,monitor:model:Dell S2716DG
+    # Pseudo hyprland like secret tag
+    bind=SUPER,S,view,9,
+    bind=SUPER+ALT,S,tagsilent,9
 
     cursor_size=24
   '';
