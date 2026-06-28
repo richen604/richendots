@@ -179,6 +179,7 @@
       "quiet"
       "udev.log_priority=3"
       "systemd.show_status=auto"
+      "8250.nr_uarts=0"
     ];
   };
 
