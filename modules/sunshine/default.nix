@@ -18,7 +18,6 @@ let
   ];
   gamepadUiScriptPath = pkgs.lib.makeBinPath [
     pkgs.coreutils
-    pkgs.gamescope
     pkgs.steam
     pkgs.systemd
   ];
@@ -86,28 +85,9 @@ let
   sunshineSteamGamepadUiSession = pkgs.writeShellScriptBin "sunshine-steam-gamepad-ui-session" ''
     set -euo pipefail
     export PATH="/run/current-system/sw/bin:${gamepadUiScriptPath}:$PATH"
+    export PROTON_ENABLE_WAYLAND=1
 
-    RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-    STREAM_ENV="$RUNTIME_DIR/sunshine-stream.env"
-
-    if [ -r "$STREAM_ENV" ]; then
-      . "$STREAM_ENV"
-    fi
-
-    WIDTH="''${SUNSHINE_CLIENT_WIDTH:-1920}"
-    HEIGHT="''${SUNSHINE_CLIENT_HEIGHT:-1080}"
-    FPS="''${SUNSHINE_CLIENT_FPS:-60}"
-
-    exec gamescope \
-      -b \
-      -f \
-      -W "$WIDTH" \
-      -H "$HEIGHT" \
-      -w "$WIDTH" \
-      -h "$HEIGHT" \
-      -r "$FPS" \
-      -- \
-      steam -gamepadui
+    exec steam -gamepadui
   '';
   sunshineSteamGamepadUi = pkgs.writeShellScriptBin "sunshine-steam-gamepad-ui" ''
     set -euo pipefail
@@ -137,17 +117,6 @@ in
 {
   hardware.uinput.enable = true;
 
-  services.ananicy = {
-    enable = true;
-    package = pkgs.ananicy-cpp;
-    rulesProvider = pkgs.ananicy-rules-cachyos;
-  };
-
-  programs.gamescope = {
-    enable = true;
-    capSysNice = false;
-  };
-
   services.sunshine = {
     enable = true;
     package = sunshinePackage;
@@ -176,30 +145,9 @@ in
   environment.systemPackages = [
     (pkgs.writeShellScriptBin "steam-game-run" ''
       export PATH="/run/current-system/sw/bin:$PATH"
-      RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-      STREAM_ENV="$RUNTIME_DIR/sunshine-stream.env"
+      export PROTON_ENABLE_WAYLAND=1
 
-      if [ -r "$STREAM_ENV" ]; then
-        . "$STREAM_ENV"
-      fi
-
-      WIDTH="''${SUNSHINE_CLIENT_WIDTH:-2560}"
-      HEIGHT="''${SUNSHINE_CLIENT_HEIGHT:-1440}"
-      FPS="''${SUNSHINE_CLIENT_FPS:-144}"
-
-      exec gamescope \
-        -b \
-        -f \
-        -W "$WIDTH" \
-        -H "$HEIGHT" \
-        -w "$WIDTH" \
-        -h "$HEIGHT" \
-        -r "$FPS" \
-        --force-windows-fullscreen \
-        --force-grab-cursor \
-        -g \
-        -- \
-        gamemoderun prime-run "$@"
+      exec gamemoderun prime-run "$@"
     '')
   ];
 }
