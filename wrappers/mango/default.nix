@@ -63,7 +63,6 @@ let
     # ============================================
     windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
     windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
-    windowrule=tags:1,appid:gamescope,monitor:model:Dell S2716DG
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
     # ============================================
