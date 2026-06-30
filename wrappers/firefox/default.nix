@@ -7,7 +7,7 @@
   give them a star here https://github.com/adriankarlen/textfox
 */
 let
-  policies = builtins.fromJSON (builtins.readFile ./policies.json);
+  policies = import ./policies.nix;
 
   # shamelessly replacing ascii art
   text = ''
