@@ -16,6 +16,12 @@ Forgejo is authoritative after an item becomes a PRD issue.
 
 ---
 
+## unscheduled
+
+### ready
+
+- [#3](https://git.cedar.richen.sh/richen/richendots/issues/3) prd: nixpull:
+
 ## backlog
 
 - perf: make Firefox optional or switch default browser to Chromium
@@ -108,27 +114,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Confirm which hosts require greetd, graphical desktop support, and XWayland.
     - Only split these services if a no-session or lite-GUI profile is actually useful.
     - Benchmark eval if any session split is made.
-
-- nixpull:
-  - rewrite, keep bash tho
-  - full nix module impl
-  - pre post etc hooks
-  - channels? clients determine branch of build using git
-  - build history, hold multiple builds
-  - git worktrees integration
-  - inotify
-  - better metadata
-    - host
-    - called
-    - nixpkgs version
-    - channel (?)
-    - human readable timestamp
-    - git rev
-    - timestamp
-  - auto rollback similar to deployrs
-  - activation options, `nixpull client test` etc
-  - `nh` support
-  - fix systemd implementation of activation
 
 ## [desktop reliability](https://git.cedar.richen.sh/richen/richendots/milestones/10)
 
