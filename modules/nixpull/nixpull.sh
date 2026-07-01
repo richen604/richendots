@@ -32,6 +32,12 @@ log_line() {
   printf '%s %s\n' "$(date --iso-8601=seconds)" "$*" >>"$file"
 }
 
+cleanup_build_workdir() {
+  if [ -n "${NIXPULL_BUILD_WORKDIR:-}" ]; then
+    rm -rf "$NIXPULL_BUILD_WORKDIR"
+  fi
+}
+
 atomic_write() {
   local target=$1 tmp
   tmp=$(mktemp "${target}.XXXXXX")
@@ -153,7 +159,8 @@ cmd_build() {
   cores=$(jq -r '.build.cores' "$CONFIG")
   publish_partial=$(jq -r '.build.publishPartial' "$CONFIG")
   workdir=$(mktemp -d "$BUILDER_DIR/build.XXXXXX")
-  trap 'rm -rf "$workdir"' EXIT
+  NIXPULL_BUILD_WORKDIR=$workdir
+  trap cleanup_build_workdir EXIT
 
   source_metadata "$flake" >"$workdir/source.json"
   mapfile -t hosts < <(jq -r '.build.hosts[]' "$CONFIG")
@@ -233,17 +240,8 @@ fetch_metadata() {
   printf '%s\n' "$metadata"
 }
 
-cmd_fetch() {
-  require_role client
-  ensure_client_state
-
-  local host metadata activatable current_fetched store
-  host=$(hostname_short)
-  if ! metadata=$(fetch_metadata "$host"); then
-    local rc=$?
-    [ "$rc" -eq 75 ] && return 0
-    return "$rc"
-  fi
+fetch_closure() {
+  local host=$1 metadata=$2 activatable current_fetched store
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   current_fetched=$(jq -r '.fetched.activatablePath // empty' "$CLIENT_STATE")
   if [ "$current_fetched" = "$activatable" ]; then
@@ -259,30 +257,61 @@ cmd_fetch() {
   jq --arg host "$host" --argjson metadata "$metadata" '.host = $host | .fetched = $metadata' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
 }
 
+cmd_fetch() {
+  require_role client
+  ensure_client_state
+
+  local host metadata
+  host=$(hostname_short)
+  if metadata=$(fetch_metadata "$host"); then
+    :
+  else
+    local rc=$?
+    [ "$rc" -eq 75 ] && return 0
+    return "$rc"
+  fi
+  fetch_closure "$host" "$metadata"
+}
+
 activate_latest() {
-  local metadata=$1 activatable args=()
+  local metadata=$1 activatable temp_path activation_timeout magic_rollback activate_pid store_name store_hash canary
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
-  mkdir -p "$(jq -r '.activation.tempPath' "$CONFIG")"
-  args=(
+  temp_path=$(jq -r '.activation.tempPath' "$CONFIG")
+  activation_timeout=$(jq -r '.activation.activationTimeout' "$CONFIG")
+  magic_rollback=$(jq -r '.activation.magicRollback' "$CONFIG")
+  mkdir -p "$temp_path"
+
+  local args=(
     activate "$activatable"
     --profile-path /nix/var/nix/profiles/system
-    --temp-path "$(jq -r '.activation.tempPath' "$CONFIG")"
+    --temp-path "$temp_path"
     --confirm-timeout "$(jq -r '.activation.confirmTimeout' "$CONFIG")"
-    --activation-timeout "$(jq -r '.activation.activationTimeout' "$CONFIG")"
   )
-  case "$(jq -r '.activation.goal' "$CONFIG")" in
-    switch) ;;
-    boot) args+=(--boot) ;;
-    test) args+=(--test) ;;
-    dry-activate) args+=(--dry-activate) ;;
-  esac
-  [ "$(jq -r '.activation.magicRollback' "$CONFIG")" = true ] && args+=(--magic-rollback)
+  [ "$magic_rollback" = true ] && args+=(--magic-rollback)
   [ "$(jq -r '.activation.autoRollback' "$CONFIG")" = true ] && args+=(--auto-rollback)
-  "$activatable/activate-rs" "${args[@]}"
+
+  if [ "$magic_rollback" != true ]; then
+    "$activatable/activate-rs" "${args[@]}"
+    return
+  fi
+
+  "$activatable/activate-rs" "${args[@]}" &
+  activate_pid=$!
+  if ! "$activatable/activate-rs" wait "$activatable" --temp-path "$temp_path" --activation-timeout "$activation_timeout"; then
+    wait "$activate_pid" || true
+    return 1
+  fi
+
+  store_name=${activatable#/nix/store/}
+  store_hash=${store_name%%-*}
+  canary=$temp_path/deploy-rs-canary-$store_hash
+  rm -f "$canary"
+  wait "$activate_pid"
 }
 
 cmd_pull() {
   require_role client
+  ensure_client_state
   local ask=0
   case "${1:-}" in
     -a|--ask) ask=1 ;;
@@ -292,14 +321,14 @@ cmd_pull() {
 
   local host metadata toplevel result
   host=$(hostname_short)
-  if ! metadata=$(fetch_metadata "$host"); then
+  if metadata=$(fetch_metadata "$host"); then
+    :
+  else
     local rc=$?
     log_line "$CLIENT_LOG" "pull failed fetch rc=$rc"
     return "$rc"
   fi
-  cmd_fetch >/dev/null
-
-  metadata=$(jq -c '.fetched' "$CLIENT_STATE")
+  fetch_closure "$host" "$metadata" >/dev/null
   toplevel=$(jq -r '.toplevelPath' <<<"$metadata")
   if [ "$ask" -eq 1 ]; then
     if command -v dix >/dev/null 2>&1; then
@@ -334,7 +363,7 @@ cmd_pull() {
 }
 
 cmd_status() {
-  local host published fetched last_pull
+  local host published fetched last_pull published_hosts last_build
   host=$(hostname_short)
   printf 'host: %s\n' "$host"
   printf 'current: %s\n' "$(current_system)"
@@ -348,8 +377,10 @@ cmd_status() {
     printf 'published: %s\n' "$(jq -r '.activatablePath' <<<"$published")"
     printf 'publishedBuiltAt: %s\n' "$(jq -r '.builtAt' <<<"$published")"
   elif [ -f "$BUILDER_STATE" ]; then
-    printf 'published hosts: %s\n' "$(jq -r '.published | keys | join(",")' "$BUILDER_STATE")"
-    printf 'lastBuild: %s\n' "$(jq -c '.lastBuild' "$BUILDER_STATE")"
+    published_hosts=$(jq -r '.published | keys | join(",")' "$BUILDER_STATE")
+    last_build=$(jq -c '.lastBuild' "$BUILDER_STATE")
+    printf 'published hosts: %s\n' "$published_hosts"
+    printf 'lastBuild: %s\n' "$last_build"
   else
     printf 'published: unavailable\n'
   fi
