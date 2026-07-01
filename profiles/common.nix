@@ -91,20 +91,6 @@
     # custom scripts
     (pkgs.callPackage ./scripts/reboot-to.nix { })
     (pkgs.callPackage ./scripts/git-commit-date.nix { })
-    (pkgs.writeScriptBin "nixpull" ''
-      #!/usr/bin/env bash
-      PATH=$PATH:${
-        pkgs.lib.makeBinPath [
-          pkgs.coreutils
-          pkgs.openssh
-          pkgs.nix
-          pkgs.jq
-          pkgs.gum
-          pkgs.dix
-        ]
-      }
-      ${builtins.readFile ../modules/nixpull/nixpull.sh}
-    '')
 
     pkgs.nodejs
     pkgs.bun

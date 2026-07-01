@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     sunshineNixpkgs.url = "github:NixOS/nixpkgs/pull/521906/head";
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     richendots-private = {
       url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       #url = "path:/mnt/dev/richendots-private";
@@ -18,9 +22,10 @@
   };
 
   outputs =
-    { ... }@inputs:
+    { self, ... }@inputs:
     let
       richenLib = import ./lib.nix { inherit inputs; };
+      nixpull = import ./modules/nixpull/flake-module.nix { inherit inputs self; };
     in
     {
       nixosConfigurations = {
@@ -80,5 +85,6 @@
           packages = builtins.attrValues wrappers;
         }
       );
-    };
+    }
+    // nixpull;
 }
