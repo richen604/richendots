@@ -63,13 +63,10 @@
     flake = "/home/richen/mutagen/richendots";
   };
 
-  # # nixpull client configuration
-  # services.nixpull = {
-  #   enable = true;
-  #   mode = "client";
-  #   checkInterval = "hourly";
-  #   enableNotifications = true;
-  # };
+  services.nixpull = {
+    enable = true;
+    role = "client";
+  };
 
   system.stateVersion = "26.05";
 }
