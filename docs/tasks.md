@@ -18,9 +18,9 @@ Forgejo is authoritative after an item becomes a PRD issue.
 
 ## unscheduled
 
-### ready
+### review
 
-- [#3](https://git.cedar.richen.sh/richen/richendots/issues/3) prd: nixpull:
+- [#3](https://git.cedar.richen.sh/richen/richendots/issues/3) prd: nixpull: -> [!4](https://git.cedar.richen.sh/richen/richendots/pulls/4) nixpull:
 
 ## backlog
 
