@@ -114,6 +114,7 @@
     pkgs.sshfs
     pkgs.lazygit
     pkgs.nixd
+    pkgs.moonlight-qt
   ];
 
   programs.git = {
@@ -191,10 +192,12 @@
       allow-import-from-derivation = false;
       substituters = [
         "ssh-ng://cedar.build"
+        "https://cache.nixos-cuda.org"
         "https://cache.nixos.org"
       ];
       trusted-public-keys = [
         "richencache:ibHPYDq1KmrAsoHIU+WI6ViUoIoX0SEY45CvBOaPXUY="
+        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       experimental-features = [

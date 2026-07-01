@@ -9,7 +9,9 @@ let
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
   };
-  sunshinePackage = sunshinePkgs.sunshine;
+  sunshinePackage = sunshinePkgs.sunshine.override {
+    cudaSupport = true;
+  };
   headlessStreamScriptPath = pkgs.lib.makeBinPath [
     pkgs.coreutils
     pkgs.jq
@@ -49,7 +51,8 @@ let
 
     systemctl --user stop swayidle.service || true
 
-    HEADLESS_DP=$(wlr-randr --json | jq -r '.[] | select(.description | contains("sisel muhendislik EK1080T4KV2") and contains("0x00005445")) | .name')
+    OUTPUTS=$(wlr-randr --json)
+    HEADLESS_DP=$(printf '%s\n' "$OUTPUTS" | jq -r '.[] | select(.description | contains("sisel muhendislik EK1080T4KV2") and contains("0x00005445")) | .name')
 
     if [ -z "$HEADLESS_DP" ]; then
       echo "sunshine-headless-set-resolution: could not find EK1080T4KV2 dummy output" >&2
@@ -61,10 +64,30 @@ let
       exit 1
     fi
 
+    REFRESH=$(printf '%s\n' "$OUTPUTS" | jq -r \
+      --arg output "$HEADLESS_DP" \
+      --argjson width "$WIDTH" \
+      --argjson height "$HEIGHT" \
+      --argjson fps "$FPS" \
+      '.[] | select(.name == $output) | .modes
+       | map(select(.width == $width and .height == $height))
+       | if length == 0 then empty
+         else min_by(((.refresh - $fps) | if . < 0 then -. else . end)) | .refresh
+         end')
+
+    MODE_ARGS=()
+    if [ -n "$REFRESH" ]; then
+      MODE_ARGS=(--mode "''${WIDTH}x''${HEIGHT}@''${REFRESH}Hz")
+    else
+      MODE="''${WIDTH}x''${HEIGHT}@''${FPS}Hz"
+      echo "sunshine-headless-set-resolution: no advertised ''${WIDTH}x''${HEIGHT} mode, trying custom $MODE" >&2
+      MODE_ARGS=(--custom-mode "$MODE")
+    fi
+
     wlr-randr \
       --output "$HEADLESS_DP" \
       --on \
-      --custom-mode "''${WIDTH}x''${HEIGHT}@''${FPS}Hz" \
+      "''${MODE_ARGS[@]}" \
       --pos "0,0" \
       --scale "$SCALE"
   '';
@@ -129,11 +152,17 @@ in
     settings = {
       capture = "kms";
       output_name = "0";
-      encoder = "vaapi";
-      adapter_name = "/dev/dri/by-path/pci-0000:03:00.0-render";
+      encoder = "nvenc";
+      adapter_name = "/dev/dri/by-path/pci-0000:01:00.0-render";
       vaapi_strict_rc_buffer = "disabled";
     };
   };
+
+  systemd.user.services.sunshine.serviceConfig = {
+    Environment = [ "LD_LIBRARY_PATH=/run/opengl-driver/lib" ];
+  };
+
+  security.wrappers.sunshine.capabilities = pkgs.lib.mkForce "cap_sys_admin,cap_sys_nice+pie";
 
   programs.gamemode.enable = true;
 
@@ -146,8 +175,9 @@ in
     (pkgs.writeShellScriptBin "steam-game-run" ''
       export PATH="/run/current-system/sw/bin:$PATH"
       export PROTON_ENABLE_WAYLAND=1
+      export PROTON_DXVK_LOWLATENCY=1
 
-      exec gamemoderun prime-run "$@"
+      exec gamemoderun "$@"
     '')
   ];
 }

@@ -13,7 +13,10 @@ let
     system:
     import inputs.nixpkgs {
       inherit system;
-      config.allowUnfree = true;
+      config = {
+        allowUnfree = true;
+        cudaSupport = true;
+      };
     };
 
   nameFromPath =
