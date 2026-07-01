@@ -166,12 +166,7 @@ in
       };
 
       goal = lib.mkOption {
-        type = lib.types.enum [
-          "switch"
-          "boot"
-          "test"
-          "dry-activate"
-        ];
+        type = lib.types.enum [ "switch" ];
         default = "switch";
         description = "deploy-rs activation goal.";
       };
