@@ -23,10 +23,17 @@
   # nixpull server configuration
   services.nixpull = {
     enable = true;
-    mode = "server";
+    role = "builder";
     flake = "/mnt/dev/richendots";
-    autoBuild = true;
-    buildInterval = "Mon *-*-* 03:00:00"; # weekly at 3am on mondays
+    build = {
+      hosts = [
+        "cedar"
+        "fern"
+        "oak"
+      ];
+      maxJobs = 1;
+      interval = "Mon *-*-* 03:00:00"; # weekly at 3am on mondays
+    };
   };
 
   system.stateVersion = "25.05";

@@ -1,219 +1,298 @@
 {
   config,
+  inputs,
   pkgs,
   lib,
   ...
 }:
 
-# usage:
-#
-# note: user is hardcoded to "richen"
-#
-# client mode:
-#   services.nixpull = {
-#     enable = true;
-#     mode = "client";
-#     checkInterval = "hourly";  # or "weekly" or "Mon *-*-* 03:00:00" for mondays at 3am
-#     enableNotifications = true;
-#   };
-#
-# server mode:
-#   services.nixpull = {
-#     enable = true;
-#     mode = "server";
-#     autoBuild = true;
-#     buildInterval = "Mon *-*-* 03:00:00";  # weekly at 3am on mondays
-#   };
 let
   cfg = config.services.nixpull;
+
+  configFile = pkgs.writeText "nixpull-config.json" (
+    builtins.toJSON {
+      role = cfg.role;
+      flake = cfg.flake;
+      stateRoot = "/var/lib/nixpull";
+      build = {
+        hosts = cfg.build.hosts;
+        maxJobs = cfg.build.maxJobs;
+        cores = cfg.build.cores;
+        publishPartial = cfg.build.publishPartial;
+      };
+      server = cfg.server;
+      fetch = cfg.fetch;
+      activation = cfg.activation;
+    }
+  );
 
   nixpullPackage = pkgs.writeShellApplication {
     name = "nixpull";
     runtimeInputs = with pkgs; [
+      bash
       coreutils
+      diffutils
+      findutils
+      gnugrep
+      gnused
       openssh
       nix
       jq
-      gum
       dix
       git
-      busybox
-      net-tools
     ];
+    runtimeEnv.NIXPULL_CONFIG = configFile;
     text = builtins.readFile ./nixpull.sh;
   };
-
 in
 {
   options.services.nixpull = {
-    enable = lib.mkEnableOption "nixpull system update service";
+    enable = lib.mkEnableOption "nixpull pull-based NixOS profile updates";
 
-    user = lib.mkOption {
-      type = lib.types.str;
-      default = "richen";
-      description = "User to run notifications and other user-level tasks as.";
-    };
-
-    mode = lib.mkOption {
+    role = lib.mkOption {
       type = lib.types.enum [
-        "server"
+        "builder"
         "client"
       ];
-      description = ''
-        Operation mode:
-        - server: Builds all configurations in the flake and stores their paths.
-        - client: Fetches the latest build path from the server and applies it.
-      '';
+      description = "Whether this host publishes builds or fetches published builds.";
     };
 
     flake = lib.mkOption {
       type = lib.types.str;
-      default = "";
-      example = "/home/user/dots";
-      description = "Path to the flake containing NixOS configurations (server mode only).";
+      default = "/mnt/dev/richendots";
+      description = "Flake path used by the builder to build deploy-rs activatable profiles.";
     };
 
-    storeDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/tmp/nixpull";
-      description = "Directory on the server where build paths are stored.";
+    build = {
+      hosts = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = [
+          "cedar"
+          "fern"
+          "oak"
+        ];
+        description = "NixOS hosts the builder publishes.";
+      };
+
+      maxJobs = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 1;
+        description = "Maximum concurrent host profile builds launched by nixpull.";
+      };
+
+      cores = lib.mkOption {
+        type = lib.types.nullOr lib.types.ints.positive;
+        default = null;
+        description = "Optional --cores value passed to each nix build.";
+      };
+
+      publishPartial = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Publish successful host builds even when other hosts fail.";
+      };
+
+      interval = lib.mkOption {
+        type = lib.types.str;
+        default = "hourly";
+        example = "Mon *-*-* 03:00:00";
+        description = "Builder timer schedule.";
+      };
     };
 
-    # Client-specific options
-    checkInterval = lib.mkOption {
-      type = lib.types.str;
-      default = "hourly";
-      example = "Mon *-*-* 03:00:00";
-      description = "How often to check for updates (client mode). Uses systemd.time format.";
+    server = {
+      host = lib.mkOption {
+        type = lib.types.str;
+        default = "cedar.build";
+        description = "Host that publishes nixpull builder state.";
+      };
+
+      user = lib.mkOption {
+        type = lib.types.str;
+        default = "root";
+        description = "SSH user for metadata access.";
+      };
+
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 22;
+        description = "SSH port for metadata access.";
+      };
+
+      sshOptions = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [
+          "-o"
+          "BatchMode=yes"
+          "-o"
+          "ConnectTimeout=10"
+        ];
+        description = "Extra options passed to ssh for metadata access.";
+      };
+
+      store = lib.mkOption {
+        type = lib.types.str;
+        default = "ssh-ng://cedar.build";
+        description = "Nix store URL used by clients for nix copy --from.";
+      };
     };
 
-    enableNotifications = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Enable desktop notifications when updates are available (client mode only).";
+    fetch = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable the client background fetch timer.";
+      };
+
+      interval = lib.mkOption {
+        type = lib.types.str;
+        default = "hourly";
+        description = "Client fetch timer schedule.";
+      };
     };
 
-    # Server-specific options
-    buildInterval = lib.mkOption {
-      type = lib.types.str;
-      default = "hourly";
-      example = "daily";
-      description = "How often to build configs (server mode). Uses systemd.time format.";
-    };
+    activation = {
+      autoApply = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable automatic client activation of fetched builds.";
+      };
 
-    autoBuild = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Automatically build configs on schedule (server mode). If false, run 'nixpull build' manually.";
+      interval = lib.mkOption {
+        type = lib.types.str;
+        default = "daily";
+        description = "Client auto-activation timer schedule.";
+      };
+
+      goal = lib.mkOption {
+        type = lib.types.enum [
+          "switch"
+          "boot"
+          "test"
+          "dry-activate"
+        ];
+        default = "switch";
+        description = "deploy-rs activation goal.";
+      };
+
+      magicRollback = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Use deploy-rs magic rollback during activation.";
+      };
+
+      autoRollback = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Use deploy-rs automatic rollback on activation failure.";
+      };
+
+      confirmTimeout = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 30;
+        description = "deploy-rs confirmation timeout in seconds.";
+      };
+
+      activationTimeout = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 240;
+        description = "deploy-rs activation timeout in seconds.";
+      };
+
+      tempPath = lib.mkOption {
+        type = lib.types.str;
+        default = "/var/lib/nixpull/deploy-rs";
+        description = "deploy-rs temporary path used by magic rollback.";
+      };
     };
   };
 
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
-      # Validate flake path in server mode
-      (lib.mkIf (cfg.mode == "server" && cfg.autoBuild) {
+      {
         assertions = [
           {
-            assertion = cfg.flake != "";
-            message = "services.nixpull.flake must be set when mode is 'server' and autoBuild is enabled";
+            assertion = cfg.role != "builder" || cfg.build.hosts != [ ];
+            message = "services.nixpull.build.hosts must be set for builder role";
+          }
+          {
+            assertion = inputs ? deploy-rs;
+            message = "nixpull requires a deploy-rs flake input";
           }
         ];
-      })
 
-      {
-        environment.systemPackages = lib.mkDefault [ nixpullPackage ];
+        environment.systemPackages = [ nixpullPackage ];
 
-        # client mode
-        systemd.timers.nixpull-check = lib.mkIf (cfg.mode == "client") {
+        systemd.tmpfiles.rules = [
+          "d /var/lib/nixpull 0755 root root -"
+          "d /var/lib/nixpull/builder 0755 root root -"
+          "d /var/lib/nixpull/client 0755 root root -"
+          "d ${toString cfg.activation.tempPath} 0755 root root -"
+        ];
+      }
+
+      (lib.mkIf (cfg.role == "builder") {
+        systemd.timers.nixpull-build = {
           wantedBy = [ "timers.target" ];
           timerConfig = {
-            OnCalendar = cfg.checkInterval;
+            OnCalendar = cfg.build.interval;
             Persistent = true;
             RandomizedDelaySec = "5m";
           };
         };
 
-        systemd.services.nixpull-check = lib.mkIf (cfg.mode == "client") {
-          description = "check for nixos system updates";
+        systemd.services.nixpull-build = {
+          description = "Build deploy-rs activatable NixOS profiles for nixpull";
           serviceConfig = {
             Type = "oneshot";
             User = "root";
+            StateDirectory = "nixpull";
+            WorkingDirectory = cfg.flake;
           };
+          script = "${nixpullPackage}/bin/nixpull build";
+        };
+      })
 
-          script = ''
-            if ${nixpullPackage}/bin/nixpull check; then
-              echo "update available. run 'nixpull pull' to apply."
-              ${lib.optionalString cfg.enableNotifications ''
-                # trigger user notification service
-                ${pkgs.systemd}/bin/systemctl --user -M ${cfg.user}@ start nixpull-notify.service
-              ''}
-            else
-              echo "no updates available"
-            fi
-          '';
+      (lib.mkIf (cfg.role == "client") {
+        systemd.timers.nixpull-fetch = lib.mkIf cfg.fetch.enable {
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = cfg.fetch.interval;
+            Persistent = true;
+            RandomizedDelaySec = "5m";
+          };
         };
 
-        systemd.user.services.nixpull-notify = lib.mkIf (cfg.mode == "client" && cfg.enableNotifications) {
-          description = "notify about nixos system updates";
-          serviceConfig.Type = "oneshot";
-          script = ''
-            ${pkgs.libnotify}/bin/notify-send \
-              --app-name="NixPull" \
-              --urgency=normal \
-              --icon=system-software-update \
-              --action="approve=Apply Update" \
-              --action="deny=Dismiss" \
-              "System Update Available" \
-              "A new system configuration is ready to install" | while read -r action; do
-                case "$action" in
-                  approve)
-                    ${pkgs.systemd}/bin/systemctl start nixpull-apply.service
-                    ;;
-                  deny)
-                    ${pkgs.libnotify}/bin/notify-send \
-                      --app-name="NixPull" \
-                      --icon=dialog-information \
-                      "Update Dismissed" \
-                      "Run 'nixpull pull' manually when ready"
-                    ;;
-                esac
-              done
-          '';
-        };
-
-        systemd.services.nixpull-apply = lib.mkIf (cfg.mode == "client") {
-          description = "apply nixos system update";
+        systemd.services.nixpull-fetch = lib.mkIf cfg.fetch.enable {
+          description = "Fetch latest published nixpull profile";
           serviceConfig = {
             Type = "oneshot";
             User = "root";
+            StateDirectory = "nixpull";
+          };
+          script = "${nixpullPackage}/bin/nixpull fetch";
+        };
+
+        systemd.timers.nixpull-apply = lib.mkIf cfg.activation.autoApply {
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = cfg.activation.interval;
+            Persistent = true;
+            RandomizedDelaySec = "5m";
+          };
+        };
+
+        systemd.services.nixpull-apply = lib.mkIf cfg.activation.autoApply {
+          description = "Activate latest published nixpull profile";
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+            StateDirectory = "nixpull";
           };
           script = "${nixpullPackage}/bin/nixpull pull";
         };
-
-        # server mode
-        systemd.timers.nixpull-build = lib.mkIf (cfg.mode == "server" && cfg.autoBuild) {
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnCalendar = cfg.buildInterval;
-            Persistent = true;
-            RandomizedDelaySec = "5m";
-          };
-        };
-
-        systemd.services.nixpull-build =
-          lib.mkIf (cfg.mode == "server" && cfg.autoBuild && cfg.flake != "")
-            {
-              description = "build all nixos configurations for nixpull";
-              serviceConfig = {
-                Type = "oneshot";
-                User = "root";
-              };
-              script = ''
-                cd ${cfg.flake}
-                ${nixpullPackage}/bin/nixpull build
-              '';
-            };
-      }
+      })
     ]
   );
 }
