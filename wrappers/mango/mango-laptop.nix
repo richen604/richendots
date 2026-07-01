@@ -31,7 +31,7 @@ let
     if [ -n "$benq" ] && [ -n "$center" ] && [ -n "$side" ]; then
       args=(
         --output "$benq" --on --mode 1920x1080@60.000000Hz --pos 0,0 --transform 90 --scale 1
-        --output "$center" --on --mode 2560x1440@99.945999Hz --pos 1080,0 --transform normal --scale 1 --adaptive-sync disabled
+        --output "$center" --on --mode 2560x1440@119.998001Hz --pos 1080,0 --transform normal --scale 1 --adaptive-sync disabled
         --output "$side" --on --mode 1600x900@60.000000Hz --pos 3640,0 --transform 270 --scale 1
       )
 
@@ -90,8 +90,8 @@ let
     # MONITOR RULES
     # ============================================
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
-    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:100,x:1080,y:0,rr:0
-    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,rr:3
+    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:120,x:1080,y:0,rr:0
+    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,rr:3
     monitorrule=name:eDP-1,width:3200,height:2000,refresh:60,x:5240,y:0,scale:1.5,vrr:0,rr:0
 
     # ============================================
