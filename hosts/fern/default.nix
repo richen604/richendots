@@ -54,6 +54,7 @@
   services.nixpull = {
     enable = true;
     role = "client";
+    server.user = "richen";
   };
 
   system.stateVersion = pkgs.lib.mkDefault "26.05";

@@ -66,6 +66,7 @@
   services.nixpull = {
     enable = true;
     role = "client";
+    server.user = "richen";
   };
 
   system.stateVersion = "26.05";
