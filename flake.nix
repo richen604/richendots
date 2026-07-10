@@ -9,8 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     richendots-private = {
-      url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      #url = "path:/mnt/dev/richendots-private";
+      #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
+      url = "path:/mnt/dev/richendots-private";
     };
     mango.url = "github:DreamMaoMao/mango/bb0160d7cf1187f1d3292adbed51d834c6a31471";
     mnw.url = "github:Gerg-L/mnw";
