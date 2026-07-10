@@ -53,6 +53,7 @@ let
 
     OUTPUTS=$(wlr-randr --json)
     HEADLESS_DP=$(printf '%s\n' "$OUTPUTS" | jq -r '.[] | select(.description | contains("sisel muhendislik EK1080T4KV2") and contains("0x00005445")) | .name')
+    mapfile -t PHYSICAL_OUTPUTS < <(printf '%s\n' "$OUTPUTS" | jq -r '.[] | select(.model == "BenQ GW2780" or .model == "Dell S2716DG" or .model == "DELL E2020H") | .name')
 
     if [ -z "$HEADLESS_DP" ]; then
       echo "sunshine-headless-set-resolution: could not find EK1080T4KV2 dummy output" >&2
@@ -90,6 +91,10 @@ let
       "''${MODE_ARGS[@]}" \
       --pos "0,0" \
       --scale "$SCALE"
+
+    for output in "''${PHYSICAL_OUTPUTS[@]}"; do
+      wlr-randr --output "$output" --off
+    done
   '';
   sunshineHeadlessResetResolution = pkgs.writeShellScriptBin "sunshine-headless-reset-resolution" ''
     set -euo pipefail
@@ -98,9 +103,27 @@ let
     RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
     rm -f "$RUNTIME_DIR/sunshine-stream.env"
 
-    HEADLESS_DP=$(wlr-randr --json | jq -r '.[] | select(.description | contains("sisel muhendislik EK1080T4KV2") and contains("0x00005445")) | .name')
+    OUTPUTS=$(wlr-randr --json)
+    HEADLESS_DP=$(printf '%s\n' "$OUTPUTS" | jq -r '.[] | select(.description | contains("sisel muhendislik EK1080T4KV2") and contains("0x00005445")) | .name')
     if [ -n "$HEADLESS_DP" ] && [ "$(printf '%s\n' "$HEADLESS_DP" | wc -l)" -eq 1 ]; then
-      wlr-randr --output "$HEADLESS_DP" --scale 1 || true
+      wlr-randr --output "$HEADLESS_DP" --off || true
+    fi
+
+    output_for_model() {
+      printf '%s\n' "$OUTPUTS" | jq -r --arg model "$1" 'first(.[] | select(.model == $model) | .name) // empty'
+    }
+
+    benq="$(output_for_model "BenQ GW2780")"
+    center="$(output_for_model "Dell S2716DG")"
+    side="$(output_for_model "DELL E2020H")"
+
+    if [ -n "$benq" ] && [ -n "$center" ] && [ -n "$side" ]; then
+      wlr-randr \
+        --output "$benq" --on --mode 1920x1080@60.000000Hz --pos 0,0 --transform 90 --scale 1 \
+        --output "$center" --on --mode 2560x1440@119.998001Hz --pos 1080,0 --transform normal --scale 1 --adaptive-sync disabled \
+        --output "$side" --on --mode 1600x900@60.000000Hz --pos 3640,0 --transform 270 --scale 1
+    else
+      echo "sunshine-headless-reset-resolution: could not restore full physical monitor layout" >&2
     fi
 
     systemctl --user start swayidle.service || true
