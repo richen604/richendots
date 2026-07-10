@@ -12,15 +12,46 @@ let
 
     # Tag rules
     # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
-    tagrule=id:1,layout_name:scroller
-    tagrule=id:2,layout_name:scroller
-    tagrule=id:3,layout_name:scroller
-    tagrule=id:4,layout_name:scroller
-    tagrule=id:5,layout_name:scroller
-    tagrule=id:6,layout_name:scroller
-    tagrule=id:7,layout_name:scroller
-    tagrule=id:8,layout_name:scroller
-    tagrule=id:9,layout_name:scroller
+    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:1,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:2,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:3,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:3,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:4,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:4,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:5,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:6,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:6,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:7,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:7,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:8,monitor_model:DELL E2020H,layout_name:scroller
+
+    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
+    tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
+
+    # Monitor rules
+    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
+    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:120,x:1080,y:0,rr:0
+    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,rr:3
 
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
