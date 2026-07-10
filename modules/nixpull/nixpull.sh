@@ -128,25 +128,50 @@ build_one_host() {
   local flake=$1 host=$2 cores=$3 outdir=$4
   local log=$outdir/$host.log
   local activatable toplevel generation
+  local paths=()
   local cores_args=()
   if [ "$cores" != "null" ]; then
     cores_args=(--cores "$cores")
   fi
 
-  {
-    printf 'building %s\n' "$host"
-    activatable=$(nix build "$flake#nixpullProfiles.$host" --print-out-paths --no-link "${cores_args[@]}")
-    toplevel=$(nix build "$flake#nixosConfigurations.$host.config.system.build.toplevel" --print-out-paths --no-link "${cores_args[@]}")
-    generation=$(date +%s)
-    jq -n \
-      --arg host "$host" \
-      --arg generation "$generation" \
-      --arg activatablePath "$activatable" \
-      --arg toplevelPath "$toplevel" \
-      --arg builtAt "$(date --iso-8601=seconds)" \
-      --slurpfile source "$outdir/source.json" \
-      '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
-  } >"$log" 2>&1
+  : >"$log"
+  print_build_host "$host"
+  mapfile -t paths < <(nom_build_store_paths "$log" "$flake#nixpullProfiles.$host" "$flake#nixosConfigurations.$host.config.system.build.toplevel" "${cores_args[@]}")
+  activatable=${paths[0]:-}
+  toplevel=${paths[1]:-}
+  if [ -z "$activatable" ] || [ -z "$toplevel" ]; then
+    printf 'nixpull: nom did not report both store paths for %s\n' "$host" >&2
+    return 1
+  fi
+  generation=$(date +%s)
+  jq -n \
+    --arg host "$host" \
+    --arg generation "$generation" \
+    --arg activatablePath "$activatable" \
+    --arg toplevelPath "$toplevel" \
+    --arg builtAt "$(date --iso-8601=seconds)" \
+    --slurpfile source "$outdir/source.json" \
+    '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
+}
+
+publish_available_hosts() {
+  local workdir=$1 state=$2 host meta marker published=0
+  local new_state=$state
+  shift 2
+  for host in "$@"; do
+    marker=$workdir/$host.published
+    if [ -f "$workdir/$host.json" ] && [ ! -f "$marker" ]; then
+      meta=$(cat "$workdir/$host.json")
+      new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
+      log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
+      print_build_published "$host"
+      : >"$marker"
+      published=1
+    fi
+  done
+  if [ "$published" -eq 1 ]; then
+    printf '%s\n' "$new_state" | atomic_write "$BUILDER_STATE"
+  fi
 }
 
 cmd_build() {
@@ -164,7 +189,7 @@ cmd_build() {
 
   source_metadata "$flake" >"$workdir/source.json"
   mapfile -t hosts < <(jq -r '.build.hosts[]' "$CONFIG")
-  printf 'building %s host(s) with maxJobs=%s\n' "${#hosts[@]}" "$max_jobs"
+  print_build_start "${#hosts[@]}" "$max_jobs"
   log_line "$BUILDER_LOG" "build start hosts=${hosts[*]} maxJobs=$max_jobs"
 
   local running=0 host pid failed=0
@@ -178,6 +203,9 @@ cmd_build() {
         failed=1
       fi
       running=$((running - 1))
+      if [ "$publish_partial" = true ]; then
+        publish_available_hosts "$workdir" "$(cat "$BUILDER_STATE")" "${hosts[@]}"
+      fi
     fi
   done
   while [ "$running" -gt 0 ]; do
@@ -185,6 +213,9 @@ cmd_build() {
       failed=1
     fi
     running=$((running - 1))
+    if [ "$publish_partial" = true ]; then
+      publish_available_hosts "$workdir" "$(cat "$BUILDER_STATE")" "${hosts[@]}"
+    fi
   done
 
   if [ "$publish_partial" != true ] && [ "$failed" -ne 0 ]; then
@@ -198,16 +229,18 @@ cmd_build() {
   new_state=$state
   for host in "${hosts[@]}"; do
     if [ -f "$workdir/$host.json" ]; then
-      meta=$(cat "$workdir/$host.json")
-      new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
       successes=$((successes + 1))
-      log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
-      printf 'published %s\n' "$host"
+      if [ "$publish_partial" != true ]; then
+        meta=$(cat "$workdir/$host.json")
+        new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
+        log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
+        print_build_published "$host"
+      fi
     else
       failures=$((failures + 1))
       log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/$host.log"
-      printf 'failed %s\n' "$host" >&2
-      sed 's/^/  /' "$workdir/$host.log" >&2 || true
+      print_build_failed "$host" >&2
+      printf 'nixpull: build log retained at %s\n' "$workdir/$host.log" >&2
     fi
   done
 
@@ -244,14 +277,19 @@ fetch_closure() {
   local host=$1 metadata=$2 activatable current_fetched store
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   current_fetched=$(jq -r '.fetched.activatablePath // empty' "$CLIENT_STATE")
-  if [ "$current_fetched" = "$activatable" ]; then
-    printf 'already fetched %s\n' "$activatable"
+  if [ "$current_fetched" = "$activatable" ] && [ -x "$activatable/activate-rs" ]; then
+    print_nixpull_event "already fetched" "$activatable"
     log_line "$CLIENT_LOG" "fetch noop host=$host activatablePath=$activatable"
   else
     store=$(jq -r '.server.store' "$CONFIG")
     nix copy --from "$store" "$activatable"
+    if [ ! -x "$activatable/activate-rs" ]; then
+      printf 'nixpull: fetched path is missing executable activate-rs: %s\n' "$activatable" >&2
+      log_line "$CLIENT_LOG" "fetch failure missing-activate-rs host=$host activatablePath=$activatable"
+      return 1
+    fi
     log_line "$CLIENT_LOG" "fetch success host=$host activatablePath=$activatable"
-    printf 'fetched %s\n' "$activatable"
+    print_nixpull_event "fetched" "$activatable"
   fi
 
   jq --arg host "$host" --argjson metadata "$metadata" '.host = $host | .fetched = $metadata' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
@@ -328,7 +366,13 @@ cmd_pull() {
     log_line "$CLIENT_LOG" "pull failed fetch rc=$rc"
     return "$rc"
   fi
-  fetch_closure "$host" "$metadata" >/dev/null
+  if fetch_closure "$host" "$metadata" >/dev/null; then
+    :
+  else
+    local rc=$?
+    log_line "$CLIENT_LOG" "pull failed fetch rc=$rc"
+    return "$rc"
+  fi
   toplevel=$(jq -r '.toplevelPath' <<<"$metadata")
   if [ "$ask" -eq 1 ]; then
     if command -v dix >/dev/null 2>&1; then
@@ -336,23 +380,19 @@ cmd_pull() {
     else
       printf 'warning: dix is not installed; skipping diff\n' >&2
     fi
-    printf 'Activate %s? [y/N] ' "$(jq -r '.activatablePath' <<<"$metadata")"
-    read -r answer
-    case "$answer" in
-      y|Y|yes|YES) ;;
-      *)
-        log_line "$CLIENT_LOG" "pull declined host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
-        printf 'activation declined; fetched closure remains in the store\n'
-        return 0
-        ;;
-    esac
+    if ! confirm_activation "$(jq -r '.activatablePath' <<<"$metadata")"; then
+      log_line "$CLIENT_LOG" "pull declined host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
+      print_nixpull_event "activation skipped" "fetched closure remains in the store"
+      return 0
+    fi
   fi
 
+  print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
   if activate_latest "$metadata"; then
     result=$(jq -n --arg status success --arg at "$(date --iso-8601=seconds)" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, activatablePath: $activatablePath}')
     jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
     log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
-    printf 'activated %s\n' "$(jq -r '.activatablePath' <<<"$metadata")"
+    print_nixpull_event "activated" "$(jq -r '.activatablePath' <<<"$metadata")"
   else
     local rc=$?
     result=$(jq -n --arg status failure --arg at "$(date --iso-8601=seconds)" --argjson exitCode "$rc" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath}')
@@ -396,6 +436,101 @@ cmd_check() {
   printf 'published: %s\n' "$(jq -r '.activatablePath' <<<"$metadata")"
   printf 'fetched: %s\n' "${fetched:-none}"
   printf 'current: %s\n' "${current:-unknown}"
+}
+
+shorten_output_path() {
+  local value=$1 max=86 keep_start=34 keep_end=46
+  if [ "${#value}" -le "$max" ]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s...%s\n' "${value:0:keep_start}" "${value: -keep_end}"
+  fi
+}
+
+gum_output_available() {
+  command -v gum >/dev/null 2>&1 && [ -t 1 ]
+}
+
+print_nixpull_event() {
+  local message=$1 detail=${2:-}
+  if gum_output_available; then
+    gum style --foreground 39 --bold "nixpull: $message"
+    if [ -n "$detail" ]; then
+      gum style --foreground 245 "  $(shorten_output_path "$detail")"
+    fi
+  else
+    if [ -n "$detail" ]; then
+      printf '%s %s\n' "$message" "$detail"
+    else
+      printf '%s\n' "$message"
+    fi
+  fi
+}
+
+print_build_host() {
+  local host=$1
+  if gum_output_available; then
+    gum style --foreground 39 --bold "$host"
+  else
+    printf '%s\n' "$host"
+  fi
+}
+
+print_build_start() {
+  local host_count=$1 max_jobs=$2
+  if gum_output_available; then
+    gum style --foreground 39 --bold "nixpull build: $host_count hosts (maxJobs=$max_jobs)"
+  else
+    printf 'nixpull build: %s hosts (maxJobs=%s)\n' "$host_count" "$max_jobs"
+  fi
+}
+
+print_build_published() {
+  local host=$1
+  if gum_output_available; then
+    gum style --foreground 245 "  published $host"
+  else
+    printf '  published %s\n' "$host"
+  fi
+}
+
+print_build_failed() {
+  local host=$1
+  if gum_output_available; then
+    gum style --foreground 9 "  failed $host"
+  else
+    printf '  failed %s\n' "$host"
+  fi
+}
+
+nom_build_store_paths() {
+  local log=$1 activatable_attr=$2 toplevel_attr=$3 output line tmp rc
+  shift 3
+  tmp=$(mktemp)
+  if nom build "$activatable_attr" "$toplevel_attr" --print-out-paths --no-link "$@" > >(tee "$tmp" | tee -a "$log" >&2) 2> >(tee -a "$log" >&2); then
+    rc=0
+  else
+    rc=$?
+  fi
+  output=$(<"$tmp")
+  rm -f "$tmp"
+  [ "$rc" -eq 0 ] || return "$rc"
+
+  while IFS= read -r line; do
+    case "$line" in
+      /nix/store/*) printf '%s\n' "$line" ;;
+    esac
+  done <<<"$output"
+}
+
+confirm_activation() {
+  local activatable=$1 answer
+  printf 'Activate %s? [y/N] ' "$(shorten_output_path "$activatable")"
+  read -r answer
+  case "$answer" in
+    y|Y|yes|YES) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
 case "${1:-}" in

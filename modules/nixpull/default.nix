@@ -37,9 +37,11 @@ let
       gnused
       openssh
       nix
+      nix-output-monitor
       jq
       dix
       git
+      gum
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
     text = builtins.readFile ./nixpull.sh;

@@ -25,6 +25,7 @@
     enable = true;
     role = "builder";
     flake = "/mnt/dev/richendots";
+    server.user = "richen";
     build = {
       hosts = [
         "cedar"
