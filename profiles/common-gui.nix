@@ -144,6 +144,7 @@
 
     pkgs.piper
     pkgs.ungoogled-chromium
+    pkgs.prismlauncher
   ];
 
   services.ratbagd.enable = true;

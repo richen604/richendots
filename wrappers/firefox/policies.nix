@@ -150,10 +150,17 @@
       "Google"
       "Perplexity"
     ];
-    Default = "Rebang";
+    Default = "SearXNG";
     Add = [
       {
+        Name = "SearXNG";
+        Alias = "sx";
+        IconURL = "https://search.cedar.richen.sh/favicon.ico";
+        URLTemplate = "https://search.cedar.richen.sh/search?q={searchTerms}";
+      }
+      {
         Name = "Rebang";
+        Alias = "rb";
         IconURL = "https://www.rebang.online/favicon.icon";
         URLTemplate = "https://www.rebang.online/?q={searchTerms}";
       }
