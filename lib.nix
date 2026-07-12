@@ -16,6 +16,9 @@ let
       config = {
         allowUnfree = true;
         cudaSupport = true;
+        permittedInsecurePackages = [
+          "olivetin-2025.11.25"
+        ];
       };
     };
 
