@@ -26,6 +26,8 @@ let
     }
   );
 
+  notifyUsers = lib.concatStringsSep " " cfg.notify.users;
+
   nixpullPackage = pkgs.writeShellApplication {
     name = "nixpull";
     runtimeInputs = with pkgs; [
@@ -45,6 +47,85 @@ let
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
     text = builtins.readFile ./nixpull.sh;
+  };
+
+  nixpullNotifyPackage = pkgs.writeShellApplication {
+    name = "nixpull-notify";
+    runtimeInputs = with pkgs; [
+      coreutils
+      gnugrep
+      jq
+      libnotify
+      sudo
+      systemd
+    ];
+    runtimeEnv.NIXPULL_NOTIFY_USERS = notifyUsers;
+    text = ''
+      set -euo pipefail
+
+      state=/var/lib/nixpull/client/state.json
+      user=$(id -un)
+      allowed=" $NIXPULL_NOTIFY_USERS "
+      if [ -n "$NIXPULL_NOTIFY_USERS" ] && ! [[ "$allowed" == *" $user "* ]]; then
+        exit 0
+      fi
+
+      [ -r "$state" ] || exit 0
+
+      activatable=$(jq -r '.fetched.activatablePath // empty' "$state")
+      toplevel=$(jq -r '.fetched.toplevelPath // empty' "$state")
+      built_at=$(jq -r '.fetched.builtAt // "unknown"' "$state")
+      branch=$(jq -r '.fetched.gitBranch // empty' "$state")
+      rev=$(jq -r '.fetched.gitRev // empty' "$state")
+      host=$(jq -r '.host // "unknown"' "$state")
+      [ -n "$activatable" ] || exit 0
+
+      current=$(readlink /run/current-system 2>/dev/null || true)
+      if [ -n "$toplevel" ] && [ "$current" = "$toplevel" ]; then
+        exit 0
+      fi
+
+      state_home=''${XDG_STATE_HOME:-$HOME/.local/state}/nixpull
+      dismissed="$state_home/dismissed"
+      if [ -f "$dismissed" ] && grep -Fxq "$activatable" "$dismissed"; then
+        exit 0
+      fi
+
+      summary="NixOS update ready"
+      printf -v body 'Host: %s\nBuilt: %s' "$host" "$built_at"
+      if [ -n "$branch" ] || [ -n "$rev" ]; then
+        short_rev=''${rev:0:8}
+        printf -v body '%s\nSource: %s@%s' "$body" "''${branch:-unknown}" "''${short_rev:-unknown}"
+      fi
+
+      action=$(
+        notify-send \
+          --app-name=nixpull \
+          --icon=software-update-available \
+          --urgency=normal \
+          --expire-time=0 \
+          --hint=string:x-canonical-private-synchronous:nixpull-update \
+          --action=apply=Apply \
+          --action=dismiss=Dismiss \
+          --wait \
+          "$summary" \
+          "$body" || true
+      )
+
+      case "$action" in
+        apply)
+          if sudo -n ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
+            notify-send --app-name=nixpull --icon=software-update-available "Applying NixOS update" "nixpull-apply.service started"
+          else
+            notify-send --app-name=nixpull --icon=dialog-error --urgency=critical "NixOS update failed" "Could not start nixpull-apply.service"
+          fi
+          ;;
+        dismiss)
+          mkdir -p "$state_home"
+          printf '%s\n' "$activatable" >>"$dismissed"
+          ;;
+      esac
+    '';
   };
 in
 {
@@ -203,6 +284,21 @@ in
         description = "deploy-rs temporary path used by magic rollback.";
       };
     };
+
+    notify = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Notify GUI users when a fetched nixpull update is ready to apply.";
+      };
+
+      users = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = [ "richen" ];
+        description = "Users allowed to receive nixpull update notifications and start the apply service.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable (
@@ -221,12 +317,16 @@ in
 
         environment.systemPackages = [ nixpullPackage ];
 
-        systemd.tmpfiles.rules = [
-          "d /var/lib/nixpull 0755 root root -"
-          "d /var/lib/nixpull/builder 0755 root root -"
-          "d /var/lib/nixpull/client 0755 root root -"
-          "d ${toString cfg.activation.tempPath} 0755 root root -"
-        ];
+        systemd.tmpfiles.rules =
+          [
+            "d /var/lib/nixpull 0755 root root -"
+            "d /var/lib/nixpull/client 0755 root root -"
+            "d ${toString cfg.activation.tempPath} 0755 root root -"
+          ]
+          ++ lib.optionals (cfg.role == "builder") [
+            "d /var/lib/nixpull/builder 0755 ${cfg.server.user} root -"
+            "Z /var/lib/nixpull/builder - ${cfg.server.user} root -"
+          ];
       }
 
       (lib.mkIf (cfg.role == "builder") {
@@ -243,7 +343,7 @@ in
           description = "Build deploy-rs activatable NixOS profiles for nixpull";
           serviceConfig = {
             Type = "oneshot";
-            User = "root";
+            User = cfg.server.user;
             StateDirectory = "nixpull";
             WorkingDirectory = cfg.flake;
           };
@@ -280,7 +380,7 @@ in
           };
         };
 
-        systemd.services.nixpull-apply = lib.mkIf cfg.activation.autoApply {
+        systemd.services.nixpull-apply = {
           description = "Activate latest published nixpull profile";
           serviceConfig = {
             Type = "oneshot";
@@ -289,6 +389,35 @@ in
           };
           script = "${nixpullPackage}/bin/nixpull pull";
         };
+
+        systemd.user.paths.nixpull-notify = lib.mkIf cfg.notify.enable {
+          wantedBy = [ "default.target" ];
+          pathConfig = {
+            PathChanged = "/var/lib/nixpull/client/state.json";
+            Unit = "nixpull-notify.service";
+          };
+        };
+
+        systemd.user.services.nixpull-notify = lib.mkIf cfg.notify.enable {
+          description = "Notify about fetched nixpull updates";
+          wantedBy = [ "default.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${nixpullNotifyPackage}/bin/nixpull-notify";
+          };
+        };
+
+        security.sudo.extraRules = lib.mkIf (cfg.notify.enable && cfg.notify.users != [ ]) [
+          {
+            users = cfg.notify.users;
+            commands = [
+              {
+                command = "${pkgs.systemd}/bin/systemctl start nixpull-apply.service";
+                options = [ "NOPASSWD" ];
+              }
+            ];
+          }
+        ];
       })
     ]
   );
