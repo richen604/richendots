@@ -62,6 +62,7 @@
     pkgs.less
     pkgs.ripgrep
     pkgs.jq
+    pkgs.gh
 
     # system utilities
     pkgs.killall

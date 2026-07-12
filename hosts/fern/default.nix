@@ -55,6 +55,10 @@
     enable = true;
     role = "client";
     server.user = "richen";
+    notify = {
+      enable = true;
+      users = [ "richen" ];
+    };
   };
 
   system.stateVersion = pkgs.lib.mkDefault "26.05";

@@ -4,6 +4,39 @@
   richenLib,
   ...
 }:
+let
+  chromiumX11 = pkgs.symlinkJoin {
+    name = "ungoogled-chromium-x11";
+    paths = [ pkgs.ungoogled-chromium ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/chromium \
+        --unset NIXOS_OZONE_WL \
+        --add-flags "--ozone-platform=x11"
+    '';
+  };
+
+  equibopX11 = pkgs.symlinkJoin {
+    name = "equibop-x11";
+    paths = [ pkgs.equibop ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/equibop \
+        --unset NIXOS_OZONE_WL \
+        --set ELECTRON_OZONE_PLATFORM_HINT x11 \
+        --add-flags "--ozone-platform=x11"
+    '';
+  };
+
+  catppuccinGtkPython = pkgs.python313.override {
+    packageOverrides = _pyFinal: pyPrev: {
+      catppuccin = pyPrev.catppuccin.overridePythonAttrs (_old: {
+        doCheck = false;
+        pythonImportsCheck = [ ];
+      });
+    };
+  };
+in
 {
 
   imports = [
@@ -30,6 +63,7 @@
     })
     (pkgs.catppuccin-gtk.override {
       accents = [ "green" ];
+      python3 = catppuccinGtkPython;
       size = "compact";
       variant = "mocha";
     })
@@ -79,7 +113,7 @@
     pkgs.spicetify-cli
 
     # social apps
-    pkgs.equibop
+    equibopX11
 
     # other utils
     pkgs.kdePackages.kdeconnect-kde
@@ -143,7 +177,7 @@
     pkgs.wayland-pipewire-idle-inhibit
 
     pkgs.piper
-    pkgs.ungoogled-chromium
+    chromiumX11
     pkgs.prismlauncher
   ];
 

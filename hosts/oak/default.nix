@@ -67,6 +67,10 @@
     enable = true;
     role = "client";
     server.user = "richen";
+    notify = {
+      enable = true;
+      users = [ "richen" ];
+    };
   };
 
   system.stateVersion = "26.05";
