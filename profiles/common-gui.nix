@@ -69,39 +69,6 @@ in
     })
     pkgs.hicolor-icon-theme
 
-    # qt6 deps
-    pkgs.kdePackages.qt6ct
-    pkgs.kdePackages.qtbase
-    pkgs.kdePackages.qtwayland
-    pkgs.kdePackages.qtstyleplugin-kvantum
-    pkgs.kdePackages.breeze-icons
-    pkgs.kdePackages.qtimageformats
-    pkgs.kdePackages.qtsvg
-    pkgs.kdePackages.ffmpegthumbs
-    pkgs.kdePackages.kde-cli-tools
-    pkgs.kdePackages.kdegraphics-thumbnailers
-    pkgs.kdePackages.kimageformats
-    pkgs.kdePackages.kio
-    pkgs.kdePackages.kio-fuse
-    pkgs.kdePackages.kio-extras
-    pkgs.kdePackages.kwayland
-    pkgs.kdePackages.plasma-integration
-    pkgs.kdePackages.dolphin-plugins
-
-    # qt5 deps (for apps still using Qt5)
-    pkgs.qt5.qtbase
-    pkgs.qt5.qtwayland
-    # todo: package gone?
-    # pkgs.qt5.qtstyleplugin-kvantum
-
-    # dolphin
-    pkgs.kdePackages.dolphin
-    pkgs.icoutils
-    pkgs.kdePackages.kdesdk-thumbnailers
-    pkgs.libappimage
-    pkgs.resvg
-    pkgs.taglib
-
     # gtk deps
     pkgs.gtk3
     pkgs.gtk4
@@ -135,7 +102,6 @@ in
     # desktop integration
     pkgs.xdg-utils
     pkgs.desktop-file-utils
-    pkgs.kdePackages.ark
 
     # notifications/display
     pkgs.libnotify
@@ -264,8 +230,6 @@ in
     GTK_THEME = "catppuccin-mocha-green-compact";
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-    QT_QPA_PLATFORMTHEME = "qt6ct";
-    QT_STYLE_OVERRIDE = "kvantum";
     GTK_BACKEND = "wayland;x11";
     SDL_VIDEODRIVER = "wayland";
     CLUTTER_BACKEND = "wayland";
@@ -274,8 +238,8 @@ in
 
   # default apps
   xdg.mime.defaultApplications = {
-    "text/plain" = "org.kde.dolphin.desktop";
-    "inode/directory" = "org.kde.dolphin.desktop";
+    "text/plain" = "nvim.desktop";
+    "inode/directory" = "yazi-kitty.desktop";
     "application/pdf" = "firefox.desktop";
     "text/html" = "firefox.desktop";
     "x-scheme-handler/http" = "firefox.desktop";
@@ -331,10 +295,6 @@ in
       directory = "/home/richen";
       clobberFiles = true;
       files = {
-        # todo: apparently these can go to /share/Kvantum
-        ".config/Kvantum".source = ./config/Kvantum;
-        ".config/kdeglobals".source = ./config/kdeglobals;
-        ".config/qt6ct".source = ./config/qt6ct;
         ".config/equibop/themes/system24-grove.css".source = ./config/equibop/system24-grove.css;
         ".config/spicetify/config-xpui.ini" = {
           type = "copy";
