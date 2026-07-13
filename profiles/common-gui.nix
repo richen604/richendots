@@ -283,10 +283,6 @@ in
       xdg-desktop-portal-gtk
     ];
     wlr.enable = true;
-    configPackages = [
-      richenLib.wrappers.mango
-      richenLib.wrappers.mango-laptop
-    ];
   };
 
   hjem = {

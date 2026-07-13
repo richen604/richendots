@@ -37,4 +37,8 @@
   hjem.users.richen.files.".config/mango/config.conf".source =
     pkgs.writeText "config.conf" richenLib.wrappers.mango.config.content;
 
+  xdg.portal.configPackages = [
+    richenLib.wrappers.mango
+  ];
+
 }
