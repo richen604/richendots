@@ -88,12 +88,16 @@
         system:
         let
           pkgs = richenLib.pkgsFor system;
-          _richenLib = richenLib.mkLib pkgs;
-          wrappers = _richenLib.wrappers;
         in
         pkgs.mkShellNoCC {
           allowSubstitutes = false;
-          packages = builtins.attrValues wrappers;
+          packages = with pkgs; [
+            deadnix
+            git
+            nil
+            nixfmt
+            statix
+          ];
         }
       );
     }
