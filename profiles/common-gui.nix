@@ -5,6 +5,48 @@
   ...
 }:
 let
+  defaultMimeApplications = {
+    "inode/directory" = "yazi-kitty.desktop";
+
+    "text/plain" = "nvim.desktop";
+    "text/markdown" = "nvim.desktop";
+    "text/x-markdown" = "nvim.desktop";
+    "text/csv" = "nvim.desktop";
+    "text/css" = "nvim.desktop";
+    "text/xml" = "nvim.desktop";
+    "application/json" = "nvim.desktop";
+    "application/javascript" = "nvim.desktop";
+    "application/x-shellscript" = "nvim.desktop";
+
+    "application/pdf" = "firefox.desktop";
+    "application/xhtml+xml" = "firefox.desktop";
+    "application/xml" = "firefox.desktop";
+    "text/html" = "firefox.desktop";
+    "image/png" = "firefox.desktop";
+    "image/jpeg" = "firefox.desktop";
+    "image/gif" = "firefox.desktop";
+    "image/webp" = "firefox.desktop";
+    "image/svg+xml" = "firefox.desktop";
+    "video/mp4" = "firefox.desktop";
+    "video/webm" = "firefox.desktop";
+    "audio/mpeg" = "firefox.desktop";
+    "audio/ogg" = "firefox.desktop";
+    "audio/wav" = "firefox.desktop";
+    "x-scheme-handler/about" = "firefox.desktop";
+    "x-scheme-handler/http" = "firefox.desktop";
+    "x-scheme-handler/https" = "firefox.desktop";
+    "x-scheme-handler/mailto" = "firefox.desktop";
+
+    "application/zip" = "yazi-kitty.desktop";
+    "application/x-tar" = "yazi-kitty.desktop";
+    "application/gzip" = "yazi-kitty.desktop";
+    "application/x-bzip2" = "yazi-kitty.desktop";
+    "application/x-7z-compressed" = "yazi-kitty.desktop";
+    "application/x-rar-compressed" = "yazi-kitty.desktop";
+    "application/zstd" = "yazi-kitty.desktop";
+    "application/x-xz" = "yazi-kitty.desktop";
+  };
+
   chromiumX11 = pkgs.symlinkJoin {
     name = "ungoogled-chromium-x11";
     paths = [ pkgs.ungoogled-chromium ];
@@ -237,13 +279,9 @@ in
   };
 
   # default apps
-  xdg.mime.defaultApplications = {
-    "text/plain" = "nvim.desktop";
-    "inode/directory" = "yazi-kitty.desktop";
-    "application/pdf" = "firefox.desktop";
-    "text/html" = "firefox.desktop";
-    "x-scheme-handler/http" = "firefox.desktop";
-    "x-scheme-handler/https" = "firefox.desktop";
+  xdg.mime = {
+    defaultApplications = defaultMimeApplications;
+    addedAssociations = defaultMimeApplications;
   };
 
   programs.obs-studio = {
