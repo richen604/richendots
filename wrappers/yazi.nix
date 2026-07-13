@@ -351,7 +351,17 @@ let
       "FileManager"
       "FileTools"
     ];
-    mimeTypes = [ "inode/directory" ];
+    mimeTypes = [
+      "inode/directory"
+      "application/zip"
+      "application/x-tar"
+      "application/gzip"
+      "application/x-bzip2"
+      "application/x-7z-compressed"
+      "application/x-rar-compressed"
+      "application/zstd"
+      "application/x-xz"
+    ];
   };
 in
 pkgs.symlinkJoin {
