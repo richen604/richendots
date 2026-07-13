@@ -7,7 +7,6 @@
 }:
 let
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
-  mangoModule = pkgs.callPackage ./module.nix { inherit inputs richenLib; };
   oakDisplayLayout = pkgs.writeShellScriptBin "oak-display-layout" ''
     mode="''${1:-dock}"
     outputs="$(${pkgs.wlr-randr}/bin/wlr-randr --json)"
@@ -156,10 +155,12 @@ let
   '';
   fullConfig = config + "\n" + mangoBase;
 in
-(mangoModule.apply {
-  pkgs = pkgs // {
-    mangowc = inputs.mango.packages.${pkgs.system}.mango;
-  };
-  configFile.path = "/home/richen/.config/mango/config.conf";
-  "config.conf".content = fullConfig;
-}).wrapper
+inputs.wrappers.lib.wrapPackage {
+  inherit pkgs;
+  package = inputs.mango.packages.${pkgs.system}.mango;
+  flags."-c" = "/home/richen/.config/mango/config.conf";
+  filesToPatch = [
+    "share/wayland-sessions/mango.desktop"
+  ];
+  passthru.config.content = fullConfig;
+}
