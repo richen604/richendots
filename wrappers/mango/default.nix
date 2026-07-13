@@ -6,7 +6,6 @@
 }:
 let
   mangoBase = pkgs.callPackage ./_base-config.nix { };
-  mangoModule = pkgs.callPackage ./module.nix { inherit inputs; };
   config = ''
     exec-once=systemctl --user start sunshine.service
 
@@ -101,10 +100,12 @@ let
 
   fullConfig = mangoBase + "\n" + config;
 in
-(mangoModule.apply {
-  pkgs = pkgs // {
-    mangowc = inputs.mango.packages.${pkgs.system}.mango;
-  };
-  configFile.path = "$HOME/.config/mango/config.conf";
-  "config.conf".content = fullConfig;
-}).wrapper
+inputs.wrappers.lib.wrapPackage {
+  inherit pkgs;
+  package = inputs.mango.packages.${pkgs.system}.mango;
+  flags."-c" = "$HOME/.config/mango/config.conf";
+  filesToPatch = [
+    "share/wayland-sessions/mango.desktop"
+  ];
+  passthru.config.content = fullConfig;
+}

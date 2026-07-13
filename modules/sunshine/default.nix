@@ -1,15 +1,10 @@
 {
-  inputs,
   pkgs,
   richenLib,
   ...
 }:
 let
-  sunshinePkgs = import inputs.sunshineNixpkgs {
-    system = pkgs.stdenv.hostPlatform.system;
-    config.allowUnfree = true;
-  };
-  sunshinePackage = sunshinePkgs.sunshine.override {
+  sunshinePackage = pkgs.sunshine.override {
     cudaSupport = true;
   };
   headlessStreamScriptPath = pkgs.lib.makeBinPath [
