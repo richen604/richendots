@@ -18,7 +18,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-    mnw.url = "github:Gerg-L/mnw";
+    nix-doom-emacs-unstraightened = {
+      url = "github:marienz/nix-doom-emacs-unstraightened";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     wrappers = {
       url = "github:lassulus/wrappers";
       inputs.nixpkgs.follows = "nixpkgs";
