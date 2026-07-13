@@ -11,10 +11,19 @@
     richendots-private = {
       #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       url = "path:/mnt/dev/richendots-private";
+      inputs.nixarr.inputs.nixpkgs.follows = "nixpkgs";
+      inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     };
-    mango.url = "github:DreamMaoMao/mango/bb0160d7cf1187f1d3292adbed51d834c6a31471";
+    mango = {
+      url = "github:DreamMaoMao/mango/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
     mnw.url = "github:Gerg-L/mnw";
-    wrappers.url = "github:lassulus/wrappers";
+    wrappers = {
+      url = "github:lassulus/wrappers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";

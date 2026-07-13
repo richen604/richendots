@@ -21,10 +21,9 @@
       spacing = 8;
     };
     "modules-left" = [
-      # "dwl/tags"
-      "ext/workspaces"
+      "mango/workspaces"
       "wlr/taskbar"
-      "dwl/window"
+      "mango/window"
     ];
     "modules-center" = [
       "custom/playerctl"
@@ -43,17 +42,13 @@
       "custom/notification"
       "custom/power"
     ];
-    "dwl/tags" = {
-      "num-tags" = 9;
+    "mango/window" = {
+      format = "{title}";
     };
-    "dwl/window" = {
-      format = "{}";
-    };
-    "ext/workspaces" = {
-      "format" = "{icon}";
-      "ignore-hidden" = true;
+    "mango/workspaces" = {
+      "format" = "{value}";
+      "hide-empty" = true;
       "on-click" = "activate";
-      "sort-by-id" = true;
     };
     "custom/notification" = {
       tooltip = false;
@@ -125,8 +120,8 @@
       interval = 2;
       "format-wifi" = "{essid} ({signalStrength}%)";
       "format-ethernet" = "󰈀 {ifname}";
-      "format-linked" = "\uf059 No IP ({ifname})";
-      "format-disconnected" = "\uf071 Disconnected";
+      "format-linked" = " No IP ({ifname})";
+      "format-disconnected" = " Disconnected";
       "tooltip-format" = "{ifname} {ipaddr}/{cidr} via {gwaddr}";
       "format-alt" = "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}";
     };

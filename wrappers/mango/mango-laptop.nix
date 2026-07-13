@@ -158,7 +158,7 @@ let
 in
 (mangoModule.apply {
   pkgs = pkgs // {
-    mangowc = pkgs.callPackage ./_package.nix { inherit inputs; };
+    mangowc = inputs.mango.packages.${pkgs.system}.mango;
   };
   configFile.path = "/home/richen/.config/mango/config.conf";
   "config.conf".content = fullConfig;
