@@ -44,6 +44,7 @@
     richenLib.wrappers.keepassxc
     richenLib.wrappers.git
     richenLib.wrappers.nvim
+    richenLib.wrappers.yazi
 
     # other utils
     pkgs.tealdeer
