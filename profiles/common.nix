@@ -101,7 +101,6 @@
     pkgs.sshfs
     pkgs.lazygit
     pkgs.nixd
-    pkgs.moonlight-qt
   ];
 
   programs.git = {
