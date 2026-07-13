@@ -19,7 +19,7 @@ let
   # AUTOSTART APPLICATIONS
   # ============================================
   autostart = ''
-    exec-once=waybar
+    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP MANGO_INSTANCE_SIGNATURE; ${pkgs.systemd}/bin/systemctl --user start waybar.service'
     exec-once=swaybg
     exec-once=systemctl start --user swaync.service
     exec-once=vicinae server
@@ -34,7 +34,7 @@ let
     exec-once=kdeconnect-indicator
     exec-once=keepassxc
     exec-once=blueman-applet
-    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP; ${pkgs.systemd}/bin/systemctl --user start swayidle.service'
+    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP MANGO_INSTANCE_SIGNATURE; ${pkgs.systemd}/bin/systemctl --user start swayidle.service'
     exec-once=equibop
     exec-once=yubikey-touch-detector -libnotify
   '';

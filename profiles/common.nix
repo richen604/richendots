@@ -253,7 +253,7 @@
         </fontconfig>
       '';
       defaultFonts = {
-        monospace = [ "GohuFont uni14 Nerd Font Propo" ];
+        monospace = [ "GohuFont uni14 Nerd Font" ];
         sansSerif = [ "GohuFont uni14 Nerd Font Propo" ];
         serif = [ "GohuFont uni14 Nerd Font Propo" ];
       };

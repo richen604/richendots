@@ -9,7 +9,7 @@
   "kitty.conf".content = ''
     shell zsh
     # font settings
-    font_family GohuFont uni14 Nerd Font Propo
+    font_family GohuFont uni14 Nerd Font
     bold_font auto
     italic_font auto
     bold_italic_font auto

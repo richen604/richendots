@@ -26,8 +26,8 @@ in
     };
     font = {
       normal = {
-        size = 10;
-        normal = "Gohu Font 11 Nerd Font";
+        size = 11;
+        family = "GohuFont 11 Nerd Font";
       };
     };
   };
