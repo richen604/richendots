@@ -150,7 +150,6 @@ in
     pkgs.playerctl
 
     # media/utilities
-    pkgs.wf-recorder
     pkgs.dpms-off
 
     # custom scripts
@@ -260,10 +259,7 @@ in
     addedAssociations = defaultMimeApplications;
   };
 
-  programs.obs-studio = {
-    enable = true;
-    enableVirtualCamera = true;
-  };
+  programs.gpu-screen-recorder.enable = true;
   services.flatpak.enable = true;
 
   programs.steam = {

@@ -16,6 +16,100 @@ let
     ${pkgs.libnotify}/bin/notify-send "Mango passthrough" "Disabled"
     mmsg dispatch setkeymode,default
   '';
+  screenRecordMenu = pkgs.writeShellScriptBin "screenrecord-menu" ''
+    set -eu
+
+    PID_FILE="''${XDG_RUNTIME_DIR:-/tmp}/gpu-screen-recorder.pid"
+    RECORDINGS_DIR="$HOME/Videos/Recordings"
+
+    recording_active() {
+      if [ -f "$PID_FILE" ]; then
+        pid="$(${pkgs.coreutils}/bin/cat "$PID_FILE")"
+        if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+          return 0
+        fi
+        ${pkgs.coreutils}/bin/rm -f "$PID_FILE"
+      fi
+      return 1
+    }
+
+    notify() {
+      ${pkgs.libnotify}/bin/notify-send "Screen recording" "$1"
+    }
+
+    stop_recording() {
+      if recording_active; then
+        pid="$(${pkgs.coreutils}/bin/cat "$PID_FILE")"
+        kill -INT "$pid"
+        ${pkgs.coreutils}/bin/rm -f "$PID_FILE"
+        notify "Stopped recording"
+      else
+        notify "No recording in progress"
+      fi
+    }
+
+    start_recording() {
+      if recording_active; then
+        notify "Already recording"
+        exit 0
+      fi
+
+      ${pkgs.coreutils}/bin/mkdir -p "$RECORDINGS_DIR"
+      file="$RECORDINGS_DIR/$(${pkgs.coreutils}/bin/date +%y%m%d_%Hh%Mm%Ss)_recording.mp4"
+
+      ${pkgs.gpu-screen-recorder}/bin/gpu-screen-recorder \
+        "$@" \
+        -c mp4 \
+        -f 60 \
+        -a default_output \
+        -q very_high \
+        -k hevc \
+        -encoder gpu \
+        -tune quality \
+        -o "$file" &
+
+      pid=$!
+      printf '%s\n' "$pid" > "$PID_FILE"
+      notify "Started recording to $file"
+    }
+
+    choose_monitor() {
+      ${pkgs.wlr-randr}/bin/wlr-randr --json \
+        | ${pkgs.jq}/bin/jq -r '.[] | select(.enabled != false) | [.name, (.description // .model // "")] | @tsv' \
+        | ${richenLib.wrappers.vicinae}/bin/vicinae dmenu --placeholder "Record monitor" \
+        | ${pkgs.coreutils}/bin/cut -f1
+    }
+
+    options() {
+      if recording_active; then
+        printf '%s\n' "Stop recording"
+      fi
+      printf '%s\n' "Selection" "Monitor" "Window/app"
+    }
+
+    choice="$(options | ${richenLib.wrappers.vicinae}/bin/vicinae dmenu --placeholder "Screen recording")"
+
+    case "$choice" in
+      "Stop recording")
+        stop_recording
+        ;;
+      "Selection")
+        region="$(${pkgs.slurp}/bin/slurp -f '%wx%h+%x+%y')" || exit 0
+        start_recording -w region -region "$region"
+        ;;
+      "Monitor")
+        monitor="$(choose_monitor)"
+        [ -n "$monitor" ] || exit 0
+        start_recording -w "$monitor"
+        ;;
+      "Window/app")
+        start_recording -w portal
+        ;;
+      *)
+        exit 0
+        ;;
+    esac
+  '';
   # ============================================
   # AUTOSTART APPLICATIONS
   # ============================================
@@ -251,26 +345,7 @@ let
       mkdir -p ~/Pictures/Screenshots
       grim -g "$GEOM" - | satty --filename -
     ''}/bin/screenshot
-    bind=SUPER+SHIFT,P,spawn,${pkgs.writeScriptBin "screenrecord-start" ''
-      #!/usr/bin/env bash
-      mkdir -p ~/Videos/Recordings
-      GEOM=$(slurp) || exit 1
-      FILENAME=~/Videos/Recordings/$(date +%y%m%d_%Hh%Mm%Ss)_recording.mp4
-      wf-recorder -g "$GEOM" -f "$FILENAME" &
-      WF_PID=$!
-      echo $WF_PID > /tmp/wf-recorder.pid
-      notify-send "Recording started" "Saving to $FILENAME"
-    ''}/bin/screenrecord-start
-    bind=SUPER+SHIFT,O,spawn,${pkgs.writeScriptBin "screenrecord-stop" ''
-      #!/usr/bin/env bash
-      if [ -f /tmp/wf-recorder.pid ]; then
-        kill -INT $(cat /tmp/wf-recorder.pid)
-        rm /tmp/wf-recorder.pid
-        notify-send "Recording stopped" "Saved to ~/Videos/Recordings/"
-      else
-        notify-send "No recording in progress" "No PID file found"
-      fi
-    ''}/bin/screenrecord-stop
+    bind=SUPER+SHIFT,P,spawn,${screenRecordMenu}/bin/screenrecord-menu
 
     # toggle waybar
     bind=SUPER+SHIFT,W,spawn,killall -SIGUSR1 .waybar-wrapped
