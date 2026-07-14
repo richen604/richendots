@@ -1,14 +1,10 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
-  swayncWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-in
-(swayncWrapper.apply {
-  pkgs = pkgs;
-  settings = {
+  config = (pkgs.formats.json { }).generate "swaync-config" {
     positionX = "right";
     positionY = "top";
     layer = "overlay";
@@ -38,7 +34,7 @@ in
     hide-on-action = true;
     script-fail-notify = false;
   };
-  "style.css".content = ''
+  style = pkgs.writeText "style.css" ''
     @define-color bg-primary rgba(14, 18, 15, 0.8);
     @define-color bg-secondary rgba(20, 40, 37, 0.8);
     @define-color bg-tertiary rgba(30, 55, 52, 1);
@@ -367,4 +363,16 @@ in
       margin: 0.25rem;
     }
   '';
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.swaynotificationcenter;
+  filesToPatch = [ "share/systemd/user/swaync.service" ];
+  flags = {
+    "-c" = config;
+    "-s" = style;
+  };
+  passthru = {
+    config.path = config;
+    style.path = style;
+  };
+}

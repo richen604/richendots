@@ -18,6 +18,7 @@ let
   '';
   screenRecordMenu = pkgs.writeShellScriptBin "screenrecord-menu" ''
     set -eu
+    export PATH=/run/current-system/sw/bin:$PATH
 
     PID_FILE="''${XDG_RUNTIME_DIR:-/tmp}/gpu-screen-recorder.pid"
     RECORDINGS_DIR="$HOME/Videos/Recordings"
@@ -76,7 +77,7 @@ let
     choose_monitor() {
       ${pkgs.wlr-randr}/bin/wlr-randr --json \
         | ${pkgs.jq}/bin/jq -r '.[] | select(.enabled != false) | [.name, (.description // .model // "")] | @tsv' \
-        | ${richenLib.wrappers.vicinae}/bin/vicinae dmenu --placeholder "Record monitor" \
+        | vicinae dmenu --placeholder "Record monitor" \
         | ${pkgs.coreutils}/bin/cut -f1
     }
 
@@ -87,7 +88,7 @@ let
       printf '%s\n' "Selection" "Monitor" "Window/app"
     }
 
-    choice="$(options | ${richenLib.wrappers.vicinae}/bin/vicinae dmenu --placeholder "Screen recording")"
+    choice="$(options | vicinae dmenu --placeholder "Screen recording")"
 
     case "$choice" in
       "Stop recording")
@@ -114,7 +115,7 @@ let
   # AUTOSTART APPLICATIONS
   # ============================================
   autostart = ''
-    exec-once=${richenLib.wrappers.waybar}/bin/waybar
+    exec-once=waybar
     exec-once=swaybg
     exec-once=systemctl start --user swaync.service
     exec-once=vicinae server

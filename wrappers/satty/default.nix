@@ -1,15 +1,11 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
   # todo: swaync nextrelease options when available
-  sattyWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-in
-(sattyWrapper.apply {
-  pkgs = pkgs;
-  settings = {
+  config = (pkgs.formats.toml { }).generate "satty-config" {
     general = {
       # Start Satty in fullscreen mode
       fullscreen = false;
@@ -147,4 +143,9 @@ in
       ];
     };
   };
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.satty;
+  flags."-c" = config;
+  passthru.config.path = config;
+}

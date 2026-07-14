@@ -1,12 +1,10 @@
 {
-  inputs,
   pkgs,
   richenLib,
   ...
 }:
-(inputs.wrappers.wrapperModules.kitty.apply {
-  pkgs = pkgs;
-  "kitty.conf".content = ''
+let
+  config = pkgs.writeText "kitty.conf" ''
     shell zsh
     # font settings
     font_family GohuFont uni14 Nerd Font
@@ -74,4 +72,9 @@
     color7      #CCFFF9
     color15     #AAF0E7
   '';
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.kitty;
+  flags."--config" = config;
+  passthru.config.path = config;
+}

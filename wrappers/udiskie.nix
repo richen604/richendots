@@ -1,15 +1,21 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
-(inputs.wrappers.wrapperModules.udiskie.apply {
-  pkgs = pkgs;
-  settings = {
+let
+  config = (pkgs.formats.yaml { }).generate "udiskie-config" {
     program_options = {
       tray = true;
       automount = true;
       notify = true;
     };
   };
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.udiskie;
+  exePath = "${pkgs.udiskie}/bin/udiskie";
+  flagSeparator = "=";
+  flags."--config" = config;
+  passthru.config.path = config;
+}

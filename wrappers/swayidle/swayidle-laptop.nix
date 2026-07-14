@@ -1,12 +1,9 @@
 {
-  inputs,
   pkgs,
   richenLib,
   ...
 }:
 let
-  swayidleWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-
   dpmsOff = pkgs.writeShellScript "dpms-off" ''
     wlr-randr | grep -E '^[^ ]' | awk '{print $1}' | while read -r output; do
       wlr-randr --output "$output" --off
@@ -18,11 +15,39 @@ let
       wlr-randr --output "$output" --on
     done
   '';
+
+  eventsToArgs =
+    events:
+    pkgs.lib.concatMap (
+      event:
+      if event.type == "timeout" then
+        [
+          "timeout"
+          (toString event.timeout)
+          event.command
+        ]
+        ++ pkgs.lib.optionals (event ? resume && event.resume != null && event.resume != "") [
+          "resume"
+          event.resume
+        ]
+      else if event.type == "idlehint" then
+        [
+          "idlehint"
+          (toString event.timeout)
+        ]
+      else
+        [
+          event.type
+          event.command
+        ]
+    ) events;
 in
-(swayidleWrapper.apply {
-  pkgs = pkgs;
-  extraArgs = [ "-w" ];
-  events = [
+richenLib.lib.wrapPackage {
+  package = pkgs.swayidle;
+  args = [
+    "-w"
+  ]
+  ++ eventsToArgs [
     # 5 minutes
     {
       type = "timeout";
@@ -74,5 +99,6 @@ in
     #   type = "idlehint";
     #   timeout = 300;
     # }
-  ];
-}).wrapper
+  ]
+  ++ [ "$@" ];
+}

@@ -264,8 +264,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1784045217,
-        "narHash": "sha256-u2DXRvKO4zhkSA5AEJgx4t/CSV22+gmDcdK0VWKc0oE=",
+        "lastModified": 1784049011,
+        "narHash": "sha256-I/nEmyknFVdGs8yj9IODy38SPByLNWGdYDPzgpkvhkA=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },
@@ -281,8 +281,7 @@
         "mango": "mango",
         "nix-doom-emacs-unstraightened": "nix-doom-emacs-unstraightened",
         "nixpkgs": "nixpkgs",
-        "richendots-private": "richendots-private",
-        "wrappers": "wrappers"
+        "richendots-private": "richendots-private"
       }
     },
     "scenefx": {
@@ -425,26 +424,6 @@
       "original": {
         "owner": "rasmus-kirk",
         "repo": "website-builder",
-        "type": "github"
-      }
-    },
-    "wrappers": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1780428045,
-        "narHash": "sha256-pMJOun/oYhXqes+B3khzRDGWuiCNiWJ25+SVW0OwzNY=",
-        "owner": "lassulus",
-        "repo": "wrappers",
-        "rev": "ce9122bf06697ade7c5087940e0c280b89dd0208",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lassulus",
-        "repo": "wrappers",
         "type": "github"
       }
     }

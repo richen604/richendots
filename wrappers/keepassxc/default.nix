@@ -1,14 +1,10 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
-  keepassxcWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
-in
-(keepassxcWrapper.apply {
-  pkgs = pkgs;
-  settings = {
+  config = (pkgs.formats.ini { }).generate "keepassxc.ini" {
     # general settings (no prefix in Config.cpp)
     General = {
       SingleInstance = true;
@@ -176,4 +172,9 @@ in
       NoLegacyKeyFileWarning = false;
     };
   };
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.keepassxc;
+  flags."--config" = config;
+  passthru.config.path = config;
+}

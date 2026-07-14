@@ -1,12 +1,10 @@
 {
-  inputs,
   pkgs,
   richenLib,
   ...
 }:
-(inputs.wrappers.wrapperModules.waybar.apply {
-  pkgs = pkgs;
-  settings = {
+let
+  config = (pkgs.formats.json { }).generate "waybar-config" {
     layer = "top";
     position = "top";
     exclusive = true;
@@ -215,7 +213,7 @@
       "max-length" = 25;
     };
   };
-  "style.css".content = ''
+  style = pkgs.writeText "style.css" ''
 
     @define-color bar-background rgba(0, 0, 0, 0.1);
     @define-color background rgba(14,18,15,0.4);
@@ -546,4 +544,16 @@
       padding-right: 14px;
     }
   '';
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.waybar;
+  filesToPatch = [ "share/systemd/user/waybar.service" ];
+  flags = {
+    "--config" = config;
+    "--style" = style;
+  };
+  passthru = {
+    config.path = config;
+    style.path = style;
+  };
+}

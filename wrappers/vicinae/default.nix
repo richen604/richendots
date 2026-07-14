@@ -1,13 +1,9 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
-  vicinae = pkgs.callPackage ./module.nix { inherit inputs; };
-in
-(vicinae.apply {
-  pkgs = pkgs;
   settings = {
     close_on_focus_loss = false;
     consider_preedit = true;
@@ -31,10 +27,7 @@ in
       };
     };
   };
-  env = {
-    USE_LAYER_SHELL = "1";
-    QT_SCALE_FACTOR = "1.2";
-  };
+  config = (pkgs.formats.json { }).generate "custom-vicinae-config" settings;
   themes = {
     forest-green = {
       meta = {
@@ -66,4 +59,28 @@ in
       };
     };
   };
-}).wrapper
+  themeFiles = pkgs.lib.mapAttrsToList (name: value: {
+    inherit name;
+    path = (pkgs.formats.toml { }).generate "vicinae-theme-${name}" value;
+  }) themes;
+  themesPackage = pkgs.runCommand "vicinae-custom-themes" { } ''
+    mkdir -p $out/share/vicinae/themes
+    ${pkgs.lib.concatMapStringsSep "\n" (theme: ''
+      cp ${theme.path} $out/share/vicinae/themes/${theme.name}.toml
+    '') themeFiles}
+  '';
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.vicinae;
+  filesToPatch = [ "share/systemd/user/vicinae.service" ];
+  env = {
+    USE_LAYER_SHELL = "1";
+    QT_SCALE_FACTOR = "1.2";
+    VICINAE_OVERRIDES = config;
+    XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
+  };
+  passthru = {
+    config.path = config;
+    inherit themesPackage;
+  };
+}
