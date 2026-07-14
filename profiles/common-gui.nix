@@ -271,6 +271,7 @@ in
   # mango compositor requirements
   programs.xwayland.enable = true;
   services.graphical-desktop.enable = true;
+  services.speechd.enable = false;
 
   xdg.portal = {
     enable = true;
