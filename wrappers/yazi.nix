@@ -138,14 +138,6 @@ let
           run = "plugin zoom -1";
           desc = "Zoom preview out";
         }
-        {
-          on = [
-            "g"
-            "k"
-          ];
-          run = "plugin kdeconnect-send";
-          desc = "Send with KDE Connect";
-        }
       ];
 
       theme = {
@@ -326,10 +318,6 @@ let
         {
           name = "plugins/zoom.yazi";
           file.path = pkgs.yaziPlugins.zoom;
-        }
-        {
-          name = "plugins/kdeconnect-send.yazi";
-          file.path = pkgs.yaziPlugins.kdeconnect-send;
         }
         {
           name = "plugins/wl-clipboard.yazi";
