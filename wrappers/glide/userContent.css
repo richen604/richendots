@@ -1,0 +1,129 @@
+:root {
+  --theme-bg: #0e120f;
+  --theme-bg-secondary: #142825;
+  --theme-border: #295233;
+  --theme-accent: #9ae6ad;
+  --theme-accent-alt: #578f65;
+  --theme-text: #ccfff9;
+  --theme-text-alt: #aaf0e7;
+  --theme-font-family: "GohuFont uni14 Nerd Font Propo";
+  --theme-ascii-font-family: "GohuFont uni14 Nerd Font", "Fira Code", monospace;
+  --theme-border-width: 2px;
+  --theme-border-radius: 0px;
+  --theme-newtab-logo: "@textfox-logo@";
+}
+
+@-moz-document url("about:home"), url("about:newtab") {
+  :root,
+  body,
+  #root,
+  .activity-stream,
+  .outer-wrapper {
+    background: var(--theme-bg) !important;
+    color: var(--theme-text) !important;
+    font-family: var(--theme-font-family), monospace !important;
+  }
+
+  body {
+    --newtab-background-color: var(--theme-bg) !important;
+    --newtab-background-color-secondary: var(--theme-bg-secondary) !important;
+    --newtab-border-color: var(--theme-border) !important;
+    --newtab-element-hover-color: #1e3734 !important;
+    --newtab-text-primary-color: var(--theme-text) !important;
+    --newtab-text-secondary-color: var(--theme-text-alt) !important;
+    --newtab-contextual-text-primary-color: var(--theme-text) !important;
+    --newtab-contextual-text-secondary-color: var(--theme-text-alt) !important;
+    --newtab-primary-action-background: var(--theme-accent-alt) !important;
+    --newtab-primary-action-background-pocket: var(--theme-accent-alt) !important;
+  }
+
+  .logo-and-wordmark {
+    align-items: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-bottom: 2rem !important;
+    max-width: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  .logo-and-wordmark .logo {
+    display: none !important;
+  }
+
+  .logo-and-wordmark .wordmark {
+    background: none !important;
+    display: flex !important;
+    height: auto !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  .logo-and-wordmark .wordmark::before {
+    color: var(--theme-accent);
+    content: var(--theme-newtab-logo);
+    display: block;
+    font-family: var(--theme-ascii-font-family) !important;
+    font-size: clamp(0.38rem, 1.35vw, 1.05rem);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    overflow: visible;
+    text-align: left;
+    text-shadow: 0 0 22px color-mix(in srgb, var(--theme-accent) 30%, transparent);
+    white-space: pre;
+    width: max-content;
+  }
+
+  .search-wrapper .search-handoff-button,
+  .search-wrapper input,
+  .top-site-outer .tile,
+  .context-menu,
+  .card-outer,
+  .ds-card,
+  .weatherCard {
+    background-color: var(--theme-bg-secondary) !important;
+    border: var(--theme-border-width) solid var(--theme-border) !important;
+    border-radius: var(--theme-border-radius) !important;
+    box-shadow: none !important;
+    color: var(--theme-text) !important;
+  }
+
+  .search-wrapper .search-handoff-button:hover,
+  .search-wrapper input:hover,
+  .top-site-outer .tile:hover,
+  .card-outer:hover,
+  .ds-card:hover {
+    background-color: #1e3734 !important;
+    border-color: var(--theme-accent) !important;
+  }
+
+  .search-wrapper .search-inner-wrapper {
+    margin-top: 4lh !important;
+  }
+
+  .search-wrapper .search-button,
+  .top-site-outer .top-site-icon,
+  .icon,
+  .section-title span,
+  .compact-cards .card-outer .card-host-name,
+  .card-outer .card-title {
+    color: var(--theme-text) !important;
+    fill: var(--theme-text) !important;
+  }
+
+  .top-site-outer .top-site-icon,
+  .top-site-outer .screenshot,
+  .top-site-outer .default-icon {
+    background-color: transparent !important;
+  }
+
+  .card-outer .card-context,
+  .personalize-button {
+    display: none !important;
+  }
+}

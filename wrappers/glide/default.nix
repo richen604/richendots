@@ -3,6 +3,15 @@ let
   version = "0.1.63a";
   policies = import ../firefox/policies.nix;
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
+  keepassxcNativeMessagingManifest = pkgs.writeText "org.keepassxc.keepassxc_browser.json" (
+    builtins.toJSON {
+      name = "org.keepassxc.keepassxc_browser";
+      description = "KeePassXC integration with native messaging support";
+      path = "${pkgs.keepassxc}/bin/keepassxc-proxy";
+      type = "stdio";
+      allowed_extensions = [ "keepassxc-browser@keepassxc.org" ];
+    }
+  );
   text = ''
              __            __                             ______                    
              /  |          /  |                           /      \                   
@@ -13,7 +22,10 @@ let
     $$ |      $$ |$$ \_____ $$ |  $$ |$$$$$$$$/ $$ |  $$ |$$ |    $$ \__$$ | /$$$$  \ 
     $$/       $$/  $$$$$$$/ $$/   $$/  $$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/   $$/ 
   '';
-  chromeCss = pkgs.replaceVars ../firefox/userChrome.css {
+  chromeCss = pkgs.replaceVars ./userChrome.css {
+    "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
+  };
+  contentCss = pkgs.replaceVars ./userContent.css {
     "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
   };
   graphicsLibraryPath = pkgs.lib.makeLibraryPath [
@@ -89,7 +101,11 @@ pkgs.stdenv.mkDerivation {
     profile="\''${XDG_CONFIG_HOME:-\$HOME/.config}/glide"
     mkdir -p "\$profile/chrome"
     ln -sf ${./glide.ts} "\$profile/glide.ts"
+    ln -sf ${./tsconfig.json} "\$profile/tsconfig.json"
     ln -sf ${chromeCss} "\$profile/chrome/userChrome.css"
+    ln -sf ${contentCss} "\$profile/chrome/userContent.css"
+    mkdir -p "\$HOME/.glide-browser/native-messaging-hosts"
+    ln -sf ${keepassxcNativeMessagingManifest} "\$HOME/.glide-browser/native-messaging-hosts/org.keepassxc.keepassxc_browser.json"
     exec $out/lib/glide-browser-${version}/glide-unwrapped --profile "\$profile" "\$@"
     EOF
     chmod +x $out/bin/glide
@@ -107,7 +123,8 @@ pkgs.stdenv.mkDerivation {
     Icon=glide
     Terminal=false
     Categories=Network;WebBrowser;
-    MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/pdf;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/about;
+    MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/pdf;image/png;image/jpeg;image/gif;image/webp;image/svg+xml;video/mp4;video/webm;audio/mpeg;audio/ogg;audio/wav;x-scheme-handler/about;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/mailto;
+    Keywords=web;browser;internet;
     StartupNotify=true
     EOF
 
