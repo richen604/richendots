@@ -150,7 +150,7 @@ let
               );
 
               flagsString = lib.optionalString (args != [ ]) (
-                " \\\n+  " + lib.concatStringsSep " \\\n+  " (map self.lib.escapeShellArgWithEnv args)
+                " " + lib.concatStringsSep " " (map self.lib.escapeShellArgWithEnv args)
               );
 
               finalWrapper = wrapper {

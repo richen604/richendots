@@ -1,5 +1,12 @@
 { richenLib, pkgs, ... }:
 {
+  imports = [
+    (import ../wrappers/mango/_session.nix {
+      inherit pkgs richenLib;
+      waybarPackage = richenLib.wrappers.waybar-laptop;
+      swayidlePackage = richenLib.wrappers.swayidle-laptop;
+    })
+  ];
 
   #packages
   environment.systemPackages = [

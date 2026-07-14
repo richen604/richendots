@@ -115,22 +115,7 @@ let
   # AUTOSTART APPLICATIONS
   # ============================================
   autostart = ''
-    exec-once=waybar
-    exec-once=swaybg
-    exec-once=systemctl start --user swaync.service
-    exec-once=vicinae server
-    exec-once=wl-clip-persist --clipboard regular --reconnect-tries 0
-    exec-once=wl-paste --type text --watch cliphist store
-    exec-once=wl-paste --type image --watch cliphist store
-    exec-once=wlsunset -l 49.2 -L -123.1
-    exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
-    exec-once=udiskie -t
-    exec-once=nm-applet
-    exec-once=keepassxc
-    exec-once=blueman-applet
-    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP MANGO_INSTANCE_SIGNATURE; ${pkgs.systemd}/bin/systemctl --user start swayidle.service'
-    exec-once=equibop
-    exec-once=yubikey-touch-detector -libnotify
+    exec-once=mango-start-session
   '';
 
   # ============================================
