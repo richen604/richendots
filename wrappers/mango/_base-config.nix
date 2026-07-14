@@ -125,8 +125,6 @@ let
     exec-once=${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
     exec-once=udiskie -t
     exec-once=nm-applet
-    exec-once=kdeconnectd
-    exec-once=kdeconnect-indicator
     exec-once=keepassxc
     exec-once=blueman-applet
     exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP MANGO_INSTANCE_SIGNATURE; ${pkgs.systemd}/bin/systemctl --user start swayidle.service'

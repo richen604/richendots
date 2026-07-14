@@ -146,18 +146,11 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [
-      # KDE Connect
-      1716
-    ];
+    allowedTCPPorts = [ ];
     allowedUDPPorts = [
       # DHCP
       68
       546
-      # KDE Connect
-      1714
-      1715
-      1716
     ];
   };
   nix = {

@@ -103,7 +103,6 @@ in
     pkgs.equibop
 
     # other utils
-    pkgs.kdePackages.kdeconnect-kde
     pkgs.wlogout
 
     # wayland tools
