@@ -203,6 +203,10 @@
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/keepassxc-browser/latest.xpi";
       installation_mode = "force_installed";
     };
+    "firefoxpwa@filips.si" = {
+      install_url = "https://addons.mozilla.org/firefox/downloads/file/4864693/pwas_for_firefox-2.18.4.xpi";
+      installation_mode = "force_installed";
+    };
     "sponsorBlocker@ajay.app" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/sponsorblock/latest.xpi";
       installation_mode = "force_installed";
