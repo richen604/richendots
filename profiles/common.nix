@@ -29,7 +29,6 @@
 
   environment.systemPackages = [
     # yubikey tools
-    pkgs.yubikey-manager
     pkgs.yubikey-personalization
     pkgs.yubikey-touch-detector
 
@@ -142,7 +141,6 @@
       '';
     };
   };
-
 
   # networking
   networking.networkmanager.enable = true;

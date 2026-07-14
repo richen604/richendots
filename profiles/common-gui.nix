@@ -96,6 +96,7 @@ in
     richenLib.wrappers.glide
     richenLib.wrappers.keepassxc
     richenLib.wrappers.udiskie
+    pkgs.yubikey-manager
 
     # cursor, icon, gtk themes
     pkgs.bibata-cursors
