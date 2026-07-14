@@ -88,7 +88,7 @@ in
   sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-    BROWSER = "firefox";
+    BROWSER = "glide";
     PAGER = "less";
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
