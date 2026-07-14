@@ -238,7 +238,7 @@ let
     # Applications
     bind=SUPER,T,spawn,kitty
     bind=SUPER,E,spawn,zeditor
-    bind=SUPER,B,spawn,firefox
+    bind=SUPER,B,spawn,glide
     bind=SUPER,L,spawn,swaylock
     bind=SUPER,A,spawn,vicinae toggle
     bind=SUPER,V,spawn,vicinae vicinae://launch/clipboard/history
