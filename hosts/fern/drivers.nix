@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   ...
 }:
 {
@@ -15,6 +16,13 @@
     graphics = {
       enable = true;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        libva
+        libva-vdpau-driver
+        nvidia-vaapi-driver
+        vulkan-loader
+        vulkan-tools
+      ];
     };
 
     nvidia = {
