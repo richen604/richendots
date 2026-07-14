@@ -73,7 +73,8 @@ in
       "keepassxc.service"
       "equibop.service"
       "yubikey-touch-detector.service"
-    ] ++ extraWantedServices;
+    ]
+    ++ extraWantedServices;
   };
 
   systemd.user.services = {
@@ -116,6 +117,7 @@ in
       serviceConfig = {
         ExecStart = "${richenLib.wrappers.vicinae}/bin/vicinae server --replace";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
+        Environment = "PATH=${sessionPath}";
         Restart = "always";
         RestartSec = 60;
         KillMode = "process";
