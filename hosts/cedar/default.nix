@@ -8,11 +8,10 @@
 
   networking.networkmanager.enable = true;
   networking.interfaces.wlp3s0.wakeOnLan.enable = true;
-
-
   users.users.richen.extraGroups = [ "docker" ];
 
   virtualisation.docker.enable = true;
+
   programs.nh = {
     enable = true;
     flake = "/mnt/dev/richendots";
