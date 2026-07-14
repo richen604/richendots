@@ -14,7 +14,7 @@
       inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     };
     mango = {
-      url = "github:DreamMaoMao/mango/main";
+      url = "github:mangowm/mango/wl-only";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     };
