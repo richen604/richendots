@@ -22,10 +22,6 @@
       url = "github:marienz/nix-doom-emacs-unstraightened";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    wrappers = {
-      url = "github:lassulus/wrappers";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";

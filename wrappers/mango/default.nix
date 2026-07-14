@@ -5,6 +5,7 @@
   ...
 }:
 let
+  mangoPackage = inputs.mango.packages.${pkgs.system}.mango;
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit richenLib; };
   config = ''
     exec-once=systemctl --user start sunshine.service
@@ -99,13 +100,42 @@ let
   '';
 
   fullConfig = mangoBase + "\n" + config;
+  wrappedMango = pkgs.writeShellApplication {
+    name = "mango";
+    text = ''
+      exec ${mangoPackage}/bin/mango -c "$HOME/.config/mango/config.conf" "$@"
+    '';
+  };
 in
-inputs.wrappers.lib.wrapPackage {
-  inherit pkgs;
-  package = inputs.mango.packages.${pkgs.system}.mango;
-  flags."-c" = "$HOME/.config/mango/config.conf";
-  filesToPatch = [
-    "share/wayland-sessions/mango.desktop"
-  ];
-  passthru.config.content = fullConfig;
+pkgs.stdenv.mkDerivation {
+  pname = mangoPackage.pname or "mango";
+  version = mangoPackage.version or "unstable";
+  dontUnpack = true;
+
+  buildCommand = ''
+    mkdir -p $out
+    ${pkgs.lndir}/bin/lndir -silent ${mangoPackage} $out
+
+    rm -f $out/bin/mango
+    mkdir -p $out/bin
+    ln -s ${wrappedMango}/bin/mango $out/bin/mango
+
+    desktopFile=$out/share/wayland-sessions/mango.desktop
+    if [ -L "$desktopFile" ]; then
+      target=$(readlink -f "$desktopFile")
+      if grep -qF ${pkgs.lib.escapeShellArg (toString mangoPackage)} "$target" 2>/dev/null; then
+        rm "$desktopFile"
+        substitute "$target" "$desktopFile" \
+          --replace-fail ${pkgs.lib.escapeShellArg (toString mangoPackage)} "$out"
+        chmod --reference="$target" "$desktopFile"
+      fi
+    fi
+  '';
+
+  passthru = (mangoPackage.passthru or { }) // {
+    config.content = fullConfig;
+  };
+  meta = (mangoPackage.meta or { }) // {
+    mainProgram = "mango";
+  };
 }

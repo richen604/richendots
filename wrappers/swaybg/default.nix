@@ -1,13 +1,18 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
-  swaybgWrapper = pkgs.callPackage ./module.nix { inherit inputs; };
+  wallpaperPkg = pkgs.runCommandLocal "swaybg-wallpaper" { } ''
+    mkdir -p $out
+    cp ${./wall.png} $out/wall.png
+  '';
 in
-(swaybgWrapper.apply {
-  pkgs = pkgs;
-  wallpaper.path = ./wall.png;
-  mode = "fill";
-}).wrapper
+richenLib.lib.wrapPackage {
+  package = pkgs.swaybg;
+  flags = {
+    "-i" = "${wallpaperPkg}/wall.png";
+    "-m" = "fill";
+  };
+}

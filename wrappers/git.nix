@@ -1,12 +1,11 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
 # some of the options from https://jvns.ca/blog/2024/02/16/popular-git-config-options/
-(inputs.wrappers.wrapperModules.git.apply {
-  pkgs = pkgs;
-  settings = {
+let
+  config = (pkgs.formats.gitIni { }).generate "gitconfig" {
     core = {
       editor = "nvim";
       visual = "nvim";
@@ -35,4 +34,9 @@
     gpg.format = "ssh";
     merge.conflictStyle = "zdiff3";
   };
-}).wrapper
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.git;
+  env.GIT_CONFIG_GLOBAL = config;
+  passthru.config.path = config;
+}

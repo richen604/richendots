@@ -1,13 +1,20 @@
 {
-  inputs,
   pkgs,
+  richenLib,
   ...
 }:
-(inputs.wrappers.wrapperModules.swaylock.apply {
-  pkgs = pkgs // {
-    swaylock = pkgs.swaylock-effects;
-  };
-  settings = {
+let
+  toSwaylockConf =
+    attrs:
+    pkgs.lib.concatStringsSep "\n" (
+      pkgs.lib.concatLists (
+        pkgs.lib.mapAttrsToList (
+          name: value:
+          if pkgs.lib.isBool value then pkgs.lib.optional value name else [ "${name}=${toString value}" ]
+        ) attrs
+      )
+    );
+  config = pkgs.writeText "swaylock-config" (toSwaylockConf {
     daemonize = true;
     clock = true;
     # this is a hack to ensure the wallpaper is in closure
@@ -49,5 +56,10 @@
     datestr = "%b-%d";
     timestr = "%H:%M";
     ignore-empty-password = true;
-  };
-}).wrapper
+  });
+in
+richenLib.lib.wrapPackage {
+  package = pkgs.swaylock-effects;
+  flags."--config" = config;
+  passthru.config.path = config;
+}
