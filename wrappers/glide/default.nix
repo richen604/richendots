@@ -1,8 +1,38 @@
 { pkgs, ... }:
 let
   version = "0.1.63a";
+  runtimeSubdir = "lib/glide-browser-${version}";
   policies = import ../firefox/policies.nix;
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
+
+  # FirefoxPWA's native connector and patch assets, without its bundled Firefox runtime.
+  firefoxpwaConnectorOnly = pkgs.firefoxpwa-unwrapped.overrideAttrs (old: {
+    pname = "firefoxpwa-connector";
+    postInstall = ''
+      mkdir -p $out/share/firefoxpwa
+      cp -r userchrome $out/share/firefoxpwa
+      substituteInPlace $out/share/firefoxpwa/userchrome/profile/chrome/pwa/boot.sys.mjs \
+        --replace-fail "if (options.openerWindow && options.openerWindow.gFFPWASiteConfig && !options.args)" \
+          "if (options?.openerWindow && options.openerWindow.gFFPWASiteConfig && !options.args)"
+      substituteInPlace $out/share/firefoxpwa/userchrome/profile/chrome/pwa/boot.sys.mjs \
+        --replace-fail "Services.prefs.getIntPref('firefoxpwa.launchType', 0)" \
+          "Services.prefs.getIntPref('firefoxpwa.launchType', 3)"
+      grep -Fq "options?.openerWindow" $out/share/firefoxpwa/userchrome/profile/chrome/pwa/boot.sys.mjs
+      grep -Fq "getIntPref('firefoxpwa.launchType', 3)" $out/share/firefoxpwa/userchrome/profile/chrome/pwa/boot.sys.mjs
+
+      sed -i "s!/usr/libexec!$out/bin!" manifests/linux.json
+      install -Dm644 manifests/linux.json $out/lib/mozilla/native-messaging-hosts/firefoxpwa.json
+
+      wrapProgram $out/bin/firefoxpwa \
+        --prefix FFPWA_SYSDATA : "$out/share/firefoxpwa"
+
+      wrapProgram $out/bin/firefoxpwa-connector \
+        --prefix FFPWA_SYSDATA : "$out/share/firefoxpwa"
+    '';
+    passthru = (old.passthru or { }) // {
+      runtimeIncluded = false;
+    };
+  });
   keepassxcNativeMessagingManifest = pkgs.writeText "org.keepassxc.keepassxc_browser.json" (
     builtins.toJSON {
       name = "org.keepassxc.keepassxc_browser";
@@ -10,6 +40,15 @@ let
       path = "${pkgs.keepassxc}/bin/keepassxc-proxy";
       type = "stdio";
       allowed_extensions = [ "keepassxc-browser@keepassxc.org" ];
+    }
+  );
+  firefoxpwaNativeMessagingManifest = pkgs.writeText "firefoxpwa.json" (
+    builtins.toJSON {
+      name = "firefoxpwa";
+      description = "The native part of the PWAsForFirefox project";
+      path = "${firefoxpwaConnectorOnly}/bin/firefoxpwa-connector";
+      type = "stdio";
+      allowed_extensions = [ "firefoxpwa@filips.si" ];
     }
   );
   text = ''
@@ -83,10 +122,46 @@ pkgs.stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/lib/glide-browser-${version} $out/bin
-    cp -r . $out/lib/glide-browser-${version}
-    mv $out/lib/glide-browser-${version}/glide $out/lib/glide-browser-${version}/glide-unwrapped
-    ln -s $out/lib/glide-browser-${version}/glide-unwrapped $out/bin/glide-unwrapped
+    glide_runtime=$out/${runtimeSubdir}
+
+    mkdir -p "$glide_runtime" $out/bin
+    cp -r . "$glide_runtime"
+    mv "$glide_runtime/glide" "$glide_runtime/glide-unwrapped"
+    ln -s "$glide_runtime/glide-unwrapped" "$glide_runtime/firefox"
+    ln -s "$glide_runtime/glide-unwrapped" $out/bin/glide-unwrapped
+
+    # FirefoxPWA-generated desktop entries call `firefoxpwa`, so expose the
+    # connector CLI through the Glide package without adding a second runtime.
+    cat > $out/bin/firefoxpwa <<EOF
+    #!${pkgs.runtimeShell}
+    export MOZ_ENABLE_WAYLAND=1
+    export MOZ_DISABLE_RDD_SANDBOX="\''${MOZ_DISABLE_RDD_SANDBOX:-1}"
+    export LD_LIBRARY_PATH="/run/opengl-driver/lib:${graphicsLibraryPath}:\''${LD_LIBRARY_PATH:-}"
+    if [ -e /run/opengl-driver/lib/dri/nvidia_drv_video.so ]; then
+      export LIBVA_DRIVER_NAME="\''${LIBVA_DRIVER_NAME:-nvidia}"
+      export LIBVA_DRIVERS_PATH="/run/opengl-driver/lib/dri:\''${LIBVA_DRIVERS_PATH:-}"
+      export NVD_BACKEND="\''${NVD_BACKEND:-direct}"
+    fi
+    exec ${firefoxpwaConnectorOnly}/bin/firefoxpwa "\$@"
+    EOF
+    chmod +x $out/bin/firefoxpwa
+
+    ln -s ${firefoxpwaConnectorOnly}/bin/firefoxpwa-connector $out/bin/firefoxpwa-connector
+
+    # Patch Glide's own Firefox-compatible runtime at build time. This keeps the
+    # runtime immutable and avoids FirefoxPWA's normal downloaded Firefox copy.
+    mkdir -p $out/share/firefoxpwa
+    ln -s "$glide_runtime" $out/share/firefoxpwa/runtime
+    FFPWA_SYSDATA=${firefoxpwaConnectorOnly}/share/firefoxpwa \
+      FFPWA_USERDATA=$out/share/firefoxpwa \
+      ${firefoxpwaConnectorOnly}/bin/.firefoxpwa-wrapped runtime patch
+
+    test -x $out/bin/firefoxpwa
+    test -x $out/bin/firefoxpwa-connector
+    test -e "$glide_runtime/firefox"
+    test -e "$glide_runtime/application.ini"
+    test -e "$glide_runtime/_autoconfig.cfg"
+    test -e "$glide_runtime/defaults/pref/autoconfig.js"
 
     cat > $out/bin/glide <<EOF
     #!${pkgs.runtimeShell}
@@ -104,14 +179,26 @@ pkgs.stdenv.mkDerivation {
     ln -sf ${./tsconfig.json} "\$profile/tsconfig.json"
     ln -sf ${chromeCss} "\$profile/chrome/userChrome.css"
     ln -sf ${contentCss} "\$profile/chrome/userContent.css"
+    firefoxpwa_runtime="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/runtime"
+    if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
+      rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
+    fi
+    if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${runtimeSubdir}" ]; then
+      rm "\$firefoxpwa_runtime"
+    fi
+    if [ ! -e "\$firefoxpwa_runtime" ]; then
+      mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
+      ln -s $out/${runtimeSubdir} "\$firefoxpwa_runtime"
+    fi
     mkdir -p "\$HOME/.glide-browser/native-messaging-hosts"
     ln -sf ${keepassxcNativeMessagingManifest} "\$HOME/.glide-browser/native-messaging-hosts/org.keepassxc.keepassxc_browser.json"
-    exec $out/lib/glide-browser-${version}/glide-unwrapped --profile "\$profile" "\$@"
+    ln -sf ${firefoxpwaNativeMessagingManifest} "\$HOME/.glide-browser/native-messaging-hosts/firefoxpwa.json"
+    exec $out/${runtimeSubdir}/glide-unwrapped --profile "\$profile" "\$@"
     EOF
     chmod +x $out/bin/glide
 
-    mkdir -p $out/lib/glide-browser-${version}/distribution
-    ln -s ${policiesJson} $out/lib/glide-browser-${version}/distribution/policies.json
+    mkdir -p $out/${runtimeSubdir}/distribution
+    ln -s ${policiesJson} $out/${runtimeSubdir}/distribution/policies.json
 
     mkdir -p $out/share/applications
     cat > $out/share/applications/glide.desktop <<'EOF'
@@ -130,7 +217,7 @@ pkgs.stdenv.mkDerivation {
 
     for size in 16 32 48 64 128; do
       mkdir -p $out/share/icons/hicolor/''${size}x''${size}/apps
-      cp $out/lib/glide-browser-${version}/browser/chrome/icons/default/default''${size}.png \
+      cp $out/${runtimeSubdir}/browser/chrome/icons/default/default''${size}.png \
         $out/share/icons/hicolor/''${size}x''${size}/apps/glide.png
     done
 
@@ -143,5 +230,11 @@ pkgs.stdenv.mkDerivation {
     license = pkgs.lib.licenses.mpl20;
     mainProgram = "glide";
     platforms = [ "x86_64-linux" ];
+  };
+
+  passthru = {
+    firefoxpwaConnector = firefoxpwaConnectorOnly;
+    firefoxpwaRuntimeIncluded = true;
+    runtimePath = runtimeSubdir;
   };
 }
