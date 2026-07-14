@@ -162,7 +162,7 @@ in
     equibop = lib.recursiveUpdate partOfMangoSession {
       description = "Equibop chat client";
       serviceConfig = {
-        ExecStart = "${pkgs.lib.getExe pkgs.equibop}";
+        ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
         Restart = "no";
       };
     };

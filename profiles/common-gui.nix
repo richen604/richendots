@@ -285,7 +285,7 @@ in
         # except those
         "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
         "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
-        "org.freedesktop.impl.portal.ScreenShot" = [ "wlr" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
         # wlr does not have this interface
         "org.freedesktop.impl.portal.Inhibit" = [ ];
       };
@@ -294,7 +294,14 @@ in
       xdg-desktop-portal-wlr
       xdg-desktop-portal-gtk
     ];
-    wlr.enable = true;
+    wlr = {
+      enable = true;
+      settings.screencast = {
+        chooser_type = "simple";
+        chooser_cmd = "${pkgs.slurp}/bin/slurp -f 'Monitor: %o' -or";
+        max_fps = 60;
+      };
+    };
   };
 
   hjem = {
