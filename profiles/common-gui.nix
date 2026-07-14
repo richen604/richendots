@@ -161,7 +161,9 @@ in
     pkgs.wayland-pipewire-idle-inhibit
 
     pkgs.piper
-    pkgs.prismlauncher
+    (pkgs.prismlauncher.override {
+      jdks = [ pkgs.jdk21 ];
+    })
   ];
 
   services.ratbagd.enable = true;
