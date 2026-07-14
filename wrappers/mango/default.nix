@@ -8,8 +8,6 @@ let
   mangoPackage = inputs.mango.packages.${pkgs.system}.mango;
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit richenLib; };
   config = ''
-    exec-once=systemctl --user start sunshine.service
-
     # Tag rules
     # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
     tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller

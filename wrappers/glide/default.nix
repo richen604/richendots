@@ -142,6 +142,14 @@ pkgs.stdenv.mkDerivation {
       export LIBVA_DRIVERS_PATH="/run/opengl-driver/lib/dri:\''${LIBVA_DRIVERS_PATH:-}"
       export NVD_BACKEND="\''${NVD_BACKEND:-direct}"
     fi
+    if [ "\''${1:-}" = site ] && [ "\''${2:-}" = launch ] && [ "\''${4:-}" = --protocol ] && [ "\''${5:-}" = %u ]; then
+      site_id="\$3"
+      config="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/config.json"
+      fallback_url="\$(${pkgs.jq}/bin/jq -er --arg site_id "\$site_id" '.sites[\$site_id] | .config.start_url // .manifest.start_url // .config.document_url' "\$config" 2>/dev/null || true)"
+      if [ -n "\$fallback_url" ]; then
+        set -- site launch "\$site_id" --url "\$fallback_url"
+      fi
+    fi
     exec ${firefoxpwaConnectorOnly}/bin/firefoxpwa "\$@"
     EOF
     chmod +x $out/bin/firefoxpwa

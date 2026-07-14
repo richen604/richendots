@@ -8,43 +8,7 @@
 let
   mangoPackage = inputs.mango.packages.${pkgs.system}.mango;
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
-  oakDisplayLayout = pkgs.writeShellScriptBin "oak-display-layout" ''
-    mode="''${1:-dock}"
-    outputs="$(${pkgs.wlr-randr}/bin/wlr-randr --json)"
-
-    output_for_model() {
-      printf '%s\n' "$outputs" | ${pkgs.jq}/bin/jq -r --arg model "$1" 'first(.[] | select(.model == $model) | .name) // empty'
-    }
-
-    benq="$(output_for_model "BenQ GW2780")"
-    center="$(output_for_model "Dell S2716DG")"
-    side="$(output_for_model "DELL E2020H")"
-    edp="$(printf '%s\n' "$outputs" | ${pkgs.jq}/bin/jq -r 'first(.[] | select(.name == "eDP-1") | .name) // empty')"
-
-    if [ "$mode" = "laptop" ]; then
-      if [ -n "$edp" ]; then
-        ${pkgs.wlr-randr}/bin/wlr-randr --output "$edp" --on --preferred --pos 0,0 --transform normal --scale 1.5
-      fi
-      exit 0
-    fi
-
-    if [ -n "$benq" ] && [ -n "$center" ] && [ -n "$side" ]; then
-      args=(
-        --output "$benq" --on --mode 1920x1080@60.000000Hz --pos 0,0 --transform 90 --scale 1
-        --output "$center" --on --mode 2560x1440@119.998001Hz --pos 1080,0 --transform normal --scale 1 --adaptive-sync disabled
-        --output "$side" --on --mode 1600x900@60.000000Hz --pos 3640,0 --transform 270 --scale 1
-      )
-
-      if [ -n "$edp" ]; then
-        args+=(--output "$edp" --off)
-      fi
-
-      ${pkgs.wlr-randr}/bin/wlr-randr "''${args[@]}"
-    fi
-  '';
   config = ''
-    exec-once=${oakDisplayLayout}/bin/oak-display-layout dock
-
     # ============================================
     # TAG RULES - Layout hints per monitor
     # ============================================
@@ -99,12 +63,6 @@ let
     # ============================================
     windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
     windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
-
-    # ============================================
-    # DISPLAY LAYOUT BINDINGS
-    # ============================================
-    bind=SUPER+SHIFT,D,spawn,${oakDisplayLayout}/bin/oak-display-layout dock
-    bind=SUPER+SHIFT,L,spawn,${oakDisplayLayout}/bin/oak-display-layout laptop
 
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
