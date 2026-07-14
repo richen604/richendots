@@ -128,6 +128,12 @@ pkgs.stdenv.mkDerivation {
     StartupNotify=true
     EOF
 
+    for size in 16 32 48 64 128; do
+      mkdir -p $out/share/icons/hicolor/''${size}x''${size}/apps
+      cp $out/lib/glide-browser-${version}/browser/chrome/icons/default/default''${size}.png \
+        $out/share/icons/hicolor/''${size}x''${size}/apps/glide.png
+    done
+
     runHook postInstall
   '';
 

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  mangoBase = pkgs.callPackage ./_base-config.nix { };
+  mangoBase = pkgs.callPackage ./_base-config.nix { inherit richenLib; };
   config = ''
     exec-once=systemctl --user start sunshine.service
 

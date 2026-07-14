@@ -17,11 +17,11 @@ in
     theme = {
       light = {
         name = "vicinae-light";
-        icon_theme = "default";
+        icon_theme = "Papirus";
       };
       dark = {
         name = "forest-green";
-        icon_theme = "default";
+        icon_theme = "Papirus-Dark";
       };
     };
     font = {

@@ -1,5 +1,6 @@
 {
   pkgs,
+  richenLib,
   ...
 }:
 # todo: mango wrapper: runtime applications for auto start
@@ -19,7 +20,7 @@ let
   # AUTOSTART APPLICATIONS
   # ============================================
   autostart = ''
-    exec-once=${pkgs.bash}/bin/sh -lc '${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP MANGO_INSTANCE_SIGNATURE; ${pkgs.systemd}/bin/systemctl --user start waybar.service'
+    exec-once=${richenLib.wrappers.waybar}/bin/waybar
     exec-once=swaybg
     exec-once=systemctl start --user swaync.service
     exec-once=vicinae server
