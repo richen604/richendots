@@ -50,6 +50,7 @@ let
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
     monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:120,x:1080,y:0,rr:0
     monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,rr:3
+    monitorrule=make:sisel muhendislik,model:EK1080T4KV2,serial:0x00005445,disable:1
 
     # ============================================
     # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)

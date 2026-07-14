@@ -132,13 +132,14 @@ let
   # Game Mode:   animations=0, blur=0, opacity=1.0/1.0, radius=0, border=1, gaps=0/0/0/0
   # After editing, rebuild with: nixos-rebuild switch
   gamemode = ''
-    animations=1              # Game mode: 0
-    layer_animations=1        # Game mode: 0
-    blur=1                    # Game mode: 0
+    animations=0
+    layer_animations=0
+    blur=0
     focused_opacity=1         # Game mode: 1.0
     unfocused_opacity=1       # Game mode: 1.0
-    border_radius=6           # Game mode: 0
+    border_radius=0
     borderpx=1                # Game mode: 0
+    syncobj_enable=1
     gappih=3                  # Game mode: 0
     gappiv=3                  # Game mode: 0
     gappoh=3                  # Game mode: 0
