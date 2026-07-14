@@ -3,7 +3,6 @@
 
   imports = [
     ./hardware-configuration.nix
-    ../../profiles/common.nix
   ];
 
   networking.networkmanager.enable = true;
