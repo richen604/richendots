@@ -18,24 +18,24 @@ let
     "application/javascript" = "nvim.desktop";
     "application/x-shellscript" = "nvim.desktop";
 
-    "application/pdf" = "firefox.desktop";
-    "application/xhtml+xml" = "firefox.desktop";
-    "application/xml" = "firefox.desktop";
-    "text/html" = "firefox.desktop";
-    "image/png" = "firefox.desktop";
-    "image/jpeg" = "firefox.desktop";
-    "image/gif" = "firefox.desktop";
-    "image/webp" = "firefox.desktop";
-    "image/svg+xml" = "firefox.desktop";
-    "video/mp4" = "firefox.desktop";
-    "video/webm" = "firefox.desktop";
-    "audio/mpeg" = "firefox.desktop";
-    "audio/ogg" = "firefox.desktop";
-    "audio/wav" = "firefox.desktop";
-    "x-scheme-handler/about" = "firefox.desktop";
-    "x-scheme-handler/http" = "firefox.desktop";
-    "x-scheme-handler/https" = "firefox.desktop";
-    "x-scheme-handler/mailto" = "firefox.desktop";
+    "application/pdf" = "glide.desktop";
+    "application/xhtml+xml" = "glide.desktop";
+    "application/xml" = "glide.desktop";
+    "text/html" = "glide.desktop";
+    "image/png" = "glide.desktop";
+    "image/jpeg" = "glide.desktop";
+    "image/gif" = "glide.desktop";
+    "image/webp" = "glide.desktop";
+    "image/svg+xml" = "glide.desktop";
+    "video/mp4" = "glide.desktop";
+    "video/webm" = "glide.desktop";
+    "audio/mpeg" = "glide.desktop";
+    "audio/ogg" = "glide.desktop";
+    "audio/wav" = "glide.desktop";
+    "x-scheme-handler/about" = "glide.desktop";
+    "x-scheme-handler/http" = "glide.desktop";
+    "x-scheme-handler/https" = "glide.desktop";
+    "x-scheme-handler/mailto" = "glide.desktop";
 
     "application/zip" = "yazi-kitty.desktop";
     "application/x-tar" = "yazi-kitty.desktop";
@@ -93,7 +93,7 @@ in
     richenLib.wrappers.swaync
     richenLib.wrappers.vicinae
     richenLib.wrappers.satty
-    richenLib.wrappers.firefox
+    richenLib.wrappers.glide
     richenLib.wrappers.keepassxc
     richenLib.wrappers.udiskie
 

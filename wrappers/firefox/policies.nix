@@ -13,6 +13,8 @@
     "browser.toolbars.bookmarks.visibility" = "never";
     "services.sync.engine.tabs" = false;
     "media.ffmpeg.vaapi.enabled" = true;
+    "media.hardware-video-decoding.force-enabled" = true;
+    "widget.dmabuf.force-enabled" = true;
     "layers.acceleration.force-enabled" = true;
     "gfx.webrender.all" = true;
     "browser.in-content.dark-mode" = true;
@@ -167,6 +169,23 @@
     ];
   };
   ExtensionSettings = {
+    # Block extensions that used to be force-installed so profile copies do not linger.
+    "jid1-BoFifL9Vbdl2zQ@jetpack" = {
+      installation_mode = "blocked";
+    };
+    "clipper@obsidian.md" = {
+      installation_mode = "blocked";
+    };
+    "{2662ff67-b302-4363-95f3-b050218bd72c}" = {
+      installation_mode = "blocked";
+    };
+    "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = {
+      installation_mode = "blocked";
+    };
+    "vimium-c@gdh1995.cn" = {
+      installation_mode = "blocked";
+    };
+
     "addon@darkreader.org" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/darkreader/latest.xpi";
       installation_mode = "force_installed";
@@ -179,16 +198,8 @@
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/clearurls/latest.xpi";
       installation_mode = "force_installed";
     };
-    "jid1-BoFifL9Vbdl2zQ@jetpack" = {
-      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/decentraleyes/latest.xpi";
-      installation_mode = "force_installed";
-    };
     "keepassxc-browser@keepassxc.org" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/keepassxc-browser/latest.xpi";
-      installation_mode = "force_installed";
-    };
-    "clipper@obsidian.md" = {
-      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/web-clipper-obsidian/latest.xpi";
       installation_mode = "force_installed";
     };
     "sponsorBlocker@ajay.app" = {
@@ -197,18 +208,6 @@
     };
     "uBlock0@raymondhill.net" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/ublock-origin/latest.xpi";
-      installation_mode = "force_installed";
-    };
-    "{2662ff67-b302-4363-95f3-b050218bd72c}" = {
-      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/untrap-for-youtube/latest.xpi";
-      installation_mode = "force_installed";
-    };
-    "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = {
-      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/vimium/latest.xpi";
-      installation_mode = "force_installed";
-    };
-    "vimium-c@gdh1995.cn" = {
-      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/vimium-c/latest.xpi";
       installation_mode = "force_installed";
     };
   };
