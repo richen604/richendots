@@ -47,29 +47,6 @@ let
     "application/x-xz" = "yazi-kitty.desktop";
   };
 
-  chromiumX11 = pkgs.symlinkJoin {
-    name = "ungoogled-chromium-x11";
-    paths = [ pkgs.ungoogled-chromium ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/chromium \
-        --unset NIXOS_OZONE_WL \
-        --add-flags "--ozone-platform=x11"
-    '';
-  };
-
-  equibopX11 = pkgs.symlinkJoin {
-    name = "equibop-x11";
-    paths = [ pkgs.equibop ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/equibop \
-        --unset NIXOS_OZONE_WL \
-        --set ELECTRON_OZONE_PLATFORM_HINT x11 \
-        --add-flags "--ozone-platform=x11"
-    '';
-  };
-
   catppuccinGtkPython = pkgs.python313.override {
     packageOverrides = _pyFinal: pyPrev: {
       catppuccin = pyPrev.catppuccin.overridePythonAttrs (_old: {
@@ -123,7 +100,7 @@ in
     pkgs.spicetify-cli
 
     # social apps
-    equibopX11
+    pkgs.equibop
 
     # other utils
     pkgs.kdePackages.kdeconnect-kde
@@ -186,7 +163,7 @@ in
     pkgs.wayland-pipewire-idle-inhibit
 
     pkgs.piper
-    chromiumX11
+    pkgs.ungoogled-chromium
     pkgs.prismlauncher
   ];
 
