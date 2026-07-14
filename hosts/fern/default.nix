@@ -94,7 +94,7 @@ in
       ];
     };
 
-  networking.interfaces.enp7s0.wakeOnLan.enable = true;
+  networking.interfaces.enp5s0.wakeOnLan.enable = true;
 
   # TODO: make swap module for fern
   swapDevices = [

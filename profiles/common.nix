@@ -147,8 +147,6 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
-      # SSH
-      22
       # KDE Connect
       1716
     ];
