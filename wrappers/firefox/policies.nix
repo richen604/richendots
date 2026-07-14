@@ -22,6 +22,7 @@
     "widget.use-xdg-desktop-portal.file-picker" = 1;
     "extensions.autoDisableScopes" = 0;
     "extensions.update.enabled" = false;
+    "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
     # Low-breakage privacy baseline. Avoid RFP, WebGL/WebRTC disablement, and
     # cookie clearing so normal sites and persisted logins keep working.
