@@ -46,15 +46,14 @@ in
     du = "du -h --max-depth=1";
     free = "free -h";
   };
-  shellInit = ''
-    # Only show pokemon in interactive shells
-    if [[ $- == *i* ]]; then
-      ${pkgs.pokemon-colorscripts}/bin/pokemon-colorscripts -r 1,2 --no-title
-    fi
+  interactiveShellInit = ''
+    ${pkgs.pokemon-colorscripts}/bin/pokemon-colorscripts -r 1,2 --no-title
+
     # Powerlevel10k instant prompt
     if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
       source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
     fi
+
     eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
   '';
 

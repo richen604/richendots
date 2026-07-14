@@ -25,6 +25,7 @@
     shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
   };
   users.defaultUserShell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
+  environment.shells = [ "${pkgs.lib.getExe richenLib.wrappers.zsh}" ];
 
   systemd.services.NetworkManager-wait-online.enable = false;
 
