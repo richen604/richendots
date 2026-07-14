@@ -40,7 +40,6 @@
 
     # wrappers
     richenLib.wrappers.zsh
-    richenLib.wrappers.keepassxc
     richenLib.wrappers.git
     pkgs.neovim
     richenLib.wrappers.doom-emacs
