@@ -16,8 +16,6 @@
       "video"
       "input"
       "networkmanager"
-      # todo: should be in a dev module
-      "docker"
     ];
     home = "/home/richen";
     initialPassword = "test";
@@ -146,12 +144,6 @@
     };
   };
 
-  # docker
-  virtualisation.docker.enable = true;
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
 
   # networking
   networking.networkmanager.enable = true;
