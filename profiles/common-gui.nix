@@ -163,7 +163,6 @@ in
     pkgs.wayland-pipewire-idle-inhibit
 
     pkgs.piper
-    pkgs.ungoogled-chromium
     pkgs.prismlauncher
   ];
 
