@@ -154,15 +154,6 @@ in
   # boot
   # todo: limine secure boot
   boot = {
-    plymouth = {
-      enable = true;
-      theme = "liquid";
-      themePackages = with pkgs; [
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "liquid" ];
-        })
-      ];
-    };
     # skip grub
     loader.grub.timeoutStyle = "hidden";
     loader.timeout = 0;
