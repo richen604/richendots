@@ -68,10 +68,10 @@ in
       "wlsunset.service"
       "polkit-gnome-authentication-agent.service"
       "udiskie.service"
-      "nm-applet.service"
       "blueman-applet.service"
       "keepassxc.service"
       "equibop.service"
+      "spotify.service"
       "yubikey-touch-detector.service"
     ]
     ++ extraWantedServices;
@@ -138,8 +138,6 @@ in
 
     udiskie = simpleSessionService "${richenLib.wrappers.udiskie}/bin/udiskie -t";
 
-    nm-applet = simpleSessionService "${pkgs.networkmanagerapplet}/bin/nm-applet";
-
     blueman-applet = lib.recursiveUpdate partOfMangoSession {
       description = "Bluetooth management applet";
       serviceConfig = {
@@ -163,6 +161,15 @@ in
       description = "Equibop chat client";
       serviceConfig = {
         ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
+        Restart = "no";
+      };
+    };
+
+    spotify = lib.recursiveUpdate partOfMangoSession {
+      description = "Spotify Flatpak client";
+      after = partOfMangoSession.after ++ [ "equibop.service" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.flatpak}/bin/flatpak run --user com.spotify.Client";
         Restart = "no";
       };
     };
