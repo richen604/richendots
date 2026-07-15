@@ -92,7 +92,9 @@ pkgs.writeShellApplication {
 
     eval_once() {
       local host="$1"
-      nix eval --raw "$(eval_attr "$host")" \
+      nix --quiet eval --raw "$(eval_attr "$host")" \
+        --read-only \
+        --no-write-lock-file \
         --option eval-cache false \
         --option allow-import-from-derivation false
     }
@@ -101,8 +103,25 @@ pkgs.writeShellApplication {
       local profile_file="$1"
       local summary_file="$2"
       local tokens=(
+        "hosts/cedar/default.nix"
+        "services/web-apps/immich.nix"
+        "nixarr"
         "wrappers/doom-emacs/_no-ifd.nix"
         "wrappers/doom-emacs/default.nix"
+        "profiles/common-gui.nix"
+        "profiles/desktop.nix"
+        "profiles/laptop.nix"
+        "wrappers/glide/default.nix"
+        "wrappers/waybar.nix"
+        "wrappers/waybar-laptop.nix"
+        "wrappers/mango/_base-config.nix"
+        "wrappers/mango/default.nix"
+        "wrappers/mango/mango-laptop.nix"
+        "modules/sunshine/default.nix"
+        "catppuccin-gtk"
+        "python313"
+        "formats.json"
+        "writeShellApplication"
         "doom-emacs"
         "emacs"
         "overrideScope"
@@ -137,7 +156,7 @@ pkgs.writeShellApplication {
               --warmup 1 \
               --runs 3 \
               --export-markdown "$out_dir/$host-hyperfine.md" \
-              "nix eval --raw '$(eval_attr "$host")' --option eval-cache false --option allow-import-from-derivation false"
+              "nix --quiet eval --raw '$(eval_attr "$host")' --read-only --no-write-lock-file --option eval-cache false --option allow-import-from-derivation false"
 
             printf '== stats %s ==\n' "$host"
             NIX_SHOW_STATS=1 eval_once "$host" >"$out_dir/$host-drv-path.txt" 2>"$out_dir/$host-stats.txt"
@@ -147,7 +166,9 @@ pkgs.writeShellApplication {
       if [[ "$run_profile" -eq 1 ]]; then
         printf '== profile %s ==\n' "$host"
         profile_file="$out_dir/$host-eval-profile.folded"
-        nix eval --raw "$(eval_attr "$host")" \
+        nix --quiet eval --raw "$(eval_attr "$host")" \
+          --read-only \
+          --no-write-lock-file \
           --option eval-cache false \
           --option allow-import-from-derivation false \
           --option eval-profiler flamegraph \

@@ -34,6 +34,55 @@
     let
       richenLib = import ./lib.nix { inherit inputs; };
       nixpull = import ./modules/nixpull/flake-module.nix { inherit inputs self; };
+      evalBudgetCheck =
+        system:
+        let
+          pkgs = richenLib.pkgsFor system;
+          budgets = {
+            cedar = 6673;
+            fern = 7178;
+            oak = 7185;
+          };
+          checkHost = host: budget: {
+            name = "eval-budget-${host}";
+            value =
+              pkgs.runCommandLocal "eval-budget-${host}"
+                {
+                  nativeBuildInputs = [ pkgs.nix ];
+                  requiredSystemFeatures = [ "recursive-nix" ];
+                }
+                ''
+                  export HOME=$TMPDIR
+                  export NIX_CONFIG='experimental-features = nix-command flakes recursive-nix'
+                  start=$(date +%s%3N)
+                  nix --quiet eval --raw ${self}#nixosConfigurations.${host}.config.system.build.toplevel.drvPath \
+                    --override-input nixpkgs ${inputs.nixpkgs} \
+                    --override-input deploy-rs ${inputs.deploy-rs} \
+                    --override-input richendots-private ${inputs.richendots-private} \
+                    --override-input mango ${inputs.mango} \
+                    --override-input nix-doom-emacs-unstraightened ${inputs.nix-doom-emacs-unstraightened} \
+                    --override-input hjem ${inputs.hjem} \
+                    --read-only \
+                    --no-write-lock-file \
+                    --option eval-cache false \
+                    --option allow-import-from-derivation false \
+                    >/dev/null
+                  end=$(date +%s%3N)
+                  elapsed=$((end - start))
+
+                  if [ "$elapsed" -gt ${toString budget} ]; then
+                    printf 'eval budget failed for ${host}: elapsed=%sms budget=%sms over=%sms\n' \
+                      "$elapsed" ${toString budget} "$((elapsed - ${toString budget}))" >&2
+                    exit 1
+                  fi
+
+                  printf 'eval budget ok for ${host}: elapsed=%sms budget=%sms\n' \
+                    "$elapsed" ${toString budget}
+                  touch "$out"
+                '';
+          };
+        in
+        builtins.listToAttrs (inputs.nixpkgs.lib.mapAttrsToList checkHost budgets);
     in
     {
       nixosConfigurations = {
@@ -100,5 +149,10 @@
         }
       );
     }
-    // nixpull;
+    // nixpull
+    // {
+      checks = nixpull.checks // {
+        x86_64-linux = nixpull.checks.x86_64-linux // evalBudgetCheck "x86_64-linux";
+      };
+    };
 }

@@ -4,7 +4,7 @@ let
   lib = inputs.nixpkgs.lib;
   hosts = self.nixosConfigurations;
 
-  hostSystem = host: hosts.${host}.pkgs.system;
+  hostSystem = host: hosts.${host}.pkgs.stdenv.hostPlatform.system;
   activatable = host: inputs.deploy-rs.lib.${hostSystem host}.activate.nixos hosts.${host};
 
   deploy = {
