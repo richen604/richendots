@@ -7,7 +7,6 @@
 }:
 let
   doomInput = inputs.nix-doom-emacs-unstraightened;
-  emacsOverlay = doomInput.inputs.emacs-overlay.overlays.package { } pkgs;
   updateIntermediates = pkgs.callPackage (doomInput + "/build-helpers/doomscript.nix") {
     name = "doom-intermediates";
     doomSource = doomInput.inputs.doomemacs;
@@ -49,11 +48,25 @@ let
     doomModules = doomInput.inputs.doomemacs-modules;
     unstraightenedSource = doomInput;
     emacs = pkgs.emacs-nox;
-    emacsPackagesFor = emacsOverlay.emacsPackagesFor;
+    emacsPackagesFor = pkgs.emacsPackagesFor;
     experimentalFetchTree = true;
     toInit = _lib: _attrs: "";
     extraPackages = epkgs: [
-      epkgs.treesit-grammars.with-all-grammars
+      (epkgs.treesit-grammars.with-grammars (
+        grammars: with grammars; [
+          tree-sitter-bash
+          tree-sitter-css
+          tree-sitter-html
+          tree-sitter-javascript
+          tree-sitter-json
+          tree-sitter-markdown
+          tree-sitter-markdown-inline
+          tree-sitter-nix
+          tree-sitter-tsx
+          tree-sitter-typescript
+          tree-sitter-yaml
+        ]
+      ))
     ];
   };
 in
