@@ -37,7 +37,6 @@ let
       "backlight"
       "clock"
       "custom/notification"
-      "custom/power"
     ];
     "mango/window" = {
       format = "{title}";
@@ -162,11 +161,6 @@ let
         ];
       };
     };
-    "custom/power" = {
-      format = "";
-      tooltip = false;
-      "on-click" = "wlogout -b 6 --protocol layer-shell";
-    };
     "pulseaudio#microphone" = {
       format = "{format_source}";
       "format-source" = " {volume}%";
@@ -257,8 +251,7 @@ let
     #workspaces,
     #tray,
     #keyboard-state,
-    #custom-notification,
-    #custom-power {
+    #custom-notification {
       background: none;
       padding: 0px 10px;
       margin: 0px;
@@ -535,13 +528,6 @@ let
       min-width: 18px;
     }
 
-    #custom-power {
-      background: none;
-      color: @active-foreground;
-      margin-left: 0px;
-      margin-right: 4px;
-      padding-right: 14px;
-    }
   '';
 in
 richenLib.lib.wrapPackage {

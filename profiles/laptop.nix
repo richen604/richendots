@@ -24,6 +24,7 @@
   services.tlp.enable = true;
   powerManagement.enable = true;
   services.thermald.enable = true;
+  services.upower.enable = true;
 
   # greetd configuration
   services.greetd.settings = rec {
