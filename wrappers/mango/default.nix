@@ -55,6 +55,7 @@ let
 
     # Window rules
     windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
+    windowrule=tags:1,isopensilent:1,appid:com.spotify.Client,monitor:model:DELL E2020H
     windowrule=tags:1,appid:FFPWA-.*,monitor:model:BenQ GW2780
     windowrule=appid:steam,monitor:model:Dell S2716DG
     windowrule=appid:steam_app_.*,monitor:model:Dell S2716DG

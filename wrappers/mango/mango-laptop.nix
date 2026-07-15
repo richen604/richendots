@@ -61,7 +61,8 @@ let
     # ============================================
     # WINDOW RULES
     # ============================================
-    windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
+    windowrule=tags:2,isopensilent:1,monitor:eDP-1,appid:equibop
+    windowrule=tags:3,isopensilent:1,monitor:eDP-1,appid:com.spotify.Client
     windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
 
     # ============================================
