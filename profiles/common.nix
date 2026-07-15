@@ -47,10 +47,6 @@
     # other utils
     pkgs.tealdeer
 
-    # nix tools
-    pkgs.nixfmt
-    pkgs.nil
-
     # cli utilities
     pkgs.bat
     pkgs.eza
@@ -61,45 +57,22 @@
     pkgs.less
     pkgs.ripgrep
     pkgs.jq
-    pkgs.gh
+    pkgs.fd
 
     # system utilities
     pkgs.killall
-    pkgs.gnumake
     pkgs.fzf
     pkgs.trash-cli
     pkgs.gawk
-    pkgs.coreutils
     pkgs.bash-completion
     pkgs.unzip
-    pkgs.cpufrequtils
-    pkgs.busybox
 
     # network/hardware
-    pkgs.networkmanager
     pkgs.lm_sensors
     pkgs.pciutils
-    pkgs.wpa_supplicant
-
-    # filesystem
-    pkgs.ntfs3g
-    pkgs.exfat
 
     # direnv
     pkgs.direnv
-
-    # custom scripts
-    (pkgs.callPackage ./scripts/reboot-to.nix { })
-    (pkgs.callPackage ./scripts/git-commit-date.nix { })
-
-    pkgs.nodejs
-    pkgs.bun
-    pkgs.fnm
-    richenLib.wrappers.opencode
-    pkgs.fd
-    pkgs.sshfs
-    pkgs.lazygit
-    pkgs.nixd
   ];
 
   programs.git = {

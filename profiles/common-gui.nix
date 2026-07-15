@@ -87,23 +87,12 @@ in
       size = "compact";
       variant = "mocha";
     })
-    pkgs.hicolor-icon-theme
-
-    # gtk deps
-    pkgs.gtk3
-    pkgs.gtk4
-    pkgs.glib
-    pkgs.nwg-look
-    pkgs.adwaita-icon-theme
 
     # media apps
     pkgs.spicetify-cli
 
     # social apps
     pkgs.equibop
-
-    # other utils
-    pkgs.wlogout
 
     # wayland tools
     pkgs.wlr-randr
@@ -113,14 +102,9 @@ in
 
     # system services
     pkgs.polkit_gnome
-    pkgs.dbus
-    pkgs.upower
-    pkgs.dconf
-    pkgs.dconf-editor
 
     # desktop integration
     pkgs.xdg-utils
-    pkgs.desktop-file-utils
 
     # notifications/display
     pkgs.libnotify
@@ -129,7 +113,6 @@ in
     pkgs.slurp
 
     # hardware management
-    pkgs.networkmanagerapplet
     pkgs.brightnessctl
 
     # input
@@ -142,8 +125,6 @@ in
     pkgs.blueman
 
     # audio
-    pkgs.pipewire
-    pkgs.wireplumber
     pkgs.pavucontrol
     pkgs.pamixer
     pkgs.playerctl
@@ -160,22 +141,16 @@ in
 
     pkgs.wayland-pipewire-idle-inhibit
 
-    pkgs.piper
     (pkgs.prismlauncher.override {
       jdks = [ pkgs.jdk21 ];
     })
   ];
 
-  services.ratbagd.enable = true;
   programs.dconf.enable = true;
   services.dbus.enable = true;
-  services.upower.enable = true;
-  services.libinput.enable = true;
   services.gvfs.enable = true;
   security.pam.services.swaylock = { };
   security.rtkit.enable = true;
-  hardware.opentabletdriver.enable = true;
-  services.xserver.digimend.enable = true;
   # boot
   # todo: limine secure boot
   boot = {
