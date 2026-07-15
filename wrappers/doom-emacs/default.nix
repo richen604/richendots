@@ -11,7 +11,7 @@ let
   updateIntermediates = pkgs.callPackage (doomInput + "/build-helpers/doomscript.nix") {
     name = "doom-intermediates";
     doomSource = doomInput.inputs.doomemacs;
-    emacs = pkgs.emacs-pgtk;
+    emacs = pkgs.emacs-nox;
     extraArgs = {
       DOOMDIR = "${./doom.d}";
     };
@@ -48,7 +48,7 @@ let
     doomSource = doomInput.inputs.doomemacs;
     doomModules = doomInput.inputs.doomemacs-modules;
     unstraightenedSource = doomInput;
-    emacs = pkgs.emacs-pgtk;
+    emacs = pkgs.emacs-nox;
     emacsPackagesFor = emacsOverlay.emacsPackagesFor;
     experimentalFetchTree = true;
     toInit = _lib: _attrs: "";
