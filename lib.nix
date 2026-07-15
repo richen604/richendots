@@ -166,6 +166,12 @@ let
                   ;
               };
 
+              runtimePath = lib.optionalString (runtimeInputs != [ ]) ''
+                export PATH="${lib.makeBinPath runtimeInputs}:$PATH"
+              '';
+
+              wrapperScriptContent = "#!${pkgs.runtimeShell}\n" + runtimePath + finalWrapper;
+
               originalOutputs =
                 if package ? outputs then
                   lib.listToAttrs (
@@ -201,13 +207,11 @@ let
 
                 mkdir -p $out/bin
                 rm -f $out/bin/${binName}
-                makeWrapper ${
-                  pkgs.writeShellApplication {
-                    name = binName;
-                    inherit runtimeInputs;
-                    text = finalWrapper;
-                  }
-                }/bin/${binName} $out/bin/${binName}
+                mkdir -p $out/libexec
+                wrapperScript="$out/libexec/${binName}-wrapper"
+                printf '%s' ${lib.escapeShellArg wrapperScriptContent} > "$wrapperScript"
+                chmod +x "$wrapperScript"
+                makeWrapper "$wrapperScript" $out/bin/${binName}
 
                 ${lib.optionalString (filesToPatch != [ ]) ''
                   oldPath="${package}"
