@@ -2,8 +2,34 @@
 let
   version = "0.1.63a";
   runtimeSubdir = "lib/glide-browser-${version}";
+  pwaRuntimeSubdir = "lib/glide-pwa-runtime-${version}";
   policies = import ../firefox/policies.nix;
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
+  pwaPoliciesJson = pkgs.writeText "glide-pwa-policies.json" (builtins.toJSON {
+    policies = {
+      Preferences = {
+        "media.eme.enabled" = true;
+        "media.ffmpeg.vaapi.enabled" = true;
+        "media.hardware-video-decoding.force-enabled" = true;
+        "widget.dmabuf.force-enabled" = true;
+        "layers.acceleration.force-enabled" = true;
+        "gfx.webrender.all" = true;
+        "widget.use-xdg-desktop-portal.file-picker" = 1;
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+      };
+      DontCheckDefaultBrowser = true;
+      DisableFirefoxStudies = true;
+      DisableTelemetry = true;
+      ExtensionSettings = {
+        "addon@darkreader.org".installation_mode = "blocked";
+        "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}".installation_mode = "blocked";
+        "{74145f27-f039-47ce-a470-a662b129930a}".installation_mode = "blocked";
+        "keepassxc-browser@keepassxc.org".installation_mode = "blocked";
+        "sponsorBlocker@ajay.app".installation_mode = "blocked";
+        "uBlock0@raymondhill.net".installation_mode = "blocked";
+      };
+    };
+  });
 
   # FirefoxPWA's native connector and patch assets, without its bundled Firefox runtime.
   firefoxpwaConnectorOnly = pkgs.firefoxpwa-unwrapped.overrideAttrs (old: {
@@ -105,12 +131,16 @@ pkgs.stdenv.mkDerivation {
     runHook preInstall
 
     glide_runtime=$out/${runtimeSubdir}
+    pwa_runtime=$out/${pwaRuntimeSubdir}
 
     mkdir -p "$glide_runtime" $out/bin $out/share/firefoxpwa
     cp -r . "$glide_runtime"
     mv "$glide_runtime/glide" "$glide_runtime/glide-unwrapped"
     ln -s "$glide_runtime/glide-unwrapped" "$glide_runtime/firefox"
     ln -s "$glide_runtime/glide-unwrapped" $out/bin/glide-unwrapped
+    cp -r "$glide_runtime" "$pwa_runtime"
+    rm "$pwa_runtime/firefox"
+    ln -s "$pwa_runtime/glide-unwrapped" "$pwa_runtime/firefox"
 
     # FirefoxPWA-generated desktop entries call `firefoxpwa`, so expose the
     # connector CLI through the Glide package without adding a second runtime.
@@ -135,12 +165,12 @@ fi
 if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
   rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
 fi
-if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${runtimeSubdir}" ]; then
+if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
   rm "\$firefoxpwa_runtime"
 fi
 if [ ! -e "\$firefoxpwa_runtime" ]; then
   mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-  ln -s $out/${runtimeSubdir} "\$firefoxpwa_runtime"
+  ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
 fi
 if [ -f "\$firefoxpwa_config" ]; then
   config_tmp="\$(mktemp)"
@@ -210,12 +240,12 @@ fi
 if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
   rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
 fi
-if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${runtimeSubdir}" ]; then
+if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
   rm "\$firefoxpwa_runtime"
 fi
 if [ ! -e "\$firefoxpwa_runtime" ]; then
   mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-  ln -s $out/${runtimeSubdir} "\$firefoxpwa_runtime"
+  ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
 fi
 if [ -f "\$firefoxpwa_config" ]; then
   config_tmp="\$(mktemp)"
@@ -247,10 +277,13 @@ EOF
 {"allowed_extensions":["firefoxpwa@filips.si"],"description":"The native part of the PWAsForFirefox project","name":"firefoxpwa","path":"$out/bin/firefoxpwa-connector","type":"stdio"}
 EOF
 
-    # Patch Glide's own Firefox-compatible runtime at build time. This keeps the
-    # runtime immutable and avoids FirefoxPWA's normal downloaded Firefox copy.
+    # Patch a minimal FirefoxPWA runtime at build time. This keeps the runtime
+    # immutable and avoids FirefoxPWA's normal downloaded Firefox copy while
+    # keeping normal Glide browser policies out of PWA profiles.
     mkdir -p $out/share/firefoxpwa
-    ln -s "$glide_runtime" $out/share/firefoxpwa/runtime
+    mkdir -p "$pwa_runtime/distribution"
+    ln -s ${pwaPoliciesJson} "$pwa_runtime/distribution/policies.json"
+    ln -s "$pwa_runtime" $out/share/firefoxpwa/runtime
     FFPWA_SYSDATA=${firefoxpwaConnectorOnly}/share/firefoxpwa \
       FFPWA_USERDATA=$out/share/firefoxpwa \
       ${firefoxpwaConnectorOnly}/bin/.firefoxpwa-wrapped runtime patch
@@ -259,8 +292,10 @@ EOF
     test -x $out/bin/firefoxpwa-connector
     test -e "$glide_runtime/firefox"
     test -e "$glide_runtime/application.ini"
-    test -e "$glide_runtime/_autoconfig.cfg"
-    test -e "$glide_runtime/defaults/pref/autoconfig.js"
+    test -e "$pwa_runtime/firefox"
+    test -e "$pwa_runtime/application.ini"
+    test -e "$pwa_runtime/_autoconfig.cfg"
+    test -e "$pwa_runtime/defaults/pref/autoconfig.js"
 
     cat > $out/bin/glide <<EOF
 #!${pkgs.runtimeShell}
@@ -289,12 +324,12 @@ fi
 if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
   rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
 fi
-if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${runtimeSubdir}" ]; then
+if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
   rm "\$firefoxpwa_runtime"
 fi
 if [ ! -e "\$firefoxpwa_runtime" ]; then
   mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-  ln -s $out/${runtimeSubdir} "\$firefoxpwa_runtime"
+  ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
 fi
 if [ -f "\$firefoxpwa_config" ]; then
   config_tmp="\$(mktemp)"
