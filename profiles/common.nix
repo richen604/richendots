@@ -149,6 +149,7 @@
         "nix-command"
         "flakes"
       ];
+      system-features = [ "recursive-nix" ];
       keep-going = true;
       log-lines = 20;
       keep-derivations = true;
