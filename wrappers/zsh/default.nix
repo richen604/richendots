@@ -36,6 +36,7 @@ let
     du = "du -h --max-depth=1";
     free = "free -h";
     nix = "nix --quiet";
+    nh = "nh --quiet";
   };
 
   sessionVariables = {
