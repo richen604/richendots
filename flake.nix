@@ -21,6 +21,7 @@
     nix-doom-emacs-unstraightened = {
       url = "github:marienz/nix-doom-emacs-unstraightened";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.emacs-overlay.follows = "nixpkgs";
     };
     hjem = {
       url = "github:feel-co/hjem";
