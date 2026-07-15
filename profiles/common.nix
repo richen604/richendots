@@ -133,11 +133,12 @@
       warn-dirty = false;
       allow-import-from-derivation = false;
       substituters = [
-        "ssh-ng://cedar.build"
+        "http://cedar.richen.sh:5000?priority=10"
         "https://doom-emacs-unstraightened.cachix.org"
         "https://cache.nixos-cuda.org"
         "https://cache.nixos.org"
       ];
+      http-connections = 64;
       trusted-public-keys = [
         "richencache:ibHPYDq1KmrAsoHIU+WI6ViUoIoX0SEY45CvBOaPXUY="
         "doom-emacs-unstraightened.cachix.org-1:O5oOlRPnmQEvVaFyuMTmthCEooHbrg54WgSLR07tmg4="
