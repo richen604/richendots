@@ -98,7 +98,7 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Portal plus Flatpak measured about `+0.18s`.
     - Portal is likely needed for Wayland desktop behavior; Flatpak may be optional if only supporting Spotify.
   - Agent tasks:
-    - Inspect `services.flatpak`, `xdg.portal`, and `profiles/scripts/spotify-spicetified.nix`.
+    - Inspect `services.flatpak`, `xdg.portal`, and `profiles/gui/spotify-spicetified.nix`.
     - Keep portal enabled unless a replacement is proven safe.
     - Move Flatpak and Spotify Flatpak script behind an optional profile if appropriate.
     - Validate portal eval and Spotify workflow assumptions.

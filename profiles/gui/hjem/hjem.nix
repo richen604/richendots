@@ -10,41 +10,40 @@
       directory = "/home/richen";
       clobberFiles = true;
       files = {
-        ".config/equibop/themes/system24-grove.css".source = ../config/equibop/system24-grove.css;
         ".config/spicetify/config-xpui.ini" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/config-xpui.ini;
+          source = ./config/spicetify/config-xpui.ini;
         };
         ".config/spicetify/CustomApps/marketplace/extension.js" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/CustomApps/marketplace/extension.js;
+          source = ./config/spicetify/CustomApps/marketplace/extension.js;
         };
         ".config/spicetify/CustomApps/marketplace/index.js" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/CustomApps/marketplace/index.js;
+          source = ./config/spicetify/CustomApps/marketplace/index.js;
         };
         ".config/spicetify/CustomApps/marketplace/manifest.json" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/CustomApps/marketplace/manifest.json;
+          source = ./config/spicetify/CustomApps/marketplace/manifest.json;
         };
         ".config/spicetify/CustomApps/marketplace/style.css" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/CustomApps/marketplace/style.css;
+          source = ./config/spicetify/CustomApps/marketplace/style.css;
         };
         ".config/spicetify/Themes/tui/color.ini" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/Themes/tui/color.ini;
+          source = ./config/spicetify/Themes/tui/color.ini;
         };
         ".config/spicetify/Themes/tui/user.css" = {
           type = "copy";
           permissions = "0644";
-          source = ../config/spicetify/Themes/tui/user.css;
+          source = ./config/spicetify/Themes/tui/user.css;
         };
       };
     };
