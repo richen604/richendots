@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Derived from nix-doom-emacs-unstraightened/default.nix:
+# https://github.com/marienz/nix-doom-emacs-unstraightened/blob/e34924af2d6cb57a2f7655472cc7fcd45321fec8/default.nix
+#
+# Local differences:
+# - accepts pre-generated doomIntermediates to avoid import-from-derivation during host eval
+# - reads helper files and package overrides from the nix-doom-emacs-unstraightened flake input via unstraightenedSource
+# - carries local package workarounds needed by this Doom config
+
 {
   # DOOMDIR / Doom private directory / module.
   doomDir,
