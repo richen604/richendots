@@ -1,3 +1,4 @@
+{ richenLib }:
 {
   Preferences = {
     "privacy.globalprivacycontrol.enabled" = true;
@@ -154,13 +155,7 @@
       "Perplexity"
     ];
     Default = "Rebang";
-    Add = [
-      {
-        Name = "SearXNG";
-        Alias = "sx";
-        IconURL = "https://search.cedar.richen.sh/favicon.ico";
-        URLTemplate = "https://search.cedar.richen.sh/search?q={searchTerms}";
-      }
+    Add = richenLib.vars.private.glide.searchEngines ++ [
       {
         Name = "Rebang";
         Alias = "rb";

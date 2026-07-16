@@ -117,7 +117,7 @@ let
   wrappedMango = pkgs.writeShellApplication {
     name = "mango";
     text = ''
-      exec ${mangoPackage}/bin/mango -c /home/richen/.config/mango/config.conf "$@"
+      exec ${mangoPackage}/bin/mango -c "$HOME/.config/mango/config.conf" "$@"
     '';
   };
 in

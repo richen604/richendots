@@ -243,8 +243,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1784213260,
-        "narHash": "sha256-J7TOwfQ97H1tc2l4rGLGlB+uyzhtsnSj6N9nLpvqXtQ=",
+        "lastModified": 1784216071,
+        "narHash": "sha256-PxZRPWBr7+9l9fOGkgQ/cjuFzFXKAiL1Yv++WijRbV0=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },

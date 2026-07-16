@@ -1,13 +1,13 @@
-{ inputs, ... }:
+{ inputs, richenLib, ... }:
 {
   imports = [
     inputs.hjem.nixosModules.default
   ];
 
   hjem = {
-    users.richen = {
-      user = "richen";
-      directory = "/home/richen";
+    users.${richenLib.vars.username} = {
+      user = richenLib.vars.username;
+      directory = "/home/${richenLib.vars.username}";
       clobberFiles = true;
       files = {
         ".config/spicetify/config-xpui.ini" = {

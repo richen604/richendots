@@ -43,11 +43,17 @@ let
     in
     if base == "default" then baseNameOf (dirOf path) else base;
 
+  publicVars = {
+    username = "richen";
+  };
+
+  privateVars = inputs.richendots-private.privateVars or { };
+
   mkLib =
     pkgs:
     let
       self = {
-        vars.username = "richen";
+        vars = lib.recursiveUpdate publicVars privateVars;
 
         lib = {
           flagToArgs =
