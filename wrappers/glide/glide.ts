@@ -13,6 +13,43 @@ glide.o.yank_highlight_time = 180;
 glide.keymaps.set("command", "<C-j>", "commandline_focus_next");
 glide.keymaps.set("command", "<C-k>", "commandline_focus_back");
 
+function url_from_input(input: string): string {
+  const trimmed = input.trim();
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+  if (/^(localhost|[\w-]+(\.[\w-]+)+)(:\d+)?([/?#].*)?$/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return `https://duckduckgo.com/?q=${encodeURIComponent(trimmed)}`;
+}
+
+glide.keymaps.set("normal", "go", async () => {
+  await glide.commandline.show({
+    input: glide.ctx.url.toString(),
+    options: [{
+      label: "open in current tab",
+      matches: () => true,
+      async execute({ input }) {
+        if (!input.trim()) return;
+        await browser.tabs.update({ url: url_from_input(input) });
+      },
+    }],
+  });
+}, { description: "open URL in current tab" });
+
+glide.keymaps.set("normal", "gO", async () => {
+  await glide.commandline.show({
+    title: "open URL in new tab",
+    options: [{
+      label: "open in new tab",
+      matches: () => true,
+      async execute({ input }) {
+        if (!input.trim()) return;
+        await browser.tabs.create({ active: true, url: url_from_input(input) });
+      },
+    }],
+  });
+}, { description: "open URL in new tab" });
+
 glide.keymaps.set("normal", "<leader>ce", "config_edit", {
   description: "edit Glide config",
 });
