@@ -332,7 +332,7 @@ let
 
   mkVm =
     hostvars:
-    (import ./hosts/vm.nix {
+    (import ./vm.nix {
       inherit inputs;
       nixosConfiguration = mkHost hostvars;
     }).config.system.build.vm;

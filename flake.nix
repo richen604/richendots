@@ -85,8 +85,6 @@
           wrappers = _richenLib.wrappers;
         in
         {
-          profile-eval = pkgs.callPackage ./packages/profile-eval.nix { };
-
           vm-fern = richenLib.mkVm {
             hostname = "fern";
             system = system;
