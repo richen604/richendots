@@ -11,7 +11,6 @@
     richenLib.wrappers.keepassxc
     richenLib.wrappers.udiskie
     pkgs.yubikey-manager
-    pkgs.spicetify-cli
     pkgs.equibop
     pkgs.wlr-randr
     pkgs.wl-clipboard
@@ -27,7 +26,6 @@
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
-    (pkgs.callPackage ../scripts/spotify-spicetified.nix { })
     pkgs.obsidian
     pkgs.zed-editor
     pkgs.wayland-pipewire-idle-inhibit
@@ -37,6 +35,5 @@
   ];
 
   programs.gpu-screen-recorder.enable = true;
-  services.flatpak.enable = true;
   programs.steam.enable = true;
 }

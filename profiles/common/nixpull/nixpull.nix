@@ -46,7 +46,7 @@ let
       gum
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
-    text = builtins.readFile ./_nixpull.sh;
+    text = builtins.readFile ./nixpull.sh;
   };
 
   nixpullNotifyPackage = pkgs.writeShellApplication {
