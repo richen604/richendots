@@ -19,7 +19,6 @@ let
       BackupBeforeSave = true;
       BackupFilePathPattern = "{DB_FILENAME}.old.kdbx";
       UseAtomicSaves = true;
-      UseDirectWriteSaves = false;
       SearchLimitGroup = false;
       MinimizeOnOpenUrl = false;
       OpenURLOnDoubleClick = true;
@@ -53,7 +52,6 @@ let
       MovableToolbar = false;
       HideGroupPanel = false;
       HidePreviewPanel = false;
-      AlwaysOnTop = false;
       ToolButtonStyle = 0; # icon only
       LaunchAtStartup = false;
       ShowTrayIcon = true;
@@ -72,7 +70,6 @@ let
       SearchWaitForEnter = false;
       ShowExpiredEntriesOnDatabaseUnlock = true;
       ShowExpiredEntriesOnDatabaseUnlockOffsetDays = 3;
-      AutoTypeSelectDialogSize = "600x250";
     };
 
     # security settings
@@ -81,7 +78,7 @@ let
       ClearClipboardTimeout = 30;
       ClearSearch = true;
       ClearSearchTimeout = 5;
-      HideNotes = false;
+      Security_HideNotes = false;
       LockDatabaseIdle = false;
       LockDatabaseIdleSeconds = 900;
       LockDatabaseMinimize = false;
@@ -92,20 +89,16 @@ let
       PasswordEmptyPlaceholder = true;
       HidePasswordPreviewPanel = true;
       HideTotpPreviewPanel = false;
-      AutoTypeAsk = true;
+      AutotypeAsk = true;
       AutoTypeSkipMainWindowConfirmation = false;
       IconDownloadFallback = false;
       NoConfirmMoveEntryToRecycleBin = true;
       EnableCopyOnDoubleClick = true;
-      QuickUnlock = true;
-      DatabasePasswordMinimumQuality = 0;
     };
 
     # browser integration
     Browser = {
       Enabled = true;
-      CustomBrowserLocation = "";
-      CustomBrowserType = 2;
       ShowNotification = true;
       BestMatchOnly = false;
       UnlockDatabase = true;
@@ -122,7 +115,7 @@ let
       SearchInAllDatabases = false;
       SupportKphFields = true;
       NoMigrationPrompt = false;
-      AllowLocalhostWithPasskeys = false;
+      Browser_AllowLocalhostWithPasskeys = false;
     };
     # ssh agent
     SSHAgent = {
@@ -172,9 +165,35 @@ let
       NoLegacyKeyFileWarning = false;
     };
   };
+
+  localConfig = (pkgs.formats.ini { }).generate "keepassxc-local.ini" {
+    General = {
+      UseDirectWriteSaves = false;
+    };
+
+    GUI = {
+      GUI_AlwaysOnTop = false;
+      AutoTypeSelectDialogSize = "600x250";
+    };
+
+    Security = {
+      QuickUnlock = true;
+      DatabasePasswordMinimumQuality = 0;
+    };
+
+    Browser = {
+      UseCustomBrowser = true;
+      CustomBrowserType = 2; # Firefox native messaging format for Glide.
+      CustomBrowserLocation = "/home/richen/.glide-browser/native-messaging-hosts";
+    };
+  };
 in
 richenLib.lib.wrapPackage {
   package = pkgs.keepassxc;
   flags."--config" = config;
-  passthru.config.path = config;
+  flags."--localconfig" = localConfig;
+  passthru.config = {
+    path = config;
+    localPath = localConfig;
+  };
 }
