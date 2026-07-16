@@ -9,7 +9,7 @@
     };
     richendots-private = {
       #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/mnt/dev/richendots-private/worktrees/profile-feature-imports";
+      url = "path:/mnt/dev/richendots-private";
       inputs.nixarr.inputs.nixpkgs.follows = "nixpkgs";
       inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     };
