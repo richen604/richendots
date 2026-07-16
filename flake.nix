@@ -1,5 +1,5 @@
 {
-  description = "template for hydenix";
+  description = "richendots";
 
   outputs =
     inputs:
