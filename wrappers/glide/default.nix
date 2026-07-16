@@ -3,7 +3,7 @@ let
   version = "0.1.63a";
   runtimeSubdir = "lib/glide-browser-${version}";
   pwaRuntimeSubdir = "lib/glide-pwa-runtime-${version}";
-  policies = import ../firefox/_policies.nix;
+  policies = import ./_policies.nix;
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
   pwaPoliciesJson = pkgs.writeText "glide-pwa-policies.json" (
     builtins.toJSON {

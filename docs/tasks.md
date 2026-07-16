@@ -28,7 +28,7 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - `pkgs.ungoogled-chromium` measured near noise-level by comparison.
     - Current Firefox references include `profiles/common-gui.nix`, zsh browser env, Mango keybinds, and MIME defaults.
   - Agent tasks:
-    - Inspect `profiles/common-gui.nix`, `wrappers/firefox/default.nix`, `wrappers/zsh/default.nix`, `wrappers/zsh/module.nix`, and `wrappers/mango/_base-config.nix`.
+    - Inspect `profiles/common-gui.nix`, `wrappers/glide/default.nix`, `wrappers/zsh/default.nix`, `wrappers/zsh/module.nix`, and `wrappers/mango/_base-config.nix`.
     - Decide whether Firefox should move to an optional profile or Chromium should become the default browser.
     - Update browser package selection, `BROWSER`, MIME defaults, and desktop keybinds consistently.
     - Benchmark Fern eval before and after with `nix eval .#nixosConfigurations.fern.config.system.build.toplevel.drvPath --raw --no-eval-cache`.
