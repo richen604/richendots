@@ -2,8 +2,6 @@
 {
   environment.systemPackages = [
     richenLib.wrappers.opencode
-
-    # dev tools
     pkgs.nixfmt
     pkgs.nil
     pkgs.nixd

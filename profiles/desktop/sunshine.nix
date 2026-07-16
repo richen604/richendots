@@ -145,7 +145,7 @@ let
 
     systemctl --user stop sunshine-steam-gamepad-ui.service >/dev/null 2>&1 || true
   '';
-  sunshineApps = import ./apps.nix {
+  sunshineApps = import ./_sunshine-apps.nix {
     inherit
       sunshinePackage
       sunshineHeadlessSetResolution
@@ -164,9 +164,7 @@ in
     autoStart = true;
     capSysAdmin = true;
     openFirewall = true;
-    applications = {
-      apps = sunshineApps;
-    };
+    applications.apps = sunshineApps;
     settings = {
       capture = "kms";
       output_name = "0";
@@ -181,9 +179,7 @@ in
   };
 
   security.wrappers.sunshine.capabilities = pkgs.lib.mkForce "cap_sys_admin,cap_sys_nice+pie";
-
   programs.gamemode.enable = true;
-
   users.users.richen.extraGroups = [
     "gamemode"
     "uinput"

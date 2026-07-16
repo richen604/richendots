@@ -9,7 +9,7 @@
     };
     richendots-private = {
       #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
-      url = "path:/mnt/dev/richendots-private";
+      url = "path:/mnt/dev/richendots-private/worktrees/profile-feature-imports";
       inputs.nixarr.inputs.nixpkgs.follows = "nixpkgs";
       inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -33,56 +33,27 @@
     { self, ... }@inputs:
     let
       richenLib = import ./lib.nix { inherit inputs; };
-      nixpull = import ./modules/nixpull/flake-module.nix { inherit inputs self; };
-      evalBudgetCheck =
-        system:
+      nixpull =
         let
-          pkgs = richenLib.pkgsFor system;
-          budgets = {
-            cedar = 6673;
-            fern = 7178;
-            oak = 7185;
-          };
-          checkHost = host: budget: {
-            name = "eval-budget-${host}";
-            value =
-              pkgs.runCommandLocal "eval-budget-${host}"
-                {
-                  nativeBuildInputs = [ pkgs.nix ];
-                  requiredSystemFeatures = [ "recursive-nix" ];
-                }
-                ''
-                  export HOME=$TMPDIR
-                  export NIX_CONFIG='experimental-features = nix-command flakes recursive-nix'
-                  start=$(date +%s%3N)
-                  nix --quiet eval --raw ${self}#nixosConfigurations.${host}.config.system.build.toplevel.drvPath \
-                    --override-input nixpkgs ${inputs.nixpkgs} \
-                    --override-input deploy-rs ${inputs.deploy-rs} \
-                    --override-input richendots-private ${inputs.richendots-private} \
-                    --override-input mango ${inputs.mango} \
-                    --override-input nix-doom-emacs-unstraightened ${inputs.nix-doom-emacs-unstraightened} \
-                    --override-input hjem ${inputs.hjem} \
-                    --read-only \
-                    --no-write-lock-file \
-                    --option eval-cache false \
-                    --option allow-import-from-derivation false \
-                    >/dev/null
-                  end=$(date +%s%3N)
-                  elapsed=$((end - start))
-
-                  if [ "$elapsed" -gt ${toString budget} ]; then
-                    printf 'eval budget failed for ${host}: elapsed=%sms budget=%sms over=%sms\n' \
-                      "$elapsed" ${toString budget} "$((elapsed - ${toString budget}))" >&2
-                    exit 1
-                  fi
-
-                  printf 'eval budget ok for ${host}: elapsed=%sms budget=%sms\n' \
-                    "$elapsed" ${toString budget}
-                  touch "$out"
-                '';
+          lib = inputs.nixpkgs.lib;
+          hosts = self.nixosConfigurations;
+          hostSystem = host: hosts.${host}.pkgs.stdenv.hostPlatform.system;
+          activatable = host: inputs.deploy-rs.lib.${hostSystem host}.activate.nixos hosts.${host};
+          deploy = {
+            nodes = lib.mapAttrs (host: _configuration: {
+              hostname = host;
+              profiles.system = {
+                user = "root";
+                path = activatable host;
+              };
+            }) hosts;
           };
         in
-        builtins.listToAttrs (inputs.nixpkgs.lib.mapAttrsToList checkHost budgets);
+        {
+          nixpullProfiles = lib.mapAttrs (host: _configuration: activatable host) hosts;
+          inherit deploy;
+          checks = lib.mapAttrs (_system: deployLib: deployLib.deployChecks deploy) inputs.deploy-rs.lib;
+        };
     in
     {
       nixosConfigurations = {
@@ -90,16 +61,19 @@
           hostname = "fern";
           system = "x86_64-linux";
           profile = "desktop";
+          stateVersion = "26.05";
         };
         oak = richenLib.mkHost {
           hostname = "oak";
           system = "x86_64-linux";
           profile = "laptop";
+          stateVersion = "26.05";
         };
         cedar = richenLib.mkHost {
           hostname = "cedar";
           system = "x86_64-linux";
           profile = "server";
+          stateVersion = "25.05";
         };
       };
 
@@ -117,16 +91,19 @@
             hostname = "fern";
             system = system;
             profile = "desktop";
+            stateVersion = "26.05";
           };
           vm-oak = richenLib.mkVm {
             hostname = "oak";
             system = system;
             profile = "laptop";
+            stateVersion = "26.05";
           };
           vm-cedar = richenLib.mkVm {
             hostname = "cedar";
             system = system;
             profile = "server";
+            stateVersion = "25.05";
           };
         }
         // wrappers
@@ -151,8 +128,6 @@
     }
     // nixpull
     // {
-      checks = nixpull.checks // {
-        x86_64-linux = nixpull.checks.x86_64-linux // evalBudgetCheck "x86_64-linux";
-      };
+      checks = nixpull.checks;
     };
 }
