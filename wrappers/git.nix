@@ -22,6 +22,7 @@ let
     user = {
       name = "richen604";
       email = "56615615+richen604@users.noreply.github.com";
+      signingkey = "/home/richen/.ssh/id_ed25519_sk";
     };
     rebase.autoStash = true;
     # detect data corruption eagerly
@@ -31,7 +32,12 @@ let
     # makes git branch sort by most recently used branches instead of alphabetical
     branch.sort = "-committerdate";
     # signed commits with ssh
-    gpg.format = "ssh";
+    gpg = {
+      format = "ssh";
+      ssh.allowedSignersFile = "/run/secrets/users/richen/git_allowed_signers";
+    };
+    commit.gpgSign = true;
+    tag.gpgSign = true;
     merge.conflictStyle = "zdiff3";
   };
 in
