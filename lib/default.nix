@@ -2,8 +2,8 @@
 let
   inherit (inputs.nixpkgs) lib;
 
-  nixpkgs = import ./nixpkgs.nix { inherit inputs; };
-  inherit (nixpkgs) forEachSystem pkgsFor;
+  packageLib = import ./packages.nix { inherit inputs lib; };
+  inherit (packageLib) forEachSystem pkgsFor;
 
   mkLib =
     pkgs:
@@ -11,19 +11,10 @@ let
       selfLib = {
         vars = import ./vars.nix { inherit inputs lib; };
 
-        lib =
-          let
-            helpers = import ./helpers.nix { inherit lib; };
-          in
-          helpers
-          // {
-            wrapPackage = import ./wrap-package.nix {
-              inherit helpers lib pkgs;
-            };
-          };
+        lib = import ./core.nix { inherit lib pkgs; };
 
-        wrappers = import ./wrappers.nix {
-          inherit inputs lib pkgs;
+        wrappers = packageLib.mkWrappers {
+          inherit pkgs;
           richenLib = selfLib;
         };
       };
@@ -39,18 +30,9 @@ let
       ;
   };
 
-  packages = import ./flake-packages.nix {
-    inherit
-      forEachSystem
-      lib
-      mkLib
-      pkgsFor
-      ;
+  packages = packageLib.mkPackages {
     inherit (hosts) hostVars mkVm;
-  };
-
-  devShell = import ./dev-shell.nix {
-    inherit forEachSystem pkgsFor;
+    inherit mkLib;
   };
 
   nixpull = import ./nixpull.nix {
@@ -60,13 +42,14 @@ let
 in
 {
   inherit
-    devShell
     forEachSystem
     mkLib
     nixpull
     packages
     pkgsFor
     ;
+
+  devShell = packageLib.devShell;
 
   inherit (hosts)
     hostVars
