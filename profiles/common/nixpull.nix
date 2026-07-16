@@ -46,7 +46,7 @@ let
       gum
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
-    text = builtins.readFile ./nixpull.sh;
+    text = builtins.readFile ./_nixpull.sh;
   };
 
   nixpullNotifyPackage = pkgs.writeShellApplication {
@@ -317,16 +317,15 @@ in
 
         environment.systemPackages = [ nixpullPackage ];
 
-        systemd.tmpfiles.rules =
-          [
-            "d /var/lib/nixpull 0755 root root -"
-            "d /var/lib/nixpull/client 0755 root root -"
-            "d ${toString cfg.activation.tempPath} 0755 root root -"
-          ]
-          ++ lib.optionals (cfg.role == "builder") [
-            "d /var/lib/nixpull/builder 0755 ${cfg.server.user} root -"
-            "Z /var/lib/nixpull/builder - ${cfg.server.user} root -"
-          ];
+        systemd.tmpfiles.rules = [
+          "d /var/lib/nixpull 0755 root root -"
+          "d /var/lib/nixpull/client 0755 root root -"
+          "d ${toString cfg.activation.tempPath} 0755 root root -"
+        ]
+        ++ lib.optionals (cfg.role == "builder") [
+          "d /var/lib/nixpull/builder 0755 ${cfg.server.user} root -"
+          "Z /var/lib/nixpull/builder - ${cfg.server.user} root -"
+        ];
       }
 
       (lib.mkIf (cfg.role == "builder") {

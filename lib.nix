@@ -305,6 +305,11 @@ let
     let
       pkgs = pkgsFor hostvars.system;
       richenLib = mkLib pkgs;
+      recursiveModules =
+        dir:
+        richenLib.lib.listFilesRecursiveCond dir (
+          filename: lib.hasSuffix ".nix" filename && filename != "default.nix" && !lib.hasPrefix "_" filename
+        );
     in
     lib.nixosSystem {
       inherit pkgs;
@@ -315,17 +320,14 @@ let
         inherit richenLib hostvars;
       };
 
-      modules = [
-        ./hosts/${hostvars.hostname}
-        ./profiles/common.nix
-        ./profiles/${hostvars.profile}.nix
-        # todo: recursive import modules?
-        ./modules/nixpull
-        (inputs.richendots-private.nixosModules.${hostvars.hostname} or { })
-      ]
-      ++ lib.optional (
-        hostvars.profile == "desktop" || hostvars.profile == "laptop"
-      ) ./profiles/common-gui.nix;
+      modules =
+        recursiveModules ./profiles/common
+        ++ lib.optionals (hostvars.profile == "desktop" || hostvars.profile == "laptop") (
+          recursiveModules ./profiles/gui
+        )
+        ++ recursiveModules ./profiles/${hostvars.profile}
+        ++ recursiveModules ./hosts/${hostvars.hostname}
+        ++ [ (inputs.richendots-private.nixosModules.${hostvars.hostname} or { }) ];
     };
 
   mkVm =
