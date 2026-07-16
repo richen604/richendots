@@ -32,7 +32,7 @@
   outputs =
     { self, ... }@inputs:
     let
-      richenLib = import ./lib.nix { inherit inputs; };
+      richenLib = import ./lib { inherit inputs; };
       nixpull =
         let
           lib = inputs.nixpkgs.lib;

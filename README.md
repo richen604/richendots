@@ -40,4 +40,4 @@ my personal nixos config
 
 > [!TIP]
 > some modules, packages, and options are obfuscated from private imports </br>
-> the configuration will not build from a clone/fork without `inputs.richendots-private` removed from `./lib.nix`
+> the configuration will not build from a clone/fork without `inputs.richendots-private` removed from `./lib/default.nix`

@@ -280,7 +280,7 @@ let
 
         wrappers =
           let
-            files = self.lib.listFilesRecursiveCond ./wrappers (
+            files = self.lib.listFilesRecursiveCond ../wrappers (
               filename:
               lib.hasSuffix ".nix" filename && filename != "module.nix" && lib.hasPrefix "_" filename == false
             );
@@ -321,12 +321,12 @@ let
       };
 
       modules =
-        recursiveModules ./profiles/common
+        recursiveModules ../profiles/common
         ++ lib.optionals (hostvars.profile == "desktop" || hostvars.profile == "laptop") (
-          recursiveModules ./profiles/gui
+          recursiveModules ../profiles/gui
         )
-        ++ recursiveModules ./profiles/${hostvars.profile}
-        ++ recursiveModules ./hosts/${hostvars.hostname}
+        ++ recursiveModules ../profiles/${hostvars.profile}
+        ++ recursiveModules ../hosts/${hostvars.hostname}
         ++ [ (inputs.richendots-private.nixosModules.${hostvars.hostname} or { }) ];
     };
 

@@ -17,9 +17,9 @@ Options:
 Default hosts: cedar fern oak
 
 Examples:
-  ./profile-eval
-  ./profile-eval --profile-only cedar
-  ./profile-eval --out /tmp/richendots-eval fern oak
+  ./lib/profile-eval
+  ./lib/profile-eval --profile-only cedar
+  ./lib/profile-eval --out /tmp/richendots-eval fern oak
 EOF
 }
 
