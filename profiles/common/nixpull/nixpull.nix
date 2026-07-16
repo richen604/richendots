@@ -187,7 +187,7 @@ in
     server = {
       host = lib.mkOption {
         type = lib.types.str;
-        default = "cedar.build";
+        default = "localhost";
         description = "Host that publishes nixpull builder state.";
       };
 
@@ -216,7 +216,7 @@ in
 
       store = lib.mkOption {
         type = lib.types.str;
-        default = "ssh-ng://cedar.build";
+        default = "ssh-ng://localhost";
         description = "Nix store URL used by clients for nix copy --from.";
       };
     };

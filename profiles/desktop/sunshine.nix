@@ -163,7 +163,7 @@ in
     package = sunshinePackage;
     autoStart = true;
     capSysAdmin = true;
-    openFirewall = true;
+    openFirewall = false;
     applications.apps = sunshineApps;
     settings = {
       capture = "kms";
@@ -173,6 +173,8 @@ in
       vaapi_strict_rc_buffer = "disabled";
     };
   };
+
+  services.avahi.openFirewall = false;
 
   systemd.user.services.sunshine.serviceConfig = {
     Environment = [ "LD_LIBRARY_PATH=/run/opengl-driver/lib" ];

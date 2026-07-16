@@ -8,14 +8,15 @@
   ...
 }:
 let
+  home = "/home/${richenLib.vars.username}";
   sessionPath = lib.concatStringsSep ":" [
     "/run/wrappers/bin"
-    "/home/richen/.local/share/flatpak/exports/bin"
+    "${home}/.local/share/flatpak/exports/bin"
     "/var/lib/flatpak/exports/bin"
-    "/home/richen/.nix-profile/bin"
+    "${home}/.nix-profile/bin"
     "/nix/profile/bin"
-    "/home/richen/.local/state/nix/profile/bin"
-    "/etc/profiles/per-user/richen/bin"
+    "${home}/.local/state/nix/profile/bin"
+    "/etc/profiles/per-user/${richenLib.vars.username}/bin"
     "/nix/var/nix/profiles/default/bin"
     "/run/current-system/sw/bin"
   ];

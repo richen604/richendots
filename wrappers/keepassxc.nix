@@ -166,27 +166,24 @@ let
     };
   };
 
-  localConfig = (pkgs.formats.ini { }).generate "keepassxc-local.ini" {
-    General = {
-      UseDirectWriteSaves = false;
-    };
+  localConfig = (pkgs.formats.ini { }).generate "keepassxc-local.ini" (
+    pkgs.lib.recursiveUpdate {
+      General = {
+        UseDirectWriteSaves = false;
+      };
 
-    GUI = {
-      GUI_AlwaysOnTop = false;
-      AutoTypeSelectDialogSize = "600x250";
-    };
+      GUI = {
+        GUI_AlwaysOnTop = false;
+        AutoTypeSelectDialogSize = "600x250";
+      };
 
-    Security = {
-      QuickUnlock = true;
-      DatabasePasswordMinimumQuality = 0;
-    };
+      Security = {
+        QuickUnlock = true;
+        DatabasePasswordMinimumQuality = 0;
+      };
 
-    Browser = {
-      UseCustomBrowser = true;
-      CustomBrowserType = 2; # Firefox native messaging format for Glide.
-      CustomBrowserLocation = "/home/richen/.glide-browser/native-messaging-hosts";
-    };
-  };
+    } richenLib.vars.private.keepassxc.localConfig
+  );
 in
 richenLib.lib.wrapPackage {
   package = pkgs.keepassxc;
