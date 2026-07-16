@@ -18,8 +18,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
 
 ## unscheduled
 
-### review
-
 ## backlog
 
 - perf: make Firefox optional or switch default browser to Chromium
@@ -103,16 +101,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Move Flatpak and Spotify Flatpak script behind an optional profile if appropriate.
     - Validate portal eval and Spotify workflow assumptions.
 
-- perf: keep desktop session services explicit and measured
-  - Notes:
-    - greetd, graphical-desktop, and XWayland measured about `+0.16s`.
-    - These are expected desktop costs, not obvious waste.
-  - Agent tasks:
-    - Inspect `profiles/common-gui.nix` and `profiles/desktop.nix` session wiring.
-    - Confirm which hosts require greetd, graphical desktop support, and XWayland.
-    - Only split these services if a no-session or lite-GUI profile is actually useful.
-    - Benchmark eval if any session split is made.
-
 ## [desktop reliability](https://git.cedar.richen.sh/richen/richendots/milestones/10)
 
 - fix: media playing should prevent idle
@@ -124,27 +112,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Verify whether `wayland-pipewire-idle-inhibit` is installed, active, and sufficient.
     - Apply the smallest config, wrapper, or service change that makes media playback inhibit idle.
     - Validate affected desktop and laptop profiles.
-
-- fix: dolphin doesnt grab default programs, shows 0 programs
-  - Notes:
-    - Dolphin currently fails to discover default programs and reports zero programs.
-    - First attempted fix is `XDG_MENU_PREFIX=nixos- kbuildsycoca6 --noincremental`.
-    - If that fails, Dolphin may need a wrapper or KService/XDG environment wiring.
-  - Agent tasks:
-    - Inspect current Dolphin and XDG desktop integration in the GUI profile.
-    - Test or encode the `XDG_MENU_PREFIX=nixos- kbuildsycoca6 --noincremental` path where appropriate.
-    - Add a wrapper or environment fix only if the simple cache rebuild path is insufficient.
-    - Validate Dolphin sees default applications after the change.
-
-- systemd services for all autostart apps
-  - Notes:
-    - Autostart should be declarative and reliable across sessions.
-    - Current exec-once style startup should be reviewed before replacing it broadly.
-  - Agent tasks:
-    - Inventory current autostart apps and where they are launched.
-    - Identify which apps should become systemd user services.
-    - Add focused service definitions without changing unrelated session behavior.
-    - Validate services start in the intended profiles.
 
 - feat: screenshot should freeze screen
   - Notes:
@@ -165,16 +132,6 @@ Forgejo is authoritative after an item becomes a PRD issue.
     - Fix startup through the preferred autostart or systemd path.
     - Add host-appropriate window placement rules for Fern and Oak.
     - Validate KeepassXC starts and opens in the expected position.
-
-- fern: fix: plymouth aligned weird
-  - Notes:
-    - Fern has host-specific Plymouth alignment issues.
-    - Keep the fix isolated to Fern unless shared config is clearly wrong.
-  - Agent tasks:
-    - Inspect Fern host display and boot visual configuration.
-    - Identify whether Plymouth alignment is controlled by resolution, theme, or host settings.
-    - Apply the smallest host-specific correction.
-    - Document any manual reboot check that cannot be automated.
 
 - fern: monitor alignment is slightly off for left and right
   - Notes:
