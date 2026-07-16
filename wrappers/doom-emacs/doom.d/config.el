@@ -1,5 +1,7 @@
 ;;; config.el -*- lexical-binding: t; -*-
 
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" doom-user-dir))
+
 (setq user-full-name "Richen"
-      doom-theme 'doom-one
+      doom-theme 'grove
       display-line-numbers-type 'relative)
