@@ -45,6 +45,11 @@
           permissions = "0644";
           source = ./config/spicetify/Themes/tui/user.css;
         };
+        ".config/equibop/themes/system24-grove.css" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/equibop/system24-grove.css;
+        };
       };
     };
   };
