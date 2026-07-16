@@ -12,6 +12,7 @@ forEachSystem (
     packages = with pkgs; [
       deadnix
       git
+      hyperfine
       nil
       nixfmt
       statix
