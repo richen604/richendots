@@ -141,9 +141,6 @@ in
     blueman-applet = lib.recursiveUpdate partOfMangoSession {
       description = "Bluetooth management applet";
       serviceConfig = {
-        Type = "dbus";
-        BusName = "org.blueman.Applet";
-        ExecStart = "${pkgs.blueman}/bin/blueman-applet";
         Restart = "on-failure";
         RestartSec = 2;
       };
