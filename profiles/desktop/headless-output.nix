@@ -34,9 +34,9 @@ let
         headless_enabled="$(printf '%s' "$outputs" | ${pkgs.jq}/bin/jq '[.[] | select((.enabled != false) and (.name | test("^HEADLESS-[0-9]+$")))] | length')"
 
         if [ "$real_enabled" -eq 0 ] && [ "$headless_enabled" -eq 0 ]; then
-          ${richenLib.wrappers.mango}/bin/mmsg dispatch create_virtual_output >/dev/null 2>&1 || true
+          ${richenLib.wrappers.mango-fern}/bin/mmsg dispatch create_virtual_output >/dev/null 2>&1 || true
         elif [ "$real_enabled" -gt 0 ] && [ "$headless_enabled" -gt 0 ]; then
-          ${richenLib.wrappers.mango}/bin/mmsg dispatch destroy_all_virtual_output >/dev/null 2>&1 || true
+          ${richenLib.wrappers.mango-fern}/bin/mmsg dispatch destroy_all_virtual_output >/dev/null 2>&1 || true
           ${pkgs.systemd}/bin/systemctl --user try-restart waybar.service >/dev/null 2>&1 || true
         fi
       fi

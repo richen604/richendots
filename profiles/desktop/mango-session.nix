@@ -15,7 +15,7 @@
   ];
 
   environment.systemPackages = [
-    richenLib.wrappers.mango
+    richenLib.wrappers.mango-fern
     richenLib.wrappers.swaylock
     richenLib.wrappers.swayidle
     richenLib.wrappers.waybar
@@ -23,7 +23,7 @@
 
   services.greetd.settings = rec {
     initial_session = {
-      command = "${richenLib.wrappers.mango}/bin/mango";
+      command = "${richenLib.wrappers.mango-fern}/bin/mango";
       user = "richen";
     };
     default_session = initial_session;
@@ -37,9 +37,9 @@
   };
 
   hjem.users.richen.files.".config/mango/config.conf".source =
-    pkgs.writeText "config.conf" richenLib.wrappers.mango.config.content;
+    pkgs.writeText "config.conf" richenLib.wrappers.mango-fern.config.content;
 
   xdg.portal.configPackages = [
-    richenLib.wrappers.mango
+    richenLib.wrappers.mango-fern
   ];
 }
