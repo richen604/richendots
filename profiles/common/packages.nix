@@ -13,7 +13,6 @@
     richenLib.wrappers.yazi
     pkgs.tealdeer
     pkgs.bat
-    pkgs.eza
     pkgs.tree
     pkgs.htop
     pkgs.fastfetch

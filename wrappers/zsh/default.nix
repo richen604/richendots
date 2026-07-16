@@ -15,10 +15,10 @@ let
     ".." = "cd ..";
     "..." = "cd ../..";
     "...." = "cd ../../..";
-    ls = "eza --color=auto";
-    ll = "eza -lh --color=auto --group-directories-first";
-    la = "eza -la --color=auto --group-directories-first";
-    lt = "eza -lh --color=auto --tree";
+    ls = "ls --color=auto --group-directories-first";
+    ll = "ls -lh --color=auto --group-directories-first";
+    la = "ls -lah --color=auto --group-directories-first";
+    lt = "tree -C -h";
     cat = "bat --color=always -pp";
     less = "less -R";
     tree = "tree -C";
