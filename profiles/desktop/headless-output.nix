@@ -58,8 +58,12 @@ in
     };
   };
 
-  systemd.user.services.waybar.serviceConfig.ExecStartPre =
-    "${waitForRealOutput}/bin/wait-for-real-output";
-  systemd.user.services.equibop.serviceConfig.ExecStartPre =
-    "${waitForEquibopOutput}/bin/wait-for-equibop-output";
+  systemd.user.services.waybar.serviceConfig = {
+    ExecStartPre = "${waitForRealOutput}/bin/wait-for-real-output";
+    TimeoutStartSec = "infinity";
+  };
+  systemd.user.services.equibop.serviceConfig = {
+    ExecStartPre = "${waitForEquibopOutput}/bin/wait-for-equibop-output";
+    TimeoutStartSec = "infinity";
+  };
 }

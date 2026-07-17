@@ -8,6 +8,7 @@
   imports = [
     (import ../../wrappers/mango/_session.nix {
       inherit pkgs richenLib;
+      mangoPackage = richenLib.wrappers.mango-fern;
       waybarPackage = richenLib.wrappers.waybar;
       swayidlePackage = richenLib.wrappers.swayidle;
       extraWantedServices = [ "sunshine.service" ];

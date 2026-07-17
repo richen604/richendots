@@ -3,8 +3,10 @@
   imports = [
     (import ../../wrappers/mango/_session.nix {
       inherit pkgs richenLib;
+      mangoPackage = richenLib.wrappers.mango-oak;
       waybarPackage = richenLib.wrappers.waybar-laptop;
       swayidlePackage = richenLib.wrappers.swayidle-laptop;
+      vicinaePackage = richenLib.wrappers.vicinae-laptop;
     })
   ];
 
