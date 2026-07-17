@@ -1,11 +1,23 @@
-{ pkgs, richenLib, ... }:
+{
+  hostvars,
+  pkgs,
+  richenLib,
+  ...
+}:
+let
+  vicinaePackage =
+    if hostvars.profile == "laptop" then
+      richenLib.wrappers.vicinae-laptop
+    else
+      richenLib.wrappers.vicinae;
+in
 {
   environment.systemPackages = [
     richenLib.wrappers.kitty
     richenLib.wrappers.zsh
     richenLib.wrappers.swaybg
     richenLib.wrappers.swaync
-    richenLib.wrappers.vicinae
+    vicinaePackage
     richenLib.wrappers.satty
     richenLib.wrappers.glide
     richenLib.wrappers.keepassxc
