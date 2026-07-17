@@ -13,13 +13,15 @@ glide.o.yank_highlight_time = 180;
 glide.keymaps.set("command", "<C-j>", "commandline_focus_next");
 glide.keymaps.set("command", "<C-k>", "commandline_focus_back");
 
+const search_url = "https://www.rebang.online/?q=";
+
 function url_from_input(input: string): string {
   const trimmed = input.trim();
   if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
   if (/^(localhost|[\w-]+(\.[\w-]+)+)(:\d+)?([/?#].*)?$/i.test(trimmed)) {
     return `https://${trimmed}`;
   }
-  return `https://duckduckgo.com/?q=${encodeURIComponent(trimmed)}`;
+  return `${search_url}${encodeURIComponent(trimmed)}`;
 }
 
 glide.keymaps.set("normal", "go", async () => {
