@@ -2,8 +2,10 @@
   pkgs,
   lib ? pkgs.lib,
   richenLib,
+  mangoPackage,
   waybarPackage,
   swayidlePackage,
+  vicinaePackage ? richenLib.wrappers.vicinae,
   extraWantedServices ? [ ],
   ...
 }:
@@ -78,7 +80,23 @@ in
     ++ extraWantedServices;
   };
 
+  systemd.user.paths.mango-reload-config = {
+    wantedBy = [ "mango-session.target" ];
+    pathConfig = {
+      PathChanged = "%h/.config/mango/config.conf";
+      Unit = "mango-reload-config.service";
+    };
+  };
+
   systemd.user.services = {
+    mango-reload-config = {
+      description = "Reload Mango config";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${mangoPackage}/bin/mmsg dispatch reload_config";
+      };
+    };
+
     waybar = lib.recursiveUpdate partOfMangoSession {
       description = "Highly customizable Wayland bar for wlroots compositors";
       documentation = [ "https://github.com/Alexays/Waybar/wiki/" ];
@@ -116,7 +134,7 @@ in
       documentation = [ "https://docs.vicinae.com" ];
       requires = [ "dbus.socket" ];
       serviceConfig = {
-        ExecStart = "${richenLib.wrappers.vicinae}/bin/vicinae server --replace";
+        ExecStart = "${vicinaePackage}/bin/vicinae server --replace";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         Environment = "PATH=${sessionPath}";
         Restart = "always";
