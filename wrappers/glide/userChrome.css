@@ -37,7 +37,7 @@
   --theme-spacing-small: 4px;
   --theme-margin: 0.8rem;
 
-  --theme-display-horizontal-tabs: block;
+  --theme-display-horizontal-tabs: none;
   --theme-display-window-controls: none;
   --theme-display-nav-buttons: flex;
   --theme-display-urlbar-icons: none;
@@ -519,6 +519,7 @@ menuitem:where([_moz-menuactive="true"][disabled="true"]) {
 }
 
 #nav-bar {
+  display: none !important;
   padding: var(--theme-spacing-small) !important;
 }
 

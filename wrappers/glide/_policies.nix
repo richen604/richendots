@@ -80,7 +80,7 @@
   DisableFirefoxStudies = true;
   DisableTelemetry = true;
   DisplayBookmarksToolbar = "never";
-  DisplayMenuBar = "never";
+  DisplayMenuBar = "default-off";
   OverrideFirstRunPage = "";
   PictureInPicture.Enabled = false;
   GenerativeAI.Enabled = false;
