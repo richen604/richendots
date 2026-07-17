@@ -3,6 +3,7 @@ set -euo pipefail
 
 CONFIG=${NIXPULL_CONFIG:?NIXPULL_CONFIG is required}
 STATE_ROOT=$(jq -r '.stateRoot' "$CONFIG")
+SUDO=/run/wrappers/bin/sudo
 BUILDER_DIR="$STATE_ROOT/builder"
 CLIENT_DIR="$STATE_ROOT/client"
 BUILDER_STATE="$BUILDER_DIR/state.json"
@@ -14,12 +15,13 @@ usage() {
   cat <<EOF
 nixpull - pull-based NixOS profile updates
 
-usage: nixpull <build|fetch|pull|status|check> [options]
+usage: nixpull <build|fetch|pull|activate|status|check> [options]
 
 commands:
   build        build and publish configured host profiles (builder)
   fetch        copy latest published profile for this host, never activate
   pull [-a]    fetch, then activate latest published profile
+  activate     activate the already fetched profile (root/systemd)
   status       show local and published state
   check        compare published state without copying or activating
 EOF
@@ -28,7 +30,7 @@ EOF
 log_line() {
   local file=$1
   shift
-  mkdir -p "$(dirname "$file")"
+  mkdir -p "$(dirname "$file")" || return
   printf '%s %s\n' "$(date --iso-8601=seconds)" "$*" >>"$file"
 }
 
@@ -40,43 +42,22 @@ cleanup_build_workdir() {
 
 atomic_write() {
   local target=$1 tmp
-  tmp=$(mktemp "${target}.XXXXXX")
+  tmp=$(mktemp "${target}.XXXXXX") || return
   cat >"$tmp"
-  chmod 0644 "$tmp"
+  chmod 0664 "$tmp"
   mv "$tmp" "$target"
 }
 
 require_role() {
-  local expected=$1 actual
-  actual=$(jq -r '.role' "$CONFIG")
-  if [ "$actual" != "$expected" ]; then
-    printf 'nixpull: command requires %s role, configured role is %s\n' "$expected" "$actual" >&2
+  local expected=$1
+  if ! jq -e --arg expected "$expected" 'any(.roles[]; . == $expected)' "$CONFIG" >/dev/null; then
+    printf 'nixpull: command requires %s role\n' "$expected" >&2
     exit 2
   fi
 }
 
 hostname_short() {
   hostname -s
-}
-
-ssh_args() {
-  jq -r '.server.sshOptions[]?' "$CONFIG"
-  printf -- '-p\n%s\n' "$(jq -r '.server.port' "$CONFIG")"
-}
-
-ssh_target() {
-  printf '%s@%s' "$(jq -r '.server.user' "$CONFIG")" "$(jq -r '.server.host' "$CONFIG")"
-}
-
-server_online() {
-  mapfile -t args < <(ssh_args)
-  ssh "${args[@]}" "$(ssh_target)" true >/dev/null 2>&1
-}
-
-read_remote_builder_state() {
-  mapfile -t args < <(ssh_args)
-  # shellcheck disable=SC2029
-  ssh "${args[@]}" "$(ssh_target)" "cat '$BUILDER_STATE'" 2>/dev/null
 }
 
 current_system() {
@@ -256,16 +237,13 @@ cmd_build() {
 }
 
 fetch_metadata() {
-  local host=$1 remote_state metadata
-  if ! server_online; then
-    printf 'nixpull: server %s unreachable; skipping fetch\n' "$(jq -r '.server.host' "$CONFIG")" >&2
+  local host=$1 remote_state metadata metadata_url
+  metadata_url=$(jq -r '.server.metadataUrl' "$CONFIG")
+  if ! remote_state=$(curl --fail --silent --show-error --location --connect-timeout 10 "$metadata_url"); then
+    printf 'nixpull: metadata URL unreachable; skipping fetch: %s\n' "$metadata_url" >&2
     log_line "$CLIENT_LOG" "fetch skip server-unreachable"
     return 75
   fi
-  remote_state=$(read_remote_builder_state) || {
-    printf 'nixpull: unable to read remote builder state\n' >&2
-    return 1
-  }
   metadata=$(jq -e --arg host "$host" '.published[$host]' <<<"$remote_state") || {
     printf 'nixpull: no published build for %s\n' "$host" >&2
     return 1
@@ -274,15 +252,15 @@ fetch_metadata() {
 }
 
 fetch_closure() {
-  local host=$1 metadata=$2 activatable current_fetched store
+  local host=$1 metadata=$2 activatable current_fetched substituter
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   current_fetched=$(jq -r '.fetched.activatablePath // empty' "$CLIENT_STATE")
   if [ "$current_fetched" = "$activatable" ] && [ -x "$activatable/activate-rs" ]; then
     print_nixpull_event "already fetched" "$activatable"
     log_line "$CLIENT_LOG" "fetch noop host=$host activatablePath=$activatable"
   else
-    store=$(jq -r '.server.store' "$CONFIG")
-    nix copy --from "$store" "$activatable"
+    substituter=$(jq -r '.server.substituterUrl' "$CONFIG")
+    nix build "$activatable" --no-link --option substituters "$substituter"
     if [ ! -x "$activatable/activate-rs" ]; then
       printf 'nixpull: fetched path is missing executable activate-rs: %s\n' "$activatable" >&2
       log_line "$CLIENT_LOG" "fetch failure missing-activate-rs host=$host activatablePath=$activatable"
@@ -347,6 +325,36 @@ activate_latest() {
   wait "$activate_pid"
 }
 
+cmd_activate() {
+  require_role client
+  ensure_client_state
+  if [ "$(id -u)" -ne 0 ]; then
+    printf 'nixpull: activation requires root\n' >&2
+    return 1
+  fi
+
+  local host metadata result
+  host=$(hostname_short)
+  metadata=$(jq -e '.fetched' "$CLIENT_STATE") || {
+    printf 'nixpull: no fetched profile to activate\n' >&2
+    return 1
+  }
+
+  print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
+  if activate_latest "$metadata"; then
+    result=$(jq -n --arg status success --arg at "$(date --iso-8601=seconds)" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, activatablePath: $activatablePath}')
+    jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
+    log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
+    print_nixpull_event "activated" "$(jq -r '.activatablePath' <<<"$metadata")"
+  else
+    local rc=$?
+    result=$(jq -n --arg status failure --arg at "$(date --iso-8601=seconds)" --argjson exitCode "$rc" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath}')
+    jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
+    log_line "$CLIENT_LOG" "pull failure host=$host rc=$rc activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
+    return "$rc"
+  fi
+}
+
 cmd_pull() {
   require_role client
   ensure_client_state
@@ -357,7 +365,7 @@ cmd_pull() {
     *) usage; exit 2 ;;
   esac
 
-  local host metadata toplevel result
+  local host metadata toplevel
   host=$(hostname_short)
   if metadata=$(fetch_metadata "$host"); then
     :
@@ -387,18 +395,11 @@ cmd_pull() {
     fi
   fi
 
-  print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
-  if activate_latest "$metadata"; then
-    result=$(jq -n --arg status success --arg at "$(date --iso-8601=seconds)" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, activatablePath: $activatablePath}')
-    jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
-    log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
-    print_nixpull_event "activated" "$(jq -r '.activatablePath' <<<"$metadata")"
+  if [ "$(id -u)" -eq 0 ]; then
+    cmd_activate
   else
-    local rc=$?
-    result=$(jq -n --arg status failure --arg at "$(date --iso-8601=seconds)" --argjson exitCode "$rc" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath}')
-    jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
-    log_line "$CLIENT_LOG" "pull failure host=$host rc=$rc activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
-    return "$rc"
+    print_nixpull_event "requesting activation" "nixpull-apply.service"
+    "$SUDO" systemctl start nixpull-apply.service
   fi
 }
 
@@ -413,7 +414,7 @@ cmd_status() {
     printf 'fetched: %s\n' "$fetched"
     printf 'lastPull: %s\n' "$last_pull"
   fi
-  if [ "$(jq -r '.role' "$CONFIG")" = client ] && published=$(fetch_metadata "$host" 2>/dev/null); then
+  if jq -e 'any(.roles[]; . == "client")' "$CONFIG" >/dev/null && published=$(fetch_metadata "$host" 2>/dev/null); then
     printf 'published: %s\n' "$(jq -r '.activatablePath' <<<"$published")"
     printf 'publishedBuiltAt: %s\n' "$(jq -r '.builtAt' <<<"$published")"
   elif [ -f "$BUILDER_STATE" ]; then
@@ -537,6 +538,7 @@ case "${1:-}" in
   build) shift; cmd_build "$@" ;;
   fetch) shift; cmd_fetch "$@" ;;
   pull) shift; cmd_pull "$@" ;;
+  activate) shift; cmd_activate "$@" ;;
   status) shift; cmd_status "$@" ;;
   check) shift; cmd_check "$@" ;;
   -h|--help|help) usage ;;

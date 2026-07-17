@@ -8,10 +8,11 @@
 
 let
   cfg = config.services.nixpull;
+  nixpullUsers = lib.unique (cfg.client.users ++ cfg.build.users);
 
   configFile = pkgs.writeText "nixpull-config.json" (
     builtins.toJSON {
-      role = cfg.role;
+      roles = cfg.roles;
       flake = cfg.flake;
       stateRoot = "/var/lib/nixpull";
       build = {
@@ -21,6 +22,7 @@ let
         publishPartial = cfg.build.publishPartial;
       };
       server = cfg.server;
+      client = cfg.client;
       fetch = cfg.fetch;
       activation = cfg.activation;
     }
@@ -37,13 +39,14 @@ let
       findutils
       gnugrep
       gnused
-      openssh
+      curl
       nix
       nix-output-monitor
       jq
       dix
       git
       gum
+      systemd
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
     text = builtins.readFile ./nixpull.sh;
@@ -56,7 +59,6 @@ let
       gnugrep
       jq
       libnotify
-      sudo
       systemd
     ];
     runtimeEnv.NIXPULL_NOTIFY_USERS = notifyUsers;
@@ -114,7 +116,7 @@ let
 
       case "$action" in
         apply)
-          if sudo -n ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
+          if /run/wrappers/bin/sudo -n ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
             notify-send --app-name=nixpull --icon=software-update-available "Applying NixOS update" "nixpull-apply.service started"
           else
             notify-send --app-name=nixpull --icon=dialog-error --urgency=critical "NixOS update failed" "Could not start nixpull-apply.service"
@@ -132,12 +134,15 @@ in
   options.services.nixpull = {
     enable = lib.mkEnableOption "nixpull pull-based NixOS profile updates";
 
-    role = lib.mkOption {
-      type = lib.types.enum [
-        "builder"
-        "client"
-      ];
-      description = "Whether this host publishes builds or fetches published builds.";
+    roles = lib.mkOption {
+      type = lib.types.listOf (
+        lib.types.enum [
+          "builder"
+          "client"
+        ]
+      );
+      default = [ "client" ];
+      description = "nixpull roles enabled on this host.";
     };
 
     flake = lib.mkOption {
@@ -147,6 +152,13 @@ in
     };
 
     build = {
+      users = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = [ "richen" ];
+        description = "Users allowed to run nixpull build manually.";
+      };
+
       hosts = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
@@ -185,39 +197,25 @@ in
     };
 
     server = {
-      host = lib.mkOption {
+      metadataUrl = lib.mkOption {
         type = lib.types.str;
-        default = "localhost";
-        description = "Host that publishes nixpull builder state.";
+        default = "http://localhost:5000/nixpull/state.json";
+        description = "URL for published nixpull builder state.";
       };
 
-      user = lib.mkOption {
+      substituterUrl = lib.mkOption {
         type = lib.types.str;
-        default = "root";
-        description = "SSH user for metadata access.";
+        default = "http://localhost:5000";
+        description = "Binary cache substituter URL used by clients for closure fetches.";
       };
+    };
 
-      port = lib.mkOption {
-        type = lib.types.port;
-        default = 22;
-        description = "SSH port for metadata access.";
-      };
-
-      sshOptions = lib.mkOption {
+    client = {
+      users = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        default = [
-          "-o"
-          "BatchMode=yes"
-          "-o"
-          "ConnectTimeout=10"
-        ];
-        description = "Extra options passed to ssh for metadata access.";
-      };
-
-      store = lib.mkOption {
-        type = lib.types.str;
-        default = "ssh-ng://localhost";
-        description = "Nix store URL used by clients for nix copy --from.";
+        default = [ ];
+        example = [ "richen" ];
+        description = "Users allowed to fetch nixpull updates and request activation.";
       };
     };
 
@@ -306,7 +304,7 @@ in
       {
         assertions = [
           {
-            assertion = cfg.role != "builder" || cfg.build.hosts != [ ];
+            assertion = !(lib.elem "builder" cfg.roles) || cfg.build.hosts != [ ];
             message = "services.nixpull.build.hosts must be set for builder role";
           }
           {
@@ -317,18 +315,33 @@ in
 
         environment.systemPackages = [ nixpullPackage ];
 
+        users.groups.nixpull = {
+          members = nixpullUsers;
+        };
+
         systemd.tmpfiles.rules = [
           "d /var/lib/nixpull 0755 root root -"
-          "d /var/lib/nixpull/client 0755 root root -"
           "d ${toString cfg.activation.tempPath} 0755 root root -"
         ]
-        ++ lib.optionals (cfg.role == "builder") [
-          "d /var/lib/nixpull/builder 0755 ${cfg.server.user} root -"
-          "Z /var/lib/nixpull/builder - ${cfg.server.user} root -"
+        ++ lib.optionals (lib.elem "client" cfg.roles) [
+          "d /var/lib/nixpull/client 2775 root nixpull -"
+          "f /var/lib/nixpull/client/log 0664 root nixpull -"
+          "Z /var/lib/nixpull/client 2775 root nixpull -"
+          "z /var/lib/nixpull/client/log 0664 root nixpull -"
+          "z /var/lib/nixpull/client/state.json 0664 root nixpull -"
+          "Z /var/lib/nixpull/client - root nixpull -"
+        ]
+        ++ lib.optionals (lib.elem "builder" cfg.roles) [
+          "d /var/lib/nixpull/builder 2775 root nixpull -"
+          "f /var/lib/nixpull/builder/log 0664 root nixpull -"
+          "Z /var/lib/nixpull/builder 2775 root nixpull -"
+          "z /var/lib/nixpull/builder/log 0664 root nixpull -"
+          "z /var/lib/nixpull/builder/state.json 0664 root nixpull -"
+          "Z /var/lib/nixpull/builder - root nixpull -"
         ];
       }
 
-      (lib.mkIf (cfg.role == "builder") {
+      (lib.mkIf (lib.elem "builder" cfg.roles) {
         systemd.timers.nixpull-build = {
           wantedBy = [ "timers.target" ];
           timerConfig = {
@@ -342,7 +355,6 @@ in
           description = "Build deploy-rs activatable NixOS profiles for nixpull";
           serviceConfig = {
             Type = "oneshot";
-            User = cfg.server.user;
             StateDirectory = "nixpull";
             WorkingDirectory = cfg.flake;
           };
@@ -350,7 +362,7 @@ in
         };
       })
 
-      (lib.mkIf (cfg.role == "client") {
+      (lib.mkIf (lib.elem "client" cfg.roles) {
         systemd.timers.nixpull-fetch = lib.mkIf cfg.fetch.enable {
           wantedBy = [ "timers.target" ];
           timerConfig = {
@@ -386,7 +398,7 @@ in
             User = "root";
             StateDirectory = "nixpull";
           };
-          script = "${nixpullPackage}/bin/nixpull pull";
+          script = "${nixpullPackage}/bin/nixpull activate";
         };
 
         systemd.user.paths.nixpull-notify = lib.mkIf cfg.notify.enable {
@@ -406,17 +418,19 @@ in
           };
         };
 
-        security.sudo.extraRules = lib.mkIf (cfg.notify.enable && cfg.notify.users != [ ]) [
-          {
-            users = cfg.notify.users;
-            commands = [
+        security.sudo.extraRules =
+          lib.mkIf (cfg.client.users != [ ] || (cfg.notify.enable && cfg.notify.users != [ ]))
+            [
               {
-                command = "${pkgs.systemd}/bin/systemctl start nixpull-apply.service";
-                options = [ "NOPASSWD" ];
+                users = lib.unique (cfg.client.users ++ cfg.notify.users);
+                commands = [
+                  {
+                    command = "${pkgs.systemd}/bin/systemctl start nixpull-apply.service";
+                    options = [ "NOPASSWD" ];
+                  }
+                ];
               }
             ];
-          }
-        ];
       })
     ]
   );
