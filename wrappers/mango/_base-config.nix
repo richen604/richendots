@@ -128,17 +128,15 @@ let
   # ============================================
   # GAMEMODE SETTINGS - Toggle these manually
   # ============================================
-  # Normal Mode: animations=1, blur=1, opacity=0.9/0.8, radius=6, border=4, gaps=5/5/10/10
-  # Game Mode:   animations=0, blur=0, opacity=1.0/1.0, radius=0, border=1, gaps=0/0/0/0
+  # Normal Mode: animations=1, opacity=0.9/0.8, gaps=5/5/10/10
+  # Game Mode:   animations=0, opacity=1.0/1.0, gaps=0/0/0/0
   # After editing, rebuild with: nixos-rebuild switch
   gamemode = ''
     animations=0
     layer_animations=0
-    blur=0
     focused_opacity=1         # Game mode: 1.0
     unfocused_opacity=1       # Game mode: 1.0
-    border_radius=0
-    borderpx=1                # Game mode: 0
+    borderpx=0
     syncobj_enable=1
     gappih=3                  # Game mode: 0
     gappiv=3                  # Game mode: 0
@@ -174,32 +172,9 @@ let
   '';
 
   # ============================================
-  # APPEARANCE & VISUAL EFFECTS
+  # APPEARANCE
   # ============================================
   appearance = ''
-    # Blur settings
-    blur_layer=0
-    blur_optimized=1
-    blur_params_num_passes = 2
-    blur_params_radius = 5
-    blur_params_noise = 0.02
-    blur_params_brightness = 0.9
-    blur_params_contrast = 0.9
-    blur_params_saturation = 1.2
-
-    # Shadow settings
-    shadows = 0
-    layer_shadows = 0
-    shadow_only_floating = 1
-    shadows_size = 10
-    shadows_blur = 15
-    shadows_position_x = 0
-    shadows_position_y = 0
-    shadowscolor= 0x000000ff
-
-    # Border and radius settings
-    no_radius_when_single=0
-
     # Colors
     rootcolor=0x201b14ff
     bordercolor=0x444444ff
