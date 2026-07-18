@@ -16,6 +16,7 @@ my personal nixos config
 - **spotify** - `spicetify-tui`
 - **discord** - `equibop` + grove theme
 - **file manager** - `yazi`
+- **editor** - `doom emacs`
 - **terminal** - `kitty`
 - **shell** - `zsh`
 - **notifications** - `swaync`
@@ -27,16 +28,14 @@ my personal nixos config
 ## features
 
 - flakes
-- wrapped programs using [Lassulus/wrappers](https://github.com/Lassulus/wrappers)
-- `4.5s` eval (on my machine)
+- `3.7s` eval (on my machine)
+- no-IFD Doom Emacs
 - multi host & single user
 - profiles (common, desktop, laptop, server)
-- 5 hosts
+- 3 hosts
   - fern - desktop 🌿
   - oak - laptop 🌳
   - cedar - server 🪵
-  - willow - cloud vm 🌾
-  - ivy - phone 🍃
 
 > [!TIP]
 > some modules, packages, and options are obfuscated from private imports </br>
