@@ -22,7 +22,7 @@ nixpull - pull-based NixOS profile updates
 usage: nixpull <build|fetch|pull|activate|status|check> [options]
 
 commands:
-  build        build configured host profiles (the service publishes them)
+  build [FLAKE] build configured host profiles from FLAKE (defaults to configured flake)
   fetch        copy latest published profile for this host, never activate
   pull [-a]    fetch, then activate latest published profile
   activate     activate the already fetched profile (privilege is requested only for activation)
@@ -166,10 +166,27 @@ publish_available_hosts() {
 }
 
 cmd_build() {
+  local flake_override=""
+  case "${1:-}" in
+    -h|--help|help)
+      usage
+      return 0
+      ;;
+    "") ;;
+    *)
+      flake_override=$1
+      shift
+      ;;
+  esac
+  if [ "$#" -ne 0 ]; then
+    printf 'nixpull: build accepts at most one flake path\n' >&2
+    return 2
+  fi
+
   ensure_builder_state
 
   local flake max_jobs cores workdir failures=0 successes=0 publish_partial
-  flake=$(jq -r '.flake' "$CONFIG")
+  flake=${flake_override:-$(jq -r '.flake' "$CONFIG")}
   max_jobs=$(jq -r '.build.maxJobs' "$CONFIG")
   cores=$(jq -r '.build.cores' "$CONFIG")
   publish_partial=$(jq -r '.build.publishPartial' "$CONFIG")
