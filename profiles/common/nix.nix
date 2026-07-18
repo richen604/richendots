@@ -1,7 +1,7 @@
 { pkgs, richenLib, ... }:
 {
   nix = {
-    package = pkgs.lix;
+    package = pkgs.nix;
     gc.automatic = false;
     settings = {
       warn-dirty = false;
