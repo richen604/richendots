@@ -27,7 +27,7 @@ my personal nixos config
 
 ## features
 
-- `3.7s` eval (on my machine)
+- `3.5s` eval (on my machine)
 - multi host & single user
 - profiles (common, desktop, laptop, server)
 - 3 hosts
