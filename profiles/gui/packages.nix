@@ -37,7 +37,6 @@ in
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
-    pkgs.zed-editor
     pkgs.wayland-pipewire-idle-inhibit
   ];
 
