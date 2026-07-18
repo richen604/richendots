@@ -21,7 +21,6 @@ in
     richenLib.wrappers.satty
     richenLib.wrappers.glide
     richenLib.wrappers.keepassxc
-    richenLib.wrappers.udiskie
     pkgs.yubikey-manager
     pkgs.equibop
     pkgs.wlr-randr
@@ -38,12 +37,8 @@ in
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
-    pkgs.obsidian
     pkgs.zed-editor
     pkgs.wayland-pipewire-idle-inhibit
-    (pkgs.prismlauncher.override {
-      jdks = [ pkgs.jdk21 ];
-    })
   ];
 
   programs.gpu-screen-recorder.enable = true;

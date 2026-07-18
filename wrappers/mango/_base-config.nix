@@ -6,6 +6,12 @@
 # todo: mango wrapper: runtime applications for auto start
 # todo: mango wrapper: windowrules for the below applications
 let
+  chooseMonitor = placeholder: ''
+    mmsg get all-monitors \
+      | ${pkgs.jq}/bin/jq -r '.monitors[] | [.name, ((.width | tostring) + "x" + (.height | tostring) + "+" + (.x | tostring) + "+" + (.y | tostring))] | @tsv' \
+      | vicinae dmenu --placeholder "${placeholder}" \
+      | ${pkgs.coreutils}/bin/cut -f1
+  '';
   mangoEnterPassthrough = pkgs.writeShellScriptBin "mango-enter-passthrough" ''
     export PATH=/run/current-system/sw/bin:$PATH
     ${pkgs.libnotify}/bin/notify-send "Mango passthrough" "Enabled"
@@ -75,10 +81,7 @@ let
     }
 
     choose_monitor() {
-      ${pkgs.wlr-randr}/bin/wlr-randr --json \
-        | ${pkgs.jq}/bin/jq -r '.[] | select(.enabled != false) | [.name, (.description // .model // "")] | @tsv' \
-        | vicinae dmenu --placeholder "Record monitor" \
-        | ${pkgs.coreutils}/bin/cut -f1
+      ${chooseMonitor "Record monitor"}
     }
 
     options() {
@@ -105,6 +108,65 @@ let
         ;;
       "Window/app")
         start_recording -w portal
+        ;;
+      *)
+        exit 0
+        ;;
+    esac
+  '';
+  screenshotMenu = pkgs.writeShellScriptBin "screenshot-menu" ''
+    set -eu
+    export PATH=/run/current-system/sw/bin:$PATH
+
+    SCREENSHOTS_DIR="$HOME/Pictures/Screenshots"
+
+    choose_monitor() {
+      ${chooseMonitor "Screenshot monitor"}
+    }
+
+    choose_window_id() {
+      mmsg get all-clients \
+        | ${pkgs.jq}/bin/jq -r '
+          .clients[]
+          | select(.is_visible)
+          | [
+              (.id | tostring),
+              ((.title // .appid // "Untitled") + " [" + (.appid // "") + "]")
+            ]
+          | @tsv
+        ' \
+        | vicinae dmenu --placeholder "Screenshot window/app" \
+        | ${pkgs.coreutils}/bin/cut -f1
+    }
+
+    client_geom() {
+      mmsg get client "$1" \
+        | ${pkgs.jq}/bin/jq -r '(.width | tostring) + "x" + (.height | tostring) + "+" + (.x | tostring) + "+" + (.y | tostring)'
+    }
+
+    open_satty() {
+      ${richenLib.wrappers.satty}/bin/satty --filename - "$@"
+    }
+
+    ${pkgs.coreutils}/bin/mkdir -p "$SCREENSHOTS_DIR"
+
+    choice="$(printf '%s\n' "Selection" "Monitor" "Window/app" | vicinae dmenu --placeholder "Screenshot")"
+
+    case "$choice" in
+      "Selection")
+        ${pkgs.grim}/bin/grim -t png - | open_satty --fullscreen all --initial-tool crop
+        ;;
+      "Monitor")
+        monitor="$(choose_monitor)"
+        [ -n "$monitor" ] || exit 0
+        ${pkgs.grim}/bin/grim -o "$monitor" -t png - | open_satty --fullscreen --initial-tool brush
+        ;;
+      "Window/app")
+        client_id="$(choose_window_id)"
+        [ -n "$client_id" ] || exit 0
+        geom="$(client_geom "$client_id")"
+        [ -n "$geom" ] || exit 0
+        ${pkgs.grim}/bin/grim -g "$geom" -t png - | open_satty --fullscreen --initial-tool brush
         ;;
       *)
         exit 0
@@ -299,12 +361,7 @@ let
     bind=SUPER,V,spawn,vicinae vicinae://launch/clipboard/history
 
     # Screenshots and recording
-    bind=SUPER,P,spawn,${pkgs.writeScriptBin "screenshot" ''
-      #!/usr/bin/env bash
-      GEOM=$(slurp) || exit 1
-      mkdir -p ~/Pictures/Screenshots
-      grim -g "$GEOM" - | satty --filename -
-    ''}/bin/screenshot
+    bind=SUPER,P,spawn,${screenshotMenu}/bin/screenshot-menu
     bind=SUPER+SHIFT,P,spawn,${screenRecordMenu}/bin/screenrecord-menu
 
     # toggle waybar

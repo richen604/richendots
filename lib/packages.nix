@@ -29,9 +29,7 @@ let
       inherit system overlays;
       config = {
         allowUnfree = true;
-        permittedInsecurePackages = [
-          "olivetin-2025.11.25"
-        ];
+        permittedInsecurePackages = [ ];
       };
     };
 
@@ -76,7 +74,7 @@ let
           name: hostvars: lib.nameValuePair "vm-${name}" (mkVm (hostvars // { inherit system; }))
         ) hostVars;
       in
-      vmPackages // richenLib.wrappers
+        vmPackages // richenLib.wrappers
     );
 
   devShell = forEachSystem (

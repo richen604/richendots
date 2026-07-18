@@ -4,6 +4,10 @@ set -euo pipefail
 CONFIG=${NIXPULL_CONFIG:?NIXPULL_CONFIG is required}
 STATE_ROOT=$(jq -r '.stateRoot' "$CONFIG")
 SUDO=/run/wrappers/bin/sudo
+HOSTNAME=${NIXPULL_HOSTNAME:-hostname}
+if [ "$(id -u)" -ne 0 ]; then
+  STATE_ROOT=${XDG_STATE_HOME:-$HOME/.local/state}/nixpull
+fi
 BUILDER_DIR="$STATE_ROOT/builder"
 CLIENT_DIR="$STATE_ROOT/client"
 BUILDER_STATE="$BUILDER_DIR/state.json"
@@ -18,10 +22,10 @@ nixpull - pull-based NixOS profile updates
 usage: nixpull <build|fetch|pull|activate|status|check> [options]
 
 commands:
-  build        build and publish configured host profiles (builder)
+  build        build configured host profiles (the service publishes them)
   fetch        copy latest published profile for this host, never activate
   pull [-a]    fetch, then activate latest published profile
-  activate     activate the already fetched profile (root/systemd)
+  activate     activate the already fetched profile (privilege is requested only for activation)
   status       show local and published state
   check        compare published state without copying or activating
 EOF
@@ -36,6 +40,8 @@ log_line() {
 
 cleanup_build_workdir() {
   if [ -n "${NIXPULL_BUILD_WORKDIR:-}" ]; then
+    mkdir -p "$BUILDER_DIR/logs"
+    cp "$NIXPULL_BUILD_WORKDIR"/*.log "$BUILDER_DIR/logs/" 2>/dev/null || true
     rm -rf "$NIXPULL_BUILD_WORKDIR"
   fi
 }
@@ -48,20 +54,20 @@ atomic_write() {
   mv "$tmp" "$target"
 }
 
-require_role() {
-  local expected=$1
-  if ! jq -e --arg expected "$expected" 'any(.roles[]; . == $expected)' "$CONFIG" >/dev/null; then
-    printf 'nixpull: command requires %s role\n' "$expected" >&2
-    exit 2
-  fi
-}
-
 hostname_short() {
-  hostname -s
+  "$HOSTNAME" -s
 }
 
 current_system() {
   readlink /run/current-system 2>/dev/null || true
+}
+
+run_activation() {
+  if [ "$(id -u)" -eq 0 ]; then
+    "$@"
+  else
+    "$SUDO" "$@"
+  fi
 }
 
 lock_hash() {
@@ -101,7 +107,11 @@ ensure_builder_state() {
 ensure_client_state() {
   mkdir -p "$CLIENT_DIR"
   if [ ! -f "$CLIENT_STATE" ]; then
-    jq -n --arg host "$(hostname_short)" '{host: $host, fetched: null, lastPull: null}' | atomic_write "$CLIENT_STATE"
+    if [ "$(id -u)" -ne 0 ] && [ -r /var/lib/nixpull/client/state.json ]; then
+      cp /var/lib/nixpull/client/state.json "$CLIENT_STATE"
+    else
+      jq -n --arg host "$(hostname_short)" '{host: $host, fetched: null, lastPull: null}' | atomic_write "$CLIENT_STATE"
+    fi
   fi
 }
 
@@ -156,7 +166,6 @@ publish_available_hosts() {
 }
 
 cmd_build() {
-  require_role builder
   ensure_builder_state
 
   local flake max_jobs cores workdir failures=0 successes=0 publish_partial
@@ -221,7 +230,7 @@ cmd_build() {
       failures=$((failures + 1))
       log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/$host.log"
       print_build_failed "$host" >&2
-      printf 'nixpull: build log retained at %s\n' "$workdir/$host.log" >&2
+      printf 'nixpull: build log retained at %s/logs/%s.log\n' "$BUILDER_DIR" "$host" >&2
     fi
   done
 
@@ -260,7 +269,7 @@ fetch_closure() {
     log_line "$CLIENT_LOG" "fetch noop host=$host activatablePath=$activatable"
   else
     substituter=$(jq -r '.server.substituterUrl' "$CONFIG")
-    nix build "$activatable" --no-link --option substituters "$substituter"
+    nix copy --from "$substituter" "$activatable"
     if [ ! -x "$activatable/activate-rs" ]; then
       printf 'nixpull: fetched path is missing executable activate-rs: %s\n' "$activatable" >&2
       log_line "$CLIENT_LOG" "fetch failure missing-activate-rs host=$host activatablePath=$activatable"
@@ -270,11 +279,35 @@ fetch_closure() {
     print_nixpull_event "fetched" "$activatable"
   fi
 
-  jq --arg host "$host" --argjson metadata "$metadata" '.host = $host | .fetched = $metadata' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
+  jq --arg host "$host" --argjson metadata "$metadata" '.host = $host | .fetched = $metadata | .fetching = null' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
+}
+
+record_fetching() {
+  local host=$1 metadata=$2 activatable current_fetched fetching
+  activatable=$(jq -r '.activatablePath' <<<"$metadata")
+  current_fetched=$(jq -r '.fetched.activatablePath // empty' "$CLIENT_STATE")
+  [ "$current_fetched" != "$activatable" ] || return 0
+
+  fetching=$(jq -n \
+    --arg status fetching \
+    --arg at "$(date --iso-8601=seconds)" \
+    --argjson metadata "$metadata" \
+    '{status: $status, at: $at, metadata: $metadata}')
+  jq --arg host "$host" --argjson fetching "$fetching" '.host = $host | .fetching = $fetching' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
+}
+
+record_fetch_failure() {
+  local host=$1 metadata=$2 rc=$3 fetching
+  fetching=$(jq -n \
+    --arg status failure \
+    --arg at "$(date --iso-8601=seconds)" \
+    --argjson exitCode "$rc" \
+    --argjson metadata "$metadata" \
+    '{status: $status, at: $at, exitCode: $exitCode, metadata: $metadata}')
+  jq --arg host "$host" --argjson fetching "$fetching" '.host = $host | .fetching = $fetching' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
 }
 
 cmd_fetch() {
-  require_role client
   ensure_client_state
 
   local host metadata
@@ -286,13 +319,21 @@ cmd_fetch() {
     [ "$rc" -eq 75 ] && return 0
     return "$rc"
   fi
-  fetch_closure "$host" "$metadata"
+  record_fetching "$host" "$metadata"
+  fetch_closure "$host" "$metadata" || {
+    local rc=$?
+    record_fetch_failure "$host" "$metadata" "$rc"
+    return "$rc"
+  }
 }
 
 activate_latest() {
-  local metadata=$1 activatable temp_path activation_timeout magic_rollback activate_pid store_name store_hash canary
+  local metadata=$1 activatable temp_path activation_timeout magic_rollback activate_pid store_name store_hash canary wait_log
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   temp_path=$(jq -r '.activation.tempPath' "$CONFIG")
+  if [ "$(id -u)" -ne 0 ]; then
+    temp_path="$STATE_ROOT/deploy-rs"
+  fi
   activation_timeout=$(jq -r '.activation.activationTimeout' "$CONFIG")
   magic_rollback=$(jq -r '.activation.magicRollback' "$CONFIG")
   mkdir -p "$temp_path"
@@ -307,14 +348,18 @@ activate_latest() {
   [ "$(jq -r '.activation.autoRollback' "$CONFIG")" = true ] && args+=(--auto-rollback)
 
   if [ "$magic_rollback" != true ]; then
-    "$activatable/activate-rs" "${args[@]}"
+    run_activation "$activatable/activate-rs" "${args[@]}"
     return
   fi
 
-  "$activatable/activate-rs" "${args[@]}" &
+  wait_log=$CLIENT_DIR/activate-rs-wait.log
+  : >"$wait_log"
+
+  run_activation "$activatable/activate-rs" "${args[@]}" &
   activate_pid=$!
-  if ! "$activatable/activate-rs" wait "$activatable" --temp-path "$temp_path" --activation-timeout "$activation_timeout"; then
+  if ! run_activation "$activatable/activate-rs" wait "$activatable" --temp-path "$temp_path" --activation-timeout "$activation_timeout" >"$wait_log" 2>&1; then
     wait "$activate_pid" || true
+    printf 'nixpull: activate-rs wait failed; see %s\n' "$wait_log" >&2
     return 1
   fi
 
@@ -326,12 +371,7 @@ activate_latest() {
 }
 
 cmd_activate() {
-  require_role client
   ensure_client_state
-  if [ "$(id -u)" -ne 0 ]; then
-    printf 'nixpull: activation requires root\n' >&2
-    return 1
-  fi
 
   local host metadata result
   host=$(hostname_short)
@@ -356,7 +396,6 @@ cmd_activate() {
 }
 
 cmd_pull() {
-  require_role client
   ensure_client_state
   local ask=0
   case "${1:-}" in
@@ -395,12 +434,7 @@ cmd_pull() {
     fi
   fi
 
-  if [ "$(id -u)" -eq 0 ]; then
-    cmd_activate
-  else
-    print_nixpull_event "requesting activation" "nixpull-apply.service"
-    "$SUDO" systemctl start nixpull-apply.service
-  fi
+  cmd_activate
 }
 
 cmd_status() {
@@ -414,7 +448,7 @@ cmd_status() {
     printf 'fetched: %s\n' "$fetched"
     printf 'lastPull: %s\n' "$last_pull"
   fi
-  if jq -e 'any(.roles[]; . == "client")' "$CONFIG" >/dev/null && published=$(fetch_metadata "$host" 2>/dev/null); then
+  if published=$(fetch_metadata "$host" 2>/dev/null); then
     printf 'published: %s\n' "$(jq -r '.activatablePath' <<<"$published")"
     printf 'publishedBuiltAt: %s\n' "$(jq -r '.builtAt' <<<"$published")"
   elif [ -f "$BUILDER_STATE" ]; then
@@ -428,7 +462,6 @@ cmd_status() {
 }
 
 cmd_check() {
-  require_role client
   local host metadata current fetched
   host=$(hostname_short)
   metadata=$(fetch_metadata "$host")

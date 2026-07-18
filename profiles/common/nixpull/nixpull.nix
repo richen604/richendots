@@ -8,27 +8,22 @@
 
 let
   cfg = config.services.nixpull;
-  nixpullUsers = lib.unique (cfg.client.users ++ cfg.build.users);
 
   configFile = pkgs.writeText "nixpull-config.json" (
     builtins.toJSON {
-      roles = cfg.roles;
       flake = cfg.flake;
       stateRoot = "/var/lib/nixpull";
       build = {
-        hosts = cfg.build.hosts;
-        maxJobs = cfg.build.maxJobs;
-        cores = cfg.build.cores;
-        publishPartial = cfg.build.publishPartial;
+        hosts = cfg.builder.hosts;
+        maxJobs = cfg.builder.maxJobs;
+        cores = cfg.builder.cores;
+        publishPartial = cfg.builder.publishPartial;
       };
       server = cfg.server;
-      client = cfg.client;
       fetch = cfg.fetch;
       activation = cfg.activation;
     }
   );
-
-  notifyUsers = lib.concatStringsSep " " cfg.notify.users;
 
   nixpullPackage = pkgs.writeShellApplication {
     name = "nixpull";
@@ -40,6 +35,7 @@ let
       gnugrep
       gnused
       curl
+      hostname
       nix
       nix-output-monitor
       jq
@@ -49,6 +45,7 @@ let
       systemd
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
+    runtimeEnv.NIXPULL_HOSTNAME = "${pkgs.hostname}/bin/hostname";
     text = builtins.readFile ./nixpull.sh;
   };
 
@@ -59,67 +56,84 @@ let
       gnugrep
       jq
       libnotify
+      polkit
       systemd
     ];
-    runtimeEnv.NIXPULL_NOTIFY_USERS = notifyUsers;
     text = ''
       set -euo pipefail
 
       state=/var/lib/nixpull/client/state.json
-      user=$(id -un)
-      allowed=" $NIXPULL_NOTIFY_USERS "
-      if [ -n "$NIXPULL_NOTIFY_USERS" ] && ! [[ "$allowed" == *" $user "* ]]; then
+      [ -r "$state" ] || exit 0
+      state_home=''${XDG_STATE_HOME:-$HOME/.local/state}/nixpull
+      dismissed="$state_home/dismissed"
+      current=$(readlink /run/current-system 2>/dev/null || true)
+
+      fetching_status=$(jq -r '.fetching.status // empty' "$state")
+      fetching_activatable=$(jq -r '.fetching.metadata.activatablePath // empty' "$state")
+      fetching_toplevel=$(jq -r '.fetching.metadata.toplevelPath // empty' "$state")
+      if [ "$fetching_status" = fetching ] && [ -n "$fetching_activatable" ]; then
+        current_fetched=$(jq -r '.fetched.activatablePath // empty' "$state")
+        if [ "$current_fetched" != "$fetching_activatable" ] \
+          && { [ ! -f "$dismissed" ] || ! grep -Fxq "$fetching_activatable" "$dismissed"; } \
+          && { [ -z "$fetching_toplevel" ] || [ "$current" != "$fetching_toplevel" ]; }; then
+          host=$(jq -r '.host // "unknown"' "$state")
+          built_at=$(jq -r '.fetching.metadata.builtAt // "unknown"' "$state")
+          notify-send \
+            --app-name=nixpull \
+            --icon=software-update-available \
+            --expire-time=8000 \
+            --hint=string:x-canonical-private-synchronous:nixpull-fetching \
+            "NixOS build available" \
+            "Host: $host\nBuilt: $built_at\nFetching closure..." || true
+        fi
         exit 0
       fi
 
-      [ -r "$state" ] || exit 0
+      if [ "$fetching_status" = failure ] && [ -n "$fetching_activatable" ]; then
+        host=$(jq -r '.host // "unknown"' "$state")
+        exit_code=$(jq -r '.fetching.exitCode // "unknown"' "$state")
+        notify-send \
+          --app-name=nixpull \
+          --icon=dialog-error \
+          --urgency=critical \
+          --expire-time=12000 \
+          --hint=string:x-canonical-private-synchronous:nixpull-fetching \
+          "NixOS fetch failed" \
+          "Host: $host\nExit code: $exit_code" || true
+        exit 0
+      fi
 
       activatable=$(jq -r '.fetched.activatablePath // empty' "$state")
       toplevel=$(jq -r '.fetched.toplevelPath // empty' "$state")
-      built_at=$(jq -r '.fetched.builtAt // "unknown"' "$state")
-      branch=$(jq -r '.fetched.gitBranch // empty' "$state")
-      rev=$(jq -r '.fetched.gitRev // empty' "$state")
-      host=$(jq -r '.host // "unknown"' "$state")
       [ -n "$activatable" ] || exit 0
 
-      current=$(readlink /run/current-system 2>/dev/null || true)
-      if [ -n "$toplevel" ] && [ "$current" = "$toplevel" ]; then
-        exit 0
-      fi
+      [ -n "$toplevel" ] && [ "$current" = "$toplevel" ] && exit 0
 
-      state_home=''${XDG_STATE_HOME:-$HOME/.local/state}/nixpull
-      dismissed="$state_home/dismissed"
       if [ -f "$dismissed" ] && grep -Fxq "$activatable" "$dismissed"; then
         exit 0
       fi
 
-      summary="NixOS update ready"
-      printf -v body 'Host: %s\nBuilt: %s' "$host" "$built_at"
-      if [ -n "$branch" ] || [ -n "$rev" ]; then
-        short_rev=''${rev:0:8}
-        printf -v body '%s\nSource: %s@%s' "$body" "''${branch:-unknown}" "''${short_rev:-unknown}"
-      fi
-
-      action=$(
-        notify-send \
-          --app-name=nixpull \
-          --icon=software-update-available \
-          --urgency=normal \
-          --expire-time=0 \
-          --hint=string:x-canonical-private-synchronous:nixpull-update \
-          --action=apply=Apply \
-          --action=dismiss=Dismiss \
-          --wait \
-          "$summary" \
-          "$body" || true
-      )
+      host=$(jq -r '.host // "unknown"' "$state")
+      built_at=$(jq -r '.fetched.builtAt // "unknown"' "$state")
+      action=$(notify-send \
+        --app-name=nixpull \
+        --icon=software-update-available \
+        --expire-time=0 \
+        --hint=string:x-canonical-private-synchronous:nixpull-update \
+        --action=apply=Apply \
+        --action=dismiss=Dismiss \
+        --wait \
+        "NixOS update ready" \
+        "Host: $host\nBuilt: $built_at" || true)
 
       case "$action" in
         apply)
-          if /run/wrappers/bin/sudo -n ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
-            notify-send --app-name=nixpull --icon=software-update-available "Applying NixOS update" "nixpull-apply.service started"
+          if pkexec ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
+            notify-send --app-name=nixpull --icon=software-update-available \
+              "Applying NixOS update" "nixpull-apply.service started"
           else
-            notify-send --app-name=nixpull --icon=dialog-error --urgency=critical "NixOS update failed" "Could not start nixpull-apply.service"
+            notify-send --app-name=nixpull --icon=dialog-error --urgency=critical \
+              "NixOS update failed" "Could not start nixpull-apply.service"
           fi
           ;;
         dismiss)
@@ -129,21 +143,11 @@ let
       esac
     '';
   };
+
 in
 {
   options.services.nixpull = {
     enable = lib.mkEnableOption "nixpull pull-based NixOS profile updates";
-
-    roles = lib.mkOption {
-      type = lib.types.listOf (
-        lib.types.enum [
-          "builder"
-          "client"
-        ]
-      );
-      default = [ "client" ];
-      description = "nixpull roles enabled on this host.";
-    };
 
     flake = lib.mkOption {
       type = lib.types.str;
@@ -151,13 +155,8 @@ in
       description = "Flake path used by the builder to build deploy-rs activatable profiles.";
     };
 
-    build = {
-      users = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        example = [ "richen" ];
-        description = "Users allowed to run nixpull build manually.";
-      };
+    builder = {
+      enable = lib.mkEnableOption "the nixpull builder";
 
       hosts = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -210,14 +209,9 @@ in
       };
     };
 
-    client = {
-      users = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        example = [ "richen" ];
-        description = "Users allowed to fetch nixpull updates and request activation.";
-      };
-    };
+    client.enable = lib.mkEnableOption "the nixpull client" // { default = true; };
+
+    notify.enable = lib.mkEnableOption "desktop notifications for fetched updates";
 
     fetch = {
       enable = lib.mkOption {
@@ -230,6 +224,12 @@ in
         type = lib.types.str;
         default = "hourly";
         description = "Client fetch timer schedule.";
+      };
+
+      randomizedDelaySec = lib.mkOption {
+        type = lib.types.str;
+        default = "30s";
+        description = "Randomized delay added to the client fetch timer.";
       };
     };
 
@@ -283,20 +283,6 @@ in
       };
     };
 
-    notify = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Notify GUI users when a fetched nixpull update is ready to apply.";
-      };
-
-      users = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        example = [ "richen" ];
-        description = "Users allowed to receive nixpull update notifications and start the apply service.";
-      };
-    };
   };
 
   config = lib.mkIf cfg.enable (
@@ -304,8 +290,8 @@ in
       {
         assertions = [
           {
-            assertion = !(lib.elem "builder" cfg.roles) || cfg.build.hosts != [ ];
-            message = "services.nixpull.build.hosts must be set for builder role";
+            assertion = !cfg.builder.enable || cfg.builder.hosts != [ ];
+            message = "services.nixpull.builder.hosts must be set when the builder is enabled";
           }
           {
             assertion = inputs ? deploy-rs;
@@ -315,37 +301,33 @@ in
 
         environment.systemPackages = [ nixpullPackage ];
 
-        users.groups.nixpull = {
-          members = nixpullUsers;
-        };
-
         systemd.tmpfiles.rules = [
           "d /var/lib/nixpull 0755 root root -"
           "d ${toString cfg.activation.tempPath} 0755 root root -"
         ]
-        ++ lib.optionals (lib.elem "client" cfg.roles) [
-          "d /var/lib/nixpull/client 2775 root nixpull -"
-          "f /var/lib/nixpull/client/log 0664 root nixpull -"
-          "Z /var/lib/nixpull/client 2775 root nixpull -"
-          "z /var/lib/nixpull/client/log 0664 root nixpull -"
-          "z /var/lib/nixpull/client/state.json 0664 root nixpull -"
-          "Z /var/lib/nixpull/client - root nixpull -"
+        ++ lib.optionals cfg.client.enable [
+          "d /var/lib/nixpull/client 0755 root root -"
+          "f /var/lib/nixpull/client/log 0644 root root -"
+          "Z /var/lib/nixpull/client 0755 root root -"
+          "z /var/lib/nixpull/client/log 0644 root root -"
+          "z /var/lib/nixpull/client/state.json 0644 root root -"
+          "Z /var/lib/nixpull/client - root root -"
         ]
-        ++ lib.optionals (lib.elem "builder" cfg.roles) [
-          "d /var/lib/nixpull/builder 2775 root nixpull -"
-          "f /var/lib/nixpull/builder/log 0664 root nixpull -"
-          "Z /var/lib/nixpull/builder 2775 root nixpull -"
-          "z /var/lib/nixpull/builder/log 0664 root nixpull -"
-          "z /var/lib/nixpull/builder/state.json 0664 root nixpull -"
-          "Z /var/lib/nixpull/builder - root nixpull -"
+        ++ lib.optionals cfg.builder.enable [
+          "d /var/lib/nixpull/builder 0755 root root -"
+          "f /var/lib/nixpull/builder/log 0644 root root -"
+          "Z /var/lib/nixpull/builder 0755 root root -"
+          "z /var/lib/nixpull/builder/log 0644 root root -"
+          "z /var/lib/nixpull/builder/state.json 0644 root root -"
+          "Z /var/lib/nixpull/builder - root root -"
         ];
       }
 
-      (lib.mkIf (lib.elem "builder" cfg.roles) {
+      (lib.mkIf cfg.builder.enable {
         systemd.timers.nixpull-build = {
           wantedBy = [ "timers.target" ];
           timerConfig = {
-            OnCalendar = cfg.build.interval;
+            OnCalendar = cfg.builder.interval;
             Persistent = true;
             RandomizedDelaySec = "5m";
           };
@@ -362,13 +344,13 @@ in
         };
       })
 
-      (lib.mkIf (lib.elem "client" cfg.roles) {
+      (lib.mkIf cfg.client.enable {
         systemd.timers.nixpull-fetch = lib.mkIf cfg.fetch.enable {
           wantedBy = [ "timers.target" ];
           timerConfig = {
             OnCalendar = cfg.fetch.interval;
             Persistent = true;
-            RandomizedDelaySec = "5m";
+            RandomizedDelaySec = cfg.fetch.randomizedDelaySec;
           };
         };
 
@@ -411,26 +393,12 @@ in
 
         systemd.user.services.nixpull-notify = lib.mkIf cfg.notify.enable {
           description = "Notify about fetched nixpull updates";
-          wantedBy = [ "default.target" ];
           serviceConfig = {
             Type = "oneshot";
             ExecStart = "${nixpullNotifyPackage}/bin/nixpull-notify";
           };
         };
 
-        security.sudo.extraRules =
-          lib.mkIf (cfg.client.users != [ ] || (cfg.notify.enable && cfg.notify.users != [ ]))
-            [
-              {
-                users = lib.unique (cfg.client.users ++ cfg.notify.users);
-                commands = [
-                  {
-                    command = "${pkgs.systemd}/bin/systemctl start nixpull-apply.service";
-                    options = [ "NOPASSWD" ];
-                  }
-                ];
-              }
-            ];
       })
     ]
   );

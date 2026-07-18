@@ -6,7 +6,7 @@
   ...
 }:
 let
-  mangoPackage = inputs.mango.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+  mangoPackage = pkgs.callPackage ./_package.nix { src = inputs.mango; };
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
   config = ''
     # ============================================

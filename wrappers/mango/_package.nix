@@ -1,0 +1,76 @@
+{
+  lib,
+  libX11,
+  libinput,
+  libxcb,
+  libdrm,
+  libxkbcommon,
+  pcre2,
+  pango,
+  cjson,
+  pixman,
+  pkg-config,
+  stdenv,
+  wayland,
+  wayland-protocols,
+  wayland-scanner,
+  libxcb-wm,
+  xwayland,
+  meson,
+  ninja,
+  wlroots_0_20,
+  libGL,
+  src,
+  enableXWayland ? true,
+  debug ? false,
+}:
+stdenv.mkDerivation {
+  pname = "mango";
+  version = "nightly";
+  inherit src;
+
+  mesonFlags = [
+    (lib.mesonEnable "xwayland" enableXWayland)
+    (lib.mesonBool "asan" debug)
+  ];
+
+  nativeBuildInputs = [
+    meson
+    ninja
+    pkg-config
+    wayland-scanner
+  ];
+
+  buildInputs =
+    [
+      libinput
+      libxcb
+      libxkbcommon
+      pcre2
+      pango
+      cjson
+      pixman
+      wayland
+      wayland-protocols
+      wlroots_0_20
+      libGL
+      libdrm
+    ]
+    ++ lib.optionals enableXWayland [
+      libX11
+      libxcb-wm
+      xwayland
+    ];
+
+  passthru = {
+    providedSessions = [ "mango" ];
+  };
+
+  meta = {
+    mainProgram = "mango";
+    description = "Practical and Powerful wayland compositor (dwm but wayland)";
+    homepage = "https://github.com/mangowm/mango";
+    license = lib.licenses.gpl3Plus;
+    platforms = lib.platforms.unix;
+  };
+}

@@ -181,19 +181,7 @@ in
   };
 
   security.wrappers.sunshine.capabilities = pkgs.lib.mkForce "cap_sys_admin,cap_sys_nice+pie";
-  programs.gamemode.enable = true;
   users.users.richen.extraGroups = [
-    "gamemode"
     "uinput"
-  ];
-
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "steam-game-run" ''
-      export PATH="/run/current-system/sw/bin:$PATH"
-      export PROTON_ENABLE_WAYLAND=1
-      export PROTON_DXVK_LOWLATENCY=1
-
-      exec gamemoderun "$@"
-    '')
   ];
 }
