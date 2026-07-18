@@ -1,7 +1,6 @@
 *.qcow2
 result*
 .direnv
-.diagnostics/
 worktrees/
 /*.md
 !/README.md
