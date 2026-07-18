@@ -35,8 +35,7 @@
     };
     mango = {
       url = "github:mangowm/mango/wl-only";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
+      flake = false;
     };
     nix-doom-emacs-unstraightened = {
       url = "github:marienz/nix-doom-emacs-unstraightened";

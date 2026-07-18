@@ -8,14 +8,12 @@
     pkgs.pam_u2f
     richenLib.wrappers.zsh
     richenLib.wrappers.git
-    pkgs.neovim
     richenLib.wrappers.doom-emacs
     richenLib.wrappers.yazi
     pkgs.tealdeer
     pkgs.bat
     pkgs.tree
     pkgs.htop
-    pkgs.fastfetch
     pkgs.tmux
     pkgs.less
     pkgs.ripgrep

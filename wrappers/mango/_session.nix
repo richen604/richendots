@@ -70,7 +70,6 @@ in
       "cliphist-image.service"
       "wlsunset.service"
       "polkit-gnome-authentication-agent.service"
-      "udiskie.service"
       "blueman-applet.service"
       "keepassxc.service"
       "equibop.service"
@@ -154,8 +153,6 @@ in
     wlsunset = simpleSessionService "${pkgs.wlsunset}/bin/wlsunset -l 49.2 -L -123.1";
 
     polkit-gnome-authentication-agent = simpleSessionService "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-
-    udiskie = simpleSessionService "${richenLib.wrappers.udiskie}/bin/udiskie -t";
 
     blueman-applet = lib.recursiveUpdate partOfMangoSession {
       description = "Bluetooth management applet";
