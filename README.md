@@ -37,7 +37,7 @@ my personal nixos config
 
 > [!TIP]
 > some modules, packages, and options are obfuscated from private imports </br>
-> the configuration will not build from a clone/fork without `inputs.richendots-private` removed from `./lib/default.nix`
+> the configuration will not build from a clone/fork without [`inputs.richendots-private`](./lib/hosts.nix#L46-L58) removed
 
 ## license
 
