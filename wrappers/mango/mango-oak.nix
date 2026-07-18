@@ -9,15 +9,13 @@ let
   mangoPackage = pkgs.callPackage ./_package.nix { src = inputs.mango; };
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit inputs pkgs richenLib; };
   config = ''
-    # ============================================
-    # TAG RULES - Layout hints per monitor
-    # ============================================
-    # Tag 1 - Main
+    # tag rules
+    # tag 1 is the main workspace
     tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
     tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
     tagrule=id:1,monitor_model:DELL E2020H,layout_name:scroller
 
-    # Tag 2-9 - Projects (same layout as Tag 1)
+    # tags 2-9 use the same project layout
     tagrule=id:2,monitor_model:BenQ GW2780,layout_name:scroller
     tagrule=id:2,monitor_model:Dell S2716DG,layout_name:scroller
     tagrule=id:2,monitor_model:DELL E2020H,layout_name:scroller
@@ -50,24 +48,18 @@ let
     tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
     tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
 
-    # ============================================
-    # MONITOR RULES
-    # ============================================
+    # monitor rules
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
     monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:120,x:1080,y:0,rr:0
     monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,rr:3
     monitorrule=name:eDP-1,width:3200,height:2000,refresh:60,x:5240,y:0,scale:1.5,vrr:0,rr:0
 
-    # ============================================
-    # WINDOW RULES
-    # ============================================
+    # window rules
     windowrule=tags:2,isopensilent:1,monitor:eDP-1,appid:equibop
     windowrule=tags:3,isopensilent:1,monitor:eDP-1,appid:com.spotify.Client
     windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
 
-    # ============================================
-    # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
-    # ============================================
+    # tag view bindings; synctag keeps monitors on the same tag
     bind=SUPER,1,view,1,1
     bind=SUPER,2,view,2,1
     bind=SUPER,3,view,3,1
@@ -78,9 +70,7 @@ let
     bind=SUPER,8,view,8,1
     bind=SUPER,9,view,9,1
 
-    # ============================================
-    # MOVE WINDOW TO TAG (without switching view)
-    # ============================================
+    # move windows without switching view
     bind=SUPER+ALT,1,tagsilent,1
     bind=SUPER+ALT,2,tagsilent,2
     bind=SUPER+ALT,3,tagsilent,3
@@ -91,9 +81,7 @@ let
     bind=SUPER+ALT,8,tagsilent,8
     bind=SUPER+ALT,9,tagsilent,9
 
-    # ============================================
-    # TOGGLE TAG ON CURRENT WINDOW
-    # ============================================
+    # toggle a tag on the current window
     bind=SUPER+SHIFT,1,view,1
     bind=SUPER+SHIFT,2,view,2
     bind=SUPER+SHIFT,3,view,3
@@ -104,10 +92,7 @@ let
     bind=SUPER+SHIFT,8,view,8
     bind=SUPER+SHIFT,9,view,9
 
-    # ============================================
-    # SECRET TAG (main monitor only - not synced)
-    # ============================================
-    # Toggle tag 9 on main monitor only (Hyprland-style secret workspace)
+    # secret tag on the main monitor only
     bind=SUPER,S,view,9,monitor:model:Dell S2716DG
     bind=SUPER+ALT,S,tagcrossmon,9,monitor:model:Dell S2716DG
 

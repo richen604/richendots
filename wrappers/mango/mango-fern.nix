@@ -8,7 +8,7 @@ let
   mangoPackage = pkgs.callPackage ./_package.nix { src = inputs.mango; };
   mangoBase = pkgs.callPackage ./_base-config.nix { inherit richenLib; };
   config = ''
-    # Tag rules
+    # tag rules
     # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
     tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
     tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
@@ -46,23 +46,21 @@ let
     tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
     tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
 
-    # Monitor rules
+    # monitor rules
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
     monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:120,x:1080,y:0,rr:0
     monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,rr:3
     monitorrule=name:^HEADLESS-[0-9]+$,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,rr:0
     monitorrule=make:sisel muhendislik,model:EK1080T4KV2,serial:0x00005445,disable:1
 
-    # Window rules
+    # window rules
     windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
     windowrule=tags:1,isopensilent:1,appid:com.spotify.Client,monitor:model:DELL E2020H
     windowrule=tags:1,appid:FFPWA-.*,monitor:model:BenQ GW2780
     windowrule=appid:steam,monitor:model:Dell S2716DG
     windowrule=appid:steam_app_.*,monitor:model:Dell S2716DG
 
-    # ============================================
-    # TAG VIEW BINDINGS (synctag=1 - all monitors show same tag)
-    # ============================================
+    # tag view bindings; synctag keeps monitors on the same tag
     bind=SUPER,1,view,1,1
     bind=SUPER,2,view,2,1
     bind=SUPER,3,view,3,1
@@ -73,9 +71,7 @@ let
     bind=SUPER,8,view,8,1
     bind=SUPER,9,view,9,1
 
-    # ============================================
-    # MOVE WINDOW TO TAG (without switching view)
-    # ============================================
+    # move windows without switching view
     bind=SUPER+ALT,1,tagsilent,1
     bind=SUPER+ALT,2,tagsilent,2
     bind=SUPER+ALT,3,tagsilent,3
@@ -86,9 +82,7 @@ let
     bind=SUPER+ALT,8,tagsilent,8
     bind=SUPER+ALT,9,tagsilent,9
 
-    # ============================================
-    # TOGGLE TAG ON CURRENT WINDOW
-    # ============================================
+    # toggle a tag on the current window
     bind=SUPER+SHIFT,1,view,1
     bind=SUPER+SHIFT,2,view,2
     bind=SUPER+SHIFT,3,view,3
@@ -99,7 +93,7 @@ let
     bind=SUPER+SHIFT,8,view,8
     bind=SUPER+SHIFT,9,view,9
 
-    # Pseudo hyprland like secret tag
+    # hyprland-style secret tag
     bind=SUPER,S,view,9,
     bind=SUPER+ALT,S,tagsilent,9
 

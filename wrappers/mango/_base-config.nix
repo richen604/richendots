@@ -3,8 +3,6 @@
   richenLib,
   ...
 }:
-# todo: mango wrapper: runtime applications for auto start
-# todo: mango wrapper: windowrules for the below applications
 let
   chooseMonitor = placeholder: ''
     mmsg get all-monitors \
@@ -173,26 +171,13 @@ let
         ;;
     esac
   '';
-  # ============================================
-  # AUTOSTART APPLICATIONS
-  # ============================================
   autostart = ''
     exec-once=mango-start-session
   '';
 
-  # ============================================
-  # ENVIRONMENT & CURSOR
-  # ============================================
   environment = ''
     cursor_theme=Bibata-Modern-Ice
   '';
-
-  # ============================================
-  # GAMEMODE SETTINGS - Toggle these manually
-  # ============================================
-  # Normal Mode: animations=1, opacity=0.9/0.8, gaps=5/5/10/10
-  # Game Mode:   animations=0, opacity=1.0/1.0, gaps=0/0/0/0
-  # After editing, rebuild with: nixos-rebuild switch
   gamemode = ''
     animations=0
     layer_animations=0
@@ -206,11 +191,6 @@ let
     gappov=3                  # Game mode: 0
   '';
 
-  # ============================================
-  # ANIMATIONS
-  # ============================================
-  # Animation Configuration (support type: zoom, slide)
-  # tag_animation_direction: 0-horizontal, 1-vertical
   animations = ''
     animation_type_open=slide
     animation_type_close=slide
@@ -233,9 +213,6 @@ let
     animation_curve_focus=0.46,1.0,0.29,1
   '';
 
-  # ============================================
-  # APPEARANCE
-  # ============================================
   appearance = ''
     # Colors
     rootcolor=0x201b14ff
@@ -252,9 +229,6 @@ let
     scratchpad_height_ratio=1
   '';
 
-  # ============================================
-  # LAYOUT SETTINGS
-  # ============================================
   layouts = ''
     # Scroller Layout Setting
     scroller_structs = 8
@@ -278,9 +252,6 @@ let
     overviewgappo=15
   '';
 
-  # ============================================
-  # INPUT DEVICES
-  # ============================================
   input = ''
     # Keyboard
     repeat_rate=25
@@ -303,9 +274,6 @@ let
     mouse_natural_scrolling=0
   '';
 
-  # ============================================
-  # WINDOW BEHAVIOR
-  # ============================================
   behavior = ''
     no_border_when_single=0
     axis_bind_apply_timeout=100
@@ -327,9 +295,6 @@ let
     idleinhibit_ignore_visible=1
   '';
 
-  # ============================================
-  # LAYER RULES
-  # ============================================
   layerRules = ''
     # Layer rules for vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
@@ -338,11 +303,6 @@ let
     layerrule=noanim:1,noblur:1,layer_name:waybar
   '';
 
-  # ============================================
-  # KEYBINDINGS
-  # ============================================
-  # Key name refer to `xev` or `wev` command output
-  # Mod keys name: super,ctrl,alt,shift,none
   keybinds = ''
     # Passthrough mode lets nested remote sessions receive compositor shortcuts.
     keymode=default
@@ -433,10 +393,6 @@ let
 
     keymode=default
   '';
-
-  # ============================================
-  # FINAL CONFIG CONCATENATION
-  # ============================================
   config = ''
     ${autostart}
 

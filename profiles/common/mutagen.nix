@@ -9,7 +9,6 @@ with lib;
 let
   cfg = config.services.mutagen;
 
-  # Helper function to create common option types
   mkNullableOption =
     type: default: description:
     mkOption {
@@ -17,16 +16,12 @@ let
       inherit default description;
     };
 
-  # Helper function to create string option with default
   mkStringOption = default: description: mkNullableOption types.str default description;
 
-  # Helper function to create boolean option with default
   mkBoolOption = default: description: mkNullableOption types.bool default description;
 
-  # Helper function to create int option with default
   mkIntOption = default: description: mkNullableOption types.int default description;
 
-  # Helper function to build command arguments for sync sessions
   buildSyncArgs =
     name: value:
     [
@@ -39,7 +34,6 @@ let
     ++ optionals (value.mode != null) [ "--mode=${value.mode}" ]
     ++ optionals (value.ignore != null) (map (i: "--ignore=${i}") value.ignore)
     ++ optionals (value.vcsIgnore != null && value.vcsIgnore) [ "--ignore-vcs" ]
-    # Permissions options
     ++ optionals (value.permissions != null) (
       optionals (value.permissions.defaultFileMode != null) [
         "--default-file-mode=${value.permissions.defaultFileMode}"
@@ -54,11 +48,9 @@ let
         "--default-group=${value.permissions.defaultGroup}"
       ]
     )
-    # Symlink options
     ++ optionals (value.symlink != null && value.symlink.mode != null) [
       "--symlink-mode=${value.symlink.mode}"
     ]
-    # Watch options
     ++ optionals (value.watch != null) (
       optionals (value.watch.mode != null) [
         "--watch-mode=${value.watch.mode}"
@@ -67,7 +59,6 @@ let
         "--watch-polling-interval=${toString value.watch.pollingInterval}"
       ]
     )
-    # Other options
     ++ optionals (value.probeMode != null) [ "--probe-mode=${value.probeMode}" ]
     ++ optionals (value.scanMode != null) [ "--scan-mode=${value.scanMode}" ]
     ++ optionals (value.stageMode != null) [ "--stage-mode=${value.stageMode}" ]
@@ -78,7 +69,6 @@ let
       "--max-staging-file-size=${value.maxStagingFileSize}"
     ];
 
-  # Helper function to build command arguments for forward sessions
   buildForwardArgs =
     name: value:
     [
@@ -88,7 +78,6 @@ let
     ]
     ++ optionals (value.source != null) [ value.source ]
     ++ optionals (value.destination != null) [ value.destination ]
-    # Socket options
     ++ optionals (value.socket != null) (
       optionals (value.socket.overwriteMode != null) [
         "--socket-overwrite-mode=${value.socket.overwriteMode}"
@@ -100,7 +89,6 @@ let
       ]
     );
 
-  # Helper function to generate all sync session creation commands
   generateSyncCommands = mapAttrsToList (
     name: value:
     optionals value.enable [
@@ -109,7 +97,6 @@ let
     ]
   ) cfg.sync;
 
-  # Helper function to generate all forward session creation commands
   generateForwardCommands = mapAttrsToList (
     name: value:
     optionals value.enable [
@@ -118,7 +105,6 @@ let
     ]
   ) cfg.forward;
 
-  # Flatten the command lists
   allSyncCommands = flatten generateSyncCommands;
   allForwardCommands = flatten generateForwardCommands;
 in
@@ -141,7 +127,6 @@ in
                 type = types.str;
                 description = "Path to the beta endpoint.";
               };
-              # Sync behavior options
               mode = mkStringOption "two-way-safe" "Synchronization mode (e.g., 'two-way-resolved', 'one-way-replica').";
               ignore = mkOption {
                 type = types.nullOr (types.listOf types.str);
@@ -150,7 +135,6 @@ in
               };
               vcsIgnore = mkBoolOption false "Whether to ignore VCS directories (e.g., .git, .svn).";
 
-              # File permission options
               permissions = mkOption {
                 type = types.nullOr (
                   types.submodule {
@@ -166,7 +150,6 @@ in
                 description = "Permissions configuration for synchronized files/directories.";
               };
 
-              # Symlink handling options
               symlink = mkOption {
                 type = types.nullOr (
                   types.submodule {
@@ -179,7 +162,6 @@ in
                 description = "Symbolic link synchronization configuration.";
               };
 
-              # Filesystem watching options
               watch = mkOption {
                 type = types.nullOr (
                   types.submodule {
@@ -193,7 +175,6 @@ in
                 description = "Filesystem watching configuration.";
               };
 
-              # Advanced sync options
               probeMode = mkStringOption "assume" "Filesystem probing mode ('assume', 'probe').";
               scanMode = mkStringOption "accelerated" "Filesystem scanning mode ('accelerated', 'full').";
               stageMode = mkStringOption "mutagen" "Filesystem staging mode ('mutagen', 'neighboring', 'internal').";
@@ -223,7 +204,6 @@ in
                 description = "Destination address/path for forwarding.";
               };
 
-              # Socket options for Unix domain sockets
               socket = mkOption {
                 type = types.nullOr (
                   types.submodule {
@@ -248,12 +228,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Add mutagen to system packages so it's available for manual use
     environment.systemPackages = [ pkgs.mutagen ];
 
-    # Set up systemd services
     systemd.user.services = {
-      # Main daemon service
       mutagen-daemon = {
         description = "Mutagen Daemon";
         wantedBy = [ "default.target" ];
@@ -269,7 +246,6 @@ in
         };
       };
 
-      # Single consolidated service for all mutagen sessions
       mutagen-sessions = mkIf ((length allSyncCommands > 0) || (length allForwardCommands > 0)) {
         description = "Mutagen Sessions";
         wantedBy = [ "default.target" ];
@@ -286,7 +262,7 @@ in
           ExecStart = pkgs.writeShellScript "mutagen-sessions-start" /* bash */ ''
             set -euo pipefail
 
-            # Wait for network connectivity
+            # wait for network
             echo "Waiting for network..."
             timeout=60
             while [ $timeout -gt 0 ]; do
@@ -298,7 +274,7 @@ in
               timeout=$((timeout - 1))
             done
 
-            # Wait for daemon to be ready
+            # wait for the mutagen daemon
             echo "Waiting for Mutagen daemon to be ready..."
             timeout=30
             while [ $timeout -gt 0 ]; do
@@ -315,20 +291,18 @@ in
               exit 1
             fi
 
-            # Terminate all existing sessions to start fresh
+            # restart sessions from config so stale syncs do not stick around.
             echo "Terminating all existing sync sessions..."
             ${pkgs.mutagen}/bin/mutagen sync terminate -a || true
 
             echo "Terminating all existing forward sessions..."
             ${pkgs.mutagen}/bin/mutagen forward terminate -a || true
 
-            # TODO: Add support for terminating all mutagen projects when the feature becomes available
+            # todo: terminate mutagen projects here once mutagen supports it.
             # ${pkgs.mutagen}/bin/mutagen project terminate -a
 
-            # Create all configured sync sessions
             ${concatStringsSep "\n" allSyncCommands}
 
-            # Create all configured forward sessions
             ${concatStringsSep "\n" allForwardCommands}
 
             echo "All mutagen sessions have been created successfully"
@@ -340,7 +314,7 @@ in
             echo "Terminating all forward sessions..."
             ${pkgs.mutagen}/bin/mutagen forward terminate -a || true
 
-            # TODO: Add support for terminating all mutagen projects when the feature becomes available
+            # todo: terminate mutagen projects here once mutagen supports it.
             # ${pkgs.mutagen}/bin/mutagen project terminate -a
 
             echo "All mutagen sessions have been terminated"
