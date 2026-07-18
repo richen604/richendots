@@ -8,6 +8,7 @@
 
 let
   cfg = config.services.nixpull;
+  webhookTokenFile = if cfg.fetch.webhook.tokenFile == null then "/dev/null" else toString cfg.fetch.webhook.tokenFile;
 
   configFile = pkgs.writeText "nixpull-config.json" (
     builtins.toJSON {
@@ -18,6 +19,7 @@ let
         maxJobs = cfg.builder.maxJobs;
         cores = cfg.builder.cores;
         publishPartial = cfg.builder.publishPartial;
+        fetchWebhooks = cfg.builder.fetchWebhooks;
       };
       server = cfg.server;
       fetch = cfg.fetch;
@@ -56,7 +58,6 @@ let
       gnugrep
       jq
       libnotify
-      polkit
       systemd
     ];
     text = ''
@@ -68,30 +69,56 @@ let
       dismissed="$state_home/dismissed"
       current=$(readlink /run/current-system 2>/dev/null || true)
 
-      fetching_status=$(jq -r '.fetching.status // empty' "$state")
-      fetching_activatable=$(jq -r '.fetching.metadata.activatablePath // empty' "$state")
-      fetching_toplevel=$(jq -r '.fetching.metadata.toplevelPath // empty' "$state")
-      if [ "$fetching_status" = fetching ] && [ -n "$fetching_activatable" ]; then
-        current_fetched=$(jq -r '.fetched.activatablePath // empty' "$state")
-        if [ "$current_fetched" != "$fetching_activatable" ] \
-          && { [ ! -f "$dismissed" ] || ! grep -Fxq "$fetching_activatable" "$dismissed"; } \
-          && { [ -z "$fetching_toplevel" ] || [ "$current" != "$fetching_toplevel" ]; }; then
+      last_pull_status=$(jq -r '.lastPull.status // empty' "$state")
+      last_pull_at=$(jq -r '.lastPull.at // empty' "$state")
+      last_pull_path=$(jq -r '.lastPull.activatablePath // empty' "$state")
+      last_pull_toplevel=$(jq -r '.lastPull.toplevelPath // empty' "$state")
+      if [ -n "$last_pull_at" ] && [ -n "$last_pull_path" ]; then
+        notified="$state_home/notified-last-pull"
+        notified_key="$last_pull_at $last_pull_status $last_pull_path"
+        if [ ! -f "$notified" ] || ! grep -Fxq "$notified_key" "$notified"; then
           host=$(jq -r '.host // "unknown"' "$state")
-          built_at=$(jq -r '.fetching.metadata.builtAt // "unknown"' "$state")
-          notify-send \
-            --app-name=nixpull \
-            --icon=software-update-available \
-            --expire-time=8000 \
-            --hint=string:x-canonical-private-synchronous:nixpull-fetching \
-            "NixOS build available" \
-            "Host: $host\nBuilt: $built_at\nFetching closure..." || true
+          if [ "$last_pull_status" = success ] && [ -n "$last_pull_toplevel" ] && [ "$current" = "$last_pull_toplevel" ]; then
+            mkdir -p "$state_home"
+            printf '%s\n' "$notified_key" >>"$notified"
+            notify-send \
+              --app-name=nixpull \
+              --icon=software-update-available \
+              --expire-time=8000 \
+              --hint=string:x-canonical-private-synchronous:nixpull-apply \
+              "NixOS update applied" \
+              "Host: $host" || true
+            exit 0
+          elif [ "$last_pull_status" = failure ]; then
+            mkdir -p "$state_home"
+            printf '%s\n' "$notified_key" >>"$notified"
+            exit_code=$(jq -r '.lastPull.exitCode // "unknown"' "$state")
+            notify-send \
+              --app-name=nixpull \
+              --icon=dialog-error \
+              --urgency=critical \
+              --expire-time=12000 \
+              --hint=string:x-canonical-private-synchronous:nixpull-apply \
+              "NixOS update failed" \
+              "Host: $host\nExit code: $exit_code" || true
+            exit 0
+          fi
         fi
-        exit 0
       fi
 
+      fetching_status=$(jq -r '.fetching.status // empty' "$state")
+      fetching_activatable=$(jq -r '.fetching.metadata.activatablePath // empty' "$state")
       if [ "$fetching_status" = failure ] && [ -n "$fetching_activatable" ]; then
         host=$(jq -r '.host // "unknown"' "$state")
         exit_code=$(jq -r '.fetching.exitCode // "unknown"' "$state")
+        fetching_at=$(jq -r '.fetching.at // empty' "$state")
+        notified="$state_home/notified-fetch-failure"
+        notified_key="$fetching_at $exit_code $fetching_activatable"
+        if [ -f "$notified" ] && grep -Fxq "$notified_key" "$notified"; then
+          exit 0
+        fi
+        mkdir -p "$state_home"
+        printf '%s\n' "$notified_key" >>"$notified"
         notify-send \
           --app-name=nixpull \
           --icon=dialog-error \
@@ -128,10 +155,7 @@ let
 
       case "$action" in
         apply)
-          if pkexec ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
-            notify-send --app-name=nixpull --icon=software-update-available \
-              "Applying NixOS update" "nixpull-apply.service started"
-          else
+          if ! ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
             notify-send --app-name=nixpull --icon=dialog-error --urgency=critical \
               "NixOS update failed" "Could not start nixpull-apply.service"
           fi
@@ -141,6 +165,60 @@ let
           printf '%s\n' "$activatable" >>"$dismissed"
           ;;
       esac
+    '';
+  };
+
+  nixpullWebhookPackage = pkgs.writeShellApplication {
+    name = "nixpull-webhook";
+    runtimeInputs = with pkgs; [
+      coreutils
+      gnugrep
+      systemd
+    ];
+    text = ''
+      set -euo pipefail
+
+      token_file=${lib.escapeShellArg webhookTokenFile}
+      [ -r "$token_file" ] || exit 1
+      expected=$(tr -d '\r\n' <"$token_file")
+
+      status="401 Unauthorized"
+      body="unauthorized"
+
+      if IFS= read -r request_line; then
+        request_line=''${request_line%$'\r'}
+        method=''${request_line%% *}
+        rest=''${request_line#* }
+        path=''${rest%% *}
+        authorization=""
+
+        while IFS= read -r header; do
+          header=''${header%$'\r'}
+          [ -n "$header" ] || break
+          case "$header" in
+            [Aa]uthorization:*)
+              authorization=''${header#*:}
+              authorization=''${authorization# }
+              ;;
+          esac
+        done
+
+        if [ "$method" = POST ] && [ "$path" = /nixpull/fetch ] && [ "$authorization" = "Bearer $expected" ]; then
+          if systemctl start --no-block nixpull-fetch.service; then
+            status="202 Accepted"
+            body="fetch started"
+          else
+            status="500 Internal Server Error"
+            body="failed to start fetch"
+          fi
+        elif [ "$method" != POST ] || [ "$path" != /nixpull/fetch ]; then
+          status="404 Not Found"
+          body="not found"
+        fi
+      fi
+
+      printf 'HTTP/1.1 %s\r\nContent-Type: text/plain\r\nContent-Length: %s\r\nConnection: close\r\n\r\n%s\n' \
+        "$status" "$((''${#body} + 1))" "$body"
     '';
   };
 
@@ -187,6 +265,25 @@ in
         description = "Publish successful host builds even when other hosts fail.";
       };
 
+      fetchWebhooks = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule {
+          options = {
+            url = lib.mkOption {
+              type = lib.types.str;
+              example = "http://fern:5051/nixpull/fetch";
+              description = "Webhook URL called after this host's build is published.";
+            };
+
+            tokenFile = lib.mkOption {
+              type = lib.types.str;
+              description = "File containing the bearer token for this host's webhook.";
+            };
+          };
+        });
+        default = { };
+        description = "Per-host client fetch webhooks called immediately after publishing.";
+      };
+
       interval = lib.mkOption {
         type = lib.types.str;
         default = "hourly";
@@ -230,6 +327,28 @@ in
         type = lib.types.str;
         default = "30s";
         description = "Randomized delay added to the client fetch timer.";
+      };
+
+      webhook = {
+        enable = lib.mkEnableOption "a socket-activated webhook that starts nixpull-fetch.service";
+
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 5051;
+          description = "TCP port for the client fetch webhook listener.";
+        };
+
+        tokenFile = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "File containing the bearer token accepted by the client fetch webhook.";
+        };
+
+        openFirewallOnTailscale = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Open the fetch webhook port only on the tailscale0 firewall interface.";
+        };
       };
     };
 
@@ -297,6 +416,10 @@ in
             assertion = inputs ? deploy-rs;
             message = "nixpull requires a deploy-rs flake input";
           }
+          {
+            assertion = !cfg.fetch.webhook.enable || cfg.fetch.webhook.tokenFile != null;
+            message = "services.nixpull.fetch.webhook.tokenFile must be set when the webhook is enabled";
+          }
         ];
 
         environment.systemPackages = [ nixpullPackage ];
@@ -354,7 +477,7 @@ in
           };
         };
 
-        systemd.services.nixpull-fetch = lib.mkIf cfg.fetch.enable {
+        systemd.services.nixpull-fetch = lib.mkIf (cfg.fetch.enable || cfg.fetch.webhook.enable) {
           description = "Fetch latest published nixpull profile";
           serviceConfig = {
             Type = "oneshot";
@@ -375,6 +498,8 @@ in
 
         systemd.services.nixpull-apply = {
           description = "Activate latest published nixpull profile";
+          restartIfChanged = false;
+          stopIfChanged = false;
           serviceConfig = {
             Type = "oneshot";
             User = "root";
@@ -382,6 +507,29 @@ in
           };
           script = "${nixpullPackage}/bin/nixpull activate";
         };
+
+        systemd.sockets.nixpull-webhook = lib.mkIf cfg.fetch.webhook.enable {
+          wantedBy = [ "sockets.target" ];
+          socketConfig = {
+            ListenStream = cfg.fetch.webhook.port;
+            Accept = true;
+          };
+        };
+
+        systemd.services."nixpull-webhook@" = lib.mkIf cfg.fetch.webhook.enable {
+          description = "Start nixpull fetch from an authenticated webhook";
+          serviceConfig = {
+            Type = "exec";
+            StandardInput = "socket";
+            StandardOutput = "socket";
+            StandardError = "journal";
+            ExecStart = "${nixpullWebhookPackage}/bin/nixpull-webhook";
+          };
+        };
+
+        networking.firewall.interfaces.tailscale0.allowedTCPPorts = lib.mkIf (
+          cfg.fetch.webhook.enable && cfg.fetch.webhook.openFirewallOnTailscale
+        ) [ cfg.fetch.webhook.port ];
 
         systemd.user.paths.nixpull-notify = lib.mkIf cfg.notify.enable {
           wantedBy = [ "default.target" ];
@@ -398,6 +546,19 @@ in
             ExecStart = "${nixpullNotifyPackage}/bin/nixpull-notify";
           };
         };
+
+        security.polkit.extraConfig = lib.mkIf cfg.notify.enable ''
+          polkit.addRule(function(action, subject) {
+            if (action.id == "org.freedesktop.systemd1.manage-units"
+                && action.lookup("unit") == "nixpull-apply.service"
+                && action.lookup("verb") == "start"
+                && subject.user == "richen"
+                && subject.local
+                && subject.active) {
+              return polkit.Result.YES;
+            }
+          });
+        '';
 
       })
     ]

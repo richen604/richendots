@@ -38,6 +38,28 @@ log_line() {
   printf '%s %s\n' "$(date --iso-8601=seconds)" "$*" >>"$file"
 }
 
+trigger_webhook() {
+  local host=$1 webhook url token_file token curl_args=()
+  webhook=$(jq -c --arg host "$host" '.build.fetchWebhooks[$host] // empty' "$CONFIG")
+  [ -n "$webhook" ] || return 0
+
+  url=$(jq -r '.url' <<<"$webhook")
+  token_file=$(jq -r '.tokenFile' <<<"$webhook")
+  if [ -r "$token_file" ]; then
+    token=$(tr -d '\r\n' <"$token_file")
+    curl_args=(-H "Authorization: Bearer $token")
+  else
+    log_line "$BUILDER_LOG" "webhook skipped host=$host reason=missing-token-file tokenFile=$token_file"
+    return 0
+  fi
+
+  if curl --fail --silent --show-error --location --max-time 10 -X POST "${curl_args[@]}" "$url" >/dev/null; then
+    log_line "$BUILDER_LOG" "webhook success host=$host url=$url"
+  else
+    log_line "$BUILDER_LOG" "webhook failure host=$host url=$url"
+  fi
+}
+
 cleanup_build_workdir() {
   if [ -n "${NIXPULL_BUILD_WORKDIR:-}" ]; then
     mkdir -p "$BUILDER_DIR/logs"
@@ -148,6 +170,7 @@ build_one_host() {
 publish_available_hosts() {
   local workdir=$1 state=$2 host meta marker published=0
   local new_state=$state
+  local published_hosts=()
   shift 2
   for host in "$@"; do
     marker=$workdir/$host.published
@@ -157,11 +180,15 @@ publish_available_hosts() {
       log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
       print_build_published "$host"
       : >"$marker"
+      published_hosts+=("$host")
       published=1
     fi
   done
   if [ "$published" -eq 1 ]; then
     printf '%s\n' "$new_state" | atomic_write "$BUILDER_STATE"
+    for host in "${published_hosts[@]}"; do
+      trigger_webhook "$host"
+    done
   fi
 }
 
@@ -231,7 +258,7 @@ cmd_build() {
     return 1
   fi
 
-  local state new_state meta
+  local state new_state meta trigger_hosts=()
   state=$(cat "$BUILDER_STATE")
   new_state=$state
   for host in "${hosts[@]}"; do
@@ -242,6 +269,7 @@ cmd_build() {
         new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
         log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
         print_build_published "$host"
+        trigger_hosts+=("$host")
       fi
     else
       failures=$((failures + 1))
@@ -257,6 +285,10 @@ cmd_build() {
     --argjson failures "$failures" \
     '.lastBuild = {builtAt: $builtAt, successes: $successes, failures: $failures}' \
     <<<"$new_state" | atomic_write "$BUILDER_STATE"
+
+  for host in "${trigger_hosts[@]}"; do
+    trigger_webhook "$host"
+  done
 
   log_line "$BUILDER_LOG" "build complete successes=$successes failures=$failures"
   [ "$failures" -eq 0 ]
@@ -399,13 +431,24 @@ cmd_activate() {
 
   print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
   if activate_latest "$metadata"; then
-    result=$(jq -n --arg status success --arg at "$(date --iso-8601=seconds)" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, activatablePath: $activatablePath}')
+    result=$(jq -n \
+      --arg status success \
+      --arg at "$(date --iso-8601=seconds)" \
+      --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" \
+      --arg toplevelPath "$(jq -r '.toplevelPath' <<<"$metadata")" \
+      '{status: $status, at: $at, activatablePath: $activatablePath, toplevelPath: $toplevelPath}')
     jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
     log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
     print_nixpull_event "activated" "$(jq -r '.activatablePath' <<<"$metadata")"
   else
     local rc=$?
-    result=$(jq -n --arg status failure --arg at "$(date --iso-8601=seconds)" --argjson exitCode "$rc" --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath}')
+    result=$(jq -n \
+      --arg status failure \
+      --arg at "$(date --iso-8601=seconds)" \
+      --argjson exitCode "$rc" \
+      --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" \
+      --arg toplevelPath "$(jq -r '.toplevelPath' <<<"$metadata")" \
+      '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath, toplevelPath: $toplevelPath}')
     jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
     log_line "$CLIENT_LOG" "pull failure host=$host rc=$rc activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
     return "$rc"
