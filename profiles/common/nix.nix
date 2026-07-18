@@ -1,5 +1,11 @@
 { pkgs, richenLib, ... }:
 {
+
+  # we use nh which reimplements nixos-rebuild. saves eval
+  system.tools.nixos-rebuild.enable = false;
+  # also saves some eval
+  system.tools.nixos-option.enable = false;
+
   nix = {
     package = pkgs.nix;
     gc.automatic = false;
