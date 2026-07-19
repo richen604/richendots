@@ -32,10 +32,6 @@ let
     runtimeInputs = with pkgs; [
       bash
       coreutils
-      diffutils
-      findutils
-      gnugrep
-      gnused
       curl
       hostname
       nix
@@ -58,7 +54,6 @@ let
       gnugrep
       jq
       libnotify
-      systemd
     ];
     text = ''
       set -euo pipefail
@@ -172,7 +167,6 @@ let
     name = "nixpull-webhook";
     runtimeInputs = with pkgs; [
       coreutils
-      gnugrep
       systemd
     ];
     text = ''
@@ -309,6 +303,13 @@ in
     client.enable = lib.mkEnableOption "the nixpull client" // { default = true; };
 
     notify.enable = lib.mkEnableOption "desktop notifications for fetched updates";
+
+    notify.applyUser = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "alice";
+      description = "Active local desktop user allowed to start nixpull-apply.service from notifications.";
+    };
 
     fetch = {
       enable = lib.mkOption {
@@ -547,12 +548,12 @@ in
           };
         };
 
-        security.polkit.extraConfig = lib.mkIf cfg.notify.enable ''
+        security.polkit.extraConfig = lib.mkIf (cfg.notify.enable && cfg.notify.applyUser != null) ''
           polkit.addRule(function(action, subject) {
             if (action.id == "org.freedesktop.systemd1.manage-units"
                 && action.lookup("unit") == "nixpull-apply.service"
                 && action.lookup("verb") == "start"
-                && subject.user == "richen"
+                && subject.user == ${builtins.toJSON cfg.notify.applyUser}
                 && subject.local
                 && subject.active) {
               return polkit.Result.YES;

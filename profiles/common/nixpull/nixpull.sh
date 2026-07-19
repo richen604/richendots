@@ -72,7 +72,7 @@ atomic_write() {
   local target=$1 tmp
   tmp=$(mktemp "${target}.XXXXXX") || return
   cat >"$tmp"
-  chmod 0664 "$tmp"
+  chmod 0644 "$tmp"
   mv "$tmp" "$target"
 }
 
@@ -226,11 +226,9 @@ cmd_build() {
   print_build_start "${#hosts[@]}" "$max_jobs"
   log_line "$BUILDER_LOG" "build start hosts=${hosts[*]} maxJobs=$max_jobs"
 
-  local running=0 host pid failed=0
+  local running=0 host failed=0
   for host in "${hosts[@]}"; do
     build_one_host "$flake" "$host" "$cores" "$workdir" &
-    pid=$!
-    printf '%s\n' "$host" >"$workdir/pid-$pid"
     running=$((running + 1))
     if [ "$running" -ge "$max_jobs" ]; then
       if ! wait -n; then
