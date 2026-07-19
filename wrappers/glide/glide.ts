@@ -13,7 +13,7 @@ glide.o.yank_highlight_time = 180;
 glide.keymaps.set("command", "<C-j>", "commandline_focus_next");
 glide.keymaps.set("command", "<C-k>", "commandline_focus_back");
 
-const search_url = "https://www.rebang.online/?q=";
+const search_url = "https://rebang.online/?q=";
 
 function url_from_input(input: string): string {
   const trimmed = input.trim();
@@ -26,7 +26,7 @@ function url_from_input(input: string): string {
 
 glide.keymaps.set("normal", "go", async () => {
   await glide.commandline.show({
-    input: glide.ctx.url.toString(),
+    title: "open URL in current tab",
     options: [{
       label: "open in current tab",
       matches: () => true,
