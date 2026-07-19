@@ -159,8 +159,8 @@
       {
         Name = "Rebang";
         Alias = "rb";
-        IconURL = "https://www.rebang.online/favicon.icon";
-        URLTemplate = "https://www.rebang.online/?q={searchTerms}";
+        IconURL = "https://rebang.online/ReBangLogoBG.ico";
+        URLTemplate = "https://rebang.online/?q={searchTerms}";
       }
     ];
   };
