@@ -20,6 +20,11 @@ let
     ${pkgs.libnotify}/bin/notify-send "Mango passthrough" "Disabled"
     mmsg dispatch setkeymode,default
   '';
+  toggleGlobalMute = pkgs.writeShellScriptBin "mango-toggle-global-mute" ''
+    export PATH=/run/current-system/sw/bin:$PATH
+    ${pkgs.lib.getExe pkgs.equibop} --toggle-mic
+    ${pkgs.pamixer}/bin/pamixer --default-source -t
+  '';
   screenRecordMenu = pkgs.writeShellScriptBin "screenrecord-menu" ''
     set -eu
     export PATH=/run/current-system/sw/bin:$PATH
@@ -137,9 +142,9 @@ let
         | ${pkgs.coreutils}/bin/cut -f1
     }
 
-    client_geom() {
+    client_toplevel_id() {
       mmsg get client "$1" \
-        | ${pkgs.jq}/bin/jq -r '(.width | tostring) + "x" + (.height | tostring) + "+" + (.x | tostring) + "+" + (.y | tostring)'
+        | ${pkgs.jq}/bin/jq -r '.foreign_toplevel_id // empty'
     }
 
     open_satty() {
@@ -152,19 +157,21 @@ let
 
     case "$choice" in
       "Selection")
-        ${pkgs.grim}/bin/grim -t png - | open_satty --fullscreen all --initial-tool crop
+        geom="$(${pkgs.slurp}/bin/slurp -f '%x,%y %wx%h')" || exit 0
+        [ -n "$geom" ] || exit 0
+        ${pkgs.grim}/bin/grim -g "$geom" -t png - | open_satty --initial-tool brush
         ;;
       "Monitor")
         monitor="$(choose_monitor)"
         [ -n "$monitor" ] || exit 0
-        ${pkgs.grim}/bin/grim -o "$monitor" -t png - | open_satty --fullscreen --initial-tool brush
+        ${pkgs.grim}/bin/grim -o "$monitor" -t png - | open_satty --initial-tool brush
         ;;
       "Window/app")
         client_id="$(choose_window_id)"
         [ -n "$client_id" ] || exit 0
-        geom="$(client_geom "$client_id")"
-        [ -n "$geom" ] || exit 0
-        ${pkgs.grim}/bin/grim -g "$geom" -t png - | open_satty --fullscreen --initial-tool brush
+        toplevel_id="$(client_toplevel_id "$client_id")"
+        [ -n "$toplevel_id" ] || exit 0
+        ${pkgs.grim}/bin/grim -T "$toplevel_id" -t png - | open_satty --initial-tool brush
         ;;
       *)
         exit 0
@@ -295,6 +302,10 @@ let
     idleinhibit_ignore_visible=1
   '';
 
+  windowRules = ''
+    windowrule=isfloating:1,isoverlay:1,appid:satty
+  '';
+
   layerRules = ''
     # Layer rules for vicinae
     layerrule=animation_type_open:none,layer_name:vicinae
@@ -318,6 +329,7 @@ let
     bind=SUPER,B,spawn,glide
     bind=SUPER,L,spawn,swaylock
     bind=SUPER,A,spawn,vicinae toggle
+    bind=SUPER+SHIFT,A,spawn,${toggleGlobalMute}/bin/mango-toggle-global-mute
     bind=SUPER,V,spawn,vicinae vicinae://launch/clipboard/history
 
     # Screenshots and recording
@@ -370,6 +382,7 @@ let
     # Mouse Button Bindings (NONE mode key only work in ov mode)
     mousebind=SUPER,btn_left,moveresize,curmove
     mousebind=SUPER,btn_right,moveresize,curresize
+    mousebind=NONE,btn_extra,spawn,${toggleGlobalMute}/bin/mango-toggle-global-mute
     # todo: none don't currently work, need to investigate
     # mousebind=NONE,btn_middle,togglemaximizescreen,0
     # mousebind=NONE,btn_left,toggleoverview,1
@@ -409,6 +422,8 @@ let
     ${input}
 
     ${behavior}
+
+    ${windowRules}
 
     ${layerRules}
 
