@@ -20,12 +20,18 @@ let
         cores = cfg.builder.cores;
         publishPartial = cfg.builder.publishPartial;
         fetchWebhooks = cfg.builder.fetchWebhooks;
+        signingKeyFile = cfg.builder.signingKeyFile;
       };
       server = cfg.server;
       fetch = cfg.fetch;
       activation = cfg.activation;
     }
   );
+
+  gitConfig = pkgs.writeText "nixpull-gitconfig" ''
+    [safe]
+    	directory = ${cfg.flake}
+  '';
 
   nixpullPackage = pkgs.writeShellApplication {
     name = "nixpull";
@@ -40,6 +46,7 @@ let
       dix
       git
       gum
+      openssh
       systemd
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
@@ -164,6 +171,12 @@ let
       [ -n "$activatable" ] || exit 0
 
       [ -n "$toplevel" ] && [ "$current" = "$toplevel" ] && exit 0
+
+      last_pull_status=$(jq -r '.lastPull.status // empty' "$state")
+      last_pull_path=$(jq -r '.lastPull.activatablePath // empty' "$state")
+      if [ "$last_pull_status" = success ] && [ "$last_pull_path" = "$activatable" ]; then
+        exit 0
+      fi
 
       if [ -f "$dismissed" ] && grep -Fxq "$activatable" "$dismissed"; then
         exit 0
@@ -298,6 +311,12 @@ in
         type = lib.types.bool;
         default = true;
         description = "Publish successful host builds even when other hosts fail.";
+      };
+
+      signingKeyFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Secret Nix signing key used to sign built profiles before publishing.";
       };
 
       fetchWebhooks = lib.mkOption {
@@ -500,6 +519,7 @@ in
 
         systemd.services.nixpull-build = {
           description = "Build deploy-rs activatable NixOS profiles for nixpull";
+          environment.GIT_CONFIG_GLOBAL = gitConfig;
           serviceConfig = {
             Type = "oneshot";
             StateDirectory = "nixpull";

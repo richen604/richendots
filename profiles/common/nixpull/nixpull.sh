@@ -140,7 +140,7 @@ ensure_client_state() {
 build_one_host() {
   local flake=$1 host=$2 cores=$3 outdir=$4
   local log=$outdir/$host.log
-  local activatable toplevel generation
+  local activatable toplevel generation signing_key
   local paths=()
   local cores_args=()
   if [ "$cores" != "null" ]; then
@@ -156,6 +156,14 @@ build_one_host() {
     printf 'nixpull: nom did not report both store paths for %s\n' "$host" >&2
     return 1
   fi
+  signing_key=$(jq -r '.build.signingKeyFile // empty' "$CONFIG")
+  if [ -n "$signing_key" ]; then
+    if [ ! -r "$signing_key" ]; then
+      printf 'nixpull: signing key is not readable: %s\n' "$signing_key" >&2
+      return 1
+    fi
+    nix store sign --key-file "$signing_key" --recursive "$activatable" "$toplevel"
+  fi
   generation=$(date +%s)
   jq -n \
     --arg host "$host" \
@@ -165,6 +173,13 @@ build_one_host() {
     --arg builtAt "$(date --iso-8601=seconds)" \
     --slurpfile source "$outdir/source.json" \
     '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
+}
+
+build_flake_ref() {
+  case "$1" in
+    /*) printf 'path:%s\n' "$1" ;;
+    *) printf '%s\n' "$1" ;;
+  esac
 }
 
 publish_available_hosts() {
@@ -212,8 +227,9 @@ cmd_build() {
 
   ensure_builder_state
 
-  local flake max_jobs cores workdir failures=0 successes=0 publish_partial
+  local flake build_flake max_jobs cores workdir failures=0 successes=0 publish_partial
   flake=${flake_override:-$(jq -r '.flake' "$CONFIG")}
+  build_flake=$(build_flake_ref "$flake")
   max_jobs=$(jq -r '.build.maxJobs' "$CONFIG")
   cores=$(jq -r '.build.cores' "$CONFIG")
   publish_partial=$(jq -r '.build.publishPartial' "$CONFIG")
@@ -228,7 +244,7 @@ cmd_build() {
 
   local running=0 host failed=0
   for host in "${hosts[@]}"; do
-    build_one_host "$flake" "$host" "$cores" "$workdir" &
+    build_one_host "$build_flake" "$host" "$cores" "$workdir" &
     running=$((running + 1))
     if [ "$running" -ge "$max_jobs" ]; then
       if ! wait -n; then
