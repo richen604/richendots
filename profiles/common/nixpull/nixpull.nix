@@ -64,42 +64,76 @@ let
       dismissed="$state_home/dismissed"
       current=$(readlink /run/current-system 2>/dev/null || true)
 
-      last_pull_status=$(jq -r '.lastPull.status // empty' "$state")
-      last_pull_at=$(jq -r '.lastPull.at // empty' "$state")
-      last_pull_path=$(jq -r '.lastPull.activatablePath // empty' "$state")
-      last_pull_toplevel=$(jq -r '.lastPull.toplevelPath // empty' "$state")
-      if [ -n "$last_pull_at" ] && [ -n "$last_pull_path" ]; then
+      notify_last_pull_result() {
+        [ -r "$state" ] || return 1
+
+        last_pull_status=$(jq -r '.lastPull.status // empty' "$state")
+        last_pull_at=$(jq -r '.lastPull.at // empty' "$state")
+        last_pull_path=$(jq -r '.lastPull.activatablePath // empty' "$state")
+        last_pull_toplevel=$(jq -r '.lastPull.toplevelPath // empty' "$state")
+        [ -n "$last_pull_at" ] && [ -n "$last_pull_path" ] || return 1
+
         notified="$state_home/notified-last-pull"
         notified_key="$last_pull_at $last_pull_status $last_pull_path"
-        if [ ! -f "$notified" ] || ! grep -Fxq "$notified_key" "$notified"; then
-          host=$(jq -r '.host // "unknown"' "$state")
-          if [ "$last_pull_status" = success ] && [ -n "$last_pull_toplevel" ] && [ "$current" = "$last_pull_toplevel" ]; then
-            mkdir -p "$state_home"
-            printf '%s\n' "$notified_key" >>"$notified"
-            notify-send \
-              --app-name=nixpull \
-              --icon=software-update-available \
-              --expire-time=8000 \
-              --hint=string:x-canonical-private-synchronous:nixpull-apply \
-              "NixOS update applied" \
-              "Host: $host" || true
-            exit 0
-          elif [ "$last_pull_status" = failure ]; then
-            mkdir -p "$state_home"
-            printf '%s\n' "$notified_key" >>"$notified"
-            exit_code=$(jq -r '.lastPull.exitCode // "unknown"' "$state")
-            notify-send \
-              --app-name=nixpull \
-              --icon=dialog-error \
-              --urgency=critical \
-              --expire-time=12000 \
-              --hint=string:x-canonical-private-synchronous:nixpull-apply \
-              "NixOS update failed" \
-              "Host: $host\nExit code: $exit_code" || true
-            exit 0
-          fi
+        if [ -f "$notified" ] && grep -Fxq "$notified_key" "$notified"; then
+          return 1
         fi
-      fi
+
+        host=$(jq -r '.host // "unknown"' "$state")
+        if [ "$last_pull_status" = success ] && [ -n "$last_pull_toplevel" ] && [ "$(readlink /run/current-system 2>/dev/null || true)" = "$last_pull_toplevel" ]; then
+          mkdir -p "$state_home"
+          printf '%s\n' "$notified_key" >>"$notified"
+          notify-send \
+            --app-name=nixpull \
+            --icon=software-update-available \
+            --expire-time=8000 \
+            --hint=string:x-canonical-private-synchronous:nixpull-apply \
+            "NixOS update applied" \
+            "Host: $host" || true
+          return 0
+        elif [ "$last_pull_status" = failure ]; then
+          mkdir -p "$state_home"
+          printf '%s\n' "$notified_key" >>"$notified"
+          exit_code=$(jq -r '.lastPull.exitCode // "unknown"' "$state")
+          notify-send \
+            --app-name=nixpull \
+            --icon=dialog-error \
+            --urgency=critical \
+            --expire-time=12000 \
+            --hint=string:x-canonical-private-synchronous:nixpull-apply \
+            "NixOS update failed" \
+            "Host: $host\nExit code: $exit_code" || true
+          return 0
+        fi
+
+        return 1
+      }
+
+      notify_apply_progress() {
+        local host=$1 apply_pid=$2
+        local start elapsed progress
+        local total=${toString (cfg.activation.confirmTimeout + cfg.activation.activationTimeout)}
+
+        start=$(date +%s)
+
+        while kill -0 "$apply_pid" 2>/dev/null; do
+          elapsed=$(($(date +%s) - start))
+          progress=$((elapsed * 95 / total))
+          [ "$progress" -ge 5 ] || progress=5
+          [ "$progress" -le 95 ] || progress=95
+          notify-send \
+            --app-name=nixpull \
+            --icon=software-update-available \
+            --expire-time=0 \
+            --hint=string:x-canonical-private-synchronous:nixpull-apply \
+            --hint=int:value:"$progress" \
+            "NixOS update applying" \
+            "Host: $host\nElapsed: ''${elapsed}s / ~''${total}s" || true
+          sleep 1
+        done
+      }
+
+      notify_last_pull_result && exit 0
 
       fetching_status=$(jq -r '.fetching.status // empty' "$state")
       fetching_activatable=$(jq -r '.fetching.metadata.activatablePath // empty' "$state")
@@ -150,8 +184,15 @@ let
 
       case "$action" in
         apply)
-          if ! ${pkgs.systemd}/bin/systemctl start nixpull-apply.service; then
+          host=$(jq -r '.host // "unknown"' "$state")
+          ${pkgs.systemd}/bin/systemctl start nixpull-apply.service &
+          apply_pid=$!
+          notify_apply_progress "$host" "$apply_pid"
+          if wait "$apply_pid"; then
+            notify_last_pull_result || true
+          elif ! notify_last_pull_result; then
             notify-send --app-name=nixpull --icon=dialog-error --urgency=critical \
+              --hint=string:x-canonical-private-synchronous:nixpull-apply \
               "NixOS update failed" "Could not start nixpull-apply.service"
           fi
           ;;

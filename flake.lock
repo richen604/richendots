@@ -94,11 +94,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784171173,
-        "narHash": "sha256-EyBAHpQYuXAdQlIx/sja+Auw9IpHJGjE4PZ9g39I7sQ=",
+        "lastModified": 1784423689,
+        "narHash": "sha256-rf8FWDqTlBF2MdKlmlrfYbgNZxQs7OPWl2xI1Y3Bua0=",
         "owner": "feel-co",
         "repo": "hjem",
-        "rev": "57f1dacffe7a2d7ad803ad224a0efa1817aa4d07",
+        "rev": "3289cc5d2e62a2c0ba4e3e4f5565c9752fb39fb9",
         "type": "github"
       },
       "original": {
@@ -110,11 +110,11 @@
     "mango": {
       "flake": false,
       "locked": {
-        "lastModified": 1784275202,
-        "narHash": "sha256-+jUePnmfxvLL4m1jDmwUkgmscZ2yXg+yq2wWPCqSx7E=",
+        "lastModified": 1784346612,
+        "narHash": "sha256-pAFWZmu7jh2ZzUSTCx8+ntdEJgToxnQtJQheWfeMASQ=",
         "owner": "mangowm",
         "repo": "mango",
-        "rev": "c601c3082e23da8aa367a3b5baed321e844264da",
+        "rev": "6b7ce6af50bde3e6f4d4c22d39a02cc85f4f4551",
         "type": "github"
       },
       "original": {
@@ -138,11 +138,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1784283186,
-        "narHash": "sha256-UbL99HxNfp3TDSe+GjQwRFeRjCpvIO7JHbkLc5rHRFQ=",
+        "lastModified": 1784368167,
+        "narHash": "sha256-6wEBLmLdxj/vmkpsaf0uFxVolyI8R/417RdYtQuLQcc=",
         "owner": "marienz",
         "repo": "nix-doom-emacs-unstraightened",
-        "rev": "41a81ad56ad1b02493afb25f54c0d5aef21d770f",
+        "rev": "c5f1c84cb8fc234568368e3375e7c46db8334c4f",
         "type": "github"
       },
       "original": {
@@ -175,11 +175,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1784120854,
-        "narHash": "sha256-KesHgItiZPgGX740axSiQLcIQ8D24MDqNpkKYWIek8k=",
+        "lastModified": 1784356753,
+        "narHash": "sha256-12KrbMiWLcf8m7pCvAtZh1ZrgF85ZXDXvfR/fWTKy84=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "753cc8a3a87467296ddd1fa93f0cc3e81120ee46",
+        "rev": "61b7c44c4073f0b827768aff0049561b5110ea5a",
         "type": "github"
       },
       "original": {
@@ -195,8 +195,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1784420914,
-        "narHash": "sha256-hEEaZEMcCPU6WorbKFkVlPsyk1WpjF0NtQcQ/er/MvI=",
+        "lastModified": 1784429431,
+        "narHash": "sha256-vsLHHGmM9TZW67rBpdvjXWYeQmW0bozW81uzs8eRLJA=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },
