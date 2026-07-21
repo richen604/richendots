@@ -4,6 +4,153 @@
   ...
 }:
 let
+  cpuTemp = pkgs.writeShellScriptBin "waybar-cpu-temp" ''
+    shopt -s nullglob
+
+    max_temp=""
+    source="CPU"
+
+    for hwmon in /sys/class/hwmon/hwmon*; do
+      name=""
+      if [ -r "$hwmon/name" ]; then
+        name="$(<"$hwmon/name")"
+      fi
+
+      case "$name" in
+        coretemp|k10temp|zenpower)
+          for input in "$hwmon"/temp*_input; do
+            [ -r "$input" ] || continue
+            value="$(<"$input")"
+            [ "$value" -gt 0 ] 2>/dev/null || continue
+            temp=$((value / 1000))
+            if [ -z "$max_temp" ] || [ "$temp" -gt "$max_temp" ]; then
+              max_temp="$temp"
+              label_file="''${input%_input}_label"
+              if [ -r "$label_file" ]; then
+                source="$(<"$label_file")"
+              else
+                source="$name"
+              fi
+            fi
+          done
+          ;;
+      esac
+    done
+
+    if [ -z "$max_temp" ]; then
+      exit 0
+    fi
+
+    class="cool"
+    if [ "$max_temp" -ge 85 ]; then
+      class="hot"
+    elif [ "$max_temp" -ge 70 ]; then
+      class="warm"
+    fi
+
+    printf '{"text":"%s°","tooltip":"%s %s°C","class":"%s","percentage":%s}\n' "$max_temp" "$source" "$max_temp" "$class" "$max_temp"
+  '';
+
+  gpuTemp = pkgs.writeShellScriptBin "waybar-gpu-temp" ''
+    if ! command -v nvidia-smi >/dev/null 2>&1; then
+      exit 0
+    fi
+
+    line=""
+    while IFS= read -r line; do
+      break
+    done < <(nvidia-smi --query-gpu=temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw --format=csv,noheader,nounits 2>/dev/null)
+
+    [ -n "$line" ] || exit 0
+
+    IFS=',' read -r temp util mem_used mem_total power <<< "$line"
+    temp="''${temp// /}"
+    util="''${util// /}"
+    mem_used="''${mem_used// /}"
+    mem_total="''${mem_total// /}"
+    power="''${power## }"
+    power="''${power%% }"
+
+    [ "$temp" -gt 0 ] 2>/dev/null || exit 0
+
+    class="cool"
+    if [ "$temp" -ge 85 ]; then
+      class="hot"
+    elif [ "$temp" -ge 70 ]; then
+      class="warm"
+    fi
+
+    tooltip="GPU ''${temp}°C, ''${util}% used, ''${mem_used}/''${mem_total} MiB VRAM, ''${power}W"
+    printf '{"text":"%s°","tooltip":"%s","class":"%s","percentage":%s}\n' "$temp" "$tooltip" "$class" "$temp"
+  '';
+
+  idleStatus = pkgs.writeShellScriptBin "waybar-idle-status" ''
+    reasons=()
+
+    if ${pkgs.systemd}/bin/systemctl --user is-active --quiet waybar-manual-idle-inhibit.service 2>/dev/null; then
+      reasons+=("manual")
+    fi
+
+    if [ -x "${pkgs.pipewire}/bin/pw-dump" ]; then
+      while IFS= read -r stream; do
+        [ -n "$stream" ] && reasons+=("media: $stream")
+      done < <(
+        ${pkgs.coreutils}/bin/timeout 1s ${pkgs.pipewire}/bin/pw-dump 2>/dev/null | ${pkgs.jq}/bin/jq -r '
+          [ .[]
+            | select(.type == "PipeWire:Interface:Node")
+            | select(.info.state == "running")
+            | .info.props
+            | select((."media.class" // "") | startswith("Stream/"))
+            | (."application.name" // ."media.name" // ."node.name" // empty)
+          ]
+          | unique[]?
+        ' 2>/dev/null
+      )
+    fi
+
+    if [ -x "${richenLib.wrappers.mango-oak}/bin/mmsg" ]; then
+      while IFS= read -r client; do
+        [ -n "$client" ] && reasons+=("fullscreen: $client")
+      done < <(
+        ${pkgs.coreutils}/bin/timeout 1s ${richenLib.wrappers.mango-oak}/bin/mmsg get all-clients 2>/dev/null | ${pkgs.jq}/bin/jq -r '
+          .clients[]?
+          | select(.is_visible == true)
+          | select(
+              (.is_fullscreen // false) == true
+              or (.fullscreen // false) == true
+              or (.is_fake_fullscreen // false) == true
+              or (.fake_fullscreen // false) == true
+              or (.fullscreen_state // "") != ""
+              or (.state.fullscreen // false) == true
+            )
+          | (.title // .appid // "client")
+        ' 2>/dev/null
+      )
+    fi
+
+    if [ "''${#reasons[@]}" -gt 0 ]; then
+      tooltip="Idle inhibited"
+      for reason in "''${reasons[@]}"; do
+        tooltip+=$'\n'"$reason"
+      done
+      ${pkgs.jq}/bin/jq -cn --arg text "󰅶" --arg tooltip "$tooltip" --arg class "active" \
+        '{text: $text, tooltip: $tooltip, class: $class}'
+    else
+      ${pkgs.jq}/bin/jq -cn --arg text "󰾪" --arg tooltip $'Idle not inhibited\nClick for manual inhibit' --arg class "inactive" \
+        '{text: $text, tooltip: $tooltip, class: $class}'
+    fi
+  '';
+
+  idleToggle = pkgs.writeShellScriptBin "waybar-idle-toggle" ''
+    if ${pkgs.systemd}/bin/systemctl --user is-active --quiet waybar-manual-idle-inhibit.service 2>/dev/null; then
+      ${pkgs.systemd}/bin/systemctl --user stop waybar-manual-idle-inhibit.service
+    else
+      ${pkgs.systemd}/bin/systemctl --user start waybar-manual-idle-inhibit.service
+    fi
+
+    ${pkgs.procps}/bin/pkill -RTMIN+9 waybar 2>/dev/null || true
+  '';
+
   config = (pkgs.formats.json { }).generate "waybar-config" {
     layer = "top";
     position = "top";
@@ -21,21 +168,19 @@ let
     "modules-left" = [
       "mango/workspaces"
       "wlr/taskbar"
-      "mango/window"
     ];
-    "modules-center" = [
-      "custom/playerctl"
-    ];
+    "modules-center" = [ ];
     "modules-right" = [
       "tray"
       # "network"
       "pulseaudio"
       # "pulseaudio#microphone"
       "keyboard-state"
-      "cpu"
-      "temperature"
+      "custom/cpu-temp"
+      "custom/gpu-temp"
       "backlight"
       "battery"
+      "custom/idle-inhibit"
       "clock"
       "custom/notification"
     ];
@@ -77,16 +222,28 @@ let
         unlocked = "";
       };
     };
-    cpu = {
+    "custom/cpu-temp" = {
       interval = 2;
-      format = " {load}%";
+      format = " {text}";
+      exec = "${cpuTemp}/bin/waybar-cpu-temp";
+      "return-type" = "json";
+      "hide-empty-text" = true;
     };
-    temperature = {
-      "thermal-zone" = 2;
-      "hwmon-path" = "/sys/class/hwmon/hwmon1/temp1_input";
-      "critical-threshold" = 10;
-      "format-critical" = " {temperatureC}°C";
-      format = "";
+    "custom/gpu-temp" = {
+      interval = 2;
+      format = "󰢮 {text}";
+      exec = "${gpuTemp}/bin/waybar-gpu-temp";
+      "return-type" = "json";
+      "hide-empty-text" = true;
+    };
+    "custom/idle-inhibit" = {
+      interval = 5;
+      signal = 9;
+      format = "{text}";
+      exec = "${idleStatus}/bin/waybar-idle-status";
+      "on-click" = "${idleToggle}/bin/waybar-idle-toggle";
+      "return-type" = "json";
+      tooltip = true;
     };
     "wlr/taskbar" = {
       format = "{icon}";
@@ -238,6 +395,9 @@ let
 
     #language,
     #custom-weather,
+    #custom-cpu-temp,
+    #custom-gpu-temp,
+    #custom-idle-inhibit,
     #window,
     #taskbar,
     #tags,
@@ -494,14 +654,25 @@ let
       margin-left: 0px;
     }
 
-    #cpu  {
+    #custom-cpu-temp,
+    #custom-gpu-temp,
+    #custom-idle-inhibit {
       background: none;
       color: @active-foreground;
     }
 
-    #temperature {
-      background: none;
-      color: @active-foreground;
+    #custom-cpu-temp.warm,
+    #custom-gpu-temp.warm {
+      color: #ffcc66;
+    }
+
+    #custom-cpu-temp.hot,
+    #custom-gpu-temp.hot {
+      color: #ef5e5e;
+    }
+
+    #custom-idle-inhibit.inactive {
+      color: @foreground;
     }
 
     #backlight {

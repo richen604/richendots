@@ -68,6 +68,7 @@ in
       "wl-clip-persist.service"
       "cliphist-text.service"
       "cliphist-image.service"
+      "wayland-pipewire-idle-inhibit.service"
       "wlsunset.service"
       "polkit-gnome-authentication-agent.service"
       "blueman-applet.service"
@@ -112,6 +113,25 @@ in
       serviceConfig = {
         ExecStart = "${swayidlePackage}/bin/swayidle";
         Restart = "on-failure";
+      };
+    };
+
+    wayland-pipewire-idle-inhibit = lib.recursiveUpdate partOfMangoSession {
+      description = "Wayland idle inhibitor for active PipeWire streams";
+      serviceConfig = {
+        ExecStart = "${pkgs.wayland-pipewire-idle-inhibit}/bin/wayland-pipewire-idle-inhibit";
+        Restart = "on-failure";
+        RestartSec = 2;
+      };
+    };
+
+    waybar-manual-idle-inhibit = {
+      description = "Manual Wayland idle inhibitor controlled by Waybar";
+      partOf = [ "mango-session.target" ];
+      after = [ "mango-session.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.wlinhibit}/bin/wlinhibit";
+        Restart = "no";
       };
     };
 
