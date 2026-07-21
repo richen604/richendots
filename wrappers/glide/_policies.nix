@@ -169,9 +169,6 @@
     "jid1-BoFifL9Vbdl2zQ@jetpack" = {
       installation_mode = "blocked";
     };
-    "clipper@obsidian.md" = {
-      installation_mode = "blocked";
-    };
     "{2662ff67-b302-4363-95f3-b050218bd72c}" = {
       installation_mode = "blocked";
     };
