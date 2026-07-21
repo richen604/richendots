@@ -151,23 +151,42 @@ let
       ${richenLib.wrappers.satty}/bin/satty --filename - "$@"
     }
 
+    with_frozen_screen() {
+      local freeze_pid command_status
+
+      ${pkgs.hyprpicker}/bin/hyprpicker -r -z >/dev/null 2>&1 &
+      freeze_pid=$!
+      sleep 0.2
+
+      set +e
+      "$@"
+      command_status=$?
+      set -e
+
+      ${pkgs.procps}/bin/pkill -P "$freeze_pid" 2>/dev/null || true
+      ${pkgs.coreutils}/bin/kill "$freeze_pid" 2>/dev/null || true
+      wait "$freeze_pid" 2>/dev/null || true
+
+      return "$command_status"
+    }
+
     ${pkgs.coreutils}/bin/mkdir -p "$SCREENSHOTS_DIR"
 
     choice="$(printf '%s\n' "Selection" "Monitor" "Window/app" | vicinae dmenu --placeholder "Screenshot")"
 
     case "$choice" in
       "Selection")
-        geom="$(${pkgs.slurp}/bin/slurp -f '%x,%y %wx%h')" || exit 0
+        geom="$(with_frozen_screen ${pkgs.slurp}/bin/slurp -f '%x,%y %wx%h')" || exit 0
         [ -n "$geom" ] || exit 0
         ${pkgs.grim}/bin/grim -g "$geom" -t png - | open_satty --initial-tool brush
         ;;
       "Monitor")
-        monitor="$(choose_monitor)"
+        monitor="$(with_frozen_screen choose_monitor)"
         [ -n "$monitor" ] || exit 0
         ${pkgs.grim}/bin/grim -o "$monitor" -t png - | open_satty --initial-tool brush
         ;;
       "Window/app")
-        client_id="$(choose_window_id)"
+        client_id="$(with_frozen_screen choose_window_id)"
         [ -n "$client_id" ] || exit 0
         toplevel_id="$(client_toplevel_id "$client_id")"
         [ -n "$toplevel_id" ] || exit 0
