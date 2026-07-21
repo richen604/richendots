@@ -1,0 +1,162 @@
+:root {
+  /*
+   Grove 2: Moss Tint + Moss Balanced + Sage Olive.
+
+   Style intent:
+   - dark Moss Tint background with a slightly cooler off-color
+   - Moss Balanced green is the process/accent color, not cyan/teal
+   - Sage Olive syntax is separate from UI accents
+   - TUI style is square, compact, border-led, and close to system24/spicetify-tui
+
+   --bg-[p|s|t|q]     : primary/off/hover/selection surfaces
+   --txt-[p|s|t|q]    : foreground text for each surface family
+   --acc-[p|s|t|q]1-9 : accent ramps, intentionally green/earthy
+   --tui-*            : small shared TUI shape/interaction set
+   --syntax-*         : Sage Olive syntax roles
+
+   TUI/system24 usage:
+   - Use --bg-p as the single main background; avoid stacked panel colors.
+   - Use --bg-s only for subtle hover/off-color surfaces.
+   - Use --bg-q for active/selected rows.
+   - Use --acc-p6 for borders, progress, focus, and active indicators.
+   - Use --acc-p7 only for hover/focus emphasis.
+   - Keep panels square, compact, and border-driven; use ~5px gaps and 2px borders.
+   - Keep syntax colors separate from UI accent colors.
+   */
+  --mode: "dark";
+
+  /* primary: Moss Tint base + Moss Balanced accent */
+  --bg-p: #08110D;
+  --txt-p: #F2FFF5;
+  --acc-p1: #1E2715;
+  --acc-p2: #33451F;
+  --acc-p3: #526835;
+  --acc-p4: #72884F;
+  --acc-p5: #8DA967;
+  --acc-p6: #9FBD79;
+  --acc-p7: #B4CC88;
+  --acc-p8: #C9DC9D;
+  --acc-p9: #E2EFBC;
+
+  /* secondary: off-color surface; accents remain green */
+  --bg-s: #102116;
+  --txt-s: #F2FFF5;
+  --acc-s1: #1A2818;
+  --acc-s2: #314522;
+  --acc-s3: #4D6334;
+  --acc-s4: #6A824C;
+  --acc-s5: #84A061;
+  --acc-s6: #9FBD79;
+  --acc-s7: #B4CC88;
+  --acc-s8: #C9DC9D;
+  --acc-s9: #E2EFBC;
+
+  /* tertiary: sage support ramp for muted/status/subtle roles */
+  --bg-t: #102116;
+  --txt-t: #F2FFF5;
+  --acc-t1: #182316;
+  --acc-t2: #2B3D24;
+  --acc-t3: #435A35;
+  --acc-t4: #607A4E;
+  --acc-t5: #78966F;
+  --acc-t6: #8FB57F;
+  --acc-t7: #A7B368;
+  --acc-t8: #B4C47A;
+  --acc-t9: #D8D6BD;
+
+  /* quaternary: selection and warm earthy accents */
+  --bg-q: #182410;
+  --txt-q: #F2FFF5;
+  --acc-q1: #231D16;
+  --acc-q2: #3A2D1D;
+  --acc-q3: #5C4328;
+  --acc-q4: #7F5731;
+  --acc-q5: #9A6838;
+  --acc-q6: #B56F37;
+  --acc-q7: #C18B43;
+  --acc-q8: #D0A15D;
+  --acc-q9: #E0C18A;
+
+  /* Friendly aliases for consumers that do not use the ramp naming. */
+  --grove2-background: #08110D;
+  --grove2-off-background: #102116;
+  --grove2-selection: #182410;
+  --grove2-foreground: #F2FFF5;
+  --grove2-muted: #607D72;
+  --grove2-accent: #9FBD79;
+  --grove2-accent-hover: #B4CC88;
+
+  /* Minimal TUI tokens. Keep this small; app themes can derive details. */
+  --tui-font-family: "GohuFont uni14 Nerd Font Propo", "DM Mono", "JetBrains Mono", monospace;
+  --tui-code-font-family: "GohuFont uni14 Nerd Font", "JetBrains Mono", monospace;
+  --tui-font-size: 14px;
+  --tui-line-height: 1.35;
+  --tui-letter-spacing: -0.04ch;
+
+  /* Compact, square, border-led layout like system24. */
+  --tui-gap: 5px;
+  --tui-panel-padding: 8px;
+  --tui-row-height: 28px;
+  --tui-radius: 0px;
+  --tui-border-width: 2px;
+  --tui-border-color: color-mix(in srgb, var(--grove2-accent), transparent 78%);
+  --tui-border-color-hover: var(--grove2-accent);
+
+  /* Single-background model: separation comes from borders/labels/overlays. */
+  --tui-surface: var(--grove2-background);
+  --tui-surface-off: var(--grove2-off-background);
+  --tui-hover: color-mix(in srgb, var(--grove2-off-background), transparent 22%);
+  --tui-active: color-mix(in srgb, var(--grove2-accent), transparent 78%);
+  --tui-selection: var(--grove2-selection);
+  --tui-focus-ring: var(--grove2-accent);
+
+  /* Floating panel labels, used by system24/spicetify-tui style panes. */
+  --tui-label-color: var(--grove2-muted);
+  --tui-label-hover-color: var(--grove2-accent);
+  --tui-label-background: var(--grove2-background);
+
+  /* Status roles avoid cyan; info stays in the sage/moss family. */
+  --tui-success: var(--grove2-accent);
+  --tui-warning: #C18B43;
+  --tui-error: #B8614A;
+  --tui-info: #8FA76D;
+
+  /* Text-like progress bars for Discord/Spotify TUI treatments. */
+  --tui-progress-height: 18px;
+  --tui-progress-background: var(--grove2-background);
+  --tui-progress-foreground: var(--grove2-accent);
+
+  /* Sage Olive syntax. Kept separate so syntax does not recolor the UI. */
+  --syntax-background: #08110D;
+  --syntax-foreground: #D8D6BD;
+  --syntax-comment: #657052;
+  --syntax-keyword: #78966F;
+  --syntax-string: #A7B368;
+  --syntax-number: #C18B43;
+  --syntax-function: #B56F37;
+  --syntax-variable: #D8D6BD;
+  --syntax-type: #8FA76D;
+  --syntax-operator: #A99F7E;
+  --syntax-constant: #A9684D;
+  --syntax-exception: #B8614A;
+
+  /* Calmer markup/prose roles for Markdown, docs, and chat-rendered text. */
+  --markup-heading: #9FBD79;
+  --markup-link: #8FA76D;
+  --markup-emphasis: #C18B43;
+  --markup-strong: #B4CC88;
+  --markup-code: #B56F37;
+  --markup-quote: #657052;
+  --markup-muted: #607D72;
+  --markup-rule: color-mix(in srgb, var(--grove2-accent), transparent 78%);
+
+  /* Diff/highlight aliases for code review surfaces. */
+  --syntax-diff-added: #8FA76D;
+  --syntax-diff-added-background: #8FA76D20;
+  --syntax-diff-removed: #B8614A;
+  --syntax-diff-removed-background: #B8614A20;
+  --syntax-diff-modified: #A7B368;
+  --syntax-diff-modified-background: #A7B36820;
+  --syntax-line-number: #657052;
+  --syntax-line-number-active: #D8D6BD;
+}
