@@ -37,6 +37,19 @@ in
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
+    (pkgs.writeShellScriptBin "steam-game-run" ''
+      mkdir -p "$HOME/.cache/dxvk" "$HOME/.cache/nvidia"
+
+      export PROTON_ENABLE_WAYLAND=1
+      export PROTON_DXVK_LOWLATENCY=1
+      export DXVK_STATE_CACHE=1
+      export DXVK_STATE_CACHE_PATH="$HOME/.cache/dxvk"
+      export __GL_SHADER_DISK_CACHE=1
+      export __GL_SHADER_DISK_CACHE_PATH="$HOME/.cache/nvidia"
+      export __GL_SHADER_DISK_CACHE_SIZE=10737418240
+
+      exec "$@"
+    '')
   ];
 
   programs.gpu-screen-recorder.enable = true;
