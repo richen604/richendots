@@ -37,6 +37,7 @@ in
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
+    pkgs.wayland-pipewire-idle-inhibit
     (pkgs.writeShellScriptBin "steam-game-run" ''
       mkdir -p "$HOME/.cache/dxvk" "$HOME/.cache/nvidia"
 
