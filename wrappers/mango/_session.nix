@@ -150,7 +150,7 @@ in
 
     cliphist-image = simpleSessionService "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch ${pkgs.cliphist}/bin/cliphist store";
 
-    wlsunset = simpleSessionService "${pkgs.wlsunset}/bin/wlsunset -l 49.2 -L -123.1";
+    wlsunset = simpleSessionService "${richenLib.wrappers.wlsunset}/bin/wlsunset";
 
     polkit-gnome-authentication-agent = simpleSessionService "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
 

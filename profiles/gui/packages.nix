@@ -30,14 +30,13 @@ in
     pkgs.polkit_gnome
     pkgs.xdg-utils
     pkgs.libnotify
-    pkgs.wlsunset
+    richenLib.wrappers.wlsunset
     pkgs.grim
     pkgs.slurp
     pkgs.brightnessctl
     pkgs.libinput-gestures
     pkgs.libinput
     pkgs.dpms-off
-    pkgs.wayland-pipewire-idle-inhibit
   ];
 
   programs.gpu-screen-recorder.enable = true;
