@@ -38,15 +38,24 @@ let
     ${pkgs.systemd}/bin/systemctl --user start mango-session.target
   '';
 
-  partOfMangoSession = {
-    partOf = [ "mango-session.target" ];
-    after = [ "mango-session.target" ];
+  mangoSession = pkgs.writeShellScriptBin "mango-session" ''
+    cleanup() {
+      ${pkgs.systemd}/bin/systemctl --user stop mango-session.target
+    }
+    trap cleanup EXIT
+
+    ${mangoPackage}/bin/mango "$@"
+  '';
+
+  partOfGraphicalSession = {
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
     wantedBy = [ "mango-session.target" ];
   };
 
   simpleSessionService =
     execStart:
-    lib.recursiveUpdate partOfMangoSession {
+    lib.recursiveUpdate partOfGraphicalSession {
       serviceConfig = {
         ExecStart = execStart;
         Restart = "on-failure";
@@ -57,8 +66,17 @@ in
 {
   environment.systemPackages = [ mangoStartSession ];
 
+  services.greetd.settings = rec {
+    initial_session = {
+      command = "${mangoSession}/bin/mango-session";
+      user = richenLib.vars.username;
+    };
+    default_session = initial_session;
+  };
+
   systemd.user.targets.mango-session = {
     description = "Mango graphical session";
+    bindsTo = [ "graphical-session.target" ];
     wants = [
       "waybar.service"
       "swayidle.service"
@@ -82,6 +100,8 @@ in
 
   systemd.user.paths.mango-reload-config = {
     wantedBy = [ "mango-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
     pathConfig = {
       PathChanged = "%h/.config/mango/config.conf";
       Unit = "mango-reload-config.service";
@@ -97,7 +117,7 @@ in
       };
     };
 
-    waybar = lib.recursiveUpdate partOfMangoSession {
+    waybar = lib.recursiveUpdate partOfGraphicalSession {
       description = "Highly customizable Wayland bar for wlroots compositors";
       documentation = [ "https://github.com/Alexays/Waybar/wiki/" ];
       serviceConfig = {
@@ -108,7 +128,7 @@ in
       };
     };
 
-    swayidle = lib.recursiveUpdate partOfMangoSession {
+    swayidle = lib.recursiveUpdate partOfGraphicalSession {
       description = "Idle manager for Wayland";
       serviceConfig = {
         ExecStart = "${swayidlePackage}/bin/swayidle";
@@ -116,7 +136,7 @@ in
       };
     };
 
-    wayland-pipewire-idle-inhibit = lib.recursiveUpdate partOfMangoSession {
+    wayland-pipewire-idle-inhibit = lib.recursiveUpdate partOfGraphicalSession {
       description = "Wayland idle inhibitor for active PipeWire streams";
       serviceConfig = {
         ExecStart = "${pkgs.wayland-pipewire-idle-inhibit}/bin/wayland-pipewire-idle-inhibit";
@@ -127,15 +147,15 @@ in
 
     waybar-manual-idle-inhibit = {
       description = "Manual Wayland idle inhibitor controlled by Waybar";
-      partOf = [ "mango-session.target" ];
-      after = [ "mango-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
       serviceConfig = {
         ExecStart = "${pkgs.wlinhibit}/bin/wlinhibit";
         Restart = "no";
       };
     };
 
-    swaync = lib.recursiveUpdate partOfMangoSession {
+    swaync = lib.recursiveUpdate partOfGraphicalSession {
       description = "Swaync notification daemon";
       documentation = [ "https://github.com/ErikReider/SwayNotificationCenter" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -148,7 +168,7 @@ in
       };
     };
 
-    vicinae = lib.recursiveUpdate partOfMangoSession {
+    vicinae = lib.recursiveUpdate partOfGraphicalSession {
       description = "Vicinae Launcher Daemon";
       documentation = [ "https://docs.vicinae.com" ];
       requires = [ "dbus.socket" ];
@@ -174,7 +194,7 @@ in
 
     polkit-gnome-authentication-agent = simpleSessionService "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
 
-    blueman-applet = lib.recursiveUpdate partOfMangoSession {
+    blueman-applet = lib.recursiveUpdate partOfGraphicalSession {
       description = "Bluetooth management applet";
       serviceConfig = {
         Restart = "on-failure";
@@ -182,7 +202,7 @@ in
       };
     };
 
-    keepassxc = lib.recursiveUpdate partOfMangoSession {
+    keepassxc = lib.recursiveUpdate partOfGraphicalSession {
       description = "KeePassXC password manager";
       serviceConfig = {
         ExecStart = "${richenLib.wrappers.keepassxc}/bin/keepassxc";
@@ -190,7 +210,7 @@ in
       };
     };
 
-    equibop = lib.recursiveUpdate partOfMangoSession {
+    equibop = lib.recursiveUpdate partOfGraphicalSession {
       description = "Equibop chat client";
       serviceConfig = {
         ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
@@ -199,9 +219,9 @@ in
       };
     };
 
-    spotify = lib.recursiveUpdate partOfMangoSession {
+    spotify = lib.recursiveUpdate partOfGraphicalSession {
       description = "Spotify Flatpak client";
-      after = partOfMangoSession.after ++ [ "equibop.service" ];
+      after = partOfGraphicalSession.after ++ [ "equibop.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.flatpak}/bin/flatpak run --user com.spotify.Client";
         Restart = "no";

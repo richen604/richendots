@@ -22,18 +22,10 @@
     richenLib.wrappers.waybar
   ];
 
-  services.greetd.settings = rec {
-    initial_session = {
-      command = "${richenLib.wrappers.mango-fern}/bin/mango";
-      user = "richen";
-    };
-    default_session = initial_session;
-  };
-
   systemd.user.services.sunshine = {
     wantedBy = lib.mkForce [ "mango-session.target" ];
-    partOf = lib.mkForce [ "mango-session.target" ];
-    after = lib.mkForce [ "mango-session.target" ];
+    partOf = lib.mkForce [ "graphical-session.target" ];
+    after = lib.mkForce [ "graphical-session.target" ];
     wants = lib.mkForce [ ];
   };
 
