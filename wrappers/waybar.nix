@@ -153,6 +153,11 @@ let
 
   config = (pkgs.formats.json { }).generate "waybar-config" {
     layer = "top";
+    output = [
+      "BNQ BenQ GW2780 ET85P0086404U"
+      "Dell Inc. Dell S2716DG #ASMV9wwvvm3d"
+      "Dell Inc. DELL E2020H BJ7NFJ3"
+    ];
     position = "top";
     exclusive = true;
     passthrough = false;
