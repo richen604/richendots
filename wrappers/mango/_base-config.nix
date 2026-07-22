@@ -322,6 +322,7 @@ let
   '';
 
   windowRules = ''
+    windowrule=isfloating:1,isoverlay:1,width:0.62,height:0.62,appid:nixpull
     windowrule=isfloating:1,isoverlay:1,appid:satty
   '';
 

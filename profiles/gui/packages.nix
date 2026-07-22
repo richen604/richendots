@@ -19,6 +19,7 @@ in
     richenLib.wrappers.swaync
     vicinaePackage
     richenLib.wrappers.satty
+    richenLib.wrappers."nixpull-launcher"
     richenLib.wrappers.glide
     richenLib.wrappers.keepassxc
     pkgs.yubikey-manager
