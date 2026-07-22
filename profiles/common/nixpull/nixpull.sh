@@ -92,6 +92,14 @@ run_activation() {
   fi
 }
 
+require_root() {
+  local command=$1
+  if [ "$(id -u)" -ne 0 ]; then
+    printf 'nixpull: %s must be run as root; use sudo nixpull %s\n' "$command" "$command" >&2
+    return 77
+  fi
+}
+
 lock_hash() {
   local flake=$1
   local lock=$flake/flake.lock
@@ -224,6 +232,8 @@ cmd_build() {
     printf 'nixpull: build accepts at most one flake path\n' >&2
     return 2
   fi
+
+  require_root build || return $?
 
   ensure_builder_state
 
