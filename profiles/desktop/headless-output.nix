@@ -1,17 +1,5 @@
 { pkgs, richenLib, ... }:
 let
-  waitForRealOutput = pkgs.writeShellScriptBin "wait-for-real-output" ''
-    set -eu
-
-    while true; do
-      outputs="$(${pkgs.wlr-randr}/bin/wlr-randr --json 2>/dev/null || true)"
-      if [ -n "$outputs" ] && printf '%s' "$outputs" | ${pkgs.jq}/bin/jq -e 'any(.[]; (.enabled != false) and ((.name | test("^HEADLESS-[0-9]+$")) | not))' >/dev/null; then
-        break
-      fi
-      sleep 1
-    done
-  '';
-
   waitForEquibopOutput = pkgs.writeShellScriptBin "wait-for-equibop-output" ''
     set -eu
 
@@ -37,7 +25,6 @@ let
           ${richenLib.wrappers.mango-fern}/bin/mmsg dispatch create_virtual_output >/dev/null 2>&1 || true
         elif [ "$real_enabled" -gt 0 ] && [ "$headless_enabled" -gt 0 ]; then
           ${richenLib.wrappers.mango-fern}/bin/mmsg dispatch destroy_all_virtual_output >/dev/null 2>&1 || true
-          ${pkgs.systemd}/bin/systemctl --user try-restart waybar.service >/dev/null 2>&1 || true
         fi
       fi
 
@@ -48,8 +35,8 @@ in
 {
   systemd.user.services.mango-headless-output = {
     description = "Create a Mango virtual output when no real displays are enabled";
-    partOf = [ "mango-session.target" ];
-    after = [ "mango-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
     wantedBy = [ "mango-session.target" ];
     serviceConfig = {
       ExecStart = "${mangoHeadlessOutput}/bin/mango-headless-output";
@@ -58,10 +45,6 @@ in
     };
   };
 
-  systemd.user.services.waybar.serviceConfig = {
-    ExecStartPre = "${waitForRealOutput}/bin/wait-for-real-output";
-    TimeoutStartSec = "infinity";
-  };
   systemd.user.services.equibop.serviceConfig = {
     ExecStartPre = "${waitForEquibopOutput}/bin/wait-for-equibop-output";
     TimeoutStartSec = "infinity";
