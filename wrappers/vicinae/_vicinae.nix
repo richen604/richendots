@@ -5,6 +5,7 @@
   ...
 }:
 let
+  vicinaeTheme = import ./_theme.nix { theme = richenLib.theme; };
   settings = {
     close_on_focus_loss = false;
     consider_preedit = true;
@@ -17,7 +18,7 @@ let
         icon_theme = "Papirus";
       };
       dark = {
-        name = "forest-green";
+        name = vicinaeTheme.name;
         icon_theme = "Papirus-Dark";
       };
     };
@@ -37,35 +38,7 @@ let
   };
   config = (pkgs.formats.json { }).generate "custom-vicinae-config" settings;
   themes = {
-    forest-green = {
-      meta = {
-        version = 1;
-        name = "Forest Green";
-        description = "Green-first theme derived from kitty palette";
-        variant = "dark";
-        # icon = "icons/gruvbox.png";
-        inherits = "vicinae-dark";
-      };
-      colors = {
-        core = {
-          background = "#0E120F";
-          foreground = "#FFFFFF";
-          secondary_background = "#142825";
-          border = "#295233";
-          accent = "#9AE6AD";
-        };
-        accents = {
-          blue = "#9AE6AD";
-          green = "#AAF0DC";
-          magenta = "#9AE6D0";
-          orange = "#FAB387";
-          purple = "#CBA6F7";
-          red = "#CCFFF9";
-          yellow = "#CCFFF7";
-          cyan = "#9AE6DA";
-        };
-      };
-    };
+    ${vicinaeTheme.name} = vicinaeTheme.theme;
   };
   themeFiles = pkgs.lib.mapAttrsToList (name: value: {
     inherit name;

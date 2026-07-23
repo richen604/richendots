@@ -1,6 +1,6 @@
 { pkgs, richenLib, ... }:
 
-pkgs.callPackage ./_vicinae.nix {
+pkgs.callPackage ./vicinae/_vicinae.nix {
   inherit richenLib;
   qtScaleFactor = "1.2";
 }

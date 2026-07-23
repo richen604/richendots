@@ -11,7 +11,7 @@ my personal nixos config
 ---
 
 - **bar** - [`waybar`](./wrappers/waybar.nix)
-- **app launcher / clipboard** - [`vicinae`](./wrappers/_vicinae.nix)
+- **app launcher / clipboard** - [`vicinae`](./wrappers/vicinae.nix)
 - **browser** - `glide (firefox)` [grove theme](./wrappers/glide/userChrome.css)
 - **spotify** - [`spicetify-tui`](./profiles/gui/hjem/config/spicetify/Themes/tui/user.css)
 - **discord** - [`equibop`](./profiles/gui/packages.nix) + [grove theme](./profiles/gui/hjem/config/equibop/system24-grove.css)

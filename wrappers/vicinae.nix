@@ -1,3 +1,3 @@
 { pkgs, richenLib, ... }:
 
-pkgs.callPackage ./_vicinae.nix { inherit richenLib; }
+pkgs.callPackage ./vicinae/_vicinae.nix { inherit richenLib; }

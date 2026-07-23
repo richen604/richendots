@@ -138,139 +138,62 @@ let
     }
   ];
 
-  theme = {
-    app.overall = {
-      bg = "#0E120F";
-    };
-    mgr = {
-      cwd = {
-        fg = "#9AE6AD";
-        bold = true;
-      };
-      border_symbol = "│";
-      border_style = {
-        fg = "#295233";
-      };
-      find_keyword = {
-        fg = "#AAF0DC";
-        bold = true;
-      };
-      find_position = {
-        fg = "#578F65";
-      };
-      marker_copied = {
-        fg = "#9AE6DA";
-        bg = "#142825";
-      };
-      marker_cut = {
-        fg = "#CCFFF7";
-        bg = "#142825";
-      };
-      marker_marked = {
-        fg = "#9AE6AD";
-        bg = "#142825";
-      };
-      marker_selected = {
-        fg = "#FFFFFF";
-        bg = "#295233";
-      };
-    };
-    tabs = {
-      active = {
-        fg = "#FFFFFF";
-        bg = "#142825";
-        bold = true;
-      };
-      inactive = {
-        fg = "#578F65";
-        bg = "#0E120F";
-      };
-    };
-    mode = {
-      normal_main = {
-        fg = "#0E120F";
-        bg = "#9AE6AD";
-        bold = true;
-      };
-      normal_alt = {
-        fg = "#9AE6AD";
-        bg = "#142825";
-      };
-      select_main = {
-        fg = "#0E120F";
-        bg = "#CCFFF7";
-        bold = true;
-      };
-      select_alt = {
-        fg = "#CCFFF7";
-        bg = "#142825";
-      };
-      unset_main = {
-        fg = "#0E120F";
-        bg = "#578F65";
-        bold = true;
-      };
-      unset_alt = {
-        fg = "#578F65";
-        bg = "#142825";
-      };
-    };
-    status = {
-      overall = {
-        fg = "#FFFFFF";
-        bg = "#0E120F";
-      };
-      progress_normal = {
-        fg = "#9AE6AD";
-        bg = "#142825";
-      };
-      progress_error = {
-        fg = "#CCFFF9";
-        bg = "#142825";
-      };
-    };
-    filetype.rules = [
-      {
-        mime = "image/*";
-        fg = "#9AE6AD";
+  theme = import ./yazi/_theme.nix { theme = richenLib.theme; };
+  baseTheme = toml.generate "yazi-base-theme.toml" theme;
+  iconThemeScript = pkgs.writeText "yazi-icon-theme.pl" ''
+    use strict;
+    use warnings;
+
+    my $in_icons = 0;
+
+    while (<>) {
+      $in_icons = 1 if /^\[icon\]\s*$/;
+      next unless $in_icons;
+
+      s/fg = "#[0-9a-fA-F]{6}"/"fg = \"" . grove_color($&) . "\""/e;
+      print;
+    }
+
+    sub grove_color {
+      my ($entry) = @_;
+      my ($hex) = $entry =~ /#([0-9a-fA-F]{6})/;
+      my ($r, $g, $b) = map { hex($_) / 255 } $hex =~ /(..)(..)(..)/;
+      my $max = $r > $g ? ($r > $b ? $r : $b) : ($g > $b ? $g : $b);
+      my $min = $r < $g ? ($r < $b ? $r : $b) : ($g < $b ? $g : $b);
+      my $delta = $max - $min;
+      my $lightness = ($max + $min) / 2;
+      my $saturation = $max == 0 ? 0 : $delta / $max;
+
+      return "${richenLib.theme.txt.p}" if $saturation < 0.18 && $lightness > 0.65;
+      return "${richenLib.theme.aliases.muted}" if $saturation < 0.18;
+
+      my $hue = 0;
+      if ($delta != 0) {
+        if ($max == $r) {
+          $hue = 60 * (($g - $b) / $delta);
+          $hue += 360 if $hue < 0;
+        } elsif ($max == $g) {
+          $hue = 60 * (($b - $r) / $delta + 2);
+        } else {
+          $hue = 60 * (($r - $g) / $delta + 4);
+        }
       }
-      {
-        mime = "{audio,video}/*";
-        fg = "#9AE6D0";
-      }
-      {
-        mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}";
-        fg = "#CCFFF7";
-      }
-      {
-        url = "*/";
-        fg = "#AAF0DC";
-        bold = true;
-      }
-      {
-        url = "*";
-        fg = "#FFFFFF";
-      }
-    ];
-    git = {
-      modified = {
-        fg = "#CCFFF7";
-      };
-      added = {
-        fg = "#9AE6AD";
-      };
-      untracked = {
-        fg = "#578F65";
-      };
-      deleted = {
-        fg = "#CCFFF9";
-        bold = true;
-      };
-      ignored = {
-        fg = "#295233";
-      };
-    };
-  };
+
+      return "${richenLib.theme.ui.error}" if $hue < 15 || $hue >= 345;
+      return "${richenLib.theme.syntax.function}" if $hue < 45;
+      return "${richenLib.theme.ui.warning}" if $hue < 75;
+      return "${richenLib.theme.acc.p."6"}" if $hue < 150;
+      return "${richenLib.theme.syntax.string}" if $hue < 190;
+      return "${richenLib.theme.syntax.type}" if $hue < 250;
+      return "${richenLib.theme.syntax.constant}" if $hue < 290;
+      return "${richenLib.theme.syntax.function}";
+    }
+  '';
+  generatedTheme = pkgs.runCommandLocal "yazi-theme.toml" { nativeBuildInputs = [ pkgs.perl ]; } ''
+    install -m 0644 ${baseTheme} $out
+    printf '\n' >> $out
+    perl ${iconThemeScript} ${pkgs.yazi-unwrapped.srcs.code_src}/yazi-config/preset/theme-dark.toml >> $out
+  '';
 
   extraFiles = [
     {
@@ -335,7 +258,7 @@ let
       }
       {
         name = "theme.toml";
-        path = toml.generate "theme.toml" theme;
+        path = generatedTheme;
       }
     ]
     ++ map (file: {
@@ -378,7 +301,7 @@ let
   };
 in
 pkgs.symlinkJoin {
-  name = "yazi-grove";
+  name = "yazi-${richenLib.theme.name}";
   paths = [
     yazi
     desktopItem
