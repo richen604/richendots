@@ -3,10 +3,18 @@
 {
   inputs,
   pkgs,
+  richenLib,
   ...
 }:
 let
   doomInput = inputs.nix-doom-emacs-unstraightened;
+  doomTheme = import ./_theme.nix { theme = richenLib.theme; };
+  generatedTheme = pkgs.replaceVars ./doom.d/themes/grove-theme.el doomTheme.replacements;
+  generatedDoomDir = pkgs.runCommandLocal "doom.d-${richenLib.theme.name}" { } ''
+    cp -r ${./doom.d} $out
+    chmod -R u+w $out
+    cp ${generatedTheme} $out/themes/grove-theme.el
+  '';
   updateIntermediates = pkgs.callPackage (doomInput + "/build-helpers/doomscript.nix") {
     name = "doom-intermediates";
     doomSource = doomInput.inputs.doomemacs;
@@ -41,7 +49,7 @@ let
     '';
   };
   doomPackages = pkgs.callPackage ./_no-ifd.nix {
-    doomDir = ./doom.d;
+    doomDir = generatedDoomDir;
     doomIntermediates = ./generated;
     doomLocalDir = "~/.local/share/nix-doom";
     doomSource = doomInput.inputs.doomemacs;
