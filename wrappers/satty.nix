@@ -4,6 +4,7 @@
   ...
 }:
 let
+  sattyTheme = import ./satty/_theme.nix { theme = richenLib.theme; };
   # todo: swaync nextrelease options when available
   config = (pkgs.formats.toml { }).generate "satty-config" {
     general = {
@@ -65,44 +66,9 @@ let
       #   "Source Han Sans"
       # ];
     };
-    # quick picks for markup: bright basics plus grove accents.
+    # Quick picks for markup from the selected theme.
     color-palette = {
-      palette = [
-        "#ff0000"
-        "#7AC297"
-        "#0080ff"
-        "#ffff00"
-        "#ff8000"
-        "#9AE6D9"
-        "#ffffff"
-        "#000000"
-      ];
-      custom = [
-        "#ff0000"
-        "#00ff00"
-        "#0080ff"
-        "#ffff00"
-        "#ff00ff"
-        "#ff8000"
-        "#00ffff"
-        "#295239"
-        "#4B7D5F"
-        "#65A37E"
-        "#7AC297"
-        "#9AE6B8"
-        "#CCFFE0"
-        "#3A6B63"
-        "#65A399"
-        "#7AC2B6"
-        "#9AE6D9"
-        "#AAF0E4"
-        "#ffffff"
-        "#cccccc"
-        "#888888"
-        "#444444"
-        "#0E1310"
-        "#000000"
-      ];
+      inherit (sattyTheme) palette custom;
     };
   };
 in

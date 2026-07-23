@@ -4,6 +4,10 @@
   ...
 }:
 let
+  swaylockTheme = import ./swaylock/_theme.nix {
+    inherit (pkgs) lib;
+    theme = richenLib.theme;
+  };
   toSwaylockConf =
     attrs:
     pkgs.lib.concatStringsSep "\n" (
@@ -14,49 +18,33 @@ let
         ) attrs
       )
     );
-  config = pkgs.writeText "swaylock-config" (toSwaylockConf {
-    daemonize = true;
-    clock = true;
-    # this is a hack to ensure the wallpaper is in closure
-    image = "${
-      pkgs.runCommandLocal "swaylock-wallpaper" { } ''
-        mkdir -p $out
-        cp ${./swaybg/wall.png} $out/wall.png
-      ''
-    }/wall.png";
-    scaling = "fill";
-    effect-blur = "5x5";
-    effect-vignette = "1:1";
-    font = "GohuFont uni14 Nerd Font Propo";
-    font-size = 52;
-    indicator = true;
-    indicator-radius = 180;
-    indicator-thickness = 12;
-    color = "0E131080";
-    line-color = "0E1310";
-    ring-color = "295239";
-    inside-color = "0E1310";
-    key-hl-color = "65A37E";
-    separator-color = "00000000";
-    text-color = "FFFFFF";
-    text-caps-lock-color = "";
-    line-ver-color = "65A37E";
-    ring-ver-color = "7AC297";
-    inside-ver-color = "0E1310";
-    text-ver-color = "FFFFFF";
-    ring-wrong-color = "65A399";
-    text-wrong-color = "AAF0E4";
-    inside-wrong-color = "0E1310";
-    inside-clear-color = "0E1310";
-    text-clear-color = "FFFFFF";
-    ring-clear-color = "9AE6D9";
-    line-clear-color = "0E1310";
-    line-wrong-color = "0E1310";
-    bs-hl-color = "578F86";
-    datestr = "%b-%d";
-    timestr = "%H:%M";
-    ignore-empty-password = true;
-  });
+  config = pkgs.writeText "swaylock-config" (
+    toSwaylockConf (
+      {
+        daemonize = true;
+        clock = true;
+        # this is a hack to ensure the wallpaper is in closure
+        image = "${
+          pkgs.runCommandLocal "swaylock-wallpaper" { } ''
+            mkdir -p $out
+            cp ${./swaybg/wall.png} $out/wall.png
+          ''
+        }/wall.png";
+        scaling = "fill";
+        effect-blur = "5x5";
+        effect-vignette = "1:1";
+        font = "GohuFont uni14 Nerd Font Propo";
+        font-size = 52;
+        indicator = true;
+        indicator-radius = 180;
+        indicator-thickness = 12;
+        datestr = "%b-%d";
+        timestr = "%H:%M";
+        ignore-empty-password = true;
+      }
+      // swaylockTheme.colors
+    )
+  );
 in
 richenLib.lib.wrapPackage {
   package = pkgs.swaylock-effects;
