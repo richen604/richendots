@@ -30,7 +30,7 @@
        (nix +lsp +tree-sitter)
        (org +pretty)
        markdown
-       (sh +tree-sitter)
+       sh
        (javascript +lsp +tree-sitter)
        (web +lsp +tree-sitter)
        (json +lsp +tree-sitter)
@@ -38,6 +38,7 @@
 
        :tools
        (lsp +eglot)
+       tree-sitter
 
        :config
        (default +bindings +smartparens))

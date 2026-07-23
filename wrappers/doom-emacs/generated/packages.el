@@ -108,5 +108,6 @@
 (package! eglot :ignore t)
 (package! jsonrpc :ignore t)
 (package! consult-eglot :ignore t)
+(package! treesit :ignore t)
 (package! link-hint :ignore t)
 (package! dotenv-mode :ignore t)

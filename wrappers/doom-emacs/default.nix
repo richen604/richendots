@@ -59,6 +59,17 @@ let
     emacsPackagesFor = pkgs.emacsPackagesFor;
     experimentalFetchTree = true;
     toInit = _lib: _attrs: "";
+    extraBinPackages = [
+      pkgs.git
+      pkgs.fd
+      pkgs.ripgrep
+      pkgs.nil
+      pkgs.nixfmt
+      pkgs.nodejs
+      pkgs.typescript-language-server
+      pkgs.vscode-langservers-extracted
+      pkgs.yaml-language-server
+    ];
     extraPackages = epkgs: [
       (epkgs.treesit-grammars.with-grammars (
         grammars: with grammars; [
@@ -66,11 +77,12 @@ let
           tree-sitter-css
           tree-sitter-html
           tree-sitter-javascript
+          tree-sitter-jsdoc
           tree-sitter-json
           tree-sitter-markdown
           tree-sitter-markdown-inline
           tree-sitter-nix
-          tree-sitter-tsx
+          (tree-sitter-tsx.override { location = "tsx"; })
           tree-sitter-typescript
           tree-sitter-yaml
         ]
