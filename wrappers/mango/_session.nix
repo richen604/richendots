@@ -98,25 +98,7 @@ in
     ++ extraWantedServices;
   };
 
-  systemd.user.paths.mango-reload-config = {
-    wantedBy = [ "mango-session.target" ];
-    partOf = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    pathConfig = {
-      PathChanged = "%h/.config/mango/config.conf";
-      Unit = "mango-reload-config.service";
-    };
-  };
-
   systemd.user.services = {
-    mango-reload-config = {
-      description = "Reload Mango config";
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${mangoPackage}/bin/mmsg dispatch reload_config";
-      };
-    };
-
     waybar = lib.recursiveUpdate partOfGraphicalSession {
       description = "Highly customizable Wayland bar for wlroots compositors";
       documentation = [ "https://github.com/Alexays/Waybar/wiki/" ];
@@ -204,6 +186,7 @@ in
 
     keepassxc = lib.recursiveUpdate partOfGraphicalSession {
       description = "KeePassXC password manager";
+      after = partOfGraphicalSession.after ++ [ "waybar.service" ];
       serviceConfig = {
         ExecStart = "${richenLib.wrappers.keepassxc}/bin/keepassxc";
         Restart = "no";

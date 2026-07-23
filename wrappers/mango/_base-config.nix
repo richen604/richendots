@@ -23,7 +23,6 @@ let
   toggleGlobalMute = pkgs.writeShellScriptBin "mango-toggle-global-mute" ''
     export PATH=/run/current-system/sw/bin:$PATH
     ${pkgs.lib.getExe pkgs.equibop} --toggle-mic
-    ${pkgs.pamixer}/bin/pamixer --default-source -t
   '';
   screenRecordMenu = pkgs.writeShellScriptBin "screenrecord-menu" ''
     set -eu
@@ -324,6 +323,8 @@ let
   windowRules = ''
     windowrule=isfloating:1,isoverlay:1,width:0.62,height:0.62,appid:nixpull
     windowrule=isfloating:1,isoverlay:1,appid:satty
+    windowrule=isfloating:1,isoverlay:1,width:0.50,height:0.68,appid:keepassxc
+    windowrule=isfloating:1,isoverlay:1,width:0.50,height:0.68,appid:org.keepassxc.KeePassXC
   '';
 
   layerRules = ''
