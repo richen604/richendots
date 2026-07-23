@@ -1,5 +1,7 @@
 { pkgs, richenLib, ... }:
 {
+  services.locate.enable = true;
+
   environment.systemPackages = [
     pkgs.yubikey-personalization
     pkgs.yubikey-touch-detector
