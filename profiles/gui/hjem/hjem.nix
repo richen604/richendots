@@ -1,4 +1,17 @@
-{ inputs, richenLib, ... }:
+{
+  inputs,
+  pkgs,
+  richenLib,
+  ...
+}:
+let
+  equibopTheme = import ./config/equibop/_theme.nix { theme = richenLib.theme; };
+  spicetifyManaged = import ./config/spicetify/_managed.nix {
+    inherit pkgs;
+    theme = richenLib.theme;
+  };
+  equibopCss = pkgs.replaceVars ./config/equibop/system24-grove.css equibopTheme.replacements;
+in
 {
   imports = [
     inputs.hjem.nixosModules.default
@@ -13,7 +26,7 @@
         ".config/spicetify/config-xpui.ini" = {
           type = "copy";
           permissions = "0644";
-          source = ./config/spicetify/config-xpui.ini;
+          source = spicetifyManaged.config;
         };
         ".config/spicetify/CustomApps/marketplace/extension.js" = {
           type = "copy";
@@ -38,17 +51,17 @@
         ".config/spicetify/Themes/tui/color.ini" = {
           type = "copy";
           permissions = "0644";
-          source = ./config/spicetify/Themes/tui/color.ini;
+          source = spicetifyManaged.colorIni;
         };
         ".config/spicetify/Themes/tui/user.css" = {
           type = "copy";
           permissions = "0644";
-          source = ./config/spicetify/Themes/tui/user.css;
+          source = spicetifyManaged.userCss;
         };
         ".config/equibop/themes/system24-grove.css" = {
           type = "copy";
           permissions = "0644";
-          source = ./config/equibop/system24-grove.css;
+          source = equibopCss;
         };
       };
     };
