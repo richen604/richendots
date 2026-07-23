@@ -11,6 +11,8 @@ let
       selfLib = {
         vars = import ./vars.nix { inherit inputs lib; };
 
+        theme = import ./theme { vars = selfLib.vars; };
+
         lib = import ./core.nix { inherit lib pkgs; };
 
         wrappers = packageLib.mkWrappers {

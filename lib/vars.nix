@@ -2,6 +2,7 @@
 let
   publicVars = {
     username = "richen";
+    theme = "grove";
   };
 
   privateVars = inputs.richendots-private.privateVars or { };
