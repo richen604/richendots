@@ -89,59 +89,59 @@ body {
    --txt-[p|s|t|q] : text color for each theme
    --acc-[p|s|t|q]1-9 : accent color scale (1-9) for each theme
    */
-  --mode: "dark";
+  --mode: @mode@;
 
   /* primary */
-  --bg-p: #0E1310;
-  --txt-p: #FFFFFF;
-  --acc-p1: #295239;
-  --acc-p2: #3A6B4E;
-  --acc-p3: #4B7D5F;
-  --acc-p4: #578F6D;
-  --acc-p5: #65A37E;
-  --acc-p6: #7AC297;
-  --acc-p7: #9AE6B8;
-  --acc-p8: #AAF0C6;
-  --acc-p9: #CCFFE0;
+  --bg-p: @bg-p@;
+  --txt-p: @txt-p@;
+  --acc-p1: @acc-p1@;
+  --acc-p2: @acc-p2@;
+  --acc-p3: @acc-p3@;
+  --acc-p4: @acc-p4@;
+  --acc-p5: @acc-p5@;
+  --acc-p6: @acc-p6@;
+  --acc-p7: @acc-p7@;
+  --acc-p8: @acc-p8@;
+  --acc-p9: @acc-p9@;
 
   /* secondary */
-  --bg-s: #10221F;
-  --txt-s: #FFFFFF;
-  --acc-s1: #29524B;
-  --acc-s2: #3A6B63;
-  --acc-s3: #4B7D75;
-  --acc-s4: #578F86;
-  --acc-s5: #65A399;
-  --acc-s6: #7AC2B6;
-  --acc-s7: #9AE6D9;
-  --acc-s8: #AAF0E4;
-  --acc-s9: #CCFFF7;
+  --bg-s: @bg-s@;
+  --txt-s: @txt-s@;
+  --acc-s1: @acc-s1@;
+  --acc-s2: @acc-s2@;
+  --acc-s3: @acc-s3@;
+  --acc-s4: @acc-s4@;
+  --acc-s5: @acc-s5@;
+  --acc-s6: @acc-s6@;
+  --acc-s7: @acc-s7@;
+  --acc-s8: @acc-s8@;
+  --acc-s9: @acc-s9@;
 
   /* tertiary */
-  --bg-t: #1F3734;
-  --txt-t: #FFFFFF;
-  --acc-t1: #29524D;
-  --acc-t2: #3A6B65;
-  --acc-t3: #4B7D77;
-  --acc-t4: #578F88;
-  --acc-t5: #65A39B;
-  --acc-t6: #7AC2B9;
-  --acc-t7: #9AE6DC;
-  --acc-t8: #AAF0E7;
-  --acc-t9: #CCFFF9;
+  --bg-t: @bg-t@;
+  --txt-t: @txt-t@;
+  --acc-t1: @acc-p1@;
+  --acc-t2: @acc-p2@;
+  --acc-t3: @acc-p3@;
+  --acc-t4: @acc-p4@;
+  --acc-t5: @acc-p5@;
+  --acc-t6: @syntax-type@;
+  --acc-t7: @acc-p7@;
+  --acc-t8: @acc-p8@;
+  --acc-t9: @acc-p9@;
 
   /* quaternary */
-  --bg-q: #3C504C;
-  --txt-q: #FFFFFF;
-  --acc-q1: #295249;
-  --acc-q2: #3A6B61;
-  --acc-q3: #4B7D73;
-  --acc-q4: #578F84;
-  --acc-q5: #65A397;
-  --acc-q6: #7AC2B3;
-  --acc-q7: #9AE6D6;
-  --acc-q8: #AAF0E2;
-  --acc-q9: #CCFFF5;
+  --bg-q: var(--bg-s);
+  --txt-q: var(--txt-p);
+  --acc-q1: @acc-s1@;
+  --acc-q2: @acc-s2@;
+  --acc-q3: @acc-s3@;
+  --acc-q4: @ui-error@;
+  --acc-q5: @acc-s5@;
+  --acc-q6: @acc-s6@;
+  --acc-q7: @acc-s7@;
+  --acc-q8: @acc-s8@;
+  --acc-q9: @acc-s9@;
 
     --colors: on; /* off: discord default colors, on: everforest custom colors */
 
@@ -158,7 +158,7 @@ body {
     --bg-2: var(--bg-t); /* dark buttons */
     --bg-3: var(--bg-p); /* spacing, secondary elements */
     --bg-4: var(--bg-p); /* main background color */
-    --hover: var(--bg-2); /* channels and buttons when hovered */
+    --hover: var(--bg-s); /* channels and buttons when hovered */
     --active: var(--bg-1); /* channels and buttons when clicked or selected */
     --active-2: var(--bg-q); /* extra state for transparent buttons */
     --message-hover: var(--hover); /* messages when hovered */
