@@ -4,34 +4,34 @@
  */
 
 :root {
-  --theme-bg: #0e120f;
-  --theme-bg-secondary: #142825;
-  --theme-border: #295233;
-  --theme-accent: #9ae6ad;
-  --theme-accent-alt: #578f65;
-  --theme-icon: #9ae6d0;
-  --theme-text: #ccfff9;
-  --theme-text-alt: #aaf0e7;
-  --theme-white: #ffffff;
+  --theme-bg: @theme-bg@;
+  --theme-bg-secondary: @theme-bg-secondary@;
+  --theme-border: @theme-border@;
+  --theme-accent: @theme-accent@;
+  --theme-accent-alt: @theme-accent-alt@;
+  --theme-icon: @theme-icon@;
+  --theme-text: @theme-text@;
+  --theme-text-alt: @theme-text-alt@;
+  --theme-white: @theme-white@;
 
-  --theme-container-yellow: #aaf0dc;
-  --theme-container-purple: #9ae6d0;
-  --theme-container-blue: #9ae6da;
-  --theme-container-turquoise: #9ae6da;
-  --theme-container-green: #9ae6ad;
-  --theme-container-orange: #aaf0e5;
-  --theme-container-red: #578f65;
-  --theme-container-pink: #ccfff9;
+  --theme-container-yellow: @theme-container-yellow@;
+  --theme-container-purple: @theme-container-purple@;
+  --theme-container-blue: @theme-container-blue@;
+  --theme-container-turquoise: @theme-container-turquoise@;
+  --theme-container-green: @theme-container-green@;
+  --theme-container-orange: @theme-container-orange@;
+  --theme-container-red: @theme-container-red@;
+  --theme-container-pink: @theme-container-pink@;
 
-  --theme-font-family: "GohuFont uni14 Nerd Font Propo";
+  --theme-font-family: @theme-font-family@;
   --theme-font-size: 16px;
   --theme-font-size-large: 11pt;
   --theme-font-weight-normal: 600;
   --theme-font-weight-bold: 800;
   --theme-text-transform: none;
 
-  --theme-border-width: 2px;
-  --theme-border-radius: 0px;
+  --theme-border-width: @theme-border-width@;
+  --theme-border-radius: @theme-border-radius@;
   --theme-border-transition: 0.2s ease;
   --theme-spacing: 8px;
   --theme-spacing-small: 4px;
@@ -49,11 +49,11 @@
   --theme-tab-height: 32px;
   --theme-tab-min-height: 29px;
   --theme-newtab-logo: "@textfox-logo@";
-  --theme-newtab-surface: #142825;
-  --theme-newtab-surface-hover: #1e3734;
-  --theme-newtab-border: #295233;
-  --theme-newtab-text: #ccfff9;
-  --theme-newtab-muted: #aaf0e7;
+  --theme-newtab-surface: @theme-newtab-surface@;
+  --theme-newtab-surface-hover: @theme-newtab-surface-hover@;
+  --theme-newtab-border: @theme-newtab-border@;
+  --theme-newtab-text: @theme-newtab-text@;
+  --theme-newtab-muted: @theme-newtab-muted@;
   --toolbar-color: currentColor !important;
   --link-color: var(--theme-accent) !important;
   --toolbox-non-lwt-bgcolor: var(--theme-bg) !important;

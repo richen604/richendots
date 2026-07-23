@@ -1,12 +1,12 @@
 :root {
-  --theme-bg: #0e120f;
-  --theme-bg-secondary: #142825;
-  --theme-border: #295233;
-  --theme-accent: #9ae6ad;
-  --theme-accent-alt: #578f65;
-  --theme-text: #ccfff9;
-  --theme-text-alt: #aaf0e7;
-  --theme-font-family: "GohuFont uni14 Nerd Font Propo";
+  --theme-bg: @theme-bg@;
+  --theme-bg-secondary: @theme-bg-secondary@;
+  --theme-border: @theme-border@;
+  --theme-accent: @theme-accent@;
+  --theme-accent-alt: @theme-accent-alt@;
+  --theme-text: @theme-text@;
+  --theme-text-alt: @theme-text-alt@;
+  --theme-font-family: @theme-font-family@;
   --theme-ascii-font-family: "GohuFont uni14 Nerd Font", "Fira Code", monospace;
   --theme-border-width: 2px;
   --theme-border-radius: 0px;
@@ -28,7 +28,7 @@
     --newtab-background-color: var(--theme-bg) !important;
     --newtab-background-color-secondary: var(--theme-bg-secondary) !important;
     --newtab-border-color: var(--theme-border) !important;
-    --newtab-element-hover-color: #1e3734 !important;
+    --newtab-element-hover-color: @theme-newtab-hover@ !important;
     --newtab-text-primary-color: var(--theme-text) !important;
     --newtab-text-secondary-color: var(--theme-text-alt) !important;
     --newtab-contextual-text-primary-color: var(--theme-text) !important;
@@ -98,7 +98,7 @@
   .top-site-outer .tile:hover,
   .card-outer:hover,
   .ds-card:hover {
-    background-color: #1e3734 !important;
+    background-color: @theme-newtab-hover@ !important;
     border-color: var(--theme-accent) !important;
   }
 

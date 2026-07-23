@@ -4,6 +4,7 @@ let
   runtimeSubdir = "lib/glide-browser-${version}";
   pwaRuntimeSubdir = "lib/glide-pwa-runtime-${version}";
   policies = import ./_policies.nix { inherit richenLib; };
+  glideTheme = import ./_theme.nix { theme = richenLib.theme; };
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
   pwaPoliciesJson = pkgs.writeText "glide-pwa-policies.json" (
     builtins.toJSON {
@@ -71,12 +72,29 @@ let
     $$ |      $$ |$$ \_____ $$ |  $$ |$$$$$$$$/ $$ |  $$ |$$ |    $$ \__$$ | /$$$$  \ 
     $$/       $$/  $$$$$$$/ $$/   $$/  $$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/   $$/ 
   '';
-  chromeCss = pkgs.replaceVars ./userChrome.css {
+  chromeCss = pkgs.replaceVars ./userChrome.css (
+    glideTheme.replacements
+    // {
+      "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
+      "theme-newtab-surface" = richenLib.theme.bg.s;
+      "theme-newtab-surface-hover" = richenLib.theme.bg.s;
+      "theme-newtab-border" = richenLib.theme.acc.p."2";
+      "theme-newtab-text" = richenLib.theme.txt.p;
+      "theme-newtab-muted" = richenLib.theme.aliases.muted;
+    }
+  );
+  contentCss = pkgs.replaceVars ./userContent.css ({
+    "theme-bg" = richenLib.theme.bg.p;
+    "theme-bg-secondary" = richenLib.theme.bg.s;
+    "theme-border" = richenLib.theme.acc.p."2";
+    "theme-accent" = richenLib.theme.acc.p."6";
+    "theme-accent-alt" = richenLib.theme.acc.p."4";
+    "theme-text" = richenLib.theme.txt.p;
+    "theme-text-alt" = richenLib.theme.aliases.muted;
+    "theme-font-family" = richenLib.theme.ui.fontFamily;
     "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
-  };
-  contentCss = pkgs.replaceVars ./userContent.css {
-    "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
-  };
+    "theme-newtab-hover" = richenLib.theme.bg.s;
+  });
   graphicsLibraryPath = pkgs.lib.makeLibraryPath [
     pkgs.ffmpeg
     pkgs.libgbm
