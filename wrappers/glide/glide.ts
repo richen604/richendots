@@ -61,3 +61,7 @@ glide.keymaps.set("normal", "<leader>cr", "config_reload", {
 glide.keymaps.set("normal", "<leader>cp", "config_path", {
   description: "show Glide config path",
 });
+
+glide.keymaps.set("normal", "<leader>ub", () => {
+  document.documentElement.toggleAttribute("glide-toolbar-visible");
+}, { description: "toggle browser toolbar" });

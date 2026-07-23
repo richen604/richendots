@@ -523,6 +523,10 @@ menuitem:where([_moz-menuactive="true"][disabled="true"]) {
   padding: var(--theme-spacing-small) !important;
 }
 
+:root[glide-toolbar-visible] #nav-bar {
+  display: revert !important;
+}
+
 #nav-bar::before {
   content: "navbar";
   margin: -16px var(--theme-spacing);
