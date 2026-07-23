@@ -100,6 +100,23 @@ require_root() {
   fi
 }
 
+dispatch_remote_build() {
+  local remote current ssh_args=()
+  remote=$(jq -r '.remoteBuilder // empty' "$CONFIG")
+  [ -n "$remote" ] || return 1
+  current=$(hostname_short)
+  [ "$current" != "$remote" ] || return 1
+
+  if [ -t 1 ]; then
+    ssh_args=(-tt)
+  fi
+  exec ssh "${ssh_args[@]}" "$remote" /run/current-system/sw/bin/nixpull build
+}
+
+escalate_build() {
+  exec "$SUDO" -n /run/current-system/sw/bin/nixpull build
+}
+
 lock_hash() {
   local flake=$1
   local lock=$flake/flake.lock
@@ -145,42 +162,67 @@ ensure_client_state() {
   fi
 }
 
-build_one_host() {
-  local flake=$1 host=$2 cores=$3 outdir=$4
-  local log=$outdir/$host.log
-  local activatable toplevel generation signing_key
-  local paths=()
-  local cores_args=()
+build_all_hosts() {
+  local flake=$1 cores=$2 max_jobs=$3 outdir=$4
+  shift 4
+  local hosts=("$@") log=$outdir/build.log tmp args=() command=(nix build) rc output path host activatable toplevel signing_key generation
+  tmp=$(mktemp)
+
+  for host in "${hosts[@]}"; do
+    args+=("$flake#nixpullProfiles.$host")
+    args+=("$flake#nixosConfigurations.$host.config.system.build.toplevel")
+  done
+  args+=(--print-out-paths --no-link --keep-going --max-jobs "$max_jobs")
   if [ "$cores" != "null" ]; then
-    cores_args=(--cores "$cores")
+    args+=(--cores "$cores")
+  fi
+
+  if gum_output_available && command -v nom >/dev/null 2>&1; then
+    command=(nom build)
   fi
 
   : >"$log"
-  print_build_host "$host"
-  mapfile -t paths < <(nom_build_store_paths "$log" "$flake#nixpullProfiles.$host" "$flake#nixosConfigurations.$host.config.system.build.toplevel" "${cores_args[@]}")
-  activatable=${paths[0]:-}
-  toplevel=${paths[1]:-}
-  if [ -z "$activatable" ] || [ -z "$toplevel" ]; then
-    printf 'nixpull: nom did not report both store paths for %s\n' "$host" >&2
-    return 1
+  if "${command[@]}" "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" >&2); then
+    rc=0
+  else
+    rc=$?
   fi
+
+  output=$(<"$tmp")
+  rm -f "$tmp"
+
   signing_key=$(jq -r '.build.signingKeyFile // empty' "$CONFIG")
-  if [ -n "$signing_key" ]; then
-    if [ ! -r "$signing_key" ]; then
-      printf 'nixpull: signing key is not readable: %s\n' "$signing_key" >&2
-      return 1
+  for host in "${hosts[@]}"; do
+    activatable=""
+    toplevel=""
+    while IFS= read -r path; do
+      case "$path" in
+        /nix/store/*-activatable-nixos-system-"$host"-*) activatable=$path ;;
+        /nix/store/*-nixos-system-"$host"-*) toplevel=$path ;;
+      esac
+    done <<<"$output"
+
+    if [ -n "$activatable" ] && [ -n "$toplevel" ]; then
+      if [ -n "$signing_key" ]; then
+        if [ ! -r "$signing_key" ]; then
+          printf 'nixpull: signing key is not readable: %s\n' "$signing_key" >&2
+          return 1
+        fi
+        nix store sign --key-file "$signing_key" --recursive "$activatable" "$toplevel"
+      fi
+      generation=$(date +%s)
+      jq -n \
+        --arg host "$host" \
+        --arg generation "$generation" \
+        --arg activatablePath "$activatable" \
+        --arg toplevelPath "$toplevel" \
+        --arg builtAt "$(date --iso-8601=seconds)" \
+        --slurpfile source "$outdir/source.json" \
+        '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
     fi
-    nix store sign --key-file "$signing_key" --recursive "$activatable" "$toplevel"
-  fi
-  generation=$(date +%s)
-  jq -n \
-    --arg host "$host" \
-    --arg generation "$generation" \
-    --arg activatablePath "$activatable" \
-    --arg toplevelPath "$toplevel" \
-    --arg builtAt "$(date --iso-8601=seconds)" \
-    --slurpfile source "$outdir/source.json" \
-    '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
+  done
+
+  return "$rc"
 }
 
 build_flake_ref() {
@@ -188,31 +230,6 @@ build_flake_ref() {
     /*) printf 'path:%s\n' "$1" ;;
     *) printf '%s\n' "$1" ;;
   esac
-}
-
-publish_available_hosts() {
-  local workdir=$1 state=$2 host meta marker published=0
-  local new_state=$state
-  local published_hosts=()
-  shift 2
-  for host in "$@"; do
-    marker=$workdir/$host.published
-    if [ -f "$workdir/$host.json" ] && [ ! -f "$marker" ]; then
-      meta=$(cat "$workdir/$host.json")
-      new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
-      log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
-      print_build_published "$host"
-      : >"$marker"
-      published_hosts+=("$host")
-      published=1
-    fi
-  done
-  if [ "$published" -eq 1 ]; then
-    printf '%s\n' "$new_state" | atomic_write "$BUILDER_STATE"
-    for host in "${published_hosts[@]}"; do
-      trigger_webhook "$host"
-    done
-  fi
 }
 
 cmd_build() {
@@ -233,11 +250,18 @@ cmd_build() {
     return 2
   fi
 
-  require_root build || return $?
+  if [ -n "$flake_override" ] && [ "$(id -u)" -ne 0 ]; then
+    printf 'nixpull: build flake override must be run as root\n' >&2
+    return 77
+  fi
+
+  if [ "$(id -u)" -ne 0 ]; then
+    dispatch_remote_build || escalate_build
+  fi
 
   ensure_builder_state
 
-  local flake build_flake max_jobs cores workdir failures=0 successes=0 publish_partial
+  local flake build_flake max_jobs cores workdir failures=0 successes=0 publish_partial failed=0
   flake=${flake_override:-$(jq -r '.flake' "$CONFIG")}
   build_flake=$(build_flake_ref "$flake")
   max_jobs=$(jq -r '.build.maxJobs' "$CONFIG")
@@ -247,34 +271,20 @@ cmd_build() {
   NIXPULL_BUILD_WORKDIR=$workdir
   trap cleanup_build_workdir EXIT
 
+  exec 9>"$BUILDER_DIR/build.lock"
+  if ! flock -n 9; then
+    printf 'nixpull: build already running\n' >&2
+    return 75
+  fi
+
   source_metadata "$flake" >"$workdir/source.json"
   mapfile -t hosts < <(jq -r '.build.hosts[]' "$CONFIG")
   print_build_start "${#hosts[@]}" "$max_jobs"
   log_line "$BUILDER_LOG" "build start hosts=${hosts[*]} maxJobs=$max_jobs"
 
-  local running=0 host failed=0
-  for host in "${hosts[@]}"; do
-    build_one_host "$build_flake" "$host" "$cores" "$workdir" &
-    running=$((running + 1))
-    if [ "$running" -ge "$max_jobs" ]; then
-      if ! wait -n; then
-        failed=1
-      fi
-      running=$((running - 1))
-      if [ "$publish_partial" = true ]; then
-        publish_available_hosts "$workdir" "$(cat "$BUILDER_STATE")" "${hosts[@]}"
-      fi
-    fi
-  done
-  while [ "$running" -gt 0 ]; do
-    if ! wait -n; then
-      failed=1
-    fi
-    running=$((running - 1))
-    if [ "$publish_partial" = true ]; then
-      publish_available_hosts "$workdir" "$(cat "$BUILDER_STATE")" "${hosts[@]}"
-    fi
-  done
+  if ! build_all_hosts "$build_flake" "$cores" "$max_jobs" "$workdir" "${hosts[@]}"; then
+    failed=1
+  fi
 
   if [ "$publish_partial" != true ] && [ "$failed" -ne 0 ]; then
     log_line "$BUILDER_LOG" "build failed; publishPartial=false so no hosts published"
@@ -297,9 +307,9 @@ cmd_build() {
       fi
     else
       failures=$((failures + 1))
-      log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/$host.log"
+      log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/build.log"
       print_build_failed "$host" >&2
-      printf 'nixpull: build log retained at %s/logs/%s.log\n' "$BUILDER_DIR" "$host" >&2
+      printf 'nixpull: build log retained at %s/logs/build.log\n' "$BUILDER_DIR" >&2
     fi
   done
 
@@ -619,26 +629,6 @@ print_build_failed() {
   else
     printf '  failed %s\n' "$host"
   fi
-}
-
-nom_build_store_paths() {
-  local log=$1 activatable_attr=$2 toplevel_attr=$3 output line tmp rc
-  shift 3
-  tmp=$(mktemp)
-  if nom build "$activatable_attr" "$toplevel_attr" --print-out-paths --no-link "$@" > >(tee "$tmp" | tee -a "$log" >&2) 2> >(tee -a "$log" >&2); then
-    rc=0
-  else
-    rc=$?
-  fi
-  output=$(<"$tmp")
-  rm -f "$tmp"
-  [ "$rc" -eq 0 ] || return "$rc"
-
-  while IFS= read -r line; do
-    case "$line" in
-      /nix/store/*) printf '%s\n' "$line" ;;
-    esac
-  done <<<"$output"
 }
 
 confirm_activation() {

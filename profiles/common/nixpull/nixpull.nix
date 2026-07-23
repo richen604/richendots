@@ -8,11 +8,13 @@
 
 let
   cfg = config.services.nixpull;
-  webhookTokenFile = if cfg.fetch.webhook.tokenFile == null then "/dev/null" else toString cfg.fetch.webhook.tokenFile;
+  webhookTokenFile =
+    if cfg.fetch.webhook.tokenFile == null then "/dev/null" else toString cfg.fetch.webhook.tokenFile;
 
   configFile = pkgs.writeText "nixpull-config.json" (
     builtins.toJSON {
       flake = cfg.flake;
+      remoteBuilder = cfg.remoteBuilder;
       stateRoot = "/var/lib/nixpull";
       build = {
         hosts = cfg.builder.hosts;
@@ -40,6 +42,7 @@ let
       coreutils
       curl
       hostname
+      util-linux
       nix
       nix-output-monitor
       jq
@@ -51,6 +54,7 @@ let
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
     runtimeEnv.NIXPULL_HOSTNAME = "${pkgs.hostname}/bin/hostname";
+    runtimeEnv.GIT_CONFIG_GLOBAL = gitConfig;
     text = builtins.readFile ./nixpull.sh;
   };
 
@@ -284,6 +288,13 @@ in
     builder = {
       enable = lib.mkEnableOption "the nixpull builder";
 
+      triggerUsers = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = [ "alice" ];
+        description = "Users allowed to trigger the local nixpull builder without interactive sudo authentication.";
+      };
+
       hosts = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
@@ -320,20 +331,22 @@ in
       };
 
       fetchWebhooks = lib.mkOption {
-        type = lib.types.attrsOf (lib.types.submodule {
-          options = {
-            url = lib.mkOption {
-              type = lib.types.str;
-              example = "http://fern:5051/nixpull/fetch";
-              description = "Webhook URL called after this host's build is published.";
-            };
+        type = lib.types.attrsOf (
+          lib.types.submodule {
+            options = {
+              url = lib.mkOption {
+                type = lib.types.str;
+                example = "http://fern:5051/nixpull/fetch";
+                description = "Webhook URL called after this host's build is published.";
+              };
 
-            tokenFile = lib.mkOption {
-              type = lib.types.str;
-              description = "File containing the bearer token for this host's webhook.";
+              tokenFile = lib.mkOption {
+                type = lib.types.str;
+                description = "File containing the bearer token for this host's webhook.";
+              };
             };
-          };
-        });
+          }
+        );
         default = { };
         description = "Per-host client fetch webhooks called immediately after publishing.";
       };
@@ -344,6 +357,13 @@ in
         example = "Mon *-*-* 03:00:00";
         description = "Builder timer schedule.";
       };
+    };
+
+    remoteBuilder = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "cedar";
+      description = "SSH host used by nixpull build when this machine is only a build trigger client.";
     };
 
     server = {
@@ -360,7 +380,9 @@ in
       };
     };
 
-    client.enable = lib.mkEnableOption "the nixpull client" // { default = true; };
+    client.enable = lib.mkEnableOption "the nixpull client" // {
+      default = true;
+    };
 
     notify.enable = lib.mkEnableOption "desktop notifications for fetched updates";
 
@@ -508,6 +530,18 @@ in
       }
 
       (lib.mkIf cfg.builder.enable {
+        security.sudo.extraRules = lib.mkIf (cfg.builder.triggerUsers != [ ]) [
+          {
+            users = cfg.builder.triggerUsers;
+            commands = [
+              {
+                command = "/run/current-system/sw/bin/nixpull build";
+                options = [ "NOPASSWD" ];
+              }
+            ];
+          }
+        ];
+
         systemd.timers.nixpull-build = {
           wantedBy = [ "timers.target" ];
           timerConfig = {

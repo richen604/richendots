@@ -10,7 +10,7 @@ let
 
       command=''${1:-}
       if [ -z "$command" ]; then
-        printf 'usage: nixpull-launcher <status|fetch|apply|pull>\n' >&2
+        printf 'usage: nixpull-launcher <status|fetch|apply|pull|build>\n' >&2
         exit 2
       fi
 
@@ -35,6 +35,9 @@ let
           ;;
         pull)
           ${nixpull} pull
+          ;;
+        build)
+          ${nixpull} build
           ;;
         *)
           printf 'unknown nixpull command: %s\n' "$command" >&2
@@ -75,6 +78,7 @@ let
     "fetch"
     "apply"
     "pull"
+    "build"
   ];
 in
 pkgs.symlinkJoin {
