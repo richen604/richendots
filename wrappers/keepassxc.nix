@@ -97,7 +97,7 @@ let
     };
 
     # browser integration
-    Browser = {
+    Browser = pkgs.lib.recursiveUpdate {
       Enabled = true;
       ShowNotification = true;
       BestMatchOnly = false;
@@ -116,7 +116,7 @@ let
       SupportKphFields = true;
       NoMigrationPrompt = false;
       Browser_AllowLocalhostWithPasskeys = false;
-    };
+    } (richenLib.vars.private.keepassxc.localConfig.Browser or { });
     # ssh agent
     SSHAgent = {
       Enabled = false;
@@ -165,32 +165,12 @@ let
       NoLegacyKeyFileWarning = false;
     };
   };
-
-  localConfig = (pkgs.formats.ini { }).generate "keepassxc-local.ini" (
-    pkgs.lib.recursiveUpdate {
-      General = {
-        UseDirectWriteSaves = false;
-      };
-
-      GUI = {
-        GUI_AlwaysOnTop = false;
-        AutoTypeSelectDialogSize = "600x250";
-      };
-
-      Security = {
-        QuickUnlock = true;
-        DatabasePasswordMinimumQuality = 0;
-      };
-
-    } richenLib.vars.private.keepassxc.localConfig
-  );
 in
 richenLib.lib.wrapPackage {
   package = pkgs.keepassxc;
   flags."--config" = config;
-  flags."--localconfig" = localConfig;
+  flags."--minimized" = true;
   passthru.config = {
     path = config;
-    localPath = localConfig;
   };
 }
