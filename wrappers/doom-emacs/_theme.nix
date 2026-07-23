@@ -20,5 +20,27 @@
     "theme-cyan" = theme.syntax.keyword;
     "theme-dark-cyan" = theme.ui.info;
     "theme-bright-yellow" = theme.acc.s."7";
+    "theme-syntax-comment" = theme.syntax.comment;
+    "theme-syntax-keyword" = theme.syntax.keyword;
+    "theme-syntax-string" = theme.syntax.string;
+    "theme-syntax-number" = theme.syntax.number;
+    "theme-syntax-function" = theme.syntax.function;
+    "theme-syntax-variable" = theme.syntax.variable;
+    "theme-syntax-type" = theme.syntax.type;
+    "theme-syntax-operator" = theme.syntax.operator;
+    "theme-syntax-constant" = theme.syntax.constant;
+    "theme-syntax-exception" = theme.syntax.exception;
+    "theme-markup-heading" = theme.markup.heading;
+    "theme-markup-link" = theme.markup.link;
+    "theme-markup-emphasis" = theme.markup.emphasis;
+    "theme-markup-strong" = theme.markup.strong;
+    "theme-markup-code" = theme.markup.code;
+    "theme-markup-quote" = theme.markup.quote;
+    "theme-markup-muted" = theme.markup.muted;
+    "theme-diff-added" = theme.diff.added;
+    "theme-diff-removed" = theme.diff.removed;
+    "theme-diff-modified" = theme.diff.modified;
+    "theme-diff-line-number" = theme.diff.lineNumber;
+    "theme-diff-line-number-active" = theme.diff.lineNumberActive;
   };
 }
