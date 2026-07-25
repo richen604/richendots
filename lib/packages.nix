@@ -7,6 +7,8 @@ let
 
   overlays = [
     (final: prev: {
+      equibop = prev.equibop.override { withTTS = false; };
+
       waybar = (prev.waybar.override { cavaSupport = false; }).overrideAttrs (_old: {
         version = "0.16.0-unstable-2026-07-12";
         src = final.fetchFromGitHub {
