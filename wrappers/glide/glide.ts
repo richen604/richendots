@@ -10,47 +10,51 @@ glide.o.hint_size = "12px";
 glide.o.yank_highlight = "#a6e3a1";
 glide.o.yank_highlight_time = 180;
 
+// Glide's menu mode sucks. This fixes focus so input can be captured more reliably.
+const command_mode = glide.modes.get("command");
+if (command_mode) {
+  command_mode.switch_mode_on_focus = false;
+}
+
+glide.autocmds.create("ModeChanged", "command:*", () => {
+  setTimeout(() => {
+    if (glide.commandline.is_active()) {
+      void glide.excmds.execute("mode_change command");
+    }
+  }, 0);
+});
+
 glide.keymaps.set("command", "<C-j>", "commandline_focus_next");
 glide.keymaps.set("command", "<C-k>", "commandline_focus_back");
 
-const search_url = "https://rebang.online/?q=";
+const toolbar_attribute = "glide-toolbar-visible";
 
-function url_from_input(input: string): string {
-  const trimmed = input.trim();
-  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
-  if (/^(localhost|[\w-]+(\.[\w-]+)+)(:\d+)?([/?#].*)?$/i.test(trimmed)) {
-    return `https://${trimmed}`;
+async function focus_location(open_new_tab = false): Promise<void> {
+  const root = document.documentElement;
+  const restore_hidden = !root.hasAttribute(toolbar_attribute);
+  if (restore_hidden) {
+    root.setAttribute(toolbar_attribute, "");
   }
-  return `${search_url}${encodeURIComponent(trimmed)}`;
+
+  if (open_new_tab) {
+    await glide.excmds.execute("tab_new");
+  }
+
+  await glide.keys.send("<C-l>", { skip_mappings: true });
+
+  if (restore_hidden) {
+    document.querySelector<HTMLInputElement>("#urlbar-input")?.addEventListener("blur", () => {
+      root.removeAttribute(toolbar_attribute);
+    }, { once: true });
+  }
 }
 
-glide.keymaps.set("normal", "go", async () => {
-  await glide.commandline.show({
-    title: "open URL in current tab",
-    options: [{
-      label: "open in current tab",
-      matches: () => true,
-      async execute({ input }) {
-        if (!input.trim()) return;
-        await browser.tabs.update({ url: url_from_input(input) });
-      },
-    }],
-  });
-}, { description: "open URL in current tab" });
-
-glide.keymaps.set("normal", "gO", async () => {
-  await glide.commandline.show({
-    title: "open URL in new tab",
-    options: [{
-      label: "open in new tab",
-      matches: () => true,
-      async execute({ input }) {
-        if (!input.trim()) return;
-        await browser.tabs.create({ active: true, url: url_from_input(input) });
-      },
-    }],
-  });
-}, { description: "open URL in new tab" });
+glide.keymaps.set("normal", "go", () => focus_location(), {
+  description: "open URL in current tab",
+});
+glide.keymaps.set("normal", "gO", () => focus_location(true), {
+  description: "open URL in new tab",
+});
 
 glide.keymaps.set("normal", "<leader>ce", "config_edit", {
   description: "edit Glide config",
@@ -63,5 +67,5 @@ glide.keymaps.set("normal", "<leader>cp", "config_path", {
 });
 
 glide.keymaps.set("normal", "<leader>ub", () => {
-  document.documentElement.toggleAttribute("glide-toolbar-visible");
+  document.documentElement.toggleAttribute(toolbar_attribute);
 }, { description: "toggle browser toolbar" });
