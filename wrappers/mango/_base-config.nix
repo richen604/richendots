@@ -72,7 +72,7 @@ let
         -f 60 \
         -a default_output \
         -q very_high \
-        -k hevc \
+        -k h264 \
         -encoder gpu \
         -tune quality \
         -o "$file" &
