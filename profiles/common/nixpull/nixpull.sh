@@ -165,7 +165,7 @@ ensure_client_state() {
 build_all_hosts() {
   local flake=$1 cores=$2 max_jobs=$3 outdir=$4
   shift 4
-  local hosts=("$@") log=$outdir/build.log tmp args=() command=(nix build) rc output path host activatable toplevel signing_key generation
+  local hosts=("$@") log=$outdir/build.log tmp args=() rc output path host activatable toplevel signing_key generation
   tmp=$(mktemp)
 
   for host in "${hosts[@]}"; do
@@ -177,15 +177,20 @@ build_all_hosts() {
     args+=(--cores "$cores")
   fi
 
-  if gum_output_available && command -v nom >/dev/null 2>&1; then
-    command=(nom build)
-  fi
-
   : >"$log"
-  if "${command[@]}" "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" >&2); then
-    rc=0
+  if gum_output_available && command -v nom >/dev/null 2>&1; then
+    args+=(--log-format internal-json -v)
+    if nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" | nom --json >&2); then
+      rc=0
+    else
+      rc=$?
+    fi
   else
-    rc=$?
+    if nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" >&2); then
+      rc=0
+    else
+      rc=$?
+    fi
   fi
 
   output=$(<"$tmp")
