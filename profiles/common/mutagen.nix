@@ -114,75 +114,72 @@ in
 
     sync = mkOption {
       type = types.attrsOf (
-        types.submodule (
-          { name, ... }:
-          {
-            options = {
-              enable = mkEnableOption "this Mutagen synchronization session";
-              alpha = mkOption {
-                type = types.str;
-                description = "Path to the alpha endpoint.";
-              };
-              beta = mkOption {
-                type = types.str;
-                description = "Path to the beta endpoint.";
-              };
-              mode = mkStringOption "two-way-safe" "Synchronization mode (e.g., 'two-way-resolved', 'one-way-replica').";
-              ignore = mkOption {
-                type = types.nullOr (types.listOf types.str);
-                default = [ ];
-                description = "List of paths to ignore during synchronization.";
-              };
-              vcsIgnore = mkBoolOption false "Whether to ignore VCS directories (e.g., .git, .svn).";
-
-              permissions = mkOption {
-                type = types.nullOr (
-                  types.submodule {
-                    options = {
-                      defaultFileMode = mkStringOption "0600" "Default file mode (octal string, e.g., '0644').";
-                      defaultDirectoryMode = mkStringOption "0700" "Default directory mode (octal string, e.g., '0755').";
-                      defaultOwner = mkStringOption null "Default owner for synchronized files/directories.";
-                      defaultGroup = mkStringOption null "Default group for synchronized files/directories.";
-                    };
-                  }
-                );
-                default = { };
-                description = "Permissions configuration for synchronized files/directories.";
-              };
-
-              symlink = mkOption {
-                type = types.nullOr (
-                  types.submodule {
-                    options = {
-                      mode = mkStringOption "portable" "Symbolic link synchronization mode ('ignore', 'portable', 'posix-raw').";
-                    };
-                  }
-                );
-                default = { };
-                description = "Symbolic link synchronization configuration.";
-              };
-
-              watch = mkOption {
-                type = types.nullOr (
-                  types.submodule {
-                    options = {
-                      mode = mkStringOption "portable" "Filesystem watching mode ('portable', 'force-poll', 'no-watch').";
-                      pollingInterval = mkIntOption 10 "Polling interval in seconds for poll-based watching.";
-                    };
-                  }
-                );
-                default = { };
-                description = "Filesystem watching configuration.";
-              };
-
-              probeMode = mkStringOption "assume" "Filesystem probing mode ('assume', 'probe').";
-              scanMode = mkStringOption "accelerated" "Filesystem scanning mode ('accelerated', 'full').";
-              stageMode = mkStringOption "mutagen" "Filesystem staging mode ('mutagen', 'neighboring', 'internal').";
-              maxEntryCount = mkIntOption 0 "Maximum number of entries (files, directories, symlinks) to synchronize. 0 means unlimited.";
-              maxStagingFileSize = mkStringOption "0" "Maximum size of files to stage (e.g., '100MB'). 0 means unlimited.";
+        types.submodule (_: {
+          options = {
+            enable = mkEnableOption "this Mutagen synchronization session";
+            alpha = mkOption {
+              type = types.str;
+              description = "Path to the alpha endpoint.";
             };
-          }
-        )
+            beta = mkOption {
+              type = types.str;
+              description = "Path to the beta endpoint.";
+            };
+            mode = mkStringOption "two-way-safe" "Synchronization mode (e.g., 'two-way-resolved', 'one-way-replica').";
+            ignore = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              default = [ ];
+              description = "List of paths to ignore during synchronization.";
+            };
+            vcsIgnore = mkBoolOption false "Whether to ignore VCS directories (e.g., .git, .svn).";
+
+            permissions = mkOption {
+              type = types.nullOr (
+                types.submodule {
+                  options = {
+                    defaultFileMode = mkStringOption "0600" "Default file mode (octal string, e.g., '0644').";
+                    defaultDirectoryMode = mkStringOption "0700" "Default directory mode (octal string, e.g., '0755').";
+                    defaultOwner = mkStringOption null "Default owner for synchronized files/directories.";
+                    defaultGroup = mkStringOption null "Default group for synchronized files/directories.";
+                  };
+                }
+              );
+              default = { };
+              description = "Permissions configuration for synchronized files/directories.";
+            };
+
+            symlink = mkOption {
+              type = types.nullOr (
+                types.submodule {
+                  options = {
+                    mode = mkStringOption "portable" "Symbolic link synchronization mode ('ignore', 'portable', 'posix-raw').";
+                  };
+                }
+              );
+              default = { };
+              description = "Symbolic link synchronization configuration.";
+            };
+
+            watch = mkOption {
+              type = types.nullOr (
+                types.submodule {
+                  options = {
+                    mode = mkStringOption "portable" "Filesystem watching mode ('portable', 'force-poll', 'no-watch').";
+                    pollingInterval = mkIntOption 10 "Polling interval in seconds for poll-based watching.";
+                  };
+                }
+              );
+              default = { };
+              description = "Filesystem watching configuration.";
+            };
+
+            probeMode = mkStringOption "assume" "Filesystem probing mode ('assume', 'probe').";
+            scanMode = mkStringOption "accelerated" "Filesystem scanning mode ('accelerated', 'full').";
+            stageMode = mkStringOption "mutagen" "Filesystem staging mode ('mutagen', 'neighboring', 'internal').";
+            maxEntryCount = mkIntOption 0 "Maximum number of entries (files, directories, symlinks) to synchronize. 0 means unlimited.";
+            maxStagingFileSize = mkStringOption "0" "Maximum size of files to stage (e.g., '100MB'). 0 means unlimited.";
+          };
+        })
       );
       description = "Mutagen synchronization sessions configuration.";
       default = { };
@@ -190,37 +187,34 @@ in
 
     forward = mkOption {
       type = types.attrsOf (
-        types.submodule (
-          { name, ... }:
-          {
-            options = {
-              enable = mkEnableOption "this Mutagen forwarding session";
-              source = mkOption {
-                type = types.str;
-                description = "Source address/path for forwarding.";
-              };
-              destination = mkOption {
-                type = types.str;
-                description = "Destination address/path for forwarding.";
-              };
-
-              socket = mkOption {
-                type = types.nullOr (
-                  types.submodule {
-                    options = {
-                      overwriteMode = mkStringOption "leave" "Behavior when a conflicting filesystem entry exists ('leave', 'overwrite').";
-                      owner = mkStringOption null "Owner for Unix domain sockets.";
-                      group = mkStringOption null "Group for Unix domain sockets.";
-                      permissionMode = mkStringOption "0660" "Permission mode for Unix domain sockets (octal string, e.g., '0660').";
-                    };
-                  }
-                );
-                default = { };
-                description = "Socket configuration for forwarding sessions.";
-              };
+        types.submodule (_: {
+          options = {
+            enable = mkEnableOption "this Mutagen forwarding session";
+            source = mkOption {
+              type = types.str;
+              description = "Source address/path for forwarding.";
             };
-          }
-        )
+            destination = mkOption {
+              type = types.str;
+              description = "Destination address/path for forwarding.";
+            };
+
+            socket = mkOption {
+              type = types.nullOr (
+                types.submodule {
+                  options = {
+                    overwriteMode = mkStringOption "leave" "Behavior when a conflicting filesystem entry exists ('leave', 'overwrite').";
+                    owner = mkStringOption null "Owner for Unix domain sockets.";
+                    group = mkStringOption null "Group for Unix domain sockets.";
+                    permissionMode = mkStringOption "0660" "Permission mode for Unix domain sockets (octal string, e.g., '0660').";
+                  };
+                }
+              );
+              default = { };
+              description = "Socket configuration for forwarding sessions.";
+            };
+          };
+        })
       );
       description = "Mutagen forwarding sessions configuration.";
       default = { };

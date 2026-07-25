@@ -1,10 +1,10 @@
 { theme }:
 {
-  name = theme.name;
+  inherit (theme) name;
   theme = {
     meta = {
       version = 1;
-      name = theme.name;
+      inherit (theme) name;
       description = "${theme.name} theme generated from richenLib.theme";
       variant = "dark";
       inherits = "vicinae-dark";

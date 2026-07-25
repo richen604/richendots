@@ -118,7 +118,7 @@ rec {
           ${postHook}
         ''
       ),
-    }@funcArgs:
+    }:
     let
       envString = lib.concatStringsSep "\n" (
         lib.mapAttrsToList (name: value: ''export ${name}="${toString value}"'') env
@@ -152,7 +152,7 @@ rec {
           lib.listToAttrs (
             map (output: {
               name = output;
-              value = if package ? ${output} then package.${output} else null;
+              value = package.${output} or null;
             }) package.outputs
           )
         else
@@ -161,7 +161,7 @@ rec {
     pkgs.stdenv.mkDerivation {
       name = package.pname or package.name;
       passthru = (package.passthru or { }) // passthru;
-      outputs = if package ? outputs then package.outputs else [ "out" ];
+      outputs = package.outputs or [ "out" ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       meta = (package.meta or { }) // {
         mainProgram = binName;
@@ -223,7 +223,7 @@ rec {
                 ${pkgs.lndir}/bin/lndir -silent "${originalOutputs.${output}}" ${"$" + output}
               fi
             ''
-        ) (if package ? outputs then package.outputs else [ "out" ])}
+        ) (package.outputs or [ "out" ])}
       '';
     };
 }

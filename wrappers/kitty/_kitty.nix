@@ -4,7 +4,7 @@
   ...
 }:
 let
-  kittyTheme = import ./_theme.nix { theme = richenLib.theme; };
+  kittyTheme = import ./_theme.nix { inherit (richenLib) theme; };
   colorConfig = pkgs.lib.concatStringsSep "\n" (
     pkgs.lib.mapAttrsToList (key: value: "${key} ${value}") kittyTheme.config
   );

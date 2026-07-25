@@ -11,7 +11,7 @@ let
       selfLib = {
         vars = import ./vars.nix { inherit inputs lib; };
 
-        theme = import ./theme { vars = selfLib.vars; };
+        theme = import ./theme { inherit (selfLib) vars; };
 
         lib = import ./core.nix { inherit lib pkgs; };
 
@@ -41,9 +41,21 @@ let
     inherit inputs lib;
     inherit (hosts) nixosConfigurations;
   };
+
+  lintChecks = import ./checks.nix {
+    inherit
+      inputs
+      lib
+      forEachSystem
+      pkgsFor
+      ;
+  };
+
+  checks = lintChecks;
 in
 {
   inherit
+    checks
     forEachSystem
     mkLib
     nixpull
@@ -51,7 +63,9 @@ in
     pkgsFor
     ;
 
-  devShell = packageLib.devShell;
+  inherit (packageLib) devShell;
+
+  inherit (nixpull) deployChecks;
 
   inherit (hosts)
     hostVars

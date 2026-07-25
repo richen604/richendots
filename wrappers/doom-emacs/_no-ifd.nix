@@ -38,7 +38,7 @@
   # Use fetchTree instead of fetchGit for package fetches.
   experimentalFetchTree ? false,
   # Extra emacs packages from nixpkgs
-  extraPackages ? epkgs: [ ],
+  extraPackages ? _epkgs: [ ],
   # Extra packages to add to $PATH
   extraBinPackages ? [
     git
@@ -50,11 +50,10 @@
   # Pre-generated output from build-helpers/dump. Supplying this avoids IFD.
   doomIntermediates,
   # Passed to overrideScope (see https://nixos.org/manual/nixpkgs/stable/#sec-emacs-config).
-  emacsPackageOverrides ? (eself: esuper: { }),
+  emacsPackageOverrides ? (_eself: _esuper: { }),
   # True to build lsp-mode and dependant packages with LSP_USE_PLISTS set.
   lspUsePlists ? true,
 
-  callPackage,
   callPackages,
   fd,
   fetchFromGitHub,
@@ -160,7 +159,7 @@ let
               repoToPackages = lib.zipAttrs (lib.mapAttrsToList (name: repo: { ${repo} = name; }) packageToRepo);
               packageToPin = lib.mapAttrs (name: p: extraPins.${name} or p.pin or null) doomPackageSet;
               repoToPins = lib.mapAttrs (
-                name: packages: lib.unique (lib.filter (p: p != null) (map (p: packageToPin.${p}) packages))
+                _name: packages: lib.unique (lib.filter (p: p != null) (map (p: packageToPin.${p}) packages))
               ) repoToPackages;
             in
             lib.mapAttrs (
@@ -379,15 +378,6 @@ let
                   )
                 else
                   fetchGit fetchGitArgs;
-              # Run locally to avoid a network roundtrip.
-              reqfile = runCommandLocal "${name}-deps" {
-                inherit src name;
-                emacs = lib.getExe emacs;
-                printDeps = unstraightenedSource + "/build-helpers/print-deps.el";
-              } "$emacs -Q --batch --script $printDeps $src $name > $out";
-              reqjson = lib.importJSON reqfile;
-              # json-encode encodes the empty list as null (nil), not [].
-              reqlist = if reqjson == null then [ ] else reqjson;
             in
             if pin != null && !hasOrigEPkg then
               epkg.overrideAttrs (old: {
@@ -420,7 +410,7 @@ let
       )
     ]
     ++ lib.optional (lspUsePlists && doomPackageSet ? lsp-mode) (
-      eself: esuper:
+      _eself: esuper:
       let
         manglePackage =
           name: pkg:

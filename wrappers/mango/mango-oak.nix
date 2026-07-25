@@ -2,7 +2,6 @@
   inputs,
   pkgs,
   richenLib,
-  stdenv,
   ...
 }:
 let

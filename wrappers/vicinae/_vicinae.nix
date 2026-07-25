@@ -5,7 +5,7 @@
   ...
 }:
 let
-  vicinaeTheme = import ./_theme.nix { theme = richenLib.theme; };
+  vicinaeTheme = import ./_theme.nix { inherit (richenLib) theme; };
   settings = {
     close_on_focus_loss = false;
     consider_preedit = true;
@@ -18,7 +18,7 @@ let
         icon_theme = "Papirus";
       };
       dark = {
-        name = vicinaeTheme.name;
+        inherit (vicinaeTheme) name;
         icon_theme = "Papirus-Dark";
       };
     };

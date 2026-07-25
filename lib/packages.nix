@@ -76,7 +76,7 @@ let
           name: hostvars: lib.nameValuePair "vm-${name}" (mkVm (hostvars // { inherit system; }))
         ) hostVars;
       in
-        vmPackages // richenLib.wrappers
+      vmPackages // richenLib.wrappers
     );
 
   devShell = forEachSystem (

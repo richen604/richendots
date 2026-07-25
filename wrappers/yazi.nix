@@ -138,7 +138,7 @@ let
     }
   ];
 
-  theme = import ./yazi/_theme.nix { theme = richenLib.theme; };
+  theme = import ./yazi/_theme.nix { inherit (richenLib) theme; };
   baseTheme = toml.generate "yazi-base-theme.toml" theme;
   iconThemeScript = pkgs.writeText "yazi-icon-theme.pl" ''
     use strict;

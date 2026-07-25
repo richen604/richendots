@@ -41,26 +41,25 @@ stdenv.mkDerivation {
     wayland-scanner
   ];
 
-  buildInputs =
-    [
-      libinput
-      libxcb
-      libxkbcommon
-      pcre2
-      pango
-      cjson
-      pixman
-      wayland
-      wayland-protocols
-      wlroots_0_20
-      libGL
-      libdrm
-    ]
-    ++ lib.optionals enableXWayland [
-      libX11
-      libxcb-wm
-      xwayland
-    ];
+  buildInputs = [
+    libinput
+    libxcb
+    libxkbcommon
+    pcre2
+    pango
+    cjson
+    pixman
+    wayland
+    wayland-protocols
+    wlroots_0_20
+    libGL
+    libdrm
+  ]
+  ++ lib.optionals enableXWayland [
+    libX11
+    libxcb-wm
+    xwayland
+  ];
 
   passthru = {
     providedSessions = [ "mango" ];

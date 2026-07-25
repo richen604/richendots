@@ -41,10 +41,10 @@ let
     in
     lib.nixosSystem {
       inherit pkgs;
-      system = hostvars.system;
+      inherit (hostvars) system;
       specialArgs = {
         inputs = inputs // inputs.richendots-private.inputs;
-        hostname = hostvars.hostname;
+        inherit (hostvars) hostname;
         inherit richenLib hostvars;
       };
 
@@ -64,9 +64,7 @@ let
       modules = [
         (
           {
-            config,
             pkgs,
-            lib,
             ...
           }:
           {

@@ -4,7 +4,7 @@
   ...
 }:
 let
-  sattyTheme = import ./satty/_theme.nix { theme = richenLib.theme; };
+  sattyTheme = import ./satty/_theme.nix { inherit (richenLib) theme; };
   # todo: swaync nextrelease options when available
   config = (pkgs.formats.toml { }).generate "satty-config" {
     general = {

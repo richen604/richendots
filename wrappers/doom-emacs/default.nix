@@ -8,7 +8,7 @@
 }:
 let
   doomInput = inputs.nix-doom-emacs-unstraightened;
-  doomTheme = import ./_theme.nix { theme = richenLib.theme; };
+  doomTheme = import ./_theme.nix { inherit (richenLib) theme; };
   generatedTheme = pkgs.replaceVars ./doom.d/themes/grove-theme.el doomTheme.replacements;
   generatedDoomDir = pkgs.runCommandLocal "doom.d-${richenLib.theme.name}" { } ''
     cp -r ${./doom.d} $out
@@ -56,7 +56,7 @@ let
     doomModules = doomInput.inputs.doomemacs-modules;
     unstraightenedSource = doomInput;
     emacs = pkgs.emacs-nox;
-    emacsPackagesFor = pkgs.emacsPackagesFor;
+    inherit (pkgs) emacsPackagesFor;
     experimentalFetchTree = true;
     toInit = _lib: _attrs: "";
     extraBinPackages = [

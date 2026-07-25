@@ -9,6 +9,8 @@
     {
       inherit (richenLib)
         devShell
+        checks
+        deployChecks
         nixosConfigurations
         packages
         ;
@@ -17,8 +19,6 @@
         deploy
         nixpullProfiles
         ;
-
-      checks = richenLib.nixpull.checks;
     };
 
   inputs = {

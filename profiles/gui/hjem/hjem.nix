@@ -5,10 +5,10 @@
   ...
 }:
 let
-  equibopTheme = import ./config/equibop/_theme.nix { theme = richenLib.theme; };
+  equibopTheme = import ./config/equibop/_theme.nix { inherit (richenLib) theme; };
   spicetifyManaged = import ./config/spicetify/_managed.nix {
     inherit pkgs;
-    theme = richenLib.theme;
+    inherit (richenLib) theme;
   };
   equibopCss = pkgs.replaceVars ./config/equibop/system24-grove.css equibopTheme.replacements;
 in

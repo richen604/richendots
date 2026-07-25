@@ -6,7 +6,7 @@
 let
   swaylockTheme = import ./swaylock/_theme.nix {
     inherit (pkgs) lib;
-    theme = richenLib.theme;
+    inherit (richenLib) theme;
   };
   toSwaylockConf =
     attrs:

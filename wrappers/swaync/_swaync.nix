@@ -34,7 +34,7 @@ let
     hide-on-action = true;
     script-fail-notify = false;
   };
-  swayncTheme = import ./_theme.nix { theme = richenLib.theme; };
+  swayncTheme = import ./_theme.nix { inherit (richenLib) theme; };
   defineGtkColors =
     colors:
     pkgs.lib.concatStringsSep "\n" (

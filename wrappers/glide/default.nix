@@ -4,7 +4,7 @@ let
   runtimeSubdir = "lib/glide-browser-${version}";
   pwaRuntimeSubdir = "lib/glide-pwa-runtime-${version}";
   policies = import ./_policies.nix { inherit richenLib; };
-  glideTheme = import ./_theme.nix { theme = richenLib.theme; };
+  glideTheme = import ./_theme.nix { inherit (richenLib) theme; };
   policiesJson = pkgs.writeText "glide-policies.json" (builtins.toJSON { inherit policies; });
   pwaPoliciesJson = pkgs.writeText "glide-pwa-policies.json" (
     builtins.toJSON {
@@ -63,14 +63,14 @@ let
     }
   );
   text = ''
-             __            __                             ______                    
-             /  |          /  |                           /      \                   
-     ______  $$/   _______ $$ |____    ______   _______  /$$$$$$  |______   __    __ 
+             __            __                             ______
+             /  |          /  |                           /      \
+     ______  $$/   _______ $$ |____    ______   _______  /$$$$$$  |______   __    __
     /      \ /  | /       |$$      \  /      \ /       \ $$ |_ $$//      \ /  \  /  |
-    /$$$$$$  |$$ |/$$$$$$$/ $$$$$$$  |/$$$$$$  |$$$$$$$  |$$   |  /$$$$$$  |$$  \/$$/ 
-    $$ |  $$/ $$ |$$ |      $$ |  $$ |$$    $$ |$$ |  $$ |$$$$/   $$ |  $$ | $$  $$<  
-    $$ |      $$ |$$ \_____ $$ |  $$ |$$$$$$$$/ $$ |  $$ |$$ |    $$ \__$$ | /$$$$  \ 
-    $$/       $$/  $$$$$$$/ $$/   $$/  $$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/   $$/ 
+    /$$$$$$  |$$ |/$$$$$$$/ $$$$$$$  |/$$$$$$  |$$$$$$$  |$$   |  /$$$$$$  |$$  \/$$/
+    $$ |  $$/ $$ |$$ |      $$ |  $$ |$$    $$ |$$ |  $$ |$$$$/   $$ |  $$ | $$  $$<
+    $$ |      $$ |$$ \_____ $$ |  $$ |$$$$$$$$/ $$ |  $$ |$$ |    $$ \__$$ | /$$$$  \
+    $$/       $$/  $$$$$$$/ $$/   $$/  $$$$$$$/ $$/   $$/ $$/      $$$$$$/  $$/   $$/
   '';
   chromeCss = pkgs.replaceVars ./userChrome.css (
     glideTheme.replacements
@@ -83,7 +83,7 @@ let
       "theme-newtab-muted" = richenLib.theme.aliases.muted;
     }
   );
-  contentCss = pkgs.replaceVars ./userContent.css ({
+  contentCss = pkgs.replaceVars ./userContent.css {
     "theme-bg" = richenLib.theme.bg.p;
     "theme-bg-secondary" = richenLib.theme.bg.s;
     "theme-border" = richenLib.theme.acc.p."2";
@@ -94,7 +94,7 @@ let
     "theme-font-family" = richenLib.theme.ui.fontFamily;
     "textfox-logo" = builtins.replaceStrings [ "\n" "\\" ] [ "\\A" "\\\\" ] text;
     "theme-newtab-hover" = richenLib.theme.bg.s;
-  });
+  };
   graphicsLibraryPath = pkgs.lib.makeLibraryPath [
     pkgs.ffmpeg
     pkgs.libgbm

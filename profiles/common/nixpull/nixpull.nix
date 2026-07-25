@@ -13,8 +13,8 @@ let
 
   configFile = pkgs.writeText "nixpull-config.json" (
     builtins.toJSON {
-      flake = cfg.flake;
-      remoteBuilder = cfg.remoteBuilder;
+      inherit (cfg) flake;
+      inherit (cfg) remoteBuilder;
       stateRoot = "/var/lib/nixpull";
       build = {
         hosts = cfg.builder.hosts;
@@ -24,9 +24,9 @@ let
         fetchWebhooks = cfg.builder.fetchWebhooks;
         signingKeyFile = cfg.builder.signingKeyFile;
       };
-      server = cfg.server;
-      fetch = cfg.fetch;
-      activation = cfg.activation;
+      inherit (cfg) server;
+      inherit (cfg) fetch;
+      inherit (cfg) activation;
     }
   );
 

@@ -355,7 +355,7 @@ let
       "max-length" = 25;
     };
   };
-  waybarTheme = import ./_theme.nix { theme = richenLib.theme; };
+  waybarTheme = import ./_theme.nix { inherit (richenLib) theme; };
   defineGtkColors =
     colors:
     pkgs.lib.concatStringsSep "\n" (

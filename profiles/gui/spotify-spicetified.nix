@@ -8,7 +8,7 @@
 let
   spicetifyManaged = import ./hjem/config/spicetify/_managed.nix {
     inherit pkgs;
-    theme = richenLib.theme;
+    inherit (richenLib) theme;
   };
   spotify-spicetified = pkgs.writeShellScriptBin "spotify-spicetified" ''
     set -e
@@ -93,7 +93,6 @@ in
 
   services.flatpak.enable = true;
 
-  systemd.user.services.spotify.serviceConfig.ExecStart = lib.mkForce (
-    "${spotify-spicetified}/bin/spotify-spicetified"
-  );
+  systemd.user.services.spotify.serviceConfig.ExecStart =
+    lib.mkForce "${spotify-spicetified}/bin/spotify-spicetified";
 }
