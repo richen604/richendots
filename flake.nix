@@ -23,6 +23,14 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    glorious-engrammer = {
+      url = "github:sunaku/glove80-keymaps";
+      flake = false;
+    };
+    glove80-zmk = {
+      url = "git+https://github.com/moergo-sc/zmk.git?ref=refs/pull/36/head";
+      flake = false;
+    };
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";

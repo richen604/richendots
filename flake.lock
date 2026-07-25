@@ -87,6 +87,39 @@
         "type": "github"
       }
     },
+    "glorious-engrammer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772564427,
+        "narHash": "sha256-9//5N4cVS2uUGUBAxC5B2CvfHQay7MJM5bbQ9K3zxt4=",
+        "owner": "sunaku",
+        "repo": "glove80-keymaps",
+        "rev": "d857d0a5fec0883e721230bac27db2fc9f81c93e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sunaku",
+        "repo": "glove80-keymaps",
+        "type": "github"
+      }
+    },
+    "glove80-zmk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774355855,
+        "narHash": "sha256-cGnOUmugSRpH6BqR5kGdig1ja1cfPqUBPq1uwFdB28w=",
+        "ref": "refs/pull/36/head",
+        "rev": "db2ba9fcd3dec4c7afcf171f123585a9f8292595",
+        "revCount": 2844,
+        "type": "git",
+        "url": "https://github.com/moergo-sc/zmk.git"
+      },
+      "original": {
+        "ref": "refs/pull/36/head",
+        "type": "git",
+        "url": "https://github.com/moergo-sc/zmk.git"
+      }
+    },
     "hjem": {
       "inputs": {
         "nixpkgs": [
@@ -208,6 +241,8 @@
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
+        "glorious-engrammer": "glorious-engrammer",
+        "glove80-zmk": "glove80-zmk",
         "hjem": "hjem",
         "mango": "mango",
         "nix-doom-emacs-unstraightened": "nix-doom-emacs-unstraightened",
