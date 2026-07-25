@@ -303,13 +303,11 @@ cmd_build() {
   for host in "${hosts[@]}"; do
     if [ -f "$workdir/$host.json" ]; then
       successes=$((successes + 1))
-      if [ "$publish_partial" != true ]; then
-        meta=$(cat "$workdir/$host.json")
-        new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
-        log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
-        print_build_published "$host"
-        trigger_hosts+=("$host")
-      fi
+      meta=$(cat "$workdir/$host.json")
+      new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
+      log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
+      print_build_published "$host"
+      trigger_hosts+=("$host")
     else
       failures=$((failures + 1))
       log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/build.log"
