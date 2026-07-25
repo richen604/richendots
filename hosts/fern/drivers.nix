@@ -11,6 +11,15 @@
     "i915"
     "xe"
   ];
+  boot.initrd.kernelModules = [
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_uvm"
+    "nvidia_drm"
+  ];
+  boot.kernelParams = [
+    "nvidia_modeset.conceal_vrr_caps=1"
+  ];
 
   hardware = {
     graphics = {
