@@ -6,6 +6,12 @@
   # also saves some eval
   system.tools.nixos-option.enable = false;
 
+  programs.nh.clean = {
+    enable = true;
+    dates = "weekly";
+    extraArgs = "--keep 5";
+  };
+
   nix = {
     package = pkgs.nix;
     gc.automatic = false;
