@@ -67,7 +67,7 @@ richenLib.lib.wrapPackage {
     {
       type = "timeout";
       timeout = 3600;
-      command = "systemctl hibernate";
+      command = "systemctl poweroff";
     }
 
     # lock screen before system goes to sleep
