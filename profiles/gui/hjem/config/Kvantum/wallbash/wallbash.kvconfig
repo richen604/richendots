@@ -99,7 +99,7 @@ interior.element=itemview
 frame=true
 interior=true
 text.iconspacing=3
-text.toggle.color=@acc-p1@ 
+text.toggle.color=@acc-p1@
 
 [RadioButton]
 inherits=PanelButtonCommand
@@ -144,7 +144,7 @@ text.margin.left=5
 text.margin.right=5
 indicator.size=0
 
-[Dock] 
+[Dock]
 interior.element=toolbar
 frame.element=toolbar
 frame=true
