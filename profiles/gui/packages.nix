@@ -47,6 +47,7 @@ in
       export DXVK_STATE_CACHE=1
       export DXVK_STATE_CACHE_PATH="$HOME/.cache/dxvk"
       export __GL_SHADER_DISK_CACHE=1
+      export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
       export __GL_SHADER_DISK_CACHE_PATH="$HOME/.cache/nvidia"
       export __GL_SHADER_DISK_CACHE_SIZE=10737418240
 
