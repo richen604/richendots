@@ -604,6 +604,18 @@ in
           script = "${nixpullPackage}/bin/nixpull activate";
         };
 
+        systemd.services.nixpull-pull = {
+          description = "Fetch and activate latest published nixpull profile";
+          restartIfChanged = false;
+          stopIfChanged = false;
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+            StateDirectory = "nixpull";
+          };
+          script = "${nixpullPackage}/bin/nixpull pull";
+        };
+
         systemd.sockets.nixpull-webhook = lib.mkIf cfg.fetch.webhook.enable {
           wantedBy = [ "sockets.target" ];
           socketConfig = {
