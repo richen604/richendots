@@ -198,7 +198,6 @@ in
       serviceConfig = {
         ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
         Environment = "LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}";
-        Restart = "no";
       };
     };
 

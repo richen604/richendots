@@ -48,5 +48,8 @@ in
   systemd.user.services.equibop.serviceConfig = {
     ExecStartPre = "${waitForEquibopOutput}/bin/wait-for-equibop-output";
     TimeoutStartSec = "infinity";
+    Restart = "on-failure";
+    RestartSec = "5s";
+    RuntimeMaxSec = "3h";
   };
 }
