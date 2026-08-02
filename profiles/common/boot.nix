@@ -2,10 +2,13 @@
 {
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
+    tmp.cleanOnBoot = true;
+    loader.efi.canTouchEfiVariables = false;
     loader.grub = {
       enable = true;
       device = "nodev";
       efiSupport = true;
+      efiInstallAsRemovable = true;
       useOSProber = true;
       extraEntries = ''
         menuentry "UEFI Firmware Settings" {
@@ -14,4 +17,6 @@
       '';
     };
   };
+
+  services.fwupd.enable = true;
 }
