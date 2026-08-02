@@ -168,6 +168,7 @@ let
     tray = {
       interval = 1;
       "icon-size" = 18;
+      "show-passive-items" = true;
       spacing = 8;
     };
     "modules-left" = [
