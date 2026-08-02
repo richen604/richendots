@@ -330,6 +330,7 @@ pkgs.stdenv.mkDerivation {
     profile="\''${XDG_CONFIG_HOME:-\$HOME/.config}/glide"
     mkdir -p "\$profile/chrome"
     ln -sf ${./glide.ts} "\$profile/glide.ts"
+    ln -sfnT ${./config} "\$profile/config"
     ln -sf ${./tsconfig.json} "\$profile/tsconfig.json"
     ln -sf ${chromeCss} "\$profile/chrome/userChrome.css"
     ln -sf ${contentCss} "\$profile/chrome/userContent.css"
