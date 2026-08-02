@@ -10,6 +10,12 @@ let
   };
 in
 {
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+    style = "kvantum";
+  };
+
   environment.systemPackages = [
     pkgs.bibata-cursors
     (pkgs.catppuccin-papirus-folders.override {

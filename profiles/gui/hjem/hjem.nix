@@ -6,16 +6,25 @@
 }:
 let
   equibopTheme = import ./config/equibop/_theme.nix { inherit (richenLib) theme; };
+  qtTheme = import ./config/qt/_theme.nix { inherit (richenLib) theme; };
   spicetifyManaged = import ./config/spicetify/_managed.nix {
     inherit pkgs;
     inherit (richenLib) theme;
   };
   equibopCss = pkgs.replaceVars ./config/equibop/system24-grove.css equibopTheme.replacements;
+  kvantumConfig = pkgs.replaceVars ./config/Kvantum/wallbash/wallbash.kvconfig qtTheme.kvantumConfigReplacements;
+  kvantumSvg = pkgs.replaceVars ./config/Kvantum/wallbash/wallbash.svg qtTheme.kvantumSvgReplacements;
+  kdeglobals = pkgs.writeText "kdeglobals-${richenLib.theme.name}" qtTheme.kdeglobals;
 in
 {
   imports = [
     inputs.hjem.nixosModules.default
   ];
+
+  systemd.services.greetd = {
+    wants = [ "hjem-update-state@${richenLib.vars.username}.service" ];
+    after = [ "hjem-update-state@${richenLib.vars.username}.service" ];
+  };
 
   hjem = {
     users.${richenLib.vars.username} = {
@@ -23,6 +32,11 @@ in
       directory = "/home/${richenLib.vars.username}";
       clobberFiles = true;
       files = {
+        ".config/Kvantum/kvantum.kvconfig".source = ./config/Kvantum/kvantum.kvconfig;
+        ".config/Kvantum/wallbash/wallbash.kvconfig".source = kvantumConfig;
+        ".config/Kvantum/wallbash/wallbash.svg".source = kvantumSvg;
+        ".config/kdeglobals".source = kdeglobals;
+        ".config/qt6ct".source = ./config/qt6ct;
         ".config/spicetify/config-xpui.ini" = {
           type = "copy";
           permissions = "0644";

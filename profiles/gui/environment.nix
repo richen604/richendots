@@ -7,6 +7,7 @@
     MOZ_ENABLE_WAYLAND = "1";
     GTK_THEME = "catppuccin-mocha-green-compact";
     QT_QPA_PLATFORM = "wayland;xcb";
+    QT_QUICK_CONTROLS_STYLE = "org.kde.desktop";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     GTK_BACKEND = "wayland;x11";
     SDL_VIDEODRIVER = "wayland";
