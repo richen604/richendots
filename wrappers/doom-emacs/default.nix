@@ -23,7 +23,7 @@ let
       DOOMDIR = "${./doom.d}";
     };
     script = doomInput + "/build-helpers/dump";
-    scriptArgs = "-m ${doomInput.inputs.doomemacs-modules} -o $out";
+    scriptArgs = "-m ${doomInput.inputs.doomemacs-modules} -u ${doomInput}/doom-module -o $out";
   };
   updateScript = pkgs.writeShellApplication {
     name = "update-doom-emacs-generated";

@@ -476,6 +476,7 @@ let
     noProfileHack = profileName == "";
     buildProfileLoader = unstraightenedSource + "/build-helpers/build-profile-loader";
     buildProfile = unstraightenedSource + "/build-helpers/build-profile";
+    ourModule = unstraightenedSource + "/doom-module";
     initEl = unstraightenedSource + "/init.el";
     EMACS = lib.getExe emacsWithPackages;
     inherit (emacsWithPackages) deps;
