@@ -76,6 +76,14 @@ atomic_write() {
   mv "$tmp" "$target"
 }
 
+root_published_profile() {
+  local host=$1 path=$2 root_dir=/nix/var/nix/gcroots/nixpull tmp
+  mkdir -p "$root_dir"
+  tmp=$(mktemp -u "$root_dir/$host.XXXXXX")
+  ln -s "$path" "$tmp"
+  mv -T "$tmp" "$root_dir/$host"
+}
+
 hostname_short() {
   "$HOSTNAME" -s
 }
@@ -304,6 +312,7 @@ cmd_build() {
     if [ -f "$workdir/$host.json" ]; then
       successes=$((successes + 1))
       meta=$(cat "$workdir/$host.json")
+      root_published_profile "$host" "$(jq -r '.activatablePath' <<<"$meta")"
       new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
       log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
       print_build_published "$host"
