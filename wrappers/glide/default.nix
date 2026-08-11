@@ -321,6 +321,8 @@ pkgs.stdenv.mkDerivation {
     #!${pkgs.runtimeShell}
     export MOZ_ENABLE_WAYLAND=1
     export MOZ_DISABLE_RDD_SANDBOX="\''${MOZ_DISABLE_RDD_SANDBOX:-1}"
+    #prevents media playback from throttling cpu with no changes to playback performance
+    export CUDA_DISABLE_PERF_BOOST=1
     export LD_LIBRARY_PATH="/run/opengl-driver/lib:${graphicsLibraryPath}:\''${LD_LIBRARY_PATH:-}"
     if [ -e /run/opengl-driver/lib/dri/nvidia_drv_video.so ]; then
       export LIBVA_DRIVER_NAME="\''${LIBVA_DRIVER_NAME:-nvidia}"
