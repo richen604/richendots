@@ -32,9 +32,29 @@ in
       directory = "/home/${richenLib.vars.username}";
       clobberFiles = true;
       files = {
-        ".config/Kvantum/kvantum.kvconfig".source = ./config/Kvantum/kvantum.kvconfig;
-        ".config/Kvantum/wallbash/wallbash.kvconfig".source = kvantumConfig;
-        ".config/Kvantum/wallbash/wallbash.svg".source = kvantumSvg;
+        ".config/Kvantum/kvantum.kvconfig" = {
+          type = "copy";
+          permissions = "0644";
+          source = ./config/Kvantum/kvantum.kvconfig;
+        };
+        ".config/Kvantum/wallbash/wallbash.kvconfig" = {
+          type = "copy";
+          permissions = "0644";
+          source = kvantumConfig;
+        };
+        ".config/Kvantum/wallbash/wallbash.svg" = {
+          type = "copy";
+          permissions = "0644";
+          source = kvantumSvg;
+        };
+        ".local/share/flatpak/overrides/global".text = ''
+          [Context]
+          filesystems=xdg-config/Kvantum:ro;
+
+          [Environment]
+          QT_QPA_PLATFORMTHEME=kde
+          QT_STYLE_OVERRIDE=kvantum
+        '';
         ".config/kdeglobals".source = kdeglobals;
         ".config/qt6ct".source = ./config/qt6ct;
         ".config/spicetify/config-xpui.ini" = {

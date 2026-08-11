@@ -53,6 +53,8 @@ rec {
     [General]
     ColorScheme=${theme.name}
     TerminalApplication=kitty
+    fixed=GohuFont uni14 Nerd Font,14,-1,5,600,0,0,0,0,0,0,0,0,0,0,1,Regular
+    font=GohuFont uni14 Nerd Font Propo,14,-1,5,600,0,0,0,0,0,0,0,0,0,0,1,Regular
     widgetStyle=kvantum
 
     [Icons]
