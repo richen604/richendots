@@ -183,6 +183,10 @@
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/darkreader/latest.xpi";
       installation_mode = "force_installed";
     };
+    "{ef87d84c-2127-493f-b952-5b4e744245bc}" = {
+      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/aw-watcher-web/latest.xpi";
+      installation_mode = "force_installed";
+    };
     "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/auto-tab-discard/latest.xpi";
       installation_mode = "force_installed";
