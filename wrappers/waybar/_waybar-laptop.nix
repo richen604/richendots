@@ -178,6 +178,7 @@ let
       # "pulseaudio#microphone"
       "custom/cpu-temp"
       "custom/gpu-temp"
+      "custom/replay"
       "backlight"
       "battery"
       "custom/idle-inhibit"
@@ -235,6 +236,17 @@ let
       exec = "${gpuTemp}/bin/waybar-gpu-temp";
       "return-type" = "json";
       "hide-empty-text" = true;
+    };
+    "custom/replay" = {
+      interval = 5;
+      signal = 10;
+      format = "{text}";
+      exec = "replay-status";
+      "on-click" = "replay-mode-menu";
+      "on-click-right" = "replay-save";
+      "on-click-middle" = "replay-recent";
+      "return-type" = "json";
+      tooltip = true;
     };
     "custom/idle-inhibit" = {
       interval = 5;
@@ -397,6 +409,7 @@ let
     #custom-weather,
     #custom-cpu-temp,
     #custom-gpu-temp,
+    #custom-replay,
     #custom-idle-inhibit,
     #window,
     #taskbar,
@@ -656,6 +669,7 @@ let
 
     #custom-cpu-temp,
     #custom-gpu-temp,
+    #custom-replay,
     #custom-idle-inhibit {
       background: none;
       color: @active-foreground;
@@ -673,6 +687,29 @@ let
 
     #custom-idle-inhibit.inactive {
       color: @foreground;
+    }
+
+    #custom-replay {
+      transition-duration: 0.2s;
+      padding-left: 7px;
+      padding-right: 7px;
+    }
+
+    #custom-replay.off {
+      color: @foreground;
+    }
+
+    #custom-replay.primary,
+    #custom-replay.all {
+      background-color: @active-background;
+      color: @urgent;
+      border-radius: 3px;
+    }
+
+    #custom-replay.degraded {
+      background-color: @urgent;
+      color: @active-foreground;
+      border-radius: 3px;
     }
 
     #backlight {

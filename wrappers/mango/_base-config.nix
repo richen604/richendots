@@ -356,6 +356,8 @@ let
     # Screenshots and recording
     bind=SUPER,P,spawn,${screenshotMenu}/bin/screenshot-menu
     bind=SUPER+SHIFT,P,spawn,${screenRecordMenu}/bin/screenrecord-menu
+    bind=SUPER+CTRL,P,spawn,replay-save
+    bind=SUPER+CTRL+SHIFT,P,spawn,replay-recent
 
     # toggle waybar
     bind=SUPER+SHIFT,W,spawn,killall -SIGUSR1 .waybar-wrapped
