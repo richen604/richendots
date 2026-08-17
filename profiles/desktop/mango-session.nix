@@ -3,6 +3,7 @@
   lib,
   richenLib,
   pkgs,
+  steamGameRun,
   ...
 }:
 let
@@ -105,7 +106,17 @@ in
       Name=Prism Launcher
       Comment=Custom Minecraft launcher
       Icon=org.prismlauncher.PrismLauncher
-      Exec=${prismLauncher}/bin/prism-launcher %U
+      Exec=${steamGameRun}/bin/steam-game-run ${prismLauncher}/bin/prism-launcher %U
+      Categories=Game;
+      Terminal=false
+    '';
+    files.".local/share/applications/smooth-matcha.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Smooth Matcha
+      Comment=Launch the Smooth Matcha modpack
+      Icon=/home/${richenLib.vars.username}/.var/app/org.prismlauncher.PrismLauncher/data/PrismLauncher/icons/curseforge_639209545400856710.png
+      Exec=${steamGameRun}/bin/steam-game-run ${prismLauncher}/bin/prism-launcher --launch "Smooth Matcha"
       Categories=Game;
       Terminal=false
     '';
