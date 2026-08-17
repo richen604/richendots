@@ -23,15 +23,29 @@ let
     text = ''
       declare -A seen_window
       declare -A missing_since
+      game_started=false
+      stale_game=false
+      startup_deadline=$((SECONDS + 60))
 
       flatpak run org.prismlauncher.PrismLauncher "$@" &
       flatpak_pid=$!
 
-      while kill -0 "$flatpak_pid" 2>/dev/null; do
-        sleep 5
-        clients="$(mmsg get all-clients 2>/dev/null)" || continue
+      while true; do
+        if ! clients="$(mmsg get all-clients 2>/dev/null)"; then
+          sleep 5
+          continue
+        fi
         mapfile -t game_pids < <(pgrep -f '[o]rg.prismlauncher.EntryPoint' || true)
 
+        if ((''${#game_pids[@]} == 0)); then
+          if [[ "$game_started" == true ]] || ((SECONDS >= startup_deadline)); then
+            break
+          fi
+          sleep 5
+          continue
+        fi
+
+        game_started=true
         for pid in "''${game_pids[@]}"; do
           if jq -e --argjson pid "$pid" 'any(.clients[]; .pid == $pid)' <<<"$clients" >/dev/null; then
             seen_window[$pid]=1
@@ -44,14 +58,17 @@ let
             missing_since[$pid]="''${missing_since[$pid]:-$now}"
             if ((now - missing_since[$pid] >= 30)); then
               flatpak kill org.prismlauncher.PrismLauncher
-              unset 'seen_window[$pid]' 'missing_since[$pid]'
+              stale_game=true
               break
             fi
           fi
         done
+
+        [[ "$stale_game" == false ]] || break
+        sleep 5
       done
 
-      wait "$flatpak_pid"
+      wait "$flatpak_pid" || [[ "$game_started" == true ]]
     '';
   };
 in
