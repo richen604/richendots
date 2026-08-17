@@ -178,6 +178,9 @@
     "vimium-c@gdh1995.cn" = {
       installation_mode = "blocked";
     };
+    "readeck@readeck.com" = {
+      installation_mode = "blocked";
+    };
 
     "addon@darkreader.org" = {
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/darkreader/latest.xpi";
