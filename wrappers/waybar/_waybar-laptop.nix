@@ -176,7 +176,6 @@ let
       # "network"
       "pulseaudio"
       # "pulseaudio#microphone"
-      "keyboard-state"
       "custom/cpu-temp"
       "custom/gpu-temp"
       "backlight"
