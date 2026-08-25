@@ -96,7 +96,7 @@ let
     "theme-newtab-hover" = richenLib.theme.bg.s;
   };
   graphicsLibraryPath = pkgs.lib.makeLibraryPath [
-    pkgs.ffmpeg
+    pkgs.ffmpeg_8
     pkgs.libgbm
     pkgs.libglvnd
     pkgs.mesa
@@ -133,7 +133,7 @@ pkgs.stdenv.mkDerivation {
 
   runtimeDependencies = [
     pkgs.curl
-    pkgs.ffmpeg
+    pkgs.ffmpeg_8
     pkgs.libgbm
     pkgs.libglvnd
     pkgs.libva.out
