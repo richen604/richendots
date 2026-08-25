@@ -7,6 +7,7 @@
     pkgs.yubikey-touch-detector
     pkgs.age
     pkgs.age-plugin-yubikey
+    pkgs.atuin
     pkgs.pam_u2f
     richenLib.wrappers.zsh
     richenLib.wrappers.git

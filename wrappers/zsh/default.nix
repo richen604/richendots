@@ -4,6 +4,38 @@
   ...
 }:
 let
+  atuinConfig = pkgs.linkFarm "atuin-config" [
+    {
+      name = "config.toml";
+      path = (pkgs.formats.toml { }).generate "atuin-config.toml" {
+        auto_sync = true;
+        sync_address = "https://service.invalid";
+        sync_frequency = "5m";
+        update_check = false;
+        key_path = "/run/secrets/removed";
+        search_mode = "fuzzy";
+        filter_mode = "global";
+        enter_accept = false;
+        store_failed = false;
+        secrets_filter = true;
+        workspaces = false;
+        daemon = {
+          enabled = false;
+          autostart = false;
+        };
+        history_filter = [
+          "(?i)(^|\\s)(--password|--passwd|--token|--secret|--api[-_]?key)(=|\\s)"
+          "(?i)(authorization:|proxy-authorization:|x-api-key:)"
+          "(?i)^\\s*atuin\\s+(account\\s+)?login(?:\\s|$)"
+        ];
+        cwd_filter = [
+          "^/run/secrets(?:/|$)"
+          "^/home/richen/\\.config/sops(?:/|$)"
+        ];
+      };
+    }
+  ];
+
   shellAliases = {
     grep = "rg";
     mkdir = "mkdir -pv";
@@ -116,6 +148,7 @@ let
         SAVEHIST=10000
         HISTSIZE=10000
         setopt HIST_IGNORE_DUPS
+        setopt HIST_IGNORE_SPACE
         setopt SHARE_HISTORY
         setopt HIST_FCNTL_LOCK
 
@@ -150,6 +183,11 @@ let
         source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
         export ZSH_AUTOSUGGEST_STRATEGY=(history)
 
+        if [[ "$TERM" != dumb && $options[zle] = on ]]; then
+          eval "$(${pkgs.atuin}/bin/atuin init zsh --disable-up-arrow --disable-ai)"
+          bindkey '^r' atuin-search
+        fi
+
         ${pkgs.lib.concatStringsSep "\n" (
           pkgs.lib.mapAttrsToList (k: v: "alias -- ${k}=${pkgs.lib.escapeShellArg v}") shellAliases
         )}
@@ -170,6 +208,7 @@ in
 richenLib.lib.wrapPackage {
   package = pkgs.zsh;
   env = {
+    ATUIN_CONFIG_DIR = atuinConfig;
     SHELL = "${pkgs.zsh}/bin/zsh";
     ZDOTDIR = "${configDir}/";
   };
