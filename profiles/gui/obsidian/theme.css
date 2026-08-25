@@ -1,0 +1,818 @@
+/* Richendots: a compact, semantic dark theme for Obsidian. */
+
+body.theme-dark {
+  /* Shared theme palette */
+  --rich-bg-primary: @background-primary@; --rich-bg-secondary: @background-secondary@;
+  --rich-bg-tertiary: @background-tertiary@; --rich-text-primary: @text-primary@;
+  --rich-text-secondary: @text-secondary@; --rich-text-tertiary: @text-tertiary@;
+  --rich-accent-p1: @accent-primary-1@; --rich-accent-p2: @accent-primary-2@;
+  --rich-accent-p3: @accent-primary-3@; --rich-accent-p4: @accent-primary-4@;
+  --rich-accent-p5: @accent-primary-5@; --rich-accent-p6: @accent-primary-6@;
+  --rich-accent-p7: @accent-primary-7@; --rich-accent-p8: @accent-primary-8@;
+  --rich-accent-p9: @accent-primary-9@; --rich-accent-s1: @accent-secondary-1@;
+  --rich-accent-s2: @accent-secondary-2@; --rich-accent-s3: @accent-secondary-3@;
+  --rich-accent-s4: @accent-secondary-4@; --rich-accent-s5: @accent-secondary-5@;
+  --rich-accent-s6: @accent-secondary-6@; --rich-accent-s7: @accent-secondary-7@;
+  --rich-accent-s8: @accent-secondary-8@; --rich-accent-s9: @accent-secondary-9@;
+  --rich-alias-background: @alias-background@; --rich-alias-off-background: @alias-off-background@;
+  --rich-alias-selection: @alias-selection@; --rich-alias-foreground: @alias-foreground@;
+  --rich-alias-muted: @alias-muted@; --rich-alias-accent: @alias-accent@;
+  --rich-alias-accent-hover: @alias-accent-hover@; --rich-font: @ui-font-family@;
+  --rich-font-mono: @ui-code-font-family@; --rich-font-size: @ui-font-size@;
+  --rich-line-height: @ui-line-height@; --rich-letter-spacing: @ui-letter-spacing@;
+  --rich-gap: @ui-gap@; --rich-panel-padding: @ui-panel-padding@;
+  --rich-row-height: @ui-row-height@; --rich-radius: @ui-radius@;
+  --rich-border-width: @ui-border-width@; --rich-success: @ui-success@;
+  --rich-warning: @ui-warning@; --rich-error: @ui-error@; --rich-info: @ui-info@;
+  --rich-syntax-background: @syntax-background@; --rich-syntax-foreground: @syntax-foreground@;
+  --rich-syntax-comment: @syntax-comment@; --rich-syntax-keyword: @syntax-keyword@;
+  --rich-syntax-string: @syntax-string@; --rich-syntax-number: @syntax-number@;
+  --rich-syntax-function: @syntax-function@; --rich-syntax-variable: @syntax-variable@;
+  --rich-syntax-type: @syntax-type@; --rich-syntax-operator: @syntax-operator@;
+  --rich-syntax-constant: @syntax-constant@; --rich-syntax-exception: @syntax-exception@;
+  --rich-markup-heading: @markup-heading@; --rich-markup-link: @markup-link@;
+  --rich-markup-emphasis: @markup-emphasis@; --rich-markup-strong: @markup-strong@;
+  --rich-markup-code: @markup-code@; --rich-markup-quote: @markup-quote@;
+  --rich-markup-muted: @markup-muted@; --rich-diff-added: @diff-added@;
+  --rich-diff-added-bg: @diff-added-background@; --rich-diff-removed: @diff-removed@;
+  --rich-diff-removed-bg: @diff-removed-background@; --rich-diff-modified: @diff-modified@;
+  --rich-diff-modified-bg: @diff-modified-background@; --rich-diff-line-number: @diff-line-number@;
+  --rich-diff-line-number-active: @diff-line-number-active@;
+
+  /* Obsidian core variables */
+  --background-primary: var(--rich-alias-background); --background-primary-alt: var(--rich-bg-tertiary);
+  --background-secondary: var(--rich-alias-off-background); --background-secondary-alt: var(--rich-bg-tertiary);
+  --background-modifier-border: var(--rich-accent-p2); --background-modifier-border-hover: var(--rich-accent-p4);
+  --background-modifier-border-focus: var(--rich-alias-accent); --background-modifier-form-field: var(--rich-bg-secondary);
+  --background-modifier-form-field-highlighted: var(--rich-bg-tertiary); --background-modifier-hover: var(--rich-accent-p1);
+  --background-modifier-active-hover: var(--rich-accent-p2); --background-modifier-success: var(--rich-success);
+  --background-modifier-error: var(--rich-error); --background-modifier-error-hover: var(--rich-syntax-exception);
+  --background-modifier-cover: color-mix(in srgb, var(--rich-bg-primary) 88%, transparent);
+  --text-normal: var(--rich-alias-foreground); --text-muted: var(--rich-alias-muted);
+  --text-faint: var(--rich-markup-muted); --text-on-accent: var(--rich-bg-primary);
+  --text-on-accent-inverted: var(--rich-text-primary); --text-success: var(--rich-success);
+  --text-warning: var(--rich-warning); --text-error: var(--rich-error);
+  --text-accent: var(--rich-alias-accent); --text-accent-hover: var(--rich-alias-accent-hover);
+  --interactive-normal: var(--rich-bg-secondary); --interactive-hover: var(--rich-bg-tertiary);
+  --interactive-accent: var(--rich-alias-accent); --interactive-accent-hover: var(--rich-alias-accent-hover);
+  --interactive-success: var(--rich-success); --icon-color: var(--rich-text-tertiary);
+  --icon-color-hover: var(--rich-text-primary); --icon-color-active: var(--rich-accent-p7);
+  --icon-color-focused: var(--rich-accent-p8); --divider-color: var(--rich-accent-p2);
+  --divider-color-hover: var(--rich-accent-p5);
+  --blockquote-border-color: var(--rich-markup-quote);
+  --blockquote-background-color: var(--rich-bg-secondary);
+  --code-background: var(--rich-syntax-background); --code-normal: var(--rich-markup-code);
+  --code-comment: var(--rich-syntax-comment); --code-function: var(--rich-syntax-function);
+  --code-important: var(--rich-syntax-exception); --code-keyword: var(--rich-syntax-keyword);
+  --code-operator: var(--rich-syntax-operator); --code-property: var(--rich-syntax-variable);
+  --code-punctuation: var(--rich-syntax-foreground); --code-string: var(--rich-syntax-string);
+  --code-tag: var(--rich-syntax-type); --code-value: var(--rich-syntax-number);
+  --font-interface-theme: var(--rich-font); --font-text-theme: var(--rich-font);
+  --font-monospace-theme: var(--rich-font-mono); --font-ui-small: var(--rich-font-size);
+  --font-text-size: var(--rich-font-size); --line-height-normal: var(--rich-line-height);
+  --line-height-tight: var(--rich-line-height); --letter-spacing: var(--rich-letter-spacing);
+  --radius-s: var(--rich-radius); --radius-m: var(--rich-radius); --radius-l: var(--rich-radius);
+  --radius-xl: var(--rich-radius); --tag-radius: var(--rich-radius); --toggle-radius: var(--rich-radius);
+  --toggle-thumb-radius: var(--rich-radius); --slider-thumb-radius: var(--rich-radius);
+  --swatch-radius: var(--rich-radius); --image-radius: var(--rich-radius);
+  --input-radius: var(--rich-radius); --button-radius: var(--rich-radius);
+  --tab-radius-active: var(--rich-radius); --modal-radius: var(--rich-radius); --prompt-radius: var(--rich-radius);
+  --nav-item-size: var(--rich-font-size);
+  --nav-item-color: var(--rich-text-secondary);
+  --nav-item-color-hover: var(--rich-text-primary);
+  --nav-item-color-active: var(--rich-accent-p9);
+  --nav-item-background-hover: var(--rich-accent-p1);
+  --nav-item-background-active: var(--rich-accent-p2);
+  --tab-text-color: var(--rich-alias-muted);
+  --tab-text-color-active: var(--rich-text-primary);
+  --tab-background-active: var(--rich-bg-primary);
+  --tab-divider-color: var(--rich-accent-p2);
+  --titlebar-background: var(--rich-bg-secondary);
+  --titlebar-background-focused: var(--rich-bg-secondary);
+  --status-bar-background: var(--rich-bg-secondary);
+  --status-bar-border-color: var(--rich-accent-p2);
+  --link-color: var(--rich-markup-link);
+  --link-color-hover: var(--rich-accent-p8);
+  --link-external-color: var(--rich-info);
+  --link-unresolved-color: var(--rich-warning);
+  --tag-color: var(--rich-accent-p9);
+  --tag-background: var(--rich-accent-p2);
+  --tag-background-hover: var(--rich-accent-p3);
+  --highlight-text: var(--rich-text-primary);
+  --highlight-background: var(--rich-accent-s3);
+  --heading-color: var(--rich-markup-heading);
+  --h1-color: var(--rich-accent-p9);
+  --h2-color: var(--rich-accent-p8);
+  --h3-color: var(--rich-accent-p7);
+  --h4-color: var(--rich-accent-p6);
+  --h5-color: var(--rich-accent-p5);
+  --h6-color: var(--rich-alias-muted);
+  --checkbox-color: var(--rich-alias-accent);
+  --checkbox-color-hover: var(--rich-alias-accent-hover);
+  --checkbox-marker-color: var(--rich-bg-primary);
+  --table-border-color: var(--rich-accent-p2);
+  --table-header-background: var(--rich-bg-secondary);
+  --table-row-alt-background: var(--rich-bg-secondary);
+  --embed-background: var(--rich-bg-secondary);
+  --embed-border-start: var(--rich-border-width) solid var(--rich-accent-p4);
+  --metadata-background: var(--rich-bg-secondary);
+  --metadata-border-color: var(--rich-accent-p2);
+  --metadata-label-text-color: var(--rich-alias-muted);
+  --metadata-input-text-color: var(--rich-text-primary);
+  --graph-line: var(--rich-accent-p3);
+  --graph-node: var(--rich-accent-p6);
+  --graph-node-focused: var(--rich-accent-p9);
+  --graph-node-tag: var(--rich-accent-s7);
+  --graph-node-attachment: var(--rich-accent-s9);
+  --graph-node-unresolved: var(--rich-error);
+}
+
+body.theme-dark {
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-family: var(--font-interface-theme);
+  font-size: var(--rich-font-size);
+  letter-spacing: var(--rich-letter-spacing);
+}
+
+body.theme-dark * {
+  border-radius: var(--rich-radius) !important;
+}
+
+::selection {
+  background: var(--rich-alias-selection);
+  color: var(--rich-text-primary);
+}
+
+/* Workspace chrome */
+.workspace-sidedock-vault-profile,
+.side-dock-actions,
+.workspace-ribbon,
+.titlebar,
+.status-bar {
+  background-color: var(--background-primary);
+}
+
+.workspace-ribbon {
+  border-inline-end: var(--rich-border-width) solid var(--rich-accent-p2);
+  padding-block: var(--rich-panel-padding);
+}
+
+.titlebar {
+  border-bottom: var(--rich-border-width) solid var(--rich-accent-p2);
+}
+
+.status-bar {
+  border-width: var(--rich-border-width) 0 0 var(--rich-border-width);
+  min-height: var(--rich-row-height);
+  padding: 0 var(--rich-panel-padding);
+}
+
+.mod-left-split,
+.mod-right-split {
+  background-color: var(--background-primary);
+}
+
+.workspace-sidedock-vault-profile {
+  border-top: var(--rich-border-width) solid var(--rich-accent-p2);
+  min-height: var(--rich-row-height);
+  padding: var(--rich-gap) var(--rich-panel-padding);
+}
+
+/* Tabs */
+.workspace-tab-header-container {
+  background-color: var(--background-primary);
+  border-bottom: var(--rich-border-width) solid var(--rich-accent-p2);
+  height: calc(var(--rich-row-height) + var(--rich-gap));
+  padding-inline: var(--rich-gap);
+}
+
+.workspace-tab-header {
+  border-inline-end: var(--rich-border-width) solid var(--rich-accent-p2);
+  color: var(--rich-alias-muted);
+  padding-inline: var(--rich-panel-padding);
+}
+
+.workspace-tab-header:hover {
+  background: var(--rich-accent-p1);
+  color: var(--rich-text-primary);
+}
+
+.workspace-tab-header.is-active {
+  background-color: var(--background-primary);
+  color: var(--rich-accent-p9);
+}
+
+.workspace-tab-header.is-active::before,
+.workspace-tab-header.is-active::after {
+  display: none;
+}
+
+/* Sidebar, navigation, and files */
+.workspace-leaf-content[data-type="file-explorer"] .view-content,
+.workspace-leaf-content[data-type="search"] .view-content,
+.workspace-leaf-content[data-type="backlink"] .view-content,
+.workspace-leaf-content[data-type="outgoing-link"] .view-content,
+.workspace-leaf-content[data-type="tag"] .view-content {
+  padding: var(--rich-panel-padding);
+}
+
+.nav-header {
+  padding: var(--rich-panel-padding);
+}
+
+.nav-files-container,
+.tag-container,
+.search-results-container {
+  padding: 0 var(--rich-panel-padding) var(--rich-panel-padding);
+}
+
+.nav-folder-title,
+.nav-file-title,
+.tree-item-self {
+  align-items: center;
+  min-height: var(--rich-row-height);
+  padding: 0 var(--rich-gap);
+}
+
+.nav-folder-title:hover,
+.nav-file-title:hover,
+.tree-item-self:hover {
+  background: var(--rich-accent-p1);
+}
+
+.nav-file-title.is-active,
+.tree-item-self.is-active {
+  background: var(--rich-accent-p2);
+  color: var(--rich-accent-p9);
+}
+
+.nav-folder-title-content {
+  color: var(--rich-text-secondary);
+  font-weight: 600;
+}
+
+.nav-folder.mod-root > .nav-folder-title {
+  display: none;
+}
+
+/* Inputs, buttons, menus, and overlays */
+.search-input-container input,
+.prompt-input,
+.modal input[type="text"],
+.modal input[type="search"],
+.modal input[type="email"],
+.modal input[type="password"],
+.modal input[type="number"],
+.modal textarea,
+.modal select,
+.dropdown {
+  background-color: var(--background-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  color: var(--rich-text-primary);
+  min-height: var(--rich-row-height);
+  padding: var(--rich-gap) var(--rich-panel-padding);
+}
+
+.search-input-container input:focus,
+.prompt-input:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus,
+.dropdown:focus {
+  border-color: var(--rich-alias-accent);
+  box-shadow: none;
+}
+
+.modal button:not(.clickable-icon),
+.setting-item-control button:not(.clickable-icon),
+.prompt button:not(.clickable-icon),
+.mod-cta {
+  background: var(--rich-accent-p2);
+  border: var(--rich-border-width) solid var(--rich-accent-p4);
+  color: var(--rich-text-primary);
+  min-height: var(--rich-row-height);
+  padding: var(--rich-gap) var(--rich-panel-padding);
+}
+
+.modal button:not(.clickable-icon):hover,
+.setting-item-control button:not(.clickable-icon):hover,
+.prompt button:not(.clickable-icon):hover,
+.mod-cta:hover {
+  background: var(--rich-accent-p3);
+  border-color: var(--rich-alias-accent-hover);
+}
+
+.modal button.mod-warning,
+.setting-item-control button.mod-warning,
+.prompt button.mod-warning {
+  border-color: var(--rich-error);
+  color: var(--rich-error);
+}
+
+.modal,
+.prompt,
+.menu {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p4);
+  box-shadow: none;
+  padding: var(--rich-panel-padding);
+}
+
+.modal-bg {
+  background: var(--background-modifier-cover);
+}
+
+.modal-title,
+.prompt-instruction-command {
+  color: var(--rich-accent-p9);
+}
+
+.menu-item,
+.suggestion-item {
+  align-items: center;
+  min-height: var(--rich-row-height);
+  padding: var(--rich-gap) var(--rich-panel-padding);
+}
+
+.menu-item.selected,
+.suggestion-item.is-selected {
+  background: var(--rich-accent-p2);
+  color: var(--rich-text-primary);
+}
+
+.tooltip {
+  background: var(--rich-bg-tertiary);
+  border: var(--rich-border-width) solid var(--rich-accent-p4);
+  color: var(--rich-text-primary);
+}
+
+/* Editor and reading typography */
+.markdown-source-view,
+.markdown-reading-view {
+  background-color: var(--background-primary);
+}
+
+.markdown-source-view.mod-cm6 .cm-scroller,
+.markdown-preview-view {
+  font-family: var(--rich-font);
+  font-size: var(--rich-font-size);
+  line-height: var(--rich-line-height);
+  letter-spacing: var(--rich-letter-spacing);
+}
+
+.markdown-source-view.mod-cm6 .cm-content,
+.markdown-preview-sizer {
+  padding: calc(var(--rich-panel-padding) * 2);
+}
+
+.markdown-source-view.mod-cm6 .cm-line {
+  padding-inline: var(--rich-gap);
+}
+
+.markdown-source-view.mod-cm6 .cm-gutters {
+  background: var(--rich-bg-secondary);
+  border-inline-end: var(--rich-border-width) solid var(--rich-accent-p2);
+  color: var(--rich-diff-line-number);
+}
+
+.markdown-source-view.mod-cm6 .cm-activeLineGutter {
+  background: var(--rich-accent-p1);
+  color: var(--rich-diff-line-number-active);
+}
+
+.markdown-source-view.mod-cm6 .cm-activeLine {
+  background: color-mix(in srgb, var(--rich-accent-p1) 55%, transparent);
+}
+
+.markdown-source-view.mod-cm6 .cm-cursor {
+  border-left-color: var(--rich-accent-p9);
+  border-left-width: var(--rich-border-width);
+}
+
+.markdown-source-view.mod-cm6 .cm-selectionBackground,
+.markdown-source-view.mod-cm6 .cm-content ::selection {
+  background: var(--rich-alias-selection);
+}
+
+/* Headings and inline markup */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6,
+.HyperMD-header {
+  font-weight: 700;
+  letter-spacing: var(--rich-letter-spacing);
+  margin-block: calc(var(--rich-panel-padding) * 2) var(--rich-panel-padding);
+}
+
+.markdown-rendered h1 {
+  border-bottom: var(--rich-border-width) solid var(--rich-accent-p3);
+  padding-bottom: var(--rich-gap);
+}
+
+.markdown-rendered a,
+.cm-link,
+.cm-hmd-internal-link {
+  color: var(--rich-markup-link);
+  text-decoration-color: var(--rich-accent-p4);
+  text-underline-offset: var(--rich-gap);
+}
+
+.is-unresolved,
+.is-unresolved:hover {
+  color: var(--rich-warning);
+  opacity: 1;
+}
+
+.tag,
+a.tag {
+  background: var(--rich-accent-p2);
+  border: var(--rich-border-width) solid var(--rich-accent-p3);
+  color: var(--rich-accent-p9);
+  padding: 0 var(--rich-gap);
+}
+
+.markdown-rendered mark,
+.cm-highlight {
+  background: var(--rich-accent-s3);
+  color: var(--rich-text-primary);
+  padding-inline: var(--rich-gap);
+}
+
+.markdown-rendered strong,
+.cm-strong {
+  color: var(--rich-markup-strong);
+}
+
+.markdown-rendered em,
+.cm-em {
+  color: var(--rich-markup-emphasis);
+}
+
+.markdown-rendered blockquote {
+  background: var(--rich-bg-secondary);
+  border-inline-start: calc(var(--rich-border-width) * 2) solid var(--rich-markup-quote);
+  color: var(--rich-text-secondary);
+  margin-inline: 0;
+  padding: var(--rich-panel-padding) calc(var(--rich-panel-padding) * 2);
+}
+
+.markdown-rendered hr {
+  border: 0;
+  border-top: var(--rich-border-width) solid var(--rich-accent-p3);
+  margin-block: calc(var(--rich-panel-padding) * 3);
+}
+
+/* Lists and tasks */
+.list-bullet::after {
+  background: var(--rich-accent-p6);
+}
+
+.task-list-item-checkbox {
+  border: var(--rich-border-width) solid var(--rich-accent-p5);
+  border-radius: var(--rich-radius);
+}
+
+.task-list-item-checkbox:checked {
+  background: var(--rich-alias-accent);
+  border-color: var(--rich-alias-accent);
+}
+
+.task-list-item.is-checked,
+.task-list-item[data-task="x"] {
+  color: var(--rich-markup-muted);
+  text-decoration-color: var(--rich-accent-p5);
+}
+
+/* Embeds and properties */
+.internal-embed,
+.file-embed,
+.markdown-embed {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  border-inline-start-color: var(--rich-accent-p5);
+  padding: var(--rich-panel-padding);
+}
+
+.markdown-embed-title,
+.file-embed-title {
+  color: var(--rich-accent-p8);
+}
+
+.metadata-container {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  margin-bottom: calc(var(--rich-panel-padding) * 2);
+  padding: var(--rich-panel-padding);
+}
+
+/* Callouts */
+.callout {
+  --rich-callout-color: rgb(var(--callout-color));
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-callout-color);
+  border-inline-start-width: calc(var(--rich-border-width) * 2);
+  padding: var(--rich-panel-padding);
+}
+
+.callout[data-callout="success"],
+.callout[data-callout="done"] {
+  --rich-callout-color: var(--rich-success);
+}
+
+.callout[data-callout="warning"],
+.callout[data-callout="caution"] {
+  --rich-callout-color: var(--rich-warning);
+}
+
+.callout[data-callout="danger"],
+.callout[data-callout="failure"] {
+  --rich-callout-color: var(--rich-error);
+}
+
+.callout[data-callout="info"],
+.callout[data-callout="note"] {
+  --rich-callout-color: var(--rich-info);
+}
+
+/* Tables */
+.markdown-rendered table {
+  border-collapse: collapse;
+  margin-block: calc(var(--rich-panel-padding) * 2);
+  width: 100%;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  padding: var(--rich-panel-padding);
+  text-align: start;
+}
+
+.markdown-rendered th {
+  background: var(--rich-bg-secondary);
+  color: var(--rich-accent-p9);
+}
+
+.markdown-rendered tbody tr:nth-child(even) {
+  background: var(--rich-bg-secondary);
+}
+
+/* Code and stable CodeMirror/Prism token selectors */
+.markdown-rendered code,
+.markdown-rendered pre,
+.cm-inline-code {
+  font-family: var(--rich-font-mono);
+}
+
+.markdown-rendered :not(pre) > code,
+.cm-inline-code {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  color: var(--rich-markup-code);
+  padding: 0 var(--rich-gap);
+}
+
+.markdown-rendered pre {
+  background: var(--rich-syntax-background);
+  border: var(--rich-border-width) solid var(--rich-accent-p2);
+  color: var(--rich-syntax-foreground);
+  padding: calc(var(--rich-panel-padding) * 2);
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata,
+.cm-comment,
+.tok-comment {
+  color: var(--rich-syntax-comment);
+}
+
+.token.keyword,
+.token.atrule,
+.cm-keyword,
+.tok-keyword {
+  color: var(--rich-syntax-keyword);
+}
+
+.token.string,
+.token.attr-value,
+.cm-string,
+.tok-string {
+  color: var(--rich-syntax-string);
+}
+
+.token.number,
+.token.boolean,
+.cm-number,
+.tok-number,
+.tok-bool {
+  color: var(--rich-syntax-number);
+}
+
+.token.function,
+.token.method,
+.cm-def,
+.tok-function {
+  color: var(--rich-syntax-function);
+}
+
+.token.variable,
+.token.property,
+.cm-variableName,
+.tok-variableName,
+.tok-propertyName {
+  color: var(--rich-syntax-variable);
+}
+
+.token.class-name,
+.token.tag,
+.cm-type,
+.tok-typeName,
+.tok-tagName {
+  color: var(--rich-syntax-type);
+}
+
+.token.operator,
+.token.punctuation,
+.cm-operator,
+.tok-operator,
+.tok-punctuation {
+  color: var(--rich-syntax-operator);
+}
+
+.token.constant,
+.token.symbol,
+.cm-atom,
+.tok-atom {
+  color: var(--rich-syntax-constant);
+}
+
+.token.deleted,
+.token.important,
+.token.regex,
+.cm-invalid,
+.tok-invalid {
+  color: var(--rich-syntax-exception);
+}
+
+.token.inserted {
+  background: var(--rich-diff-added-bg);
+  color: var(--rich-diff-added);
+}
+
+.token.deleted {
+  background: var(--rich-diff-removed-bg);
+  color: var(--rich-diff-removed);
+}
+
+.cm-changedLine {
+  background: var(--rich-diff-modified-bg);
+  color: var(--rich-diff-modified);
+}
+
+/* Search */
+.search-result-file-title {
+  color: var(--rich-accent-p8);
+  min-height: var(--rich-row-height);
+}
+
+.search-result-file-match {
+  background: var(--rich-bg-secondary);
+  border-inline-start: var(--rich-border-width) solid var(--rich-accent-p3);
+  color: var(--rich-text-secondary);
+  margin-block: var(--rich-gap);
+  padding: var(--rich-panel-padding);
+}
+
+.search-result-file-matched-text {
+  background: var(--rich-accent-s3);
+  color: var(--rich-text-primary);
+}
+
+/* Graph colors are set through core variables; canvas needs explicit chrome. */
+.canvas-wrapper {
+  background: var(--rich-bg-primary);
+}
+
+.canvas-node-container {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p3);
+  box-shadow: none;
+}
+
+.canvas-node.is-selected .canvas-node-container {
+  border-color: var(--rich-accent-p8);
+}
+
+.canvas-control-group {
+  background: var(--rich-bg-secondary);
+  border: var(--rich-border-width) solid var(--rich-accent-p3);
+  box-shadow: none;
+}
+
+/* Scrollbars */
+body.theme-dark ::-webkit-scrollbar {
+  height: calc(var(--rich-gap) * 2);
+  width: calc(var(--rich-gap) * 2);
+}
+
+body.theme-dark ::-webkit-scrollbar-thumb {
+  background: var(--rich-accent-p3);
+  border: var(--rich-border-width) solid var(--rich-bg-primary);
+  border-radius: var(--rich-radius);
+}
+
+body.theme-dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--rich-accent-p5);
+}
+
+/* Dataview */
+.block-language-dataview,
+.dataview.table-view-table {
+  font-family: var(--rich-font);
+  font-size: var(--rich-font-size);
+}
+
+.dataview.table-view-table > thead > tr > th {
+  background: var(--rich-bg-secondary);
+  border-color: var(--rich-accent-p2);
+  color: var(--rich-accent-p9);
+}
+
+/* Tasks */
+.tasks-list-text,
+.tasks-count {
+  font-family: var(--rich-font);
+}
+
+/* Omnisearch */
+.omnisearch-modal .prompt-results {
+  border-top: var(--rich-border-width) solid var(--rich-accent-p2);
+}
+
+.omnisearch-modal .suggestion-highlight {
+  background: var(--rich-accent-s3);
+  color: var(--rich-text-primary);
+}
+
+/* File Tree Alternative */
+.oz-folder-pane,
+.oz-file-tree-pane {
+  background: var(--rich-bg-secondary);
+  color: var(--rich-text-secondary);
+}
+
+.oz-folder-element:hover,
+.oz-file-tree-file:hover {
+  background: var(--rich-accent-p1);
+}
+
+.oz-folder-element.is-active,
+.oz-file-tree-file.is-active {
+  background: var(--rich-accent-p2);
+  color: var(--rich-accent-p9);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  body.theme-dark {
+    --rich-panel-padding: calc(@ui-panel-padding@ + @ui-gap@);
+    --rich-row-height: calc(@ui-row-height@ + @ui-gap@);
+  }
+
+  .workspace-tab-header-container {
+    padding-inline: var(--rich-panel-padding);
+  }
+
+  .markdown-source-view.mod-cm6 .cm-content,
+  .markdown-preview-sizer {
+    padding: var(--rich-panel-padding);
+  }
+
+  .modal,
+  .prompt {
+    border-inline: 0;
+    padding: var(--rich-panel-padding);
+  }
+
+  .status-bar {
+    border-inline-start: 0;
+  }
+
+  .menu-item,
+  .suggestion-item,
+  .nav-folder-title,
+  .nav-file-title {
+    min-height: var(--rich-row-height);
+  }
+
+  .markdown-rendered table {
+    display: block;
+    overflow-x: auto;
+  }
+}
