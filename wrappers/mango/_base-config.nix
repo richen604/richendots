@@ -290,9 +290,9 @@ let
     tap_and_drag=1
     drag_lock=1
     trackpad_natural_scrolling=0
-    disable_while_typing=1
-    left_handed=0
-    middle_button_emulation=0
+    trackpad_disable_while_typing=1
+    trackpad_left_handed=0
+    trackpad_middle_button_emulation=0
     swipe_min_threshold=1
 
     # Mouse (need relogin to make it apply)
@@ -332,7 +332,7 @@ let
     layerrule=animation_type_open:none,layer_name:vicinae
     layerrule=animation_type_close:none,layer_name:vicinae
     # Layer rules for waybar
-    layerrule=noanim:1,noblur:1,layer_name:waybar
+    layerrule=noanim:1,layer_name:waybar
   '';
 
   keybinds = ''
