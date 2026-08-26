@@ -592,6 +592,17 @@ in
           };
           script = "${nixpullPackage}/bin/nixpull build";
         };
+
+        systemd.services."nixpull-webhook-delivery@" = lib.mkIf cfg.builder.fetchWebhook.enable {
+          description = "Deliver nixpull fetch webhook to %i";
+          serviceConfig = {
+            Type = "oneshot";
+            User = "root";
+            StateDirectory = "nixpull";
+            ExecStart = "${nixpullPackage}/bin/nixpull deliver-webhook %i";
+            TimeoutStartSec = "30s";
+          };
+        };
       })
 
       (lib.mkIf cfg.client.enable {

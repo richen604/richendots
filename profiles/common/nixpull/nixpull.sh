@@ -38,14 +38,13 @@ log_line() {
   printf '%s %s\n' "$(date --iso-8601=seconds)" "$*" >>"$file"
 }
 
-trigger_webhook() {
-  local host=$1 token_file token port retries timeout url attempt started duration_ms curl_args=() urls=() fallback_urls=()
+deliver_webhook() {
+  local host=$1 token_file token port retries timeout url attempt started duration_ms urls=() fallback_urls=()
   [ "$(jq -r '.build.fetchWebhook.enable' "$CONFIG")" = true ] || return 0
 
   token_file=$(jq -r '.build.fetchWebhook.tokenFile // empty' "$CONFIG")
   if [ -r "$token_file" ]; then
     token=$(tr -d '\r\n' <"$token_file")
-    curl_args=(-H "Authorization: Bearer $token")
   else
     log_line "$BUILDER_LOG" "webhook skipped host=$host reason=missing-token-file tokenFile=$token_file"
     return 0
@@ -63,7 +62,8 @@ trigger_webhook() {
     [ "$url" = "${urls[0]}" ] || attempt=$retries
     while [ "$attempt" -le "$retries" ]; do
       started=$(date +%s%3N)
-      if curl --fail --silent --show-error --location --max-time "$timeout" -X POST "${curl_args[@]}" "$url" >/dev/null; then
+      if printf 'header = "Authorization: Bearer %s"\n' "$token" \
+        | curl --config - --fail --silent --show-error --location --max-time "$timeout" -X POST "$url" >/dev/null; then
         duration_ms=$(($(date +%s%3N) - started))
         log_line "$BUILDER_LOG" "webhook success host=$host url=$url attempt=$attempt durationMs=$duration_ms"
         return 0
@@ -76,6 +76,16 @@ trigger_webhook() {
 
   log_line "$BUILDER_LOG" "webhook failure host=$host urls=${#urls[@]} delivery=polling-fallback"
   return 0
+}
+
+queue_webhook() {
+  local host=$1 unit
+  unit=$(systemd-escape --template=nixpull-webhook-delivery@.service "$host")
+  if systemctl start --no-block "$unit"; then
+    log_line "$BUILDER_LOG" "webhook queued host=$host unit=$unit"
+  else
+    log_line "$BUILDER_LOG" "webhook queue-failure host=$host unit=$unit delivery=polling-fallback"
+  fi
 }
 
 cleanup_build_workdir() {
@@ -339,7 +349,7 @@ cmd_build() {
   print_build_start "${#hosts[@]}" "$max_jobs"
   log_line "$BUILDER_LOG" "build start hosts=${hosts[*]} maxJobs=$max_jobs"
 
-  local host webhook_pid trigger_pids=()
+  local host
   if ! build_all_hosts "$build_flake" "$cores" "$max_jobs" "$workdir" "${hosts[@]}"; then
     failed=1
   fi
@@ -354,18 +364,13 @@ cmd_build() {
     if [ -f "$workdir/$host.json" ]; then
       successes=$((successes + 1))
       publish_host "$host" "$workdir/$host.json"
-      trigger_webhook "$host" &
-      trigger_pids+=("$!")
+      queue_webhook "$host"
     else
       failures=$((failures + 1))
       log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/build.log"
       print_build_failed "$host" >&2
       printf 'nixpull: build log retained at %s/logs/build.log\n' "$BUILDER_DIR" >&2
     fi
-  done
-
-  for webhook_pid in "${trigger_pids[@]}"; do
-    wait "$webhook_pid" || true
   done
 
   exec 8>"$BUILDER_DIR/state.lock"
@@ -715,6 +720,11 @@ case "${1:-}" in
   activate) shift; cmd_activate "$@" ;;
   status) shift; cmd_status "$@" ;;
   check) shift; cmd_check "$@" ;;
+  deliver-webhook)
+    shift
+    [ "$#" -eq 1 ] || { usage; exit 2; }
+    deliver_webhook "$1"
+    ;;
   -h|--help|help) usage ;;
   *) usage; exit 2 ;;
 esac
