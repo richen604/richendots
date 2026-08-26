@@ -39,12 +39,10 @@ log_line() {
 }
 
 trigger_webhook() {
-  local host=$1 webhook url token_file token curl_args=()
-  webhook=$(jq -c --arg host "$host" '.build.fetchWebhooks[$host] // empty' "$CONFIG")
-  [ -n "$webhook" ] || return 0
+  local host=$1 token_file token port retries timeout url attempt started duration_ms curl_args=() urls=() fallback_urls=()
+  [ "$(jq -r '.build.fetchWebhook.enable' "$CONFIG")" = true ] || return 0
 
-  url=$(jq -r '.url' <<<"$webhook")
-  token_file=$(jq -r '.tokenFile' <<<"$webhook")
+  token_file=$(jq -r '.build.fetchWebhook.tokenFile // empty' "$CONFIG")
   if [ -r "$token_file" ]; then
     token=$(tr -d '\r\n' <"$token_file")
     curl_args=(-H "Authorization: Bearer $token")
@@ -53,11 +51,31 @@ trigger_webhook() {
     return 0
   fi
 
-  if curl --fail --silent --show-error --location --max-time 10 -X POST "${curl_args[@]}" "$url" >/dev/null; then
-    log_line "$BUILDER_LOG" "webhook success host=$host url=$url"
-  else
-    log_line "$BUILDER_LOG" "webhook failure host=$host url=$url"
-  fi
+  port=$(jq -r '.build.fetchWebhook.port' "$CONFIG")
+  retries=$(jq -r '.build.fetchWebhook.retries' "$CONFIG")
+  timeout=$(jq -r '.build.fetchWebhook.attemptTimeoutSec' "$CONFIG")
+  urls+=("http://$host:$port/nixpull/fetch")
+  mapfile -t fallback_urls < <(jq -r --arg host "$host" '.build.fetchWebhook.fallbackUrls[$host][]? // empty' "$CONFIG")
+  urls+=("${fallback_urls[@]}")
+
+  for url in "${urls[@]}"; do
+    attempt=1
+    [ "$url" = "${urls[0]}" ] || attempt=$retries
+    while [ "$attempt" -le "$retries" ]; do
+      started=$(date +%s%3N)
+      if curl --fail --silent --show-error --location --max-time "$timeout" -X POST "${curl_args[@]}" "$url" >/dev/null; then
+        duration_ms=$(($(date +%s%3N) - started))
+        log_line "$BUILDER_LOG" "webhook success host=$host url=$url attempt=$attempt durationMs=$duration_ms"
+        return 0
+      fi
+      duration_ms=$(($(date +%s%3N) - started))
+      log_line "$BUILDER_LOG" "webhook attempt-failure host=$host url=$url attempt=$attempt durationMs=$duration_ms"
+      attempt=$((attempt + 1))
+    done
+  done
+
+  log_line "$BUILDER_LOG" "webhook failure host=$host urls=${#urls[@]} delivery=polling-fallback"
+  return 0
 }
 
 cleanup_build_workdir() {
@@ -174,6 +192,7 @@ build_all_hosts() {
   local flake=$1 cores=$2 max_jobs=$3 outdir=$4
   shift 4
   local hosts=("$@") log=$outdir/build.log tmp args=() rc output path host activatable toplevel signing_key generation
+  local started duration_ms metrics=$outdir/build.metrics sign_started sign_duration_ms
   tmp=$(mktemp)
 
   for host in "${hosts[@]}"; do
@@ -186,15 +205,16 @@ build_all_hosts() {
   fi
 
   : >"$log"
-  if gum_output_available && command -v nom >/dev/null 2>&1; then
+  started=$(date +%s%3N)
+  if nom_output_available; then
     args+=(--log-format internal-json -v)
-    if nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" | nom --json >&2); then
+    if env time -f 'elapsedSec=%e userSec=%U systemSec=%S maxRssKiB=%M' -o "$metrics" nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" | nom --json >&2); then
       rc=0
     else
       rc=$?
     fi
   else
-    if nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" >&2); then
+    if env time -f 'elapsedSec=%e userSec=%U systemSec=%S maxRssKiB=%M' -o "$metrics" nix build "${args[@]}" > >(tee "$tmp" | tee -a "$log") 2> >(tee -a "$log" >&2); then
       rc=0
     else
       rc=$?
@@ -203,6 +223,7 @@ build_all_hosts() {
 
   output=$(<"$tmp")
   rm -f "$tmp"
+  duration_ms=$(($(date +%s%3N) - started))
 
   signing_key=$(jq -r '.build.signingKeyFile // empty' "$CONFIG")
   for host in "${hosts[@]}"; do
@@ -221,7 +242,11 @@ build_all_hosts() {
           printf 'nixpull: signing key is not readable: %s\n' "$signing_key" >&2
           return 1
         fi
+        sign_started=$(date +%s%3N)
         nix store sign --key-file "$signing_key" --recursive "$activatable" "$toplevel"
+        sign_duration_ms=$(($(date +%s%3N) - sign_started))
+      else
+        sign_duration_ms=0
       fi
       generation=$(date +%s)
       jq -n \
@@ -230,12 +255,31 @@ build_all_hosts() {
         --arg activatablePath "$activatable" \
         --arg toplevelPath "$toplevel" \
         --arg builtAt "$(date --iso-8601=seconds)" \
+        --argjson buildDurationMs "$duration_ms" \
+        --argjson signingDurationMs "$sign_duration_ms" \
         --slurpfile source "$outdir/source.json" \
-        '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt} + $source[0]' >"$outdir/$host.json"
+        '{host: $host, generation: ($generation | tonumber), activatablePath: $activatablePath, toplevelPath: $toplevelPath, builtAt: $builtAt, metrics: {buildDurationMs: $buildDurationMs, signingDurationMs: $signingDurationMs}} + $source[0]' >"$outdir/$host.json"
+      log_line "$BUILDER_LOG" "build metrics host=$host batchDurationMs=$duration_ms signingMs=$sign_duration_ms $(cat "$metrics" 2>/dev/null || true)"
     fi
   done
 
   return "$rc"
+}
+
+publish_host() {
+  local host=$1 meta_file=$2 state meta activatable publish_started duration_ms
+  meta=$(cat "$meta_file")
+  activatable=$(jq -r '.activatablePath' <<<"$meta")
+  publish_started=$(date +%s%3N)
+  root_published_profile "$host" "$activatable"
+  exec 8>"$BUILDER_DIR/state.lock"
+  flock 8
+  state=$(cat "$BUILDER_STATE")
+  jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$state" | atomic_write "$BUILDER_STATE"
+  flock -u 8
+  duration_ms=$(($(date +%s%3N) - publish_started))
+  log_line "$BUILDER_LOG" "build success host=$host activatablePath=$activatable publishMs=$duration_ms"
+  print_build_published "$host"
 }
 
 build_flake_ref() {
@@ -295,6 +339,7 @@ cmd_build() {
   print_build_start "${#hosts[@]}" "$max_jobs"
   log_line "$BUILDER_LOG" "build start hosts=${hosts[*]} maxJobs=$max_jobs"
 
+  local host webhook_pid trigger_pids=()
   if ! build_all_hosts "$build_flake" "$cores" "$max_jobs" "$workdir" "${hosts[@]}"; then
     failed=1
   fi
@@ -305,18 +350,12 @@ cmd_build() {
     return 1
   fi
 
-  local state new_state meta trigger_hosts=()
-  state=$(cat "$BUILDER_STATE")
-  new_state=$state
   for host in "${hosts[@]}"; do
     if [ -f "$workdir/$host.json" ]; then
       successes=$((successes + 1))
-      meta=$(cat "$workdir/$host.json")
-      root_published_profile "$host" "$(jq -r '.activatablePath' <<<"$meta")"
-      new_state=$(jq --arg host "$host" --argjson meta "$meta" '.published[$host] = $meta' <<<"$new_state")
-      log_line "$BUILDER_LOG" "build success host=$host activatablePath=$(jq -r '.activatablePath' "$workdir/$host.json")"
-      print_build_published "$host"
-      trigger_hosts+=("$host")
+      publish_host "$host" "$workdir/$host.json"
+      trigger_webhook "$host" &
+      trigger_pids+=("$!")
     else
       failures=$((failures + 1))
       log_line "$BUILDER_LOG" "build failure host=$host log=$workdir/build.log"
@@ -325,29 +364,35 @@ cmd_build() {
     fi
   done
 
-  jq \
-    --arg builtAt "$(date --iso-8601=seconds)" \
-    --argjson successes "$successes" \
-    --argjson failures "$failures" \
-    '.lastBuild = {builtAt: $builtAt, successes: $successes, failures: $failures}' \
-    <<<"$new_state" | atomic_write "$BUILDER_STATE"
-
-  for host in "${trigger_hosts[@]}"; do
-    trigger_webhook "$host"
+  for webhook_pid in "${trigger_pids[@]}"; do
+    wait "$webhook_pid" || true
   done
+
+  exec 8>"$BUILDER_DIR/state.lock"
+  flock 8
+  jq \
+      --arg builtAt "$(date --iso-8601=seconds)" \
+      --argjson successes "$successes" \
+      --argjson failures "$failures" \
+      '.lastBuild = {builtAt: $builtAt, successes: $successes, failures: $failures}' \
+      "$BUILDER_STATE" | atomic_write "$BUILDER_STATE"
+  flock -u 8
 
   log_line "$BUILDER_LOG" "build complete successes=$successes failures=$failures"
   [ "$failures" -eq 0 ]
 }
 
 fetch_metadata() {
-  local host=$1 remote_state metadata metadata_url
+  local host=$1 remote_state metadata metadata_url started duration_ms
   metadata_url=$(jq -r '.server.metadataUrl' "$CONFIG")
+  started=$(date +%s%3N)
   if ! remote_state=$(curl --fail --silent --show-error --location --connect-timeout 10 "$metadata_url"); then
     printf 'nixpull: metadata URL unreachable; skipping fetch: %s\n' "$metadata_url" >&2
     log_line "$CLIENT_LOG" "fetch skip server-unreachable"
     return 75
   fi
+  duration_ms=$(($(date +%s%3N) - started))
+  log_line "$CLIENT_LOG" "metadata success host=$host durationMs=$duration_ms bytes=${#remote_state}"
   metadata=$(jq -e --arg host "$host" '.published[$host]' <<<"$remote_state") || {
     printf 'nixpull: no published build for %s\n' "$host" >&2
     return 1
@@ -356,7 +401,7 @@ fetch_metadata() {
 }
 
 fetch_closure() {
-  local host=$1 metadata=$2 activatable current_fetched substituter
+  local host=$1 metadata=$2 activatable current_fetched substituter started duration_ms closure_bytes
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   current_fetched=$(jq -r '.fetched.activatablePath // empty' "$CLIENT_STATE")
   if [ "$current_fetched" = "$activatable" ] && [ -x "$activatable/activate-rs" ]; then
@@ -364,13 +409,16 @@ fetch_closure() {
     log_line "$CLIENT_LOG" "fetch noop host=$host activatablePath=$activatable"
   else
     substituter=$(jq -r '.server.substituterUrl' "$CONFIG")
+    started=$(date +%s%3N)
     nix copy --from "$substituter" "$activatable"
+    duration_ms=$(($(date +%s%3N) - started))
+    closure_bytes=$(nix path-info --json --json-format 1 --closure-size "$activatable" 2>/dev/null | jq -r 'to_entries[0].value.closureSize // 0' 2>/dev/null || printf 0)
     if [ ! -x "$activatable/activate-rs" ]; then
       printf 'nixpull: fetched path is missing executable activate-rs: %s\n' "$activatable" >&2
       log_line "$CLIENT_LOG" "fetch failure missing-activate-rs host=$host activatablePath=$activatable"
       return 1
     fi
-    log_line "$CLIENT_LOG" "fetch success host=$host activatablePath=$activatable"
+    log_line "$CLIENT_LOG" "fetch success host=$host activatablePath=$activatable durationMs=$duration_ms closureBytes=$closure_bytes"
     print_nixpull_event "fetched" "$activatable"
   fi
 
@@ -468,7 +516,7 @@ activate_latest() {
 cmd_activate() {
   ensure_client_state
 
-  local host metadata result
+  local host metadata result started duration_ms
   host=$(hostname_short)
   metadata=$(jq -e '.fetched' "$CLIENT_STATE") || {
     printf 'nixpull: no fetched profile to activate\n' >&2
@@ -476,7 +524,9 @@ cmd_activate() {
   }
 
   print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
+  started=$(date +%s%3N)
   if activate_latest "$metadata"; then
+    duration_ms=$(($(date +%s%3N) - started))
     result=$(jq -n \
       --arg status success \
       --arg at "$(date --iso-8601=seconds)" \
@@ -484,10 +534,11 @@ cmd_activate() {
       --arg toplevelPath "$(jq -r '.toplevelPath' <<<"$metadata")" \
       '{status: $status, at: $at, activatablePath: $activatablePath, toplevelPath: $toplevelPath}')
     jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
-    log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
+    log_line "$CLIENT_LOG" "pull success host=$host activatablePath=$(jq -r '.activatablePath' <<<"$metadata") activationMs=$duration_ms"
     print_nixpull_event "activated" "$(jq -r '.activatablePath' <<<"$metadata")"
   else
     local rc=$?
+    duration_ms=$(($(date +%s%3N) - started))
     result=$(jq -n \
       --arg status failure \
       --arg at "$(date --iso-8601=seconds)" \
@@ -496,7 +547,7 @@ cmd_activate() {
       --arg toplevelPath "$(jq -r '.toplevelPath' <<<"$metadata")" \
       '{status: $status, at: $at, exitCode: $exitCode, activatablePath: $activatablePath, toplevelPath: $toplevelPath}')
     jq --argjson result "$result" '.lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
-    log_line "$CLIENT_LOG" "pull failure host=$host rc=$rc activatablePath=$(jq -r '.activatablePath' <<<"$metadata")"
+    log_line "$CLIENT_LOG" "pull failure host=$host rc=$rc activatablePath=$(jq -r '.activatablePath' <<<"$metadata") activationMs=$duration_ms"
     return "$rc"
   fi
 }
@@ -589,6 +640,10 @@ shorten_output_path() {
 
 gum_output_available() {
   command -v gum >/dev/null 2>&1 && [ -t 1 ]
+}
+
+nom_output_available() {
+  command -v nom >/dev/null 2>&1 && [ -t 2 ]
 }
 
 print_nixpull_event() {

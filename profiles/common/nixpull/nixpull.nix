@@ -21,7 +21,7 @@ let
         maxJobs = cfg.builder.maxJobs;
         cores = cfg.builder.cores;
         publishPartial = cfg.builder.publishPartial;
-        fetchWebhooks = cfg.builder.fetchWebhooks;
+        fetchWebhook = cfg.builder.fetchWebhook;
         signingKeyFile = cfg.builder.signingKeyFile;
       };
       inherit (cfg) server;
@@ -51,6 +51,7 @@ let
       gum
       openssh
       systemd
+      time
     ];
     runtimeEnv.NIXPULL_CONFIG = configFile;
     runtimeEnv.NIXPULL_HOSTNAME = "${pkgs.hostname}/bin/hostname";
@@ -309,7 +310,7 @@ in
       maxJobs = lib.mkOption {
         type = lib.types.ints.positive;
         default = 1;
-        description = "Maximum concurrent host profile builds launched by nixpull.";
+        description = "Maximum concurrent Nix derivations allowed in each host build.";
       };
 
       cores = lib.mkOption {
@@ -330,25 +331,43 @@ in
         description = "Secret Nix signing key used to sign built profiles before publishing.";
       };
 
-      fetchWebhooks = lib.mkOption {
-        type = lib.types.attrsOf (
-          lib.types.submodule {
-            options = {
-              url = lib.mkOption {
-                type = lib.types.str;
-                example = "http://fern:5051/nixpull/fetch";
-                description = "Webhook URL called after this host's build is published.";
-              };
+      fetchWebhook = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Notify each host over its conventional fetch webhook after publication.";
+        };
 
-              tokenFile = lib.mkOption {
-                type = lib.types.str;
-                description = "File containing the bearer token for this host's webhook.";
-              };
-            };
-          }
-        );
-        default = { };
-        description = "Per-host client fetch webhooks called immediately after publishing.";
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 5051;
+          description = "Port used to derive conventional per-host webhook URLs.";
+        };
+
+        tokenFile = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Shared bearer-token file used to authenticate client fetch webhooks.";
+        };
+
+        fallbackUrls = lib.mkOption {
+          type = lib.types.attrsOf (lib.types.listOf lib.types.str);
+          default = { };
+          example.fern = [ "http://100.64.0.2:5051/nixpull/fetch" ];
+          description = "Optional ordered fallback webhook URLs keyed by host; the conventional LAN hostname is always tried first.";
+        };
+
+        retries = lib.mkOption {
+          type = lib.types.ints.positive;
+          default = 2;
+          description = "Attempts made against the conventional LAN webhook URL before trying fallbacks.";
+        };
+
+        attemptTimeoutSec = lib.mkOption {
+          type = lib.types.ints.positive;
+          default = 4;
+          description = "Maximum duration of each webhook delivery attempt.";
+        };
       };
 
       interval = lib.mkOption {
@@ -413,7 +432,11 @@ in
       };
 
       webhook = {
-        enable = lib.mkEnableOption "a socket-activated webhook that starts nixpull-fetch.service";
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable a socket-activated webhook that starts nixpull-fetch.service.";
+        };
 
         port = lib.mkOption {
           type = lib.types.port;
@@ -427,10 +450,11 @@ in
           description = "File containing the bearer token accepted by the client fetch webhook.";
         };
 
-        openFirewallOnTailscale = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Open the fetch webhook port only on the tailscale0 firewall interface.";
+        firewallInterfaces = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          example = [ "eno1" ];
+          description = "Network interfaces on which the fetch webhook port is opened, typically LAN interfaces.";
         };
       };
     };
@@ -502,6 +526,13 @@ in
           {
             assertion = !cfg.fetch.webhook.enable || cfg.fetch.webhook.tokenFile != null;
             message = "services.nixpull.fetch.webhook.tokenFile must be set when the webhook is enabled";
+          }
+          {
+            assertion =
+              !cfg.builder.enable
+              || !cfg.builder.fetchWebhook.enable
+              || cfg.builder.fetchWebhook.tokenFile != null;
+            message = "services.nixpull.builder.fetchWebhook.tokenFile must be set when builder webhooks are enabled";
           }
         ];
 
@@ -635,9 +666,11 @@ in
           };
         };
 
-        networking.firewall.interfaces.tailscale0.allowedTCPPorts = lib.mkIf (
-          cfg.fetch.webhook.enable && cfg.fetch.webhook.openFirewallOnTailscale
-        ) [ cfg.fetch.webhook.port ];
+        networking.firewall.interfaces = lib.mkIf cfg.fetch.webhook.enable (
+          lib.genAttrs cfg.fetch.webhook.firewallInterfaces (_: {
+            allowedTCPPorts = [ cfg.fetch.webhook.port ];
+          })
+        );
 
         systemd.user.paths.nixpull-notify = lib.mkIf cfg.notify.enable {
           wantedBy = [ "default.target" ];
