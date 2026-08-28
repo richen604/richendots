@@ -23,6 +23,25 @@ let
     "/run/current-system/sw/bin"
   ];
 
+  equibopWithPinnedEquicord = pkgs.writeShellScriptBin "equibop-with-pinned-equicord" ''
+    set -eu
+
+    config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/equibop"
+    state_file="$config_dir/state.json"
+    install -d "$config_dir"
+
+    if [ -s "$state_file" ]; then
+      state="$(${pkgs.jq}/bin/jq --arg dir "${richenLib.wrappers.equicord}" '.equicordDir = $dir' "$state_file")"
+    else
+      state="$(${pkgs.jq}/bin/jq -n --arg dir "${richenLib.wrappers.equicord}" '{ equicordDir: $dir }')"
+    fi
+
+    printf '%s\n' "$state" > "$state_file.tmp"
+    mv "$state_file.tmp" "$state_file"
+
+    exec ${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland "$@"
+  '';
+
   mangoStartSession = pkgs.writeShellScriptBin "mango-start-session" ''
     ${pkgs.systemd}/bin/systemctl --user import-environment \
       WAYLAND_DISPLAY \
@@ -196,7 +215,7 @@ in
     equibop = lib.recursiveUpdate partOfGraphicalSession {
       description = "Equibop chat client";
       serviceConfig = {
-        ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
+        ExecStart = "${equibopWithPinnedEquicord}/bin/equibop-with-pinned-equicord";
         Environment = [
           "PATH=${sessionPath}"
           "LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}"

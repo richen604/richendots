@@ -71,6 +71,23 @@
         "type": "github"
       }
     },
+    "equicord-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787767513,
+        "narHash": "sha256-FIImjr0ytJUENuZDtHQlnFqt2WJXbETCfMKPdeuWNdQ=",
+        "owner": "Equicord",
+        "repo": "Equicord",
+        "rev": "66b106302422b028517dbfe739b26f246acb97dd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Equicord",
+        "repo": "Equicord",
+        "rev": "66b106302422b028517dbfe739b26f246acb97dd",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -241,6 +258,7 @@
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
+        "equicord-src": "equicord-src",
         "glorious-engrammer": "glorious-engrammer",
         "glove80-zmk": "glove80-zmk",
         "hjem": "hjem",

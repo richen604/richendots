@@ -31,6 +31,10 @@
       url = "git+https://github.com/moergo-sc/zmk.git?ref=refs/pull/36/head";
       flake = false;
     };
+    equicord-src = {
+      url = "github:Equicord/Equicord/66b106302422b028517dbfe739b26f246acb97dd";
+      flake = false;
+    };
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
