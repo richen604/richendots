@@ -4,6 +4,15 @@
   ...
 }:
 let
+  wayfreeze = pkgs.wayfreeze.overrideAttrs (_: {
+    version = "unstable-2026-08-23";
+    src = pkgs.fetchFromGitHub {
+      owner = "Jappie3";
+      repo = "wayfreeze";
+      rev = "dfdafe6733b2e935f9d5d9d06100d0c6edde7bab";
+      hash = "sha256-dntoIlmmDaG2ZuAP/CTpE51odfmZMbVtDygIOW/iXJ4=";
+    };
+  });
   chooseMonitor = placeholder: ''
     mmsg get all-monitors \
       | ${pkgs.jq}/bin/jq -r '.monitors[] | [.name, ((.width | tostring) + "x" + (.height | tostring) + "+" + (.x | tostring) + "+" + (.y | tostring))] | @tsv' \
@@ -151,22 +160,70 @@ let
     }
 
     with_frozen_screen() {
-      local freeze_pid command_status
+      local freeze_pid ready_dir ready_file command_status
 
-      ${pkgs.hyprpicker}/bin/hyprpicker -r -z >/dev/null 2>&1 &
+      ready_dir="$(${pkgs.coreutils}/bin/mktemp -d)"
+      ready_file="$ready_dir/ready"
+
+      cleanup_freeze() {
+        ${pkgs.coreutils}/bin/kill -KILL "$freeze_pid" 2>/dev/null || true
+        wait "$freeze_pid" 2>/dev/null || true
+        ${pkgs.coreutils}/bin/rm -rf "$ready_dir"
+      }
+      trap cleanup_freeze EXIT
+
+      ${wayfreeze}/bin/wayfreeze \
+        --enable-keyboard \
+        --after-freeze-timeout 100 \
+        --after-freeze-cmd "${pkgs.coreutils}/bin/touch $ready_file" \
+        >/dev/null 2>&1 &
       freeze_pid=$!
-      sleep 0.2
+
+      while [ ! -e "$ready_file" ]; do
+        ${pkgs.coreutils}/bin/kill -0 "$freeze_pid" 2>/dev/null || return 1
+        sleep 0.01
+      done
 
       set +e
       "$@"
       command_status=$?
       set -e
 
-      ${pkgs.procps}/bin/pkill -P "$freeze_pid" 2>/dev/null || true
-      ${pkgs.coreutils}/bin/kill "$freeze_pid" 2>/dev/null || true
-      wait "$freeze_pid" 2>/dev/null || true
-
+      cleanup_freeze
+      trap - EXIT
       return "$command_status"
+    }
+
+    capture_selection() {
+      local geom
+      geom="$(${pkgs.slurp}/bin/slurp -f '%x,%y %wx%h')" || return 1
+      [ -n "$geom" ] || return 1
+      ${pkgs.grim}/bin/grim -g "$geom" -t png "$capture_file"
+    }
+
+    capture_monitor() {
+      ${pkgs.grim}/bin/grim -o "$selected_monitor" -t png "$capture_file"
+    }
+
+    capture_window() {
+      ${pkgs.grim}/bin/grim -T "$selected_toplevel_id" -t png "$capture_file"
+    }
+
+    capture_and_open() {
+      local capture_file satty_status
+
+      capture_file="$(${pkgs.coreutils}/bin/mktemp --suffix=.png)"
+      with_frozen_screen "$@" || {
+        ${pkgs.coreutils}/bin/rm -f "$capture_file"
+        return 1
+      }
+
+      set +e
+      open_satty --initial-tool brush < "$capture_file"
+      satty_status=$?
+      set -e
+      ${pkgs.coreutils}/bin/rm -f "$capture_file"
+      return "$satty_status"
     }
 
     ${pkgs.coreutils}/bin/mkdir -p "$SCREENSHOTS_DIR"
@@ -175,21 +232,19 @@ let
 
     case "$choice" in
       "Selection")
-        geom="$(with_frozen_screen ${pkgs.slurp}/bin/slurp -f '%x,%y %wx%h')" || exit 0
-        [ -n "$geom" ] || exit 0
-        ${pkgs.grim}/bin/grim -g "$geom" -t png - | open_satty --initial-tool brush
+        capture_and_open capture_selection || exit 0
         ;;
       "Monitor")
-        monitor="$(with_frozen_screen choose_monitor)"
-        [ -n "$monitor" ] || exit 0
-        ${pkgs.grim}/bin/grim -o "$monitor" -t png - | open_satty --initial-tool brush
+        selected_monitor="$(choose_monitor)" || exit 0
+        [ -n "$selected_monitor" ] || exit 0
+        capture_and_open capture_monitor || exit 0
         ;;
       "Window/app")
-        client_id="$(with_frozen_screen choose_window_id)"
-        [ -n "$client_id" ] || exit 0
-        toplevel_id="$(client_toplevel_id "$client_id")"
-        [ -n "$toplevel_id" ] || exit 0
-        ${pkgs.grim}/bin/grim -T "$toplevel_id" -t png - | open_satty --initial-tool brush
+        selected_client_id="$(choose_window_id)" || exit 0
+        [ -n "$selected_client_id" ] || exit 0
+        selected_toplevel_id="$(client_toplevel_id "$selected_client_id")"
+        [ -n "$selected_toplevel_id" ] || exit 0
+        capture_and_open capture_window || exit 0
         ;;
       *)
         exit 0
@@ -310,7 +365,7 @@ let
     focus_cross_monitor=1
     focus_cross_tag=0
     allow_shortcuts_inhibit=1
-    enable_floating_snap=0
+    enable_floating_snap=1
     snap_distance=30
     cursor_size=24
     drag_tile_to_tile=1
@@ -321,6 +376,7 @@ let
   '';
 
   windowRules = ''
+    windowrule=isfloating:1,isoverlay:1,isglobal:1,isopensilent:1,width:0.25,height:0.25,offsetx:100,offsety:100,appid:^glide-glide$,title:^Picture-in-Picture$
     windowrule=isfloating:1,isoverlay:1,width:0.62,height:0.62,appid:nixpull
     windowrule=isfloating:1,isoverlay:1,appid:satty
     windowrule=isfloating:1,isoverlay:1,width:0.50,height:0.68,appid:keepassxc
