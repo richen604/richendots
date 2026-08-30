@@ -68,3 +68,21 @@ nix run .#glove80
 ```
 
 zmk cannot tell us which firmware version is already installed.
+
+## flash Fern from Cedar
+
+Run the Fern-only recovery workflow from Cedar when the Glove80 is unavailable
+as an input device:
+
+```sh
+nix run .#glove80-flash-fern
+```
+
+The command refuses to run outside Cedar, hardcodes Fern as its SSH target,
+builds on Fern, and only mounts uniquely detected `vfat` volumes labelled
+`GLV80RHBOOT` or `GLV80LHBOOT`. Fern sudo authentication uses Cedar's forwarded
+SSH agent. A read-only build and connectivity check is also available:
+
+```sh
+nix run .#glove80-flash-fern -- --check
+```
