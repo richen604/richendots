@@ -1,6 +1,17 @@
-{ pkgs, richenLib, ... }:
+{
+  inputs,
+  pkgs,
+  richenLib,
+  ...
+}:
 let
-  version = "0.1.63a";
+  applicationIni = builtins.readFile (inputs.glide + "/application.ini");
+  versionLines = builtins.filter (pkgs.lib.hasPrefix "Version=") (
+    pkgs.lib.splitString "\n" applicationIni
+  );
+  version =
+    assert builtins.length versionLines == 1;
+    pkgs.lib.removePrefix "Version=" (builtins.head versionLines);
   runtimeSubdir = "lib/glide-browser-${version}";
   pwaRuntimeSubdir = "lib/glide-pwa-runtime-${version}";
   policies = import ./_policies.nix { inherit richenLib; };
@@ -109,12 +120,8 @@ pkgs.stdenv.mkDerivation {
   pname = "glide-browser";
   inherit version;
 
-  src = pkgs.fetchurl {
-    url = "https://github.com/glide-browser/glide/releases/download/${version}/glide.linux-x86_64.tar.xz";
-    hash = "sha256-idHArAa57FADdmhCI/5vK47SEd0dlz0diH4DRDmKDmE=";
-  };
-
-  sourceRoot = "glide";
+  src = inputs.glide;
+  sourceRoot = "source";
 
   nativeBuildInputs = [
     pkgs.autoPatchelfHook
@@ -142,9 +149,7 @@ pkgs.stdenv.mkDerivation {
     pkgs.vulkan-loader
   ];
 
-  appendRunpaths = [
-    "${pkgs.pipewire}/lib"
-  ];
+  appendRunpaths = [ "${pkgs.pipewire}/lib" ];
   patchelfFlags = [ "--no-clobber-old-sections" ];
 
   installPhase = ''
@@ -155,6 +160,9 @@ pkgs.stdenv.mkDerivation {
 
         mkdir -p "$glide_runtime" $out/bin $out/share/firefoxpwa
         cp -r . "$glide_runtime"
+        # Keep the locked release input in the closure so Cedar can substitute it
+        # even after GitHub's mutable `latest` redirect advances.
+        ln -s ${inputs.glide} $out/share/glide-release-source
         mv "$glide_runtime/glide" "$glide_runtime/glide-unwrapped"
         ln -s "$glide_runtime/glide-unwrapped" "$glide_runtime/firefox"
         ln -s "$glide_runtime/glide-unwrapped" $out/bin/glide-unwrapped

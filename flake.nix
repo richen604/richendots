@@ -23,6 +23,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    glide = {
+      url = "https://github.com/glide-browser/glide/releases/latest/download/glide.linux-x86_64.tar.xz";
+      flake = false;
+    };
     glorious-engrammer = {
       url = "github:sunaku/glove80-keymaps";
       flake = false;
@@ -42,8 +46,7 @@
     richendots-private = {
       #url = "git+ssh://git@github.com/richen604/richendots-private.git?ref=main";
       url = "path:/mnt/dev/richendots-private";
-      inputs.nixarr.inputs.nixpkgs.follows = "nixpkgs";
-      inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     mango = {
       url = "github:mangowm/mango/wl-only";
