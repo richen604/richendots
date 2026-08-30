@@ -6,6 +6,7 @@
     loader.efi.canTouchEfiVariables = false;
     loader.grub = {
       enable = true;
+      configurationLimit = 3;
       device = "nodev";
       efiSupport = true;
       efiInstallAsRemovable = true;
