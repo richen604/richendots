@@ -11,6 +11,12 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 
 | position | binding |
 | --- | --- |
+| `lh c5r1` | `&kvm_pc1` |
+| `lh c4r1` | `&kvm_pc2` |
+| `rh c2r1` | `&kvm_monitor1` |
+| `rh c3r1` | `&kvm_monitor2` |
+| `rh c4r1` | `&kvm_monitor3` |
+| `rh c5r1` | `&kvm_keyboard_mouse` |
 | `lh c5r2` | `&kp N1` |
 | `lh c4r2` | `&kp N2` |
 | `lh c3r2` | `&kp N3` |

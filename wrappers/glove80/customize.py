@@ -9,6 +9,85 @@ from pathlib import Path
 DEFINE_MARKER = "/* Automatically generated layer name defines */"
 KEYMAP_MARKER = "/* Automatically generated keymap */"
 CUSTOM_MARKER = "/* Custom Defined Behaviors */"
+KVM_MARKER = "/* Richendots TESmart KVM macros */"
+
+KVM_MACROS = f"""{KVM_MARKER}
+/ {{
+    macros {{
+        kvm_pc1: kvm_pc1 {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp N1>;
+        }};
+        kvm_pc2: kvm_pc2 {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp N2>;
+        }};
+        kvm_monitor1: kvm_monitor1 {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp LEFT>;
+        }};
+        kvm_monitor2: kvm_monitor2 {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp DOWN>;
+        }};
+        kvm_monitor3: kvm_monitor3 {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp INSERT>,
+                       <&macro_tap &kp RIGHT>;
+        }};
+        kvm_keyboard_mouse: kvm_keyboard_mouse {{
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <100>;
+            tap-ms = <40>;
+            bindings = <&macro_tap &kp RALT>,
+                       <&macro_tap &kp RALT>;
+        }};
+    }};
+}};
+"""
+
+KVM_BASE_BINDINGS = {
+    1: "&kvm_pc1",
+    2: "&kvm_pc2",
+    5: "&kvm_monitor1",
+    6: "&kvm_monitor2",
+    7: "&kvm_monitor3",
+    8: "&kvm_keyboard_mouse",
+}
+
+KVM_BASE_COLORS = {
+    1: "GRN",
+    2: "BLU",
+    5: "ORN",
+    6: "ORN",
+    7: "ORN",
+    8: "MAJ",
+}
 
 
 def layer_blocks(text: str) -> list[tuple[str, int, int]]:
@@ -54,6 +133,93 @@ def layer_definitions(text: str) -> tuple[int, int, list[tuple[str, int]]]:
     if not definitions:
         raise ValueError("no generated layer definitions found")
     return start, end, definitions
+
+
+def add_kvm_macros(text: str) -> str:
+    if KVM_MARKER in text:
+        return text
+    keymap_start = text.index(KEYMAP_MARKER)
+    return text[:keymap_start] + KVM_MACROS + "\n" + text[keymap_start:]
+
+
+def add_kvm_bindings(text: str, primary_layer: str) -> str:
+    block = next(
+        (entry for entry in layer_blocks(text) if entry[0] == primary_layer),
+        None,
+    )
+    if block is None:
+        raise ValueError(f"cannot add KVM bindings to missing layer: {primary_layer}")
+
+    _, start, end = block
+    layer = text[start:end]
+    bindings = re.search(
+        r"bindings = <\n(?P<rows>.*?)\n\s+>;",
+        layer,
+        re.MULTILINE | re.DOTALL,
+    )
+    if bindings is None:
+        raise ValueError(f"layer has no bindings block: {primary_layer}")
+
+    rows = bindings.group("rows").splitlines()
+    nonempty_rows = [index for index, row in enumerate(rows) if row.strip()]
+    if len(nonempty_rows) != 6:
+        raise ValueError(f"layer does not have six physical rows: {primary_layer}")
+
+    first_index = nonempty_rows[0]
+    first_row = rows[first_index]
+    row_bindings = re.split(r"\s{2,}", first_row.strip())
+    if len(row_bindings) != 10:
+        raise ValueError("base top row does not have ten bindings")
+
+    for index, desired in KVM_BASE_BINDINGS.items():
+        if row_bindings[index] not in {"&none", desired}:
+            raise ValueError(
+                f"refusing to replace occupied KVM key {index}: {row_bindings[index]}"
+            )
+        row_bindings[index] = desired
+
+    indentation = first_row[: len(first_row) - len(first_row.lstrip())]
+    rows[first_index] = indentation + "  ".join(row_bindings)
+    replacement = "\n".join(rows)
+    layer = layer[: bindings.start("rows")] + replacement + layer[bindings.end("rows") :]
+    return text[:start] + layer + text[end:]
+
+
+def add_kvm_colors(text: str) -> str:
+    start = text.index("      BaseLayer {")
+    end = text.index("      };", start) + len("      };")
+    block = text[start:end]
+    bindings = re.search(
+        r"bindings = <\n(?P<rows>.*?)\n\s+>;",
+        block,
+        re.MULTILINE | re.DOTALL,
+    )
+    if bindings is None:
+        raise ValueError("base RGB layer has no bindings block")
+
+    rows = bindings.group("rows").splitlines()
+    nonempty_rows = [index for index, row in enumerate(rows) if row.strip()]
+    if len(nonempty_rows) != 6:
+        raise ValueError("base RGB layer does not have six physical rows")
+
+    first_index = nonempty_rows[0]
+    first_row = rows[first_index]
+    colors = re.split(r"\s+", first_row.strip())
+    if len(colors) != 10:
+        raise ValueError("base RGB top row does not have ten colors")
+
+    for index, desired in KVM_BASE_COLORS.items():
+        if colors[index] not in {"___", desired}:
+            raise ValueError(
+                f"refusing to replace occupied KVM color {index}: {colors[index]}"
+            )
+        colors[index] = desired
+
+    indentation = first_row[: len(first_row) - len(first_row.lstrip())]
+    rows[first_index] = indentation + " ".join(colors)
+    replacement = "\n".join(rows)
+    block = block[: bindings.start("rows")] + replacement + block[bindings.end("rows") :]
+    return text[:start] + block + text[end:]
 
 
 def customize(text: str, primary_layer: str, operating_system: str) -> str:
@@ -103,6 +269,9 @@ def customize(text: str, primary_layer: str, operating_system: str) -> str:
         f"#define LAYER_{name} {number}" for number, name in enumerate(reordered_names)
     )
     text = text[:define_start] + regenerated + text[define_end:]
+    text = add_kvm_macros(text)
+    text = add_kvm_bindings(text, primary_layer)
+    text = add_kvm_colors(text)
 
     final_definitions = layer_definitions(text)[2]
     final_blocks = layer_blocks(text)
