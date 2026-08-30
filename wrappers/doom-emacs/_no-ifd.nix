@@ -74,6 +74,7 @@ let
   inherit (import (unstraightenedSource + "/fetch-overrides.nix")) extraFiles extraPins extraUrls;
 
   nonEmptyProfileName = if profileName != "" then profileName else "nix";
+  ourModule = unstraightenedSource + "/doom-module";
 
   generatedPackageRequires = {
     evil-quick-diff = [ "evil" ];
@@ -464,11 +465,13 @@ let
   doomProfile = stdenvNoCC.mkDerivation {
     name = "doom-profile";
     buildCommandPath = unstraightenedSource + "/build-helpers/build-doom-profile.sh";
+    __structuredAttrs = true;
 
     inherit
       doomIntermediates
       doomModules
       doomSource
+      ourModule
       runtimeShell
       ;
     doomDir = doomDir';
@@ -476,12 +479,12 @@ let
     noProfileHack = profileName == "";
     buildProfileLoader = unstraightenedSource + "/build-helpers/build-profile-loader";
     buildProfile = unstraightenedSource + "/build-helpers/build-profile";
-    ourModule = unstraightenedSource + "/doom-module";
-    initEl = unstraightenedSource + "/init.el";
-    EMACS = lib.getExe emacsWithPackages;
     inherit (emacsWithPackages) deps;
-    # Enable this to troubleshoot failures at this step.
-    #DEBUG = "1";
+    env = {
+      EMACS = lib.getExe emacsWithPackages;
+      # Enable this to troubleshoot failures at this step.
+      #DEBUG = "1";
+    };
 
     # Required to avoid Doom erroring out at startup.
     nativeBuildInputs = [ git ];
@@ -495,19 +498,53 @@ let
   # makeBinaryWrapper pulls in a compiler, so don't force this one local.
   doomEmacs = stdenv.mkDerivation {
     name = "doom-emacs";
-    buildCommandPath = unstraightenedSource + "/build-helpers/build-doom-emacs.sh";
+    __structuredAttrs = true;
 
-    extraBinPackagesPath = lib.makeBinPath extraBinPackages;
+    passthru = {
+      inherit emacsWithPackages doomProfile;
+    };
 
-    # emacsWithPackages also accessed externally (for pushing to Cachix).
-    inherit
-      doomProfile
-      doomLocalDir
-      doomSource
-      emacsWithPackages
-      lspUsePlists
-      ;
-    profileName = nonEmptyProfileName;
+    inherit doomSource;
+    emacs = lib.getExe emacsWithPackages;
+    makeWrapperArgs =
+      let
+        extraBinPackagesPath = lib.makeBinPath extraBinPackages;
+      in
+      [
+        "--set"
+        "DOOMPROFILELOADFILE"
+        "${doomProfile}/loader/init"
+        "--set"
+        "DOOMPROFILE"
+        nonEmptyProfileName
+        "--set-default"
+        "DOOMLOCALDIR"
+        doomLocalDir
+        "--set"
+        "DOOMDIR"
+        "${doomProfile}/doomdir"
+        "--suffix"
+        "PATH"
+        ":"
+        extraBinPackagesPath
+      ]
+      ++ lib.optionals lspUsePlists [
+        "--set"
+        "LSP_USE_PLISTS"
+        "1"
+      ];
+
+    buildCommand = ''
+      makeWrapper $emacs $out/bin/doom-emacs \
+        "''${makeWrapperArgs[@]}" \
+        --add-flags "--init-directory=$doomSource"
+      makeWrapper $doomSource/bin/doomscript $out/bin/doomscript \
+        --set EMACS $emacs \
+        "''${makeWrapperArgs[@]}"
+      makeWrapper $doomSource/bin/doom $out/bin/doom \
+        --set EMACS $emacs \
+        "''${makeWrapperArgs[@]}"
+    '';
 
     nativeBuildInputs = [ makeBinaryWrapper ];
   };
@@ -517,6 +554,7 @@ let
     inherit (emacs) meta;
     inherit doomEmacs emacs;
     buildCommandPath = unstraightenedSource + "/build-helpers/build-emacs-with-doom.sh";
+    __structuredAttrs = true;
 
     # Force local build as it's near-trivial.
     preferLocalBuild = true;
