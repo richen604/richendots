@@ -85,6 +85,9 @@ in
 {
   environment.systemPackages = [ mangoStartSession ];
 
+  # Do not defer automatic login until the service manager is idle.
+  systemd.services.greetd.serviceConfig.Type = lib.mkForce "simple";
+
   services.greetd.settings = rec {
     initial_session = {
       command = "${mangoSession}/bin/mango-session";
