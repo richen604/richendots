@@ -1,0 +1,414 @@
+:root {
+  --cinny-system24-marker: richendots;
+  --theme-background-primary: @background-primary@;
+  --theme-background-secondary: @background-secondary@;
+  --theme-background-tertiary: @background-tertiary@;
+  --theme-text-primary: @text-primary@;
+  --theme-text-secondary: @text-secondary@;
+  --theme-text-tertiary: @text-tertiary@;
+  --theme-accent-primary-1: @accent-primary-1@;
+  --theme-accent-primary-2: @accent-primary-2@;
+  --theme-accent-primary-3: @accent-primary-3@;
+  --theme-accent-primary-4: @accent-primary-4@;
+  --theme-accent-primary-5: @accent-primary-5@;
+  --theme-accent-primary-6: @accent-primary-6@;
+  --theme-accent-primary-7: @accent-primary-7@;
+  --theme-accent-primary-8: @accent-primary-8@;
+  --theme-accent-primary-9: @accent-primary-9@;
+  --theme-accent-secondary-1: @accent-secondary-1@;
+  --theme-accent-secondary-2: @accent-secondary-2@;
+  --theme-accent-secondary-3: @accent-secondary-3@;
+  --theme-accent-secondary-4: @accent-secondary-4@;
+  --theme-accent-secondary-5: @accent-secondary-5@;
+  --theme-accent-secondary-6: @accent-secondary-6@;
+  --theme-accent-secondary-7: @accent-secondary-7@;
+  --theme-accent-secondary-8: @accent-secondary-8@;
+  --theme-accent-secondary-9: @accent-secondary-9@;
+  --theme-alias-background: @alias-background@;
+  --theme-alias-off-background: @alias-off-background@;
+  --theme-alias-selection: @alias-selection@;
+  --theme-alias-foreground: @alias-foreground@;
+  --theme-alias-muted: @alias-muted@;
+  --theme-alias-accent: @alias-accent@;
+  --theme-alias-accent-hover: @alias-accent-hover@;
+  --theme-ui-font-family: @ui-font-family@;
+  --theme-ui-code-font-family: @ui-code-font-family@;
+  --theme-ui-font-size: @ui-font-size@;
+  --theme-ui-line-height: @ui-line-height@;
+  --theme-ui-letter-spacing: @ui-letter-spacing@;
+  --theme-ui-gap: @ui-gap@;
+  --theme-ui-panel-padding: @ui-panel-padding@;
+  --theme-ui-row-height: @ui-row-height@;
+  --theme-ui-radius: @ui-radius@;
+  --theme-ui-border-width: @ui-border-width@;
+  --theme-ui-success: @ui-success@;
+  --theme-ui-warning: @ui-warning@;
+  --theme-ui-error: @ui-error@;
+  --theme-ui-info: @ui-info@;
+  --theme-syntax-background: @syntax-background@;
+  --theme-syntax-foreground: @syntax-foreground@;
+  --theme-syntax-comment: @syntax-comment@;
+  --theme-syntax-keyword: @syntax-keyword@;
+  --theme-syntax-string: @syntax-string@;
+  --theme-syntax-number: @syntax-number@;
+  --theme-syntax-function: @syntax-function@;
+  --theme-syntax-variable: @syntax-variable@;
+  --theme-syntax-type: @syntax-type@;
+  --theme-syntax-operator: @syntax-operator@;
+  --theme-syntax-constant: @syntax-constant@;
+  --theme-syntax-exception: @syntax-exception@;
+  --theme-markup-heading: @markup-heading@;
+  --theme-markup-link: @markup-link@;
+  --theme-markup-emphasis: @markup-emphasis@;
+  --theme-markup-strong: @markup-strong@;
+  --theme-markup-code: @markup-code@;
+  --theme-markup-quote: @markup-quote@;
+  --theme-markup-muted: @markup-muted@;
+  --theme-diff-added: @diff-added@;
+  --theme-diff-added-background: @diff-added-background@;
+  --theme-diff-removed: @diff-removed@;
+  --theme-diff-removed-background: @diff-removed-background@;
+  --theme-diff-modified: @diff-modified@;
+  --theme-diff-modified-background: @diff-modified-background@;
+  --theme-diff-line-number: @diff-line-number@;
+  --theme-diff-line-number-active: @diff-line-number-active@;
+  --cinny-bg: @background-primary@;
+  --cinny-bg-raised: @background-secondary@;
+  --cinny-bg-overlay: @background-tertiary@;
+  --cinny-fg: @text-primary@;
+  --cinny-fg-muted: @text-secondary@;
+  --cinny-fg-subtle: @text-tertiary@;
+  --cinny-accent: @alias-accent@;
+  --cinny-accent-hover: @alias-accent-hover@;
+  --cinny-selection: @alias-selection@;
+  --cinny-border: @accent-primary-3@;
+  --cinny-focus: @accent-secondary-6@;
+  --cinny-success: @ui-success@;
+  --cinny-warning: @ui-warning@;
+  --cinny-error: @ui-error@;
+  --cinny-info: @ui-info@;
+  --cinny-font: @ui-font-family@;
+  --cinny-code-font: @ui-code-font-family@;
+  --cinny-font-size: @ui-font-size@;
+  --cinny-line-height: @ui-line-height@;
+  --cinny-letter-spacing: @ui-letter-spacing@;
+  --cinny-gap: @ui-gap@;
+  --cinny-padding: @ui-panel-padding@;
+  --cinny-row-height: @ui-row-height@;
+  --cinny-radius: @ui-radius@;
+  --cinny-border-width: @ui-border-width@;
+  color-scheme: dark;
+}
+
+/* Folds generates these names from its color contract. Keep this block guarded
+   by the package assertion: an upstream rename must fail loudly, not lose Grove. */
+body.dark-theme,
+body.butter-theme {
+  --oq6d070: var(--cinny-bg);
+  --oq6d071: var(--cinny-bg-raised);
+  --oq6d072: var(--cinny-bg-overlay);
+  --oq6d073: var(--cinny-border);
+  --oq6d074: var(--cinny-fg);
+  --oq6d075: var(--cinny-bg-raised);
+  --oq6d076: var(--cinny-bg-overlay);
+  --oq6d077: var(--theme-accent-primary-1);
+  --oq6d078: var(--theme-accent-primary-2);
+  --oq6d079: var(--cinny-fg);
+  --oq6d07a: var(--cinny-bg-overlay);
+  --oq6d07b: var(--theme-accent-primary-1);
+  --oq6d07c: var(--theme-accent-primary-2);
+  --oq6d07d: var(--theme-accent-primary-3);
+  --oq6d07e: var(--cinny-fg);
+  --oq6d07f: var(--cinny-accent);
+  --oq6d07g: var(--cinny-accent-hover);
+  --oq6d07h: var(--theme-accent-primary-7);
+  --oq6d07i: var(--theme-accent-primary-8);
+  --oq6d07j: var(--cinny-bg);
+  --oq6d07k: var(--theme-accent-primary-1);
+  --oq6d07l: var(--theme-accent-primary-2);
+  --oq6d07m: var(--theme-accent-primary-3);
+  --oq6d07n: var(--theme-accent-primary-4);
+  --oq6d07o: var(--cinny-fg);
+  --oq6d07p: var(--cinny-fg);
+  --oq6d07q: var(--theme-text-secondary);
+  --oq6d07r: var(--theme-text-tertiary);
+  --oq6d07s: var(--theme-alias-muted);
+  --oq6d07t: var(--cinny-bg);
+  --oq6d07u: var(--cinny-bg-overlay);
+  --oq6d07v: var(--theme-accent-primary-1);
+  --oq6d07w: var(--theme-accent-primary-2);
+  --oq6d07x: var(--theme-accent-primary-3);
+  --oq6d07y: var(--cinny-fg);
+  --oq6d07z: var(--cinny-success);
+  --oq6d0710: var(--theme-accent-primary-7);
+  --oq6d0711: var(--theme-accent-primary-6);
+  --oq6d0712: var(--theme-accent-primary-5);
+  --oq6d0713: var(--cinny-bg);
+  --oq6d0714: var(--theme-accent-primary-1);
+  --oq6d0715: var(--theme-accent-primary-2);
+  --oq6d0716: var(--theme-accent-primary-3);
+  --oq6d0717: var(--theme-accent-primary-4);
+  --oq6d0718: var(--cinny-fg);
+  --oq6d0719: var(--cinny-warning);
+  --oq6d071a: var(--theme-accent-secondary-7);
+  --oq6d071b: var(--theme-accent-secondary-6);
+  --oq6d071c: var(--theme-accent-secondary-5);
+  --oq6d071d: var(--cinny-bg);
+  --oq6d071e: var(--theme-accent-secondary-1);
+  --oq6d071f: var(--theme-accent-secondary-2);
+  --oq6d071g: var(--theme-accent-secondary-3);
+  --oq6d071h: var(--theme-accent-secondary-4);
+  --oq6d071i: var(--cinny-fg);
+  --oq6d071j: var(--cinny-error);
+  --oq6d071k: var(--theme-diff-removed);
+  --oq6d071l: var(--theme-markup-emphasis);
+  --oq6d071m: var(--theme-accent-secondary-5);
+  --oq6d071n: var(--cinny-bg);
+  --oq6d071o: var(--theme-diff-removed-background);
+  --oq6d071p: var(--theme-accent-secondary-1);
+  --oq6d071q: var(--theme-accent-secondary-2);
+  --oq6d071r: var(--theme-accent-secondary-3);
+  --oq6d071s: var(--cinny-fg);
+  --oq6d071t: color-mix(in srgb, var(--cinny-focus) 55%, transparent);
+  --oq6d071u: rgb(0 0 0 / 35%);
+  --oq6d071v: rgb(0 0 0 / 75%);
+}
+
+body#appBody,
+#root,
+#portalContainer {
+  background: var(--cinny-bg);
+  color: var(--cinny-fg);
+  font-family: var(--cinny-font);
+  font-size: var(--cinny-font-size);
+  line-height: var(--cinny-line-height);
+  letter-spacing: var(--cinny-letter-spacing);
+}
+
+body#appBody {
+  margin: 0;
+}
+
+#root :where(nav, aside, main, header, footer),
+#portalContainer :where([role="dialog"], [role="menu"], [role="listbox"]) {
+  border: var(--cinny-border-width) solid var(--cinny-border);
+  box-sizing: border-box;
+}
+
+#root,
+#portalContainer,
+[data-dialog],
+[data-radix-popper-content-wrapper] {
+  --bg-surface: var(--cinny-bg);
+  --bg-surface-low: var(--cinny-bg-raised);
+  --bg-surface-extra-low: var(--cinny-bg-overlay);
+  --tc-surface-high: var(--cinny-fg);
+  --tc-surface-normal: var(--cinny-fg-muted);
+  --tc-surface-low: var(--cinny-fg-subtle);
+}
+
+button,
+input,
+select,
+textarea,
+[role="button"],
+[role="menuitem"],
+[role="option"],
+[role="tab"] {
+  border-radius: var(--cinny-radius);
+  color: inherit;
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  background: var(--cinny-bg-raised);
+  border: var(--cinny-border-width) solid var(--cinny-border);
+}
+
+button:hover,
+[role="button"]:hover,
+[role="menuitem"]:hover,
+[role="option"]:hover {
+  background-color: var(--cinny-bg-overlay);
+}
+
+[aria-selected="true"],
+[aria-pressed="true"],
+[data-state="active"],
+[data-state="checked"],
+[data-selected="true"] {
+  background-color: var(--cinny-selection);
+  color: var(--cinny-fg);
+}
+
+#root :where(nav, aside) :where(
+  [data-room-id],
+  [data-space-id],
+  [data-user-id],
+  [role="listitem"]
+) {
+  box-sizing: border-box;
+  gap: calc(var(--cinny-gap) / 2);
+  height: var(--cinny-row-height);
+  min-height: 0;
+  padding-block: 0;
+  padding-inline: var(--cinny-gap);
+}
+
+#root :where(nav, aside) [data-room-id] :where(button, [role="button"]),
+#root :where(nav, aside) [data-space-id] :where(button, [role="button"]),
+#root :where(nav, aside) [data-user-id] :where(button, [role="button"]) {
+  min-height: 0;
+  padding-block: 0;
+}
+
+[data-room-id]:is([aria-current="true"], [aria-selected="true"]),
+[data-room-id]:has([aria-label*="unread" i]),
+[data-room-id]:has([aria-label*="notification" i]),
+[data-room-id][data-unread="true"],
+[data-room-id][data-notification-count]:not([data-notification-count="0"]) {
+  border-inline-start: max(2px, var(--cinny-border-width)) solid var(--cinny-accent);
+  color: var(--cinny-fg);
+  font-weight: 700;
+}
+
+:where([role="status"], [aria-live]):not(:empty),
+:where([aria-label*="unread" i], [aria-label*="notification" i]) {
+  color: var(--cinny-warning);
+  font-weight: 700;
+}
+
+/* Cinny 4.12 exposes no semantic hook on its Notifications nav item. Keep this
+   route selector version-sensitive and remove it once upstream adds ARIA/data. */
+#root a[href="/inbox/notifications/"],
+#root a[href="/inbox/notifications"] {
+  border-inline-start: max(2px, var(--cinny-border-width)) solid var(--cinny-info);
+}
+
+[data-message-id],
+[data-event-id],
+[data-testid*="message"] {
+  border-inline-start: var(--cinny-border-width) solid transparent;
+  padding-block: calc(var(--cinny-gap) / 2);
+}
+
+[data-message-id]:hover,
+[data-event-id]:hover,
+[data-testid*="message"]:hover {
+  background: var(--cinny-bg-raised);
+  border-inline-start-color: var(--cinny-accent);
+}
+
+[data-call-container],
+[data-testid*="call"] {
+  background: var(--cinny-bg-overlay);
+  border: var(--cinny-border-width) solid var(--cinny-border);
+}
+
+a {
+  color: @markup-link@;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: @markup-heading@;
+}
+
+strong {
+  color: @markup-strong@;
+}
+
+em {
+  color: @markup-emphasis@;
+}
+
+blockquote {
+  border-inline-start: var(--cinny-border-width) solid @markup-quote@;
+  color: @markup-muted@;
+}
+
+code,
+pre,
+kbd,
+samp {
+  background: @syntax-background@;
+  color: @syntax-foreground@;
+  font-family: var(--cinny-code-font);
+}
+
+pre .comment { color: @syntax-comment@; }
+pre .keyword { color: @syntax-keyword@; }
+pre .string { color: @syntax-string@; }
+pre .number { color: @syntax-number@; }
+pre .function { color: @syntax-function@; }
+pre .variable { color: @syntax-variable@; }
+pre .type { color: @syntax-type@; }
+pre .operator { color: @syntax-operator@; }
+pre .constant { color: @syntax-constant@; }
+pre .exception { color: @syntax-exception@; }
+
+[data-diff="added"] { color: @diff-added@; background: @diff-added-background@; }
+[data-diff="removed"] { color: @diff-removed@; background: @diff-removed-background@; }
+[data-diff="modified"] { color: @diff-modified@; background: @diff-modified-background@; }
+[data-line-number] { color: @diff-line-number@; }
+[data-line-number][aria-current="true"] { color: @diff-line-number-active@; }
+
+:focus-visible {
+  outline: max(2px, var(--cinny-border-width)) solid var(--cinny-focus);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-color: var(--cinny-border) var(--cinny-bg);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--cinny-border);
+  border-radius: var(--cinny-radius);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--cinny-bg);
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 48rem) {
+  :root {
+    --cinny-padding: var(--cinny-gap);
+  }
+
+  [data-message-id],
+  [data-event-id],
+  [data-testid*="message"] {
+    padding-inline: var(--cinny-gap);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
