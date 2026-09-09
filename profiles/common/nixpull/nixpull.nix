@@ -325,6 +325,12 @@ in
         description = "Publish successful host builds even when other hosts fail.";
       };
 
+      preBuild = lib.mkOption {
+        type = lib.types.lines;
+        default = "";
+        description = "Shell commands run from the flake directory before each builder run.";
+      };
+
       signingKeyFile = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -590,7 +596,11 @@ in
             StateDirectory = "nixpull";
             WorkingDirectory = cfg.flake;
           };
-          script = "${nixpullPackage}/bin/nixpull build";
+          script = ''
+            export PATH="/run/current-system/sw/bin:/run/current-system/sw/sbin:$PATH"
+            ${cfg.builder.preBuild}
+            ${nixpullPackage}/bin/nixpull build
+          '';
         };
 
         systemd.services."nixpull-webhook-delivery@" = lib.mkIf cfg.builder.fetchWebhook.enable {
