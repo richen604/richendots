@@ -1,6 +1,13 @@
 {
   description = "richendots";
 
+  nixConfig = {
+    extra-substituters = [ "https://trynix.cachix.org" ];
+    extra-trusted-public-keys = [
+      "trynix.cachix.org-1:xmOWOHz2g/BlpCVQrTEZjSKWPk3S3Dukn1xiSWLidkY="
+    ];
+  };
+
   outputs =
     inputs:
     let
@@ -23,6 +30,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    trynix.url = "github:fzakaria/trynix";
     glide = {
       url = "https://github.com/glide-browser/glide/releases/latest/download/glide.linux-x86_64.tar.xz";
       flake = false;
