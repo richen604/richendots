@@ -8,7 +8,6 @@
   hardware.cpu.intel.updateMicrocode = true;
 
   boot.blacklistedKernelModules = [
-    "i915"
     "xe"
   ];
   boot.initrd.kernelModules = [
@@ -47,4 +46,9 @@
       "nvidia"
     ];
   };
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="card*", KERNELS=="0000:01:00.0", SYMLINK+="dri/nvidia-card"
+    SUBSYSTEM=="drm", KERNEL=="card*", KERNELS=="0000:00:02.0", SYMLINK+="dri/intel-card"
+  '';
 }

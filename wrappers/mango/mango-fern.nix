@@ -10,57 +10,58 @@ let
   config = ''
     # tag rules
     # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
-    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:1,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:1,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:1,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:2,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:2,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:3,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:3,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:3,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:3,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:4,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:4,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:4,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:4,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:5,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:5,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:6,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:6,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:6,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:6,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:7,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:7,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:7,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:7,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:8,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:8,monitor_model:Odyssey G70D,layout_name:scroller
 
-    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:scroller
-    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:vertical_tile
+    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:vertical_tile
+    tagrule=id:9,monitor_model:Odyssey G70D,layout_name:scroller
 
     # monitor rules
-    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,vrr:0,rr:1
     # The NVIDIA DRM connector reports vrr_capable=0 for this proprietary
     # G-Sync display, so Mango cannot enable Wayland adaptive sync on it.
-    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:144,x:1080,y:0,vrr:0,rr:0
-    monitorrule=model:DELL E2020H,width:1600,height:900,refresh:60,x:3640,y:0,scale:1,vrr:0,rr:3
+    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:60,x:0,y:0,scale:1.333333,vrr:0,rr:1
+    monitorrule=model:Odyssey G70D,width:3840,height:2160,refresh:144,x:1081,y:0,scale:1.25,vrr:0,rr:0
+    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:4153,y:295,scale:1,vrr:0,rr:3
     monitorrule=name:^HEADLESS-[0-9]+$,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,vrr:0,rr:0
     monitorrule=make:sisel muhendislik,model:EK1080T4KV2,serial:0x00005445,disable:1
 
     # window rules
-    windowrule=tags:1,appid:equibop,monitor:model:DELL E2020H
-    windowrule=tags:1,isopensilent:1,appid:com.spotify.Client,monitor:model:DELL E2020H
-    windowrule=tags:1,appid:FFPWA-.*,monitor:model:BenQ GW2780
-    windowrule=appid:steam,monitor:model:Dell S2716DG
-    windowrule=appid:steam_app_.*,monitor:model:Dell S2716DG
+    windowrule=tags:1,appid:equibop,monitor:model:BenQ GW2780
+    windowrule=tags:2,isopensilent:1,appid:Spotify,monitor:model:BenQ GW2780
+    windowrule=tags:1,appid:FFPWA-.*,monitor:model:Dell S2716DG
+    windowrule=appid:steam,monitor:model:Odyssey G70D
+    windowrule=appid:steam_app_.*,monitor:model:Odyssey G70D
+    windowrule=appid:^anomalydx11[.]exe$,monitor:model:Odyssey G70D,idleinhibit_when_focus:1
 
     # tag view bindings; synctag keeps monitors on the same tag
     bind=SUPER,1,view,1,1
@@ -106,6 +107,7 @@ let
   wrappedMango = pkgs.writeShellApplication {
     name = "mango";
     text = ''
+      export WLR_DRM_DEVICES=/dev/dri/nvidia-card:/dev/dri/intel-card
       exec ${mangoPackage}/bin/mango -c "$HOME/.config/mango/config.conf" "$@"
     '';
   };

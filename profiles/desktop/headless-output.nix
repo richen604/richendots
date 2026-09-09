@@ -5,7 +5,7 @@ let
 
     while true; do
       outputs="$(${pkgs.wlr-randr}/bin/wlr-randr --json 2>/dev/null || true)"
-      if [ -n "$outputs" ] && printf '%s' "$outputs" | ${pkgs.jq}/bin/jq -e 'any(.[]; (.enabled != false) and (.model == "DELL E2020H"))' >/dev/null; then
+      if [ -n "$outputs" ] && printf '%s' "$outputs" | ${pkgs.jq}/bin/jq -e 'any(.[]; (.enabled != false) and (.model == "BenQ GW2780"))' >/dev/null; then
         break
       fi
       sleep 1
