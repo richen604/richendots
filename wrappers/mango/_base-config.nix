@@ -310,6 +310,8 @@ let
   '';
 
   layouts = ''
+    circle_layout=scroller,vertical_tile,tile
+
     # Scroller Layout Setting
     scroller_structs = 8
     scroller_default_proportion = 1
@@ -327,7 +329,6 @@ let
     smartgaps=0
 
     # Overview Setting
-    ov_tab_mode=1
     overviewgappi=5
     overviewgappo=15
   '';

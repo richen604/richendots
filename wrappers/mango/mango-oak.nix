@@ -10,42 +10,42 @@ let
   config = ''
     # tag rules
     # tag 1 is the main workspace
-    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:1,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:1,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:1,monitor_model:DELL E2020H,layout_name:vertical_tile
 
     # tags 2-9 use the same project layout
-    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:2,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:2,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:2,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:3,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:3,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:3,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:4,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:4,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:4,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:5,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:5,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:5,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:6,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:6,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:6,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:7,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:7,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:7,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:8,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:8,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:8,monitor_model:DELL E2020H,layout_name:vertical_tile
 
-    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:scroller
+    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:vertical_tile
     tagrule=id:9,monitor_model:Dell S2716DG,layout_name:scroller
-    tagrule=id:9,monitor_model:DELL E2020H,layout_name:scroller
+    tagrule=id:9,monitor_model:DELL E2020H,layout_name:vertical_tile
 
     # monitor rules
     monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,rr:1
