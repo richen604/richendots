@@ -15,7 +15,7 @@
       RemainAfterExit = true;
     };
     script = ''
-      echo 95 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
+      echo 100 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
       for policy in /sys/devices/system/cpu/cpufreq/policy*; do
         echo balance_power > "$policy/energy_performance_preference"
       done
