@@ -20,6 +20,17 @@ let
   pwaPoliciesJson = pkgs.writeText "glide-pwa-policies.json" (
     builtins.toJSON {
       policies = {
+        # PWA permissions must be explicitly enabled here.
+        Permissions = {
+          # Cinny is served locally on this address.
+          Camera.Allow = [ "http://127.0.0.1:16432" ];
+          Microphone.Allow = [ "http://127.0.0.1:16432" ];
+          Notifications.Allow = [
+            "http://127.0.0.1:16432"
+            "https://service.invalid"
+          ];
+          ScreenShare.Allow = [ "http://127.0.0.1:16432" ];
+        };
         Preferences = {
           "media.eme.enabled" = true;
           "media.ffmpeg.vaapi.enabled" = true;
@@ -38,6 +49,8 @@ let
           "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}".installation_mode = "blocked";
           "{74145f27-f039-47ce-a470-a662b129930a}".installation_mode = "blocked";
           "keepassxc-browser@keepassxc.org".installation_mode = "blocked";
+          "clipper@obsidian.md".installation_mode = "blocked";
+          "{a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad}".installation_mode = "blocked";
           "sponsorBlocker@ajay.app".installation_mode = "blocked";
           "uBlock0@raymondhill.net".installation_mode = "blocked";
         };

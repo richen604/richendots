@@ -198,6 +198,14 @@
       install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/keepassxc-browser/latest.xpi";
       installation_mode = "force_installed";
     };
+    "clipper@obsidian.md" = {
+      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/web-clipper-obsidian/latest.xpi";
+      installation_mode = "force_installed";
+    };
+    "{a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad}" = {
+      install_url = "https://addons.mozilla.org/en-CA/firefox/downloads/latest/refined-github-/latest.xpi";
+      installation_mode = "force_installed";
+    };
     "firefoxpwa@filips.si" = {
       install_url = "https://addons.mozilla.org/firefox/downloads/file/4864693/pwas_for_firefox-2.18.4.xpi";
       installation_mode = "force_installed";
