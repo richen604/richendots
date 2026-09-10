@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   richenLib,
   pkgs,
   steamGameRun,
@@ -80,7 +79,6 @@ in
       mangoPackage = richenLib.wrappers.mango-fern;
       waybarPackage = richenLib.wrappers.waybar;
       swayidlePackage = richenLib.wrappers.swayidle;
-      extraWantedServices = [ "sunshine.service" ];
     })
   ];
 
@@ -90,13 +88,6 @@ in
     richenLib.wrappers.swayidle
     richenLib.wrappers.waybar
   ];
-
-  systemd.user.services.sunshine = {
-    wantedBy = lib.mkForce [ "mango-session.target" ];
-    partOf = lib.mkForce [ "graphical-session.target" ];
-    after = lib.mkForce [ "graphical-session.target" ];
-    wants = lib.mkForce [ ];
-  };
 
   hjem.users.richen = {
     files.".config/mango/config.conf".source = mangoConfig;
