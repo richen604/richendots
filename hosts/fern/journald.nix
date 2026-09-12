@@ -1,5 +1,3 @@
 {
-  services.journald.extraConfig = ''
-    SystemMaxUse=1G
-  '';
+  services.journald.settings.Journal.SystemMaxUse = "1G";
 }

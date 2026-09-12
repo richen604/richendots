@@ -4,13 +4,18 @@
   ...
 }:
 let
+  wayfreezeSrc = pkgs.fetchFromGitHub {
+    owner = "Jappie3";
+    repo = "wayfreeze";
+    rev = "dfdafe6733b2e935f9d5d9d06100d0c6edde7bab";
+    hash = "sha256-dntoIlmmDaG2ZuAP/CTpE51odfmZMbVtDygIOW/iXJ4=";
+  };
   wayfreeze = pkgs.wayfreeze.overrideAttrs (_: {
     version = "unstable-2026-08-23";
-    src = pkgs.fetchFromGitHub {
-      owner = "Jappie3";
-      repo = "wayfreeze";
-      rev = "dfdafe6733b2e935f9d5d9d06100d0c6edde7bab";
-      hash = "sha256-dntoIlmmDaG2ZuAP/CTpE51odfmZMbVtDygIOW/iXJ4=";
+    src = wayfreezeSrc;
+    cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+      src = wayfreezeSrc;
+      hash = "sha256-cofOfaCDKjVpXJHqXiqz2PSIiscYIzCQI2tm5EdWRvE=";
     };
   });
   chooseMonitor = placeholder: ''
