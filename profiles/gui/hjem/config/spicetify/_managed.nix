@@ -33,6 +33,10 @@ let
       name = "user.css";
       path = userCss;
     }
+    {
+      name = "marketplace";
+      path = ./CustomApps/marketplace;
+    }
   ];
 in
 {
