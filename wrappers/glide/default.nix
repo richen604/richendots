@@ -25,10 +25,7 @@ let
           # Cinny is served locally on this address.
           Camera.Allow = [ "http://127.0.0.1:16432" ];
           Microphone.Allow = [ "http://127.0.0.1:16432" ];
-          Notifications.Allow = [
-            "http://127.0.0.1:16432"
-            "https://service.invalid"
-          ];
+          Notifications.Allow = [ "http://127.0.0.1:16432" ];
           ScreenShare.Allow = [ "http://127.0.0.1:16432" ];
         };
         Preferences = {
