@@ -8,11 +8,8 @@ let
     {
       name = "config.toml";
       path = (pkgs.formats.toml { }).generate "atuin-config.toml" {
-        auto_sync = true;
-        sync_address = "https://service.invalid";
-        sync_frequency = "5m";
+        auto_sync = false;
         update_check = false;
-        key_path = "/run/secrets/removed";
         search_mode = "fuzzy";
         filter_mode = "global";
         enter_accept = false;
@@ -28,10 +25,7 @@ let
           "(?i)(authorization:|proxy-authorization:|x-api-key:)"
           "(?i)^\\s*atuin\\s+(account\\s+)?login(?:\\s|$)"
         ];
-        cwd_filter = [
-          "^/run/secrets(?:/|$)"
-          "^/home/richen/\\.config/sops(?:/|$)"
-        ];
+        cwd_filter = [ "^/run/secrets(?:/|$)" ];
       };
     }
   ];
