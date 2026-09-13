@@ -9,7 +9,7 @@
       "networkmanager"
     ];
     home = "/home/richen";
-    initialPassword = !;
+    hashedPassword = "!";
     createHome = true;
     shell = "${pkgs.lib.getExe richenLib.wrappers.zsh}";
   };
