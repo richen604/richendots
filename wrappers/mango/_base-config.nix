@@ -174,7 +174,8 @@ let
 
       ${wayfreeze}/bin/wayfreeze \
         --enable-keyboard \
-        --after-freeze-timeout 100 \
+        --hide-cursor \
+        --after-freeze-timeout 0 \
         --after-freeze-cmd "${pkgs.coreutils}/bin/touch $ready_file" \
         >/dev/null 2>&1 &
       freeze_pid=$!
