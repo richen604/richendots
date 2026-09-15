@@ -3,13 +3,13 @@
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
     tmp.cleanOnBoot = true;
-    loader.efi.canTouchEfiVariables = false;
+    loader.efi.canTouchEfiVariables = true;
     loader.grub = {
       enable = true;
       configurationLimit = 3;
       device = "nodev";
       efiSupport = true;
-      efiInstallAsRemovable = true;
+      efiInstallAsRemovable = false;
       useOSProber = true;
       extraEntries = ''
         menuentry "UEFI Firmware Settings" {
