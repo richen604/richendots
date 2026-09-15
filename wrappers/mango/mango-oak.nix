@@ -57,6 +57,7 @@ let
     windowrule=tags:2,isopensilent:1,monitor:eDP-1,appid:equibop
     windowrule=tags:3,isopensilent:1,monitor:eDP-1,appid:com.spotify.Client
     windowrule=tags:1,appid:steam_app_.*,monitor:model:Dell S2716DG
+    windowrule=tags:1,appid:^Minecraft.*$,monitor:model:Dell S2716DG
 
     # tag view bindings; synctag keeps monitors on the same tag
     bind=SUPER,1,view,1,1

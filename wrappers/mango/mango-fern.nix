@@ -61,6 +61,7 @@ let
     windowrule=tags:1,appid:FFPWA-.*,monitor:model:Dell S2716DG
     windowrule=appid:steam,monitor:model:Odyssey G70D
     windowrule=appid:steam_app_.*,monitor:model:Odyssey G70D
+    windowrule=tags:1,appid:^Minecraft.*$,monitor:model:Odyssey G70D
     windowrule=appid:^anomalydx11[.]exe$,monitor:model:Odyssey G70D,idleinhibit_when_focus:1
 
     # tag view bindings; synctag keeps monitors on the same tag
