@@ -4,12 +4,13 @@ set -euo pipefail
 profile_dir=$(cd "$(dirname "$0")" && pwd)
 tmp=$(mktemp -d)
 server_pid=
-trap 'test -z "$server_pid" || kill "$server_pid" 2>/dev/null || true; rm -rf "$tmp"' EXIT
+trap 'test -z "$server_pid" || kill "$server_pid" 2>/dev/null || true; chmod -R u+w "$tmp" 2>/dev/null || true; rm -rf "$tmp"' EXIT
 
 web_root="$tmp/web root"
 mkdir -p "$web_root"
 printf '%s\n' '<!doctype html><title>Cinny fallback marker</title>' >"$web_root/index.html"
 printf '%s\n' '{"source":"immutable"}' >"$web_root/config.json"
+chmod -R a-w "$web_root"
 cinny_data_home="$tmp/cinny data"
 port=18432
 XDG_DATA_HOME="$cinny_data_home" STATIC_WEB_SERVER=${STATIC_WEB_SERVER:-static-web-server} \

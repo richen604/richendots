@@ -13,6 +13,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 cp -r --reflink=auto -- "$root"/. "$runtime_root"/
+chmod -R u+w "$runtime_root"
 if [ -f "$override_config" ]; then
   cp -- "$override_config" "$runtime_root/config.json"
 fi
