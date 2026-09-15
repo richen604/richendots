@@ -4,6 +4,8 @@
   ...
 }:
 let
+  inherit (richenLib) theme;
+  toMangoColor = color: "0x${pkgs.lib.removePrefix "#" color}ff";
   wayfreezeSrc = pkgs.fetchFromGitHub {
     owner = "Jappie3";
     repo = "wayfreeze";
@@ -262,7 +264,7 @@ let
     layer_animations=0
     focused_opacity=1         # Game mode: 1.0
     unfocused_opacity=1       # Game mode: 1.0
-    borderpx=0
+    borderpx=2
     syncobj_enable=1
     gappih=3                  # Game mode: 0
     gappiv=3                  # Game mode: 0
@@ -295,8 +297,8 @@ let
   appearance = ''
     # Colors
     rootcolor=0x201b14ff
-    bordercolor=0x444444ff
-    focuscolor=0xc9b890ff
+    bordercolor=${toMangoColor theme.acc.p."2"}
+    focuscolor=${toMangoColor theme.acc.p."6"}
     maximizescreencolor=0x89aa61ff
     urgentcolor=0xad401fff
     scratchpadcolor=0x516c93ff
