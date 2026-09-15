@@ -29,6 +29,7 @@ let
       };
     };
     launcher_window = {
+      layer_shell.layer = "overlay";
       compact_mode.enabled = true;
       size = {
         width = 700;
