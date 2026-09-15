@@ -49,9 +49,9 @@ let
     # monitor rules
     # The NVIDIA DRM connector reports vrr_capable=0 for this proprietary
     # G-Sync display, so Mango cannot enable Wayland adaptive sync on it.
-    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:60,x:0,y:0,scale:1.333333,vrr:0,rr:1
+    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,vrr:0,rr:1
     monitorrule=model:Odyssey G70D,width:3840,height:2160,refresh:144,x:1081,y:0,scale:1.25,vrr:0,rr:0
-    monitorrule=model:BenQ GW2780,width:1920,height:1080,refresh:60,x:4153,y:295,scale:1,vrr:0,rr:3
+    monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:60,x:4153,y:295,scale:1.333333,vrr:0,rr:3
     monitorrule=name:^HEADLESS-[0-9]+$,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,vrr:0,rr:0
     monitorrule=make:sisel muhendislik,model:EK1080T4KV2,serial:0x00005445,disable:1
 
