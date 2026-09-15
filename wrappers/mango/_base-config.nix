@@ -379,6 +379,7 @@ let
   '';
 
   windowRules = ''
+    windowrule=allow_csd:1,appid:^FFPWA-.*$
     windowrule=isfloating:1,isoverlay:1,isglobal:1,isopensilent:1,width:0.25,height:0.25,offsetx:100,offsety:100,appid:^glide-glide$,title:^Picture-in-Picture$
     windowrule=isfloating:1,isoverlay:1,width:0.62,height:0.62,appid:nixpull
     windowrule=isfloating:1,isoverlay:1,appid:satty
