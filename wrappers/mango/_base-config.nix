@@ -140,24 +140,19 @@ let
       ${chooseMonitor "Screenshot monitor"}
     }
 
-    choose_window_id() {
+    choose_toplevel_id() {
       mmsg get all-clients \
         | ${pkgs.jq}/bin/jq -r '
           .clients[]
-          | select(.is_visible)
+          | select(.is_visible and (.foreign_toplevel_id // "") != "")
           | [
-              (.id | tostring),
+              .foreign_toplevel_id,
               ((.title // .appid // "Untitled") + " [" + (.appid // "") + "]")
             ]
           | @tsv
         ' \
         | vicinae dmenu --placeholder "Screenshot window/app" \
         | ${pkgs.coreutils}/bin/cut -f1
-    }
-
-    client_toplevel_id() {
-      mmsg get client "$1" \
-        | ${pkgs.jq}/bin/jq -r '.foreign_toplevel_id // empty'
     }
 
     open_satty() {
@@ -245,9 +240,7 @@ let
         capture_and_open capture_monitor || exit 0
         ;;
       "Window/app")
-        selected_client_id="$(choose_window_id)" || exit 0
-        [ -n "$selected_client_id" ] || exit 0
-        selected_toplevel_id="$(client_toplevel_id "$selected_client_id")"
+        selected_toplevel_id="$(choose_toplevel_id)" || exit 0
         [ -n "$selected_toplevel_id" ] || exit 0
         capture_and_open capture_window || exit 0
         ;;
