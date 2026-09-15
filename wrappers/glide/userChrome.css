@@ -191,14 +191,14 @@ menuitem {
   border-radius: var(--theme-border-radius) !important;
 }
 
-:is(#tabbrowser-tabbox, findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions) {
+:is(findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions) {
   border: var(--theme-border-width) solid var(--theme-border);
   border-radius: var(--theme-border-radius) !important;
   transition: border-color var(--theme-border-transition);
 }
 
-:is(#tabbrowser-tabbox, findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions):hover,
-:is(#tabbrowser-tabbox, findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions):focus {
+:is(findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions):hover,
+:is(findbar, #sidebar-box, box#vertical-tabs, .tools-and-extensions):focus {
   border-color: var(--theme-accent) !important;
 }
 
