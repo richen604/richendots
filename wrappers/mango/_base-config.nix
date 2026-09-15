@@ -370,6 +370,7 @@ let
     enable_floating_snap=1
     snap_distance=30
     cursor_size=24
+    cursor_hide_on_keypress=1
     drag_tile_to_tile=1
     view_current_to_back=1
     enable_hotarea=0
