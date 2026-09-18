@@ -107,9 +107,28 @@ let
         )
       ];
     }).config.system.build.vm;
+
+  normalNixosConfigurations = lib.mapAttrs (_host: mkHost) hostVars;
+
+  installModules = inputs.richendots-private.nixosModules.install or { };
+
+  installNixosConfigurations = lib.mapAttrs' (
+    host: installModule:
+    lib.nameValuePair "install-${host}" (
+      normalNixosConfigurations.${host}.extendModules {
+        modules = [ installModule ];
+      }
+    )
+  ) (lib.filterAttrs (host: _module: lib.hasAttr host normalNixosConfigurations) installModules);
 in
 {
-  inherit hostVars mkHost mkVm;
+  inherit
+    hostVars
+    installNixosConfigurations
+    mkHost
+    mkVm
+    normalNixosConfigurations
+    ;
 
-  nixosConfigurations = lib.mapAttrs (_host: mkHost) hostVars;
+  nixosConfigurations = normalNixosConfigurations // installNixosConfigurations;
 }

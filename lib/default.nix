@@ -39,7 +39,7 @@ let
 
   nixpull = import ./nixpull.nix {
     inherit inputs lib;
-    inherit (hosts) nixosConfigurations;
+    nixosConfigurations = hosts.normalNixosConfigurations;
   };
 
   lintChecks = import ./checks.nix {

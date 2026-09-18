@@ -22,6 +22,27 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "richendots-private",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781152676,
+        "narHash": "sha256-RxWs5ND31KzTG7wvMM+PMfUjyNpmIEr999lqNARaM5o=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "ff8702b4de27f72b4c78573dfb89ec74e36abdf1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "doomdir": {
       "flake": false,
       "locked": {
@@ -286,6 +307,7 @@
     },
     "richendots-private": {
       "inputs": {
+        "disko": "disko",
         "nix-flatpak": "nix-flatpak",
         "nixarr": "nixarr",
         "nixpkgs": [
@@ -294,8 +316,8 @@
         "sops-nix": "sops-nix"
       },
       "locked": {
-        "lastModified": 1789491960,
-        "narHash": "sha256-wxTtvhlLuGQ1nb4G3AHqvponyMDbQtSYNsYWv/gM3qg=",
+        "lastModified": 1789700849,
+        "narHash": "sha256-NpIIrj4XIrmsjXYI/GhZm8LDVR1AdgcJg+NF6OvSpZ4=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },
