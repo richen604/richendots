@@ -72,9 +72,18 @@ let
       let
         pkgs = pkgsFor system;
         richenLib = mkLib pkgs;
+        vmCandidates = lib.filterAttrs (
+          _name: hostvars:
+          hostvars.system == system
+          && hostvars ? profile
+          && lib.elem hostvars.profile [
+            "desktop"
+            "laptop"
+          ]
+        ) hostVars;
         vmPackages = lib.mapAttrs' (
           name: hostvars: lib.nameValuePair "vm-${name}" (mkVm (hostvars // { inherit system; }))
-        ) hostVars;
+        ) vmCandidates;
       in
       vmPackages // richenLib.wrappers
     );

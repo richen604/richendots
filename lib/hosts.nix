@@ -5,7 +5,7 @@
   pkgsFor,
 }:
 let
-  hostVars = {
+  publicHostVars = {
     fern = {
       hostname = "fern";
       system = "x86_64-linux";
@@ -27,6 +27,8 @@ let
       stateVersion = "25.05";
     };
   };
+
+  hostVars = publicHostVars // (inputs.richendots-private.hostVars or { });
 
   mkHost =
     hostvars:
@@ -50,11 +52,13 @@ let
 
       modules =
         recursiveModules ../profiles/common
-        ++ lib.optionals (hostvars.profile == "desktop" || hostvars.profile == "laptop") (
-          recursiveModules ../profiles/gui
+        ++ lib.optionals (
+          (hostvars ? profile) && (hostvars.profile == "desktop" || hostvars.profile == "laptop")
+        ) (recursiveModules ../profiles/gui)
+        ++ lib.optionals (hostvars ? profile) (recursiveModules ../profiles/${hostvars.profile})
+        ++ lib.optionals (builtins.pathExists ../hosts/${hostvars.hostname}) (
+          recursiveModules ../hosts/${hostvars.hostname}
         )
-        ++ recursiveModules ../profiles/${hostvars.profile}
-        ++ recursiveModules ../hosts/${hostvars.hostname}
         ++ [ (inputs.richendots-private.nixosModules.${hostvars.hostname} or { }) ];
     };
 
