@@ -1,4 +1,4 @@
-<img align="right" width="55px" src="https://em-content.zobj.net/source/apple/419/herb_1f33f.png"></img>
+<img align="right" width="55px" src="https://em-content.zobj.net/source/apple/419/herb_1f33f.png">
 
 # richendots - the grove
 
@@ -36,7 +36,7 @@ my personal nixos config
   - cedar - server 🪵
 
 > [!TIP]
-> some modules, packages, and options are obfuscated from private imports </br>
+> some modules, packages, and options come from a private flake input </br>
 > the configuration will not build from a clone/fork without [`inputs.richendots-private`](./lib/hosts.nix#L46-L58) removed
 
 ## license

@@ -146,7 +146,7 @@ let
           ;;
         all)
           ((''${#side_units[@]} > 0)) || {
-            notify-send --urgency=critical "Replay mode unavailable" "All monitors is only available on Fern"
+            notify-send --urgency=critical "Replay mode unavailable" "All-monitor mode is only available on Fern"
             exit 64
           }
           systemctl --user start "''${units[@]}"

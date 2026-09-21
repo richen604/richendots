@@ -1,9 +1,9 @@
 { pkgs, richenLib, ... }:
 {
 
-  # we use nh which reimplements nixos-rebuild. saves eval
+  # nh replaces nixos-rebuild, so disabling it saves eval.
   system.tools.nixos-rebuild.enable = false;
-  # also saves some eval
+  # Unused; disabling it also saves eval.
   system.tools.nixos-option.enable = false;
 
   programs.nh.clean = {
