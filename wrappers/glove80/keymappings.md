@@ -4,8 +4,8 @@ this file is generated from the locked keymap after local customization.
 do not edit it by hand. it provides a quick, searchable view
 of every physical key binding. empty and transparent bindings are omitted.
 
-zmk behaviors are kept as written to distinguish taps, holds,
-layer access, mouse actions, rgb controls, and custom behaviors.
+zmk behaviors are shown with readable labels while preserving their arguments
+to distinguish taps, holds, layer access, mouse actions, and rgb controls.
 
 ## layer 0: QWERTY
 
@@ -40,14 +40,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c6r3` | `&kp MINUS` |
 | `lh c6r4` | `&kp EQUAL` |
 | `lh c5r4` | `&LeftPinky (A, LAYER_QWERTY)` |
-| `lh c4r4` | `&LeftRingy (S, LAYER_QWERTY)` |
-| `lh c3r4` | `&LeftMiddy (D, LAYER_QWERTY)` |
+| `lh c4r4` | `&LeftRing (S, LAYER_QWERTY)` |
+| `lh c3r4` | `&LeftMiddle (D, LAYER_QWERTY)` |
 | `lh c2r4` | `&LeftIndex (F, LAYER_QWERTY)` |
 | `lh c1r4` | `&kp G` |
 | `rh c1r4` | `&kp H` |
 | `rh c2r4` | `&RightIndex (J, LAYER_QWERTY)` |
-| `rh c3r4` | `&RightMiddy (K, LAYER_QWERTY)` |
-| `rh c4r4` | `&RightRingy (L, LAYER_QWERTY)` |
+| `rh c3r4` | `&RightMiddle (K, LAYER_QWERTY)` |
+| `rh c4r4` | `&RightRing (L, LAYER_QWERTY)` |
 | `rh c5r4` | `&RightPinky (SEMI, LAYER_QWERTY)` |
 | `rh c6r4` | `&kp SQT` |
 | `lh c6r5` | `&sticky_key_modtap LSFT LSFT` |
@@ -59,7 +59,7 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t1` | `&thumb LAYER_Function ESC` |
 | `lh t2` | `&mo LAYER_Lower` |
 | `lh t3` | `&kp PG_UP` |
-| `rh t3` | `&thums_up` |
+| `rh t3` | `&thumbs_up` |
 | `rh t2` | `&thumb LAYER_Lower INSERT` |
 | `rh t1` | `&thumb LAYER_System ENTER` |
 | `rh c1r5` | `&kp N` |
@@ -72,14 +72,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c5r6` | `&kp BSLH` |
 | `lh c4r6` | `&parang_left` |
 | `lh c3r6` | `&parang_right` |
-| `lh c2r6` | `&stumb LAYER_Emoji LSFT` |
+| `lh c2r6` | `&shift_thumb LAYER_Emoji LSFT` |
 | `lh t4` | `&thumb LAYER_Cursor BACKSPACE` |
 | `lh t5` | `&thumb LAYER_Number DELETE` |
 | `lh t6` | `&kp PG_DN` |
-| `rh t6` | `&thums_down` |
+| `rh t6` | `&thumbs_down` |
 | `rh t5` | `&thumb LAYER_Mouse TAB` |
 | `rh t4` | `&space LAYER_Symbol SPACE` |
-| `rh c2r6` | `&stumb LAYER_World RSFT` |
+| `rh c2r6` | `&shift_thumb LAYER_World RSFT` |
 | `rh c3r6` | `&kp LBKT` |
 | `rh c4r6` | `&kp RBKT` |
 | `rh c5r6` | `&kp GRAVE` |
@@ -112,14 +112,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c6r3` | `&kp SLASH` |
 | `lh c6r4` | `&kp EQUAL` |
 | `lh c5r4` | `&LeftPinky (A, LAYER_Dvorak)` |
-| `lh c4r4` | `&LeftRingy (O, LAYER_Dvorak)` |
-| `lh c3r4` | `&LeftMiddy (E, LAYER_Dvorak)` |
+| `lh c4r4` | `&LeftRing (O, LAYER_Dvorak)` |
+| `lh c3r4` | `&LeftMiddle (E, LAYER_Dvorak)` |
 | `lh c2r4` | `&LeftIndex (U, LAYER_Dvorak)` |
 | `lh c1r4` | `&kp I` |
 | `rh c1r4` | `&kp D` |
 | `rh c2r4` | `&RightIndex (H, LAYER_Dvorak)` |
-| `rh c3r4` | `&RightMiddy (T, LAYER_Dvorak)` |
-| `rh c4r4` | `&RightRingy (N, LAYER_Dvorak)` |
+| `rh c3r4` | `&RightMiddle (T, LAYER_Dvorak)` |
+| `rh c4r4` | `&RightRing (N, LAYER_Dvorak)` |
 | `rh c5r4` | `&RightPinky (S, LAYER_Dvorak)` |
 | `rh c6r4` | `&kp MINUS` |
 | `lh c6r5` | `&sticky_key_modtap LSFT LSFT` |
@@ -131,7 +131,7 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t1` | `&thumb LAYER_Function ESC` |
 | `lh t2` | `&mo LAYER_Lower` |
 | `lh t3` | `&kp PG_UP` |
-| `rh t3` | `&thums_up` |
+| `rh t3` | `&thumbs_up` |
 | `rh t2` | `&thumb LAYER_Lower INSERT` |
 | `rh t1` | `&thumb LAYER_System ENTER` |
 | `rh c1r5` | `&kp B` |
@@ -144,14 +144,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c5r6` | `&kp BSLH` |
 | `lh c4r6` | `&parang_left` |
 | `lh c3r6` | `&parang_right` |
-| `lh c2r6` | `&stumb LAYER_Emoji LSFT` |
+| `lh c2r6` | `&shift_thumb LAYER_Emoji LSFT` |
 | `lh t4` | `&thumb LAYER_Cursor BACKSPACE` |
 | `lh t5` | `&thumb LAYER_Number DELETE` |
 | `lh t6` | `&kp PG_DN` |
-| `rh t6` | `&thums_down` |
+| `rh t6` | `&thumbs_down` |
 | `rh t5` | `&thumb LAYER_Mouse TAB` |
 | `rh t4` | `&space LAYER_Symbol SPACE` |
-| `rh c2r6` | `&stumb LAYER_World RSFT` |
+| `rh c2r6` | `&shift_thumb LAYER_World RSFT` |
 | `rh c3r6` | `&kp LBKT` |
 | `rh c4r6` | `&kp RBKT` |
 | `rh c5r6` | `&kp GRAVE` |
@@ -184,14 +184,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c6r3` | `&kp MINUS` |
 | `lh c6r4` | `&kp EQUAL` |
 | `lh c5r4` | `&LeftPinky (A, LAYER_Colemak)` |
-| `lh c4r4` | `&LeftRingy (R, LAYER_Colemak)` |
-| `lh c3r4` | `&LeftMiddy (S, LAYER_Colemak)` |
+| `lh c4r4` | `&LeftRing (R, LAYER_Colemak)` |
+| `lh c3r4` | `&LeftMiddle (S, LAYER_Colemak)` |
 | `lh c2r4` | `&LeftIndex (T, LAYER_Colemak)` |
 | `lh c1r4` | `&kp D` |
 | `rh c1r4` | `&kp H` |
 | `rh c2r4` | `&RightIndex (N, LAYER_Colemak)` |
-| `rh c3r4` | `&RightMiddy (E, LAYER_Colemak)` |
-| `rh c4r4` | `&RightRingy (I, LAYER_Colemak)` |
+| `rh c3r4` | `&RightMiddle (E, LAYER_Colemak)` |
+| `rh c4r4` | `&RightRing (I, LAYER_Colemak)` |
 | `rh c5r4` | `&RightPinky (O, LAYER_Colemak)` |
 | `rh c6r4` | `&kp SQT` |
 | `lh c6r5` | `&sticky_key_modtap LSFT LSFT` |
@@ -203,7 +203,7 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t1` | `&thumb LAYER_Function ESC` |
 | `lh t2` | `&mo LAYER_Lower` |
 | `lh t3` | `&kp PG_UP` |
-| `rh t3` | `&thums_up` |
+| `rh t3` | `&thumbs_up` |
 | `rh t2` | `&thumb LAYER_Lower INSERT` |
 | `rh t1` | `&thumb LAYER_System ENTER` |
 | `rh c1r5` | `&kp K` |
@@ -216,14 +216,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c5r6` | `&kp BSLH` |
 | `lh c4r6` | `&parang_left` |
 | `lh c3r6` | `&parang_right` |
-| `lh c2r6` | `&stumb LAYER_Emoji LSFT` |
+| `lh c2r6` | `&shift_thumb LAYER_Emoji LSFT` |
 | `lh t4` | `&thumb LAYER_Cursor BACKSPACE` |
 | `lh t5` | `&thumb LAYER_Number DELETE` |
 | `lh t6` | `&kp PG_DN` |
-| `rh t6` | `&thums_down` |
+| `rh t6` | `&thumbs_down` |
 | `rh t5` | `&thumb LAYER_Mouse TAB` |
 | `rh t4` | `&space LAYER_Symbol SPACE` |
-| `rh c2r6` | `&stumb LAYER_World RSFT` |
+| `rh c2r6` | `&shift_thumb LAYER_World RSFT` |
 | `rh c3r6` | `&kp LBKT` |
 | `rh c4r6` | `&kp RBKT` |
 | `rh c5r6` | `&kp GRAVE` |
@@ -255,14 +255,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c5r3` | `&kp Z` |
 | `lh c6r4` | `&kp B` |
 | `lh c5r4` | `&LeftPinky (C, LAYER_Enthium)` |
-| `lh c4r4` | `&LeftRingy (I, LAYER_Enthium)` |
-| `lh c3r4` | `&LeftMiddy (A, LAYER_Enthium)` |
+| `lh c4r4` | `&LeftRing (I, LAYER_Enthium)` |
+| `lh c3r4` | `&LeftMiddle (A, LAYER_Enthium)` |
 | `lh c2r4` | `&LeftIndex (E, LAYER_Enthium)` |
 | `lh c1r4` | `&kp MINUS` |
 | `rh c1r4` | `&kp K` |
 | `rh c2r4` | `&RightIndex (H, LAYER_Enthium)` |
-| `rh c3r4` | `&RightMiddy (T, LAYER_Enthium)` |
-| `rh c4r4` | `&RightRingy (N, LAYER_Enthium)` |
+| `rh c3r4` | `&RightMiddle (T, LAYER_Enthium)` |
+| `rh c4r4` | `&RightRing (N, LAYER_Enthium)` |
 | `rh c5r4` | `&RightPinky (S, LAYER_Enthium)` |
 | `rh c6r4` | `&kp W` |
 | `lh c6r5` | `&sticky_key_modtap LSFT LSFT` |
@@ -274,7 +274,7 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t1` | `&thumb LAYER_Function ESC` |
 | `lh t2` | `&thumb LAYER_Lower INSERT` |
 | `lh t3` | `&kp PG_UP` |
-| `rh t3` | `&thums_up` |
+| `rh t3` | `&thumbs_up` |
 | `rh t2` | `&thumb LAYER_Lower DELETE` |
 | `rh t1` | `&thumb LAYER_System ENTER` |
 | `rh c1r5` | `&kp J` |
@@ -287,14 +287,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c5r6` | `&kp BSLH` |
 | `lh c4r6` | `&parang_left` |
 | `lh c3r6` | `&parang_right` |
-| `lh c2r6` | `&stumb LAYER_Emoji LSFT` |
+| `lh c2r6` | `&shift_thumb LAYER_Emoji LSFT` |
 | `lh t4` | `&thumb LAYER_Cursor SPACE` |
 | `lh t5` | `&thumb LAYER_Number TAB` |
 | `lh t6` | `&kp PG_DN` |
-| `rh t6` | `&thums_down` |
+| `rh t6` | `&thumbs_down` |
 | `rh t5` | `&thumb LAYER_Mouse BACKSPACE` |
 | `rh t4` | `&space LAYER_Symbol R` |
-| `rh c2r6` | `&stumb LAYER_World RSFT` |
+| `rh c2r6` | `&shift_thumb LAYER_World RSFT` |
 | `rh c3r6` | `&kp LBKT` |
 | `rh c4r6` | `&kp RBKT` |
 | `rh c5r6` | `&kp GRAVE` |
@@ -304,26 +304,26 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 
 | position | binding |
 | --- | --- |
-| `lh c5r4` | `&LeftMiddy_layer0 (KEY_LH_C5R4)` |
-| `lh c4r4` | `&LeftRingy_layer0 (KEY_LH_C4R4)` |
+| `lh c5r4` | `&LeftMiddle_layer0 (KEY_LH_C5R4)` |
+| `lh c4r4` | `&LeftRing_layer0 (KEY_LH_C4R4)` |
 | `lh c3r4` | `&LeftPinky_layer0 (KEY_LH_C3R4)` |
 | `lh c2r4` | `&LeftIndex_layer0 (KEY_LH_C2R4)` |
 | `rh c2r4` | `&RightIndex_layer0 (KEY_RH_C2R4)` |
 | `rh c3r4` | `&RightPinky_layer0 (KEY_RH_C3R4)` |
-| `rh c4r4` | `&RightRingy_layer0 (KEY_RH_C4R4)` |
-| `rh c5r4` | `&RightMiddy_layer0 (KEY_RH_C5R4)` |
+| `rh c4r4` | `&RightRing_layer0 (KEY_RH_C4R4)` |
+| `rh c5r4` | `&RightMiddle_layer0 (KEY_RH_C5R4)` |
 
 ## layer 5: Typing
 
 | position | binding |
 | --- | --- |
 | `lh c5r4` | `&kp LEFT_PINKY_KEY` |
-| `lh c4r4` | `&kp LEFT_RINGY_KEY` |
-| `lh c3r4` | `&kp LEFT_MIDDY_KEY` |
+| `lh c4r4` | `&kp LEFT_RING_KEY` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_KEY` |
 | `lh c2r4` | `&kp LEFT_INDEX_KEY` |
 | `rh c2r4` | `&kp RIGHT_INDEX_KEY` |
-| `rh c3r4` | `&kp RIGHT_MIDDY_KEY` |
-| `rh c4r4` | `&kp RIGHT_RINGY_KEY` |
+| `rh c3r4` | `&kp RIGHT_MIDDLE_KEY` |
+| `rh c4r4` | `&kp RIGHT_RING_KEY` |
 | `rh c5r4` | `&kp RIGHT_PINKY_KEY` |
 | `lh t1` | `&kp KEY_LH_T1` |
 | `lh t2` | `&kp KEY_LH_T2` |
@@ -358,13 +358,13 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c2r3` | `&left_pinky_tap KEY_LH_C2R3` |
 | `lh c1r3` | `&left_pinky_tap KEY_LH_C1R3` |
 | `lh c6r4` | `&left_pinky_tap KEY_LH_C6R4` |
-| `lh c4r4` | `&LeftPinkyRingy` |
-| `lh c3r4` | `&LeftPinkyMiddy` |
+| `lh c4r4` | `&LeftPinkyRing` |
+| `lh c3r4` | `&LeftPinkyMiddle` |
 | `lh c2r4` | `&LeftPinkyIndex` |
 | `lh c1r4` | `&left_pinky_tap KEY_LH_C1R4` |
 | `rh c2r4` | `&kp RIGHT_INDEX_KEY` |
-| `rh c3r4` | `&kp RIGHT_MIDDY_KEY` |
-| `rh c4r4` | `&kp RIGHT_RINGY_KEY` |
+| `rh c3r4` | `&kp RIGHT_MIDDLE_KEY` |
+| `rh c4r4` | `&kp RIGHT_RING_KEY` |
 | `rh c5r4` | `&kp RIGHT_PINKY_KEY` |
 | `lh c5r5` | `&left_pinky_tap KEY_LH_C5R5` |
 | `lh c4r5` | `&left_pinky_tap KEY_LH_C4R5` |
@@ -382,97 +382,97 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t5` | `&mo LAY_LH_T5` |
 | `lh t6` | `&left_pinky_tap KEY_LH_T6` |
 
-## layer 7: LeftRingy
+## layer 7: LeftRing
 
 | position | binding |
 | --- | --- |
-| `lh c6r1` | `&left_ringy_tap KEY_LH_C6R1` |
-| `lh c5r1` | `&left_ringy_tap KEY_LH_C5R1` |
-| `lh c4r1` | `&left_ringy_tap KEY_LH_C4R1` |
-| `lh c3r1` | `&left_ringy_tap KEY_LH_C3R1` |
-| `lh c2r1` | `&left_ringy_tap KEY_LH_C2R1` |
-| `lh c6r2` | `&left_ringy_tap KEY_LH_C6R2` |
-| `lh c5r2` | `&left_ringy_tap KEY_LH_C5R2` |
-| `lh c4r2` | `&left_ringy_tap KEY_LH_C4R2` |
-| `lh c3r2` | `&left_ringy_tap KEY_LH_C3R2` |
-| `lh c2r2` | `&left_ringy_tap KEY_LH_C2R2` |
-| `lh c1r2` | `&left_ringy_tap KEY_LH_C1R2` |
-| `lh c6r3` | `&left_ringy_tap KEY_LH_C6R3` |
-| `lh c5r3` | `&left_ringy_tap KEY_LH_C5R3` |
-| `lh c4r3` | `&left_ringy_tap KEY_LH_C4R3` |
-| `lh c3r3` | `&left_ringy_tap KEY_LH_C3R3` |
-| `lh c2r3` | `&left_ringy_tap KEY_LH_C2R3` |
-| `lh c1r3` | `&left_ringy_tap KEY_LH_C1R3` |
-| `lh c6r4` | `&left_ringy_tap KEY_LH_C6R4` |
-| `lh c5r4` | `&LeftRingyPinky` |
-| `lh c3r4` | `&LeftRingyMiddy` |
-| `lh c2r4` | `&LeftRingyIndex` |
-| `lh c1r4` | `&left_ringy_tap KEY_LH_C1R4` |
+| `lh c6r1` | `&left_ring_tap KEY_LH_C6R1` |
+| `lh c5r1` | `&left_ring_tap KEY_LH_C5R1` |
+| `lh c4r1` | `&left_ring_tap KEY_LH_C4R1` |
+| `lh c3r1` | `&left_ring_tap KEY_LH_C3R1` |
+| `lh c2r1` | `&left_ring_tap KEY_LH_C2R1` |
+| `lh c6r2` | `&left_ring_tap KEY_LH_C6R2` |
+| `lh c5r2` | `&left_ring_tap KEY_LH_C5R2` |
+| `lh c4r2` | `&left_ring_tap KEY_LH_C4R2` |
+| `lh c3r2` | `&left_ring_tap KEY_LH_C3R2` |
+| `lh c2r2` | `&left_ring_tap KEY_LH_C2R2` |
+| `lh c1r2` | `&left_ring_tap KEY_LH_C1R2` |
+| `lh c6r3` | `&left_ring_tap KEY_LH_C6R3` |
+| `lh c5r3` | `&left_ring_tap KEY_LH_C5R3` |
+| `lh c4r3` | `&left_ring_tap KEY_LH_C4R3` |
+| `lh c3r3` | `&left_ring_tap KEY_LH_C3R3` |
+| `lh c2r3` | `&left_ring_tap KEY_LH_C2R3` |
+| `lh c1r3` | `&left_ring_tap KEY_LH_C1R3` |
+| `lh c6r4` | `&left_ring_tap KEY_LH_C6R4` |
+| `lh c5r4` | `&LeftRingPinky` |
+| `lh c3r4` | `&LeftRingMiddle` |
+| `lh c2r4` | `&LeftRingIndex` |
+| `lh c1r4` | `&left_ring_tap KEY_LH_C1R4` |
 | `rh c2r4` | `&kp RIGHT_INDEX_KEY` |
-| `rh c3r4` | `&kp RIGHT_MIDDY_KEY` |
-| `rh c4r4` | `&kp RIGHT_RINGY_KEY` |
+| `rh c3r4` | `&kp RIGHT_MIDDLE_KEY` |
+| `rh c4r4` | `&kp RIGHT_RING_KEY` |
 | `rh c5r4` | `&kp RIGHT_PINKY_KEY` |
-| `lh c5r5` | `&left_ringy_tap KEY_LH_C5R5` |
-| `lh c4r5` | `&left_ringy_tap KEY_LH_C4R5` |
-| `lh c3r5` | `&left_ringy_tap KEY_LH_C3R5` |
-| `lh c2r5` | `&left_ringy_tap KEY_LH_C2R5` |
-| `lh c1r5` | `&left_ringy_tap KEY_LH_C1R5` |
+| `lh c5r5` | `&left_ring_tap KEY_LH_C5R5` |
+| `lh c4r5` | `&left_ring_tap KEY_LH_C4R5` |
+| `lh c3r5` | `&left_ring_tap KEY_LH_C3R5` |
+| `lh c2r5` | `&left_ring_tap KEY_LH_C2R5` |
+| `lh c1r5` | `&left_ring_tap KEY_LH_C1R5` |
 | `lh t1` | `&mo LAY_LH_T1` |
 | `lh t2` | `&mo LAY_LH_T2` |
-| `lh t3` | `&left_ringy_tap KEY_LH_T3` |
-| `lh c5r6` | `&left_ringy_tap KEY_LH_C5R6` |
-| `lh c4r6` | `&left_ringy_tap KEY_LH_C4R6` |
-| `lh c3r6` | `&left_ringy_tap KEY_LH_C3R6` |
+| `lh t3` | `&left_ring_tap KEY_LH_T3` |
+| `lh c5r6` | `&left_ring_tap KEY_LH_C5R6` |
+| `lh c4r6` | `&left_ring_tap KEY_LH_C4R6` |
+| `lh c3r6` | `&left_ring_tap KEY_LH_C3R6` |
 | `lh c2r6` | `&mo LAY_LH_C2R6` |
 | `lh t4` | `&mo LAY_LH_T4` |
 | `lh t5` | `&mo LAY_LH_T5` |
-| `lh t6` | `&left_ringy_tap KEY_LH_T6` |
+| `lh t6` | `&left_ring_tap KEY_LH_T6` |
 
-## layer 8: LeftMiddy
+## layer 8: LeftMiddle
 
 | position | binding |
 | --- | --- |
-| `lh c6r1` | `&left_middy_tap KEY_LH_C6R1` |
-| `lh c5r1` | `&left_middy_tap KEY_LH_C5R1` |
-| `lh c4r1` | `&left_middy_tap KEY_LH_C4R1` |
-| `lh c3r1` | `&left_middy_tap KEY_LH_C3R1` |
-| `lh c2r1` | `&left_middy_tap KEY_LH_C2R1` |
-| `lh c6r2` | `&left_middy_tap KEY_LH_C6R2` |
-| `lh c5r2` | `&left_middy_tap KEY_LH_C5R2` |
-| `lh c4r2` | `&left_middy_tap KEY_LH_C4R2` |
-| `lh c3r2` | `&left_middy_tap KEY_LH_C3R2` |
-| `lh c2r2` | `&left_middy_tap KEY_LH_C2R2` |
-| `lh c1r2` | `&left_middy_tap KEY_LH_C1R2` |
-| `lh c6r3` | `&left_middy_tap KEY_LH_C6R3` |
-| `lh c5r3` | `&left_middy_tap KEY_LH_C5R3` |
-| `lh c4r3` | `&left_middy_tap KEY_LH_C4R3` |
-| `lh c3r3` | `&left_middy_tap KEY_LH_C3R3` |
-| `lh c2r3` | `&left_middy_tap KEY_LH_C2R3` |
-| `lh c1r3` | `&left_middy_tap KEY_LH_C1R3` |
-| `lh c6r4` | `&left_middy_tap KEY_LH_C6R4` |
-| `lh c5r4` | `&LeftMiddyPinky` |
-| `lh c4r4` | `&LeftMiddyRingy` |
-| `lh c2r4` | `&LeftMiddyIndex` |
-| `lh c1r4` | `&left_middy_tap KEY_LH_C1R4` |
+| `lh c6r1` | `&left_middle_tap KEY_LH_C6R1` |
+| `lh c5r1` | `&left_middle_tap KEY_LH_C5R1` |
+| `lh c4r1` | `&left_middle_tap KEY_LH_C4R1` |
+| `lh c3r1` | `&left_middle_tap KEY_LH_C3R1` |
+| `lh c2r1` | `&left_middle_tap KEY_LH_C2R1` |
+| `lh c6r2` | `&left_middle_tap KEY_LH_C6R2` |
+| `lh c5r2` | `&left_middle_tap KEY_LH_C5R2` |
+| `lh c4r2` | `&left_middle_tap KEY_LH_C4R2` |
+| `lh c3r2` | `&left_middle_tap KEY_LH_C3R2` |
+| `lh c2r2` | `&left_middle_tap KEY_LH_C2R2` |
+| `lh c1r2` | `&left_middle_tap KEY_LH_C1R2` |
+| `lh c6r3` | `&left_middle_tap KEY_LH_C6R3` |
+| `lh c5r3` | `&left_middle_tap KEY_LH_C5R3` |
+| `lh c4r3` | `&left_middle_tap KEY_LH_C4R3` |
+| `lh c3r3` | `&left_middle_tap KEY_LH_C3R3` |
+| `lh c2r3` | `&left_middle_tap KEY_LH_C2R3` |
+| `lh c1r3` | `&left_middle_tap KEY_LH_C1R3` |
+| `lh c6r4` | `&left_middle_tap KEY_LH_C6R4` |
+| `lh c5r4` | `&LeftMiddlePinky` |
+| `lh c4r4` | `&LeftMiddleRing` |
+| `lh c2r4` | `&LeftMiddleIndex` |
+| `lh c1r4` | `&left_middle_tap KEY_LH_C1R4` |
 | `rh c2r4` | `&kp RIGHT_INDEX_KEY` |
-| `rh c3r4` | `&kp RIGHT_MIDDY_KEY` |
-| `rh c4r4` | `&kp RIGHT_RINGY_KEY` |
+| `rh c3r4` | `&kp RIGHT_MIDDLE_KEY` |
+| `rh c4r4` | `&kp RIGHT_RING_KEY` |
 | `rh c5r4` | `&kp RIGHT_PINKY_KEY` |
-| `lh c5r5` | `&left_middy_tap KEY_LH_C5R5` |
-| `lh c4r5` | `&left_middy_tap KEY_LH_C4R5` |
-| `lh c3r5` | `&left_middy_tap KEY_LH_C3R5` |
-| `lh c2r5` | `&left_middy_tap KEY_LH_C2R5` |
-| `lh c1r5` | `&left_middy_tap KEY_LH_C1R5` |
+| `lh c5r5` | `&left_middle_tap KEY_LH_C5R5` |
+| `lh c4r5` | `&left_middle_tap KEY_LH_C4R5` |
+| `lh c3r5` | `&left_middle_tap KEY_LH_C3R5` |
+| `lh c2r5` | `&left_middle_tap KEY_LH_C2R5` |
+| `lh c1r5` | `&left_middle_tap KEY_LH_C1R5` |
 | `lh t1` | `&mo LAY_LH_T1` |
 | `lh t2` | `&mo LAY_LH_T2` |
-| `lh t3` | `&left_middy_tap KEY_LH_T3` |
-| `lh c5r6` | `&left_middy_tap KEY_LH_C5R6` |
-| `lh c4r6` | `&left_middy_tap KEY_LH_C4R6` |
-| `lh c3r6` | `&left_middy_tap KEY_LH_C3R6` |
+| `lh t3` | `&left_middle_tap KEY_LH_T3` |
+| `lh c5r6` | `&left_middle_tap KEY_LH_C5R6` |
+| `lh c4r6` | `&left_middle_tap KEY_LH_C4R6` |
+| `lh c3r6` | `&left_middle_tap KEY_LH_C3R6` |
 | `lh c2r6` | `&mo LAY_LH_C2R6` |
 | `lh t4` | `&mo LAY_LH_T4` |
 | `lh t5` | `&mo LAY_LH_T5` |
-| `lh t6` | `&left_middy_tap KEY_LH_T6` |
+| `lh t6` | `&left_middle_tap KEY_LH_T6` |
 
 ## layer 9: LeftIndex
 
@@ -497,12 +497,12 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh c1r3` | `&left_index_tap KEY_LH_C1R3` |
 | `lh c6r4` | `&left_index_tap KEY_LH_C6R4` |
 | `lh c5r4` | `&LeftIndexPinky` |
-| `lh c4r4` | `&LeftIndexRingy` |
-| `lh c3r4` | `&LeftIndexMiddy` |
+| `lh c4r4` | `&LeftIndexRing` |
+| `lh c3r4` | `&LeftIndexMiddle` |
 | `lh c1r4` | `&left_index_tap KEY_LH_C1R4` |
 | `rh c2r4` | `&kp RIGHT_INDEX_KEY` |
-| `rh c3r4` | `&kp RIGHT_MIDDY_KEY` |
-| `rh c4r4` | `&kp RIGHT_RINGY_KEY` |
+| `rh c3r4` | `&kp RIGHT_MIDDLE_KEY` |
+| `rh c4r4` | `&kp RIGHT_RING_KEY` |
 | `rh c5r4` | `&kp RIGHT_PINKY_KEY` |
 | `lh c5r5` | `&left_index_tap KEY_LH_C5R5` |
 | `lh c4r5` | `&left_index_tap KEY_LH_C4R5` |
@@ -542,12 +542,12 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c5r3` | `&right_index_tap KEY_RH_C5R3` |
 | `rh c6r3` | `&right_index_tap KEY_RH_C6R3` |
 | `lh c5r4` | `&kp LEFT_PINKY_KEY` |
-| `lh c4r4` | `&kp LEFT_RINGY_KEY` |
-| `lh c3r4` | `&kp LEFT_MIDDY_KEY` |
+| `lh c4r4` | `&kp LEFT_RING_KEY` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_KEY` |
 | `lh c2r4` | `&kp LEFT_INDEX_KEY` |
 | `rh c1r4` | `&right_index_tap KEY_RH_C1R4` |
-| `rh c3r4` | `&RightIndexMiddy` |
-| `rh c4r4` | `&RightIndexRingy` |
+| `rh c3r4` | `&RightIndexMiddle` |
+| `rh c4r4` | `&RightIndexRing` |
 | `rh c5r4` | `&RightIndexPinky` |
 | `rh c6r4` | `&right_index_tap KEY_RH_C6R4` |
 | `rh t3` | `&right_index_tap KEY_RH_T3` |
@@ -566,97 +566,97 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c4r6` | `&right_index_tap KEY_RH_C4R6` |
 | `rh c5r6` | `&right_index_tap KEY_RH_C5R6` |
 
-## layer 11: RightMiddy
+## layer 11: RightMiddle
 
 | position | binding |
 | --- | --- |
-| `rh c2r1` | `&right_middy_tap KEY_RH_C2R1` |
-| `rh c3r1` | `&right_middy_tap KEY_RH_C3R1` |
-| `rh c4r1` | `&right_middy_tap KEY_RH_C4R1` |
-| `rh c5r1` | `&right_middy_tap KEY_RH_C5R1` |
-| `rh c6r1` | `&right_middy_tap KEY_RH_C6R1` |
-| `rh c1r2` | `&right_middy_tap KEY_RH_C1R2` |
-| `rh c2r2` | `&right_middy_tap KEY_RH_C2R2` |
-| `rh c3r2` | `&right_middy_tap KEY_RH_C3R2` |
-| `rh c4r2` | `&right_middy_tap KEY_RH_C4R2` |
-| `rh c5r2` | `&right_middy_tap KEY_RH_C5R2` |
-| `rh c6r2` | `&right_middy_tap KEY_RH_C6R2` |
-| `rh c1r3` | `&right_middy_tap KEY_RH_C1R3` |
-| `rh c2r3` | `&right_middy_tap KEY_RH_C2R3` |
-| `rh c3r3` | `&right_middy_tap KEY_RH_C3R3` |
-| `rh c4r3` | `&right_middy_tap KEY_RH_C4R3` |
-| `rh c5r3` | `&right_middy_tap KEY_RH_C5R3` |
-| `rh c6r3` | `&right_middy_tap KEY_RH_C6R3` |
+| `rh c2r1` | `&right_middle_tap KEY_RH_C2R1` |
+| `rh c3r1` | `&right_middle_tap KEY_RH_C3R1` |
+| `rh c4r1` | `&right_middle_tap KEY_RH_C4R1` |
+| `rh c5r1` | `&right_middle_tap KEY_RH_C5R1` |
+| `rh c6r1` | `&right_middle_tap KEY_RH_C6R1` |
+| `rh c1r2` | `&right_middle_tap KEY_RH_C1R2` |
+| `rh c2r2` | `&right_middle_tap KEY_RH_C2R2` |
+| `rh c3r2` | `&right_middle_tap KEY_RH_C3R2` |
+| `rh c4r2` | `&right_middle_tap KEY_RH_C4R2` |
+| `rh c5r2` | `&right_middle_tap KEY_RH_C5R2` |
+| `rh c6r2` | `&right_middle_tap KEY_RH_C6R2` |
+| `rh c1r3` | `&right_middle_tap KEY_RH_C1R3` |
+| `rh c2r3` | `&right_middle_tap KEY_RH_C2R3` |
+| `rh c3r3` | `&right_middle_tap KEY_RH_C3R3` |
+| `rh c4r3` | `&right_middle_tap KEY_RH_C4R3` |
+| `rh c5r3` | `&right_middle_tap KEY_RH_C5R3` |
+| `rh c6r3` | `&right_middle_tap KEY_RH_C6R3` |
 | `lh c5r4` | `&kp LEFT_PINKY_KEY` |
-| `lh c4r4` | `&kp LEFT_RINGY_KEY` |
-| `lh c3r4` | `&kp LEFT_MIDDY_KEY` |
+| `lh c4r4` | `&kp LEFT_RING_KEY` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_KEY` |
 | `lh c2r4` | `&kp LEFT_INDEX_KEY` |
-| `rh c1r4` | `&right_middy_tap KEY_RH_C1R4` |
-| `rh c2r4` | `&RightMiddyIndex` |
-| `rh c4r4` | `&RightMiddyRingy` |
-| `rh c5r4` | `&RightMiddyPinky` |
-| `rh c6r4` | `&right_middy_tap KEY_RH_C6R4` |
-| `rh t3` | `&right_middy_tap KEY_RH_T3` |
+| `rh c1r4` | `&right_middle_tap KEY_RH_C1R4` |
+| `rh c2r4` | `&RightMiddleIndex` |
+| `rh c4r4` | `&RightMiddleRing` |
+| `rh c5r4` | `&RightMiddlePinky` |
+| `rh c6r4` | `&right_middle_tap KEY_RH_C6R4` |
+| `rh t3` | `&right_middle_tap KEY_RH_T3` |
 | `rh t2` | `&mo LAY_RH_T2` |
 | `rh t1` | `&mo LAY_RH_T1` |
-| `rh c1r5` | `&right_middy_tap KEY_RH_C1R5` |
-| `rh c2r5` | `&right_middy_tap KEY_RH_C2R5` |
-| `rh c3r5` | `&right_middy_tap KEY_RH_C3R5` |
-| `rh c4r5` | `&right_middy_tap KEY_RH_C4R5` |
-| `rh c5r5` | `&right_middy_tap KEY_RH_C5R5` |
-| `rh t6` | `&right_middy_tap KEY_RH_T6` |
+| `rh c1r5` | `&right_middle_tap KEY_RH_C1R5` |
+| `rh c2r5` | `&right_middle_tap KEY_RH_C2R5` |
+| `rh c3r5` | `&right_middle_tap KEY_RH_C3R5` |
+| `rh c4r5` | `&right_middle_tap KEY_RH_C4R5` |
+| `rh c5r5` | `&right_middle_tap KEY_RH_C5R5` |
+| `rh t6` | `&right_middle_tap KEY_RH_T6` |
 | `rh t5` | `&mo LAY_RH_T5` |
 | `rh t4` | `&mo LAY_RH_T4` |
 | `rh c2r6` | `&mo LAY_RH_C2R6` |
-| `rh c3r6` | `&right_middy_tap KEY_RH_C3R6` |
-| `rh c4r6` | `&right_middy_tap KEY_RH_C4R6` |
-| `rh c5r6` | `&right_middy_tap KEY_RH_C5R6` |
+| `rh c3r6` | `&right_middle_tap KEY_RH_C3R6` |
+| `rh c4r6` | `&right_middle_tap KEY_RH_C4R6` |
+| `rh c5r6` | `&right_middle_tap KEY_RH_C5R6` |
 
-## layer 12: RightRingy
+## layer 12: RightRing
 
 | position | binding |
 | --- | --- |
-| `rh c2r1` | `&right_ringy_tap KEY_RH_C2R1` |
-| `rh c3r1` | `&right_ringy_tap KEY_RH_C3R1` |
-| `rh c4r1` | `&right_ringy_tap KEY_RH_C4R1` |
-| `rh c5r1` | `&right_ringy_tap KEY_RH_C5R1` |
-| `rh c6r1` | `&right_ringy_tap KEY_RH_C6R1` |
-| `rh c1r2` | `&right_ringy_tap KEY_RH_C1R2` |
-| `rh c2r2` | `&right_ringy_tap KEY_RH_C2R2` |
-| `rh c3r2` | `&right_ringy_tap KEY_RH_C3R2` |
-| `rh c4r2` | `&right_ringy_tap KEY_RH_C4R2` |
-| `rh c5r2` | `&right_ringy_tap KEY_RH_C5R2` |
-| `rh c6r2` | `&right_ringy_tap KEY_RH_C6R2` |
-| `rh c1r3` | `&right_ringy_tap KEY_RH_C1R3` |
-| `rh c2r3` | `&right_ringy_tap KEY_RH_C2R3` |
-| `rh c3r3` | `&right_ringy_tap KEY_RH_C3R3` |
-| `rh c4r3` | `&right_ringy_tap KEY_RH_C4R3` |
-| `rh c5r3` | `&right_ringy_tap KEY_RH_C5R3` |
-| `rh c6r3` | `&right_ringy_tap KEY_RH_C6R3` |
+| `rh c2r1` | `&right_ring_tap KEY_RH_C2R1` |
+| `rh c3r1` | `&right_ring_tap KEY_RH_C3R1` |
+| `rh c4r1` | `&right_ring_tap KEY_RH_C4R1` |
+| `rh c5r1` | `&right_ring_tap KEY_RH_C5R1` |
+| `rh c6r1` | `&right_ring_tap KEY_RH_C6R1` |
+| `rh c1r2` | `&right_ring_tap KEY_RH_C1R2` |
+| `rh c2r2` | `&right_ring_tap KEY_RH_C2R2` |
+| `rh c3r2` | `&right_ring_tap KEY_RH_C3R2` |
+| `rh c4r2` | `&right_ring_tap KEY_RH_C4R2` |
+| `rh c5r2` | `&right_ring_tap KEY_RH_C5R2` |
+| `rh c6r2` | `&right_ring_tap KEY_RH_C6R2` |
+| `rh c1r3` | `&right_ring_tap KEY_RH_C1R3` |
+| `rh c2r3` | `&right_ring_tap KEY_RH_C2R3` |
+| `rh c3r3` | `&right_ring_tap KEY_RH_C3R3` |
+| `rh c4r3` | `&right_ring_tap KEY_RH_C4R3` |
+| `rh c5r3` | `&right_ring_tap KEY_RH_C5R3` |
+| `rh c6r3` | `&right_ring_tap KEY_RH_C6R3` |
 | `lh c5r4` | `&kp LEFT_PINKY_KEY` |
-| `lh c4r4` | `&kp LEFT_RINGY_KEY` |
-| `lh c3r4` | `&kp LEFT_MIDDY_KEY` |
+| `lh c4r4` | `&kp LEFT_RING_KEY` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_KEY` |
 | `lh c2r4` | `&kp LEFT_INDEX_KEY` |
-| `rh c1r4` | `&right_ringy_tap KEY_RH_C1R4` |
-| `rh c2r4` | `&RightRingyIndex` |
-| `rh c3r4` | `&RightRingyMiddy` |
-| `rh c5r4` | `&RightRingyPinky` |
-| `rh c6r4` | `&right_ringy_tap KEY_RH_C6R4` |
-| `rh t3` | `&right_ringy_tap KEY_RH_T3` |
+| `rh c1r4` | `&right_ring_tap KEY_RH_C1R4` |
+| `rh c2r4` | `&RightRingIndex` |
+| `rh c3r4` | `&RightRingMiddle` |
+| `rh c5r4` | `&RightRingPinky` |
+| `rh c6r4` | `&right_ring_tap KEY_RH_C6R4` |
+| `rh t3` | `&right_ring_tap KEY_RH_T3` |
 | `rh t2` | `&mo LAY_RH_T2` |
 | `rh t1` | `&mo LAY_RH_T1` |
-| `rh c1r5` | `&right_ringy_tap KEY_RH_C1R5` |
-| `rh c2r5` | `&right_ringy_tap KEY_RH_C2R5` |
-| `rh c3r5` | `&right_ringy_tap KEY_RH_C3R5` |
-| `rh c4r5` | `&right_ringy_tap KEY_RH_C4R5` |
-| `rh c5r5` | `&right_ringy_tap KEY_RH_C5R5` |
-| `rh t6` | `&right_ringy_tap KEY_RH_T6` |
+| `rh c1r5` | `&right_ring_tap KEY_RH_C1R5` |
+| `rh c2r5` | `&right_ring_tap KEY_RH_C2R5` |
+| `rh c3r5` | `&right_ring_tap KEY_RH_C3R5` |
+| `rh c4r5` | `&right_ring_tap KEY_RH_C4R5` |
+| `rh c5r5` | `&right_ring_tap KEY_RH_C5R5` |
+| `rh t6` | `&right_ring_tap KEY_RH_T6` |
 | `rh t5` | `&mo LAY_RH_T5` |
 | `rh t4` | `&mo LAY_RH_T4` |
 | `rh c2r6` | `&mo LAY_RH_C2R6` |
-| `rh c3r6` | `&right_ringy_tap KEY_RH_C3R6` |
-| `rh c4r6` | `&right_ringy_tap KEY_RH_C4R6` |
-| `rh c5r6` | `&right_ringy_tap KEY_RH_C5R6` |
+| `rh c3r6` | `&right_ring_tap KEY_RH_C3R6` |
+| `rh c4r6` | `&right_ring_tap KEY_RH_C4R6` |
+| `rh c5r6` | `&right_ring_tap KEY_RH_C5R6` |
 
 ## layer 13: RightPinky
 
@@ -680,13 +680,13 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c5r3` | `&right_pinky_tap KEY_RH_C5R3` |
 | `rh c6r3` | `&right_pinky_tap KEY_RH_C6R3` |
 | `lh c5r4` | `&kp LEFT_PINKY_KEY` |
-| `lh c4r4` | `&kp LEFT_RINGY_KEY` |
-| `lh c3r4` | `&kp LEFT_MIDDY_KEY` |
+| `lh c4r4` | `&kp LEFT_RING_KEY` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_KEY` |
 | `lh c2r4` | `&kp LEFT_INDEX_KEY` |
 | `rh c1r4` | `&right_pinky_tap KEY_RH_C1R4` |
 | `rh c2r4` | `&RightPinkyIndex` |
-| `rh c3r4` | `&RightPinkyMiddy` |
-| `rh c4r4` | `&RightPinkyRingy` |
+| `rh c3r4` | `&RightPinkyMiddle` |
+| `rh c4r4` | `&RightPinkyRing` |
 | `rh c6r4` | `&right_pinky_tap KEY_RH_C6R4` |
 | `rh t3` | `&right_pinky_tap KEY_RH_T3` |
 | `rh t2` | `&mo LAY_RH_T2` |
@@ -809,8 +809,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c5r3` | `&kp TAB` |
 | `lh c6r4` | `&sk LSHFT` |
 | `lh c5r4` | `&kp LEFT_PINKY_MOD` |
-| `lh c4r4` | `&kp LEFT_RINGY_MOD` |
-| `lh c3r4` | `&kp LEFT_MIDDY_MOD` |
+| `lh c4r4` | `&kp LEFT_RING_MOD` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_MOD` |
 | `lh c2r4` | `&kp LEFT_INDEX_MOD` |
 | `lh c1r4` | `&kp _COPY` |
 | `rh c1r4` | `&kp _COPY` |
@@ -881,8 +881,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c6r3` | `&kp LS(N5)` |
 | `lh c6r4` | `&sk LSHFT` |
 | `lh c5r4` | `&kp LEFT_PINKY_MOD` |
-| `lh c4r4` | `&kp LEFT_RINGY_MOD` |
-| `lh c3r4` | `&kp LEFT_MIDDY_MOD` |
+| `lh c4r4` | `&kp LEFT_RING_MOD` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_MOD` |
 | `lh c2r4` | `&kp LEFT_INDEX_MOD` |
 | `lh c1r4` | `&kp X` |
 | `rh c1r4` | `&kp K` |
@@ -948,8 +948,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c6r3` | `&kp F13` |
 | `lh c6r4` | `&sk LSHFT` |
 | `lh c5r4` | `&kp LEFT_PINKY_MOD` |
-| `lh c4r4` | `&kp LEFT_RINGY_MOD` |
-| `lh c3r4` | `&kp LEFT_MIDDY_MOD` |
+| `lh c4r4` | `&kp LEFT_RING_MOD` |
+| `lh c3r4` | `&kp LEFT_MIDDLE_MOD` |
 | `lh c2r4` | `&kp LEFT_INDEX_MOD` |
 | `lh c1r4` | `&kp K_WWW` |
 | `rh c1r4` | `&kp K_WWW` |
@@ -990,8 +990,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 
 | position | binding |
 | --- | --- |
-| `lh c5r4` | `&kp LEFT_MIDDY_MOD` |
-| `lh c4r4` | `&kp LEFT_RINGY_MOD` |
+| `lh c5r4` | `&kp LEFT_MIDDLE_MOD` |
+| `lh c4r4` | `&kp LEFT_RING_MOD` |
 | `lh c3r4` | `&kp LEFT_PINKY_MOD` |
 | `lh c2r4` | `&kp LEFT_INDEX_MOD` |
 
@@ -1051,8 +1051,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t6` | `&kp LS(N2)` |
 | `rh t4` | `&tog LAYER_Symbol` |
 | `rh c2r6` | `&kp RIGHT_INDEX_MOD` |
-| `rh c3r6` | `&kp RIGHT_MIDDY_MOD` |
-| `rh c4r6` | `&kp RIGHT_RINGY_MOD` |
+| `rh c3r6` | `&kp RIGHT_MIDDLE_MOD` |
+| `rh c4r6` | `&kp RIGHT_RING_MOD` |
 | `rh c5r6` | `&kp RIGHT_PINKY_MOD` |
 
 ## layer 20: Mouse
@@ -1103,8 +1103,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `lh t6` | `&mkp MB4` |
 | `rh t5` | `&tog LAYER_Mouse` |
 | `rh c2r6` | `&kp RIGHT_INDEX_MOD` |
-| `rh c3r6` | `&kp RIGHT_MIDDY_MOD` |
-| `rh c4r6` | `&kp RIGHT_RINGY_MOD` |
+| `rh c3r6` | `&kp RIGHT_MIDDLE_MOD` |
+| `rh c4r6` | `&kp RIGHT_RING_MOD` |
 | `rh c5r6` | `&kp RIGHT_PINKY_MOD` |
 
 ## layer 21: System
@@ -1154,8 +1154,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh t5` | `&kp PSCRN` |
 | `rh t4` | `&kp PAUSE_BREAK` |
 | `rh c2r6` | `&kp RIGHT_INDEX_MOD` |
-| `rh c3r6` | `&kp RIGHT_MIDDY_MOD` |
-| `rh c4r6` | `&kp RIGHT_RINGY_MOD` |
+| `rh c3r6` | `&kp RIGHT_MIDDLE_MOD` |
+| `rh c4r6` | `&kp RIGHT_RING_MOD` |
 | `rh c5r6` | `&kp RIGHT_PINKY_MOD` |
 | `rh c6r6` | `&kp _POWER` |
 
@@ -1165,8 +1165,8 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | --- | --- |
 | `rh c2r6` | `&kp RIGHT_INDEX_MOD` |
 | `rh c3r6` | `&kp RIGHT_PINKY_MOD` |
-| `rh c4r6` | `&kp RIGHT_RINGY_MOD` |
-| `rh c5r6` | `&kp RIGHT_MIDDY_MOD` |
+| `rh c4r6` | `&kp RIGHT_RING_MOD` |
+| `rh c5r6` | `&kp RIGHT_MIDDLE_MOD` |
 
 ## layer 23: Emoji
 
@@ -1382,14 +1382,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 | `rh c4r3` | `&kp KP_N9` |
 | `rh c5r3` | `&kp KP_N0` |
 | `lh c5r4` | `&sk LEFT_PINKY_MOD` |
-| `lh c4r4` | `&sk LEFT_RINGY_MOD` |
-| `lh c3r4` | `&sk LEFT_MIDDY_MOD` |
+| `lh c4r4` | `&sk LEFT_RING_MOD` |
+| `lh c3r4` | `&sk LEFT_MIDDLE_MOD` |
 | `lh c2r4` | `&sk LEFT_INDEX_MOD` |
 | `lh c1r4` | `&kp KP_MINUS` |
 | `rh c1r4` | `&kp KP_SLASH` |
 | `rh c2r4` | `&sk RIGHT_INDEX_MOD` |
-| `rh c3r4` | `&sk RIGHT_MIDDY_MOD` |
-| `rh c4r4` | `&sk RIGHT_RINGY_MOD` |
+| `rh c3r4` | `&sk RIGHT_MIDDLE_MOD` |
+| `rh c4r4` | `&sk RIGHT_RING_MOD` |
 | `rh c5r4` | `&sk RIGHT_PINKY_MOD` |
 | `lh c5r5` | `&kp KP_LPAR` |
 | `lh c4r5` | `&kp KP_COMMA` |
@@ -1416,14 +1416,14 @@ layer access, mouse actions, rgb controls, and custom behaviors.
 
 | position | binding |
 | --- | --- |
-| `lh c5r4` | `&sk LEFT_MIDDY_MOD` |
-| `lh c4r4` | `&sk LEFT_RINGY_MOD` |
+| `lh c5r4` | `&sk LEFT_MIDDLE_MOD` |
+| `lh c4r4` | `&sk LEFT_RING_MOD` |
 | `lh c3r4` | `&sk LEFT_PINKY_MOD` |
 | `lh c2r4` | `&sk LEFT_INDEX_MOD` |
 | `rh c2r4` | `&sk RIGHT_INDEX_MOD` |
 | `rh c3r4` | `&sk RIGHT_PINKY_MOD` |
-| `rh c4r4` | `&sk RIGHT_RINGY_MOD` |
-| `rh c5r4` | `&sk RIGHT_MIDDY_MOD` |
+| `rh c4r4` | `&sk RIGHT_RING_MOD` |
+| `rh c5r4` | `&sk RIGHT_MIDDLE_MOD` |
 
 ## layer 28: Mouse_slow
 

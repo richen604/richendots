@@ -11,6 +11,18 @@ KEYMAP_MARKER = "/* Automatically generated keymap */"
 CUSTOM_MARKER = "/* Custom Defined Behaviors */"
 KVM_MARKER = "/* Richendots TESmart KVM macros */"
 
+SUMMARY_LABELS = {
+    "MIDDY": "MIDDLE",
+    "Middy": "Middle",
+    "middy": "middle",
+    "RINGY": "RING",
+    "Ringy": "Ring",
+    "ringy": "ring",
+    "stumb": "shift_thumb",
+    "thums_down": "thumbs_down",
+    "thums_up": "thumbs_up",
+}
+
 KVM_MACROS = f"""{KVM_MARKER}
 / {{
     macros {{
@@ -341,8 +353,8 @@ def render_summary(text: str) -> str:
         "do not edit it by hand. it provides a quick, searchable view",
         "of every physical key binding. empty and transparent bindings are omitted.",
         "",
-        "zmk behaviors are kept as written to distinguish taps, holds,",
-        "layer access, mouse actions, rgb controls, and custom behaviors.",
+        "zmk behaviors are shown with readable labels while preserving their arguments",
+        "to distinguish taps, holds, layer access, mouse actions, and rgb controls.",
         "",
     ]
 
@@ -369,7 +381,17 @@ def render_summary(text: str) -> str:
                 )
             mapped_bindings.extend(zip(row_positions, row_bindings, strict=True))
 
-        lines.extend([f"## layer {number}: {name}", "", "| position | binding |", "| --- | --- |"])
+        display_name = name
+        for source, display in SUMMARY_LABELS.items():
+            display_name = display_name.replace(source, display)
+        lines.extend(
+            [
+                f"## layer {number}: {display_name}",
+                "",
+                "| position | binding |",
+                "| --- | --- |",
+            ]
+        )
         visible_bindings = [
             (position, binding)
             for position, binding in mapped_bindings
@@ -377,7 +399,10 @@ def render_summary(text: str) -> str:
         ]
         if visible_bindings:
             for position, binding in visible_bindings:
-                escaped_binding = binding.replace("|", "\\|")
+                display_binding = binding
+                for source, display in SUMMARY_LABELS.items():
+                    display_binding = display_binding.replace(source, display)
+                escaped_binding = display_binding.replace("|", "\\|")
                 lines.append(f"| `{position}` | `{escaped_binding}` |")
         else:
             lines.append("| - | no explicit bindings |")
