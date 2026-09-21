@@ -5,30 +5,7 @@
   pkgsFor,
 }:
 let
-  publicHostVars = {
-    fern = {
-      hostname = "fern";
-      system = "x86_64-linux";
-      profile = "desktop";
-      stateVersion = "26.05";
-    };
-
-    oak = {
-      hostname = "oak";
-      system = "x86_64-linux";
-      profile = "laptop";
-      stateVersion = "26.05";
-    };
-
-    cedar = {
-      hostname = "cedar";
-      system = "x86_64-linux";
-      profile = "server";
-      stateVersion = "25.05";
-    };
-  };
-
-  hostVars = publicHostVars // (inputs.richendots-private.hostVars or { });
+  hostVars = import ./host-vars.nix { inherit inputs; };
 
   mkHost =
     hostvars:
@@ -50,66 +27,30 @@ let
         inherit richenLib hostvars;
       };
 
-      modules =
-        recursiveModules ../profiles/common
-        ++ lib.optionals (
-          (hostvars ? profile) && (hostvars.profile == "desktop" || hostvars.profile == "laptop")
-        ) (recursiveModules ../profiles/gui)
-        ++ lib.optionals (hostvars ? profile) (recursiveModules ../profiles/${hostvars.profile})
-        ++ lib.optionals (builtins.pathExists ../hosts/${hostvars.hostname}) (
+      modules = lib.concatLists [
+        (recursiveModules ../profiles/common)
+
+        (lib.optionals (lib.elem (hostvars.profile or null) [
+          "desktop"
+          "laptop"
+        ]) (recursiveModules ../profiles/gui))
+
+        (lib.optionals (hostvars ? profile) (recursiveModules ../profiles/${hostvars.profile}))
+
+        (lib.optionals (builtins.pathExists ../hosts/${hostvars.hostname}) (
           recursiveModules ../hosts/${hostvars.hostname}
-        )
-        ++ [ (inputs.richendots-private.nixosModules.${hostvars.hostname} or { }) ];
+        ))
+
+        [
+          (inputs.richendots-private.nixosModules.${hostvars.hostname} or { })
+        ]
+      ];
     };
 
   mkVm =
     hostvars:
     ((mkHost hostvars).extendModules {
-      modules = [
-        (
-          {
-            pkgs,
-            ...
-          }:
-          {
-            virtualisation.vmVariant = {
-              virtualisation = {
-                memorySize = 14096;
-                cores = 4;
-                diskSize = 10240;
-                qemu.options = [
-                  "-device virtio-vga-gl"
-                  "-display gtk,gl=on,grab-on-hover=on"
-                  "-usb -device usb-tablet"
-                  "-cpu host"
-                  "-enable-kvm"
-                  "-machine q35"
-                  "-device intel-iommu"
-                  "-device ich9-intel-hda"
-                  "-device hda-output"
-                  "-vga none"
-                ];
-              };
-              services.xserver.videoDrivers = [
-                "virtio"
-              ];
-            };
-
-            environment.variables.WLR_NO_HARDWARE_CURSORS = "1";
-
-            virtualisation.libvirtd.enable = true;
-            environment.systemPackages = with pkgs; [
-              open-vm-tools
-              spice-gtk
-              spice-vdagent
-              spice
-            ];
-            services.qemuGuest.enable = true;
-            services.spice-vdagentd.enable = true;
-            hardware.graphics.enable = true;
-          }
-        )
-      ];
+      modules = [ ./vm.nix ];
     }).config.system.build.vm;
 
   normalNixosConfigurations = lib.mapAttrs (_host: mkHost) hostVars;
@@ -123,7 +64,7 @@ let
         modules = [ installModule ];
       }
     )
-  ) (lib.filterAttrs (host: _module: lib.hasAttr host normalNixosConfigurations) installModules);
+  ) (lib.intersectAttrs normalNixosConfigurations installModules);
 in
 {
   inherit
