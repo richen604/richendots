@@ -179,7 +179,7 @@ body {
     --online: var(--acc-p6); /* change to #40a258 for default */
     --dnd: var(--acc-q4); /* change to #d83a41 for default */
     --idle: var(--acc-s6); /* change to #cc954c for default */
-    --streaming: var(--acc-t6); /* change to ##9147ff for default */
+    --streaming: var(--acc-t6); /* change to #9147ff for default */
     --offline: var(--text-4); /* change to #82838b for default offline color */
 
     /* border colors */

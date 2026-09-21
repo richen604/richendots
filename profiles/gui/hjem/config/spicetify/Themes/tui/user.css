@@ -70,7 +70,7 @@
     display: var(--display-tracklist-image);
 }
 
-/* fix */
+/* Restore spacing between the main panels. */
 .Root__top-container {
     --panel-gap: 16px !important;
 }
