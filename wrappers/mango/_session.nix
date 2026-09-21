@@ -23,25 +23,6 @@ let
     "/run/current-system/sw/bin"
   ];
 
-  equibopWithPinnedEquicord = pkgs.writeShellScriptBin "equibop-with-pinned-equicord" ''
-    set -eu
-
-    config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/equibop"
-    state_file="$config_dir/state.json"
-    install -d "$config_dir"
-
-    if [ -s "$state_file" ]; then
-      state="$(${pkgs.jq}/bin/jq --arg dir "${richenLib.wrappers.equicord}" '.equicordDir = $dir' "$state_file")"
-    else
-      state="$(${pkgs.jq}/bin/jq -n --arg dir "${richenLib.wrappers.equicord}" '{ equicordDir: $dir }')"
-    fi
-
-    printf '%s\n' "$state" > "$state_file.tmp"
-    mv "$state_file.tmp" "$state_file"
-
-    exec ${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland "$@"
-  '';
-
   mangoStartSession = pkgs.writeShellScriptBin "mango-start-session" ''
     ${pkgs.systemd}/bin/systemctl --user import-environment \
       WAYLAND_DISPLAY \
@@ -66,15 +47,15 @@ let
     ${mangoPackage}/bin/mango "$@"
   '';
 
-  partOfGraphicalSession = {
-    partOf = [ "graphical-session.target" ];
+  partOfMangoSession = {
+    partOf = [ "mango-session.target" ];
     after = [ "graphical-session.target" ];
     wantedBy = [ "mango-session.target" ];
   };
 
   simpleSessionService =
     execStart:
-    lib.recursiveUpdate partOfGraphicalSession {
+    lib.recursiveUpdate partOfMangoSession {
       serviceConfig = {
         ExecStart = execStart;
         Restart = "on-failure";
@@ -84,6 +65,9 @@ let
 in
 {
   environment.systemPackages = [ mangoStartSession ];
+
+  # Keep misbehaving desktop applications from delaying logout indefinitely.
+  systemd.user.settings.Manager.DefaultTimeoutStopSec = "15s";
 
   # Do not defer automatic login until the service manager is idle.
   systemd.services.greetd.serviceConfig.Type = lib.mkForce "simple";
@@ -121,7 +105,7 @@ in
   };
 
   systemd.user.services = {
-    waybar = lib.recursiveUpdate partOfGraphicalSession {
+    waybar = lib.recursiveUpdate partOfMangoSession {
       description = "Highly customizable Wayland bar for wlroots compositors";
       documentation = [ "https://github.com/Alexays/Waybar/wiki/" ];
       serviceConfig = {
@@ -132,7 +116,7 @@ in
       };
     };
 
-    swayidle = lib.recursiveUpdate partOfGraphicalSession {
+    swayidle = lib.recursiveUpdate partOfMangoSession {
       description = "Idle manager for Wayland";
       serviceConfig = {
         ExecStart = "${swayidlePackage}/bin/swayidle";
@@ -140,7 +124,7 @@ in
       };
     };
 
-    wayland-pipewire-idle-inhibit = lib.recursiveUpdate partOfGraphicalSession {
+    wayland-pipewire-idle-inhibit = lib.recursiveUpdate partOfMangoSession {
       description = "Wayland idle inhibitor for active PipeWire streams";
       serviceConfig = {
         ExecStart = "${pkgs.wayland-pipewire-idle-inhibit}/bin/wayland-pipewire-idle-inhibit";
@@ -151,7 +135,7 @@ in
 
     waybar-manual-idle-inhibit = {
       description = "Manual Wayland idle inhibitor controlled by Waybar";
-      partOf = [ "graphical-session.target" ];
+      partOf = [ "mango-session.target" ];
       after = [ "graphical-session.target" ];
       serviceConfig = {
         ExecStart = "${pkgs.wlinhibit}/bin/wlinhibit";
@@ -159,7 +143,7 @@ in
       };
     };
 
-    swaync = lib.recursiveUpdate partOfGraphicalSession {
+    swaync = lib.recursiveUpdate partOfMangoSession {
       description = "Swaync notification daemon";
       documentation = [ "https://github.com/ErikReider/SwayNotificationCenter" ];
       unitConfig.ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -172,17 +156,19 @@ in
       };
     };
 
-    vicinae = lib.recursiveUpdate partOfGraphicalSession {
+    vicinae = lib.recursiveUpdate partOfMangoSession {
       description = "Vicinae Launcher Daemon";
       documentation = [ "https://docs.vicinae.com" ];
       requires = [ "dbus.socket" ];
       serviceConfig = {
         ExecStart = "${vicinaePackage}/bin/vicinae server --replace";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
-        Environment = "PATH=${sessionPath}";
+        Environment = "PATH=${pkgs.flatpak}/bin:${sessionPath}";
         Restart = "always";
         RestartSec = 60;
-        KillMode = "process";
+        # Give the daemon a graceful stop, then kill any applications it left
+        # in the service cgroup when the user-service timeout expires.
+        KillMode = "mixed";
       };
     };
 
@@ -198,7 +184,7 @@ in
 
     polkit-gnome-authentication-agent = simpleSessionService "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
 
-    blueman-applet = lib.recursiveUpdate partOfGraphicalSession {
+    blueman-applet = lib.recursiveUpdate partOfMangoSession {
       description = "Bluetooth management applet";
       serviceConfig = {
         Restart = "on-failure";
@@ -206,19 +192,19 @@ in
       };
     };
 
-    keepassxc = lib.recursiveUpdate partOfGraphicalSession {
+    keepassxc = lib.recursiveUpdate partOfMangoSession {
       description = "KeePassXC password manager";
-      after = partOfGraphicalSession.after ++ [ "waybar.service" ];
+      after = partOfMangoSession.after ++ [ "waybar.service" ];
       serviceConfig = {
         ExecStart = "${richenLib.wrappers.keepassxc}/bin/keepassxc";
         Restart = "no";
       };
     };
 
-    equibop = lib.recursiveUpdate partOfGraphicalSession {
+    equibop = lib.recursiveUpdate partOfMangoSession {
       description = "Equibop chat client";
       serviceConfig = {
-        ExecStart = "${equibopWithPinnedEquicord}/bin/equibop-with-pinned-equicord";
+        ExecStart = "${pkgs.lib.getExe pkgs.equibop} --ozone-platform=wayland";
         Environment = [
           "PATH=${sessionPath}"
           "LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}"
@@ -226,9 +212,9 @@ in
       };
     };
 
-    spotify = lib.recursiveUpdate partOfGraphicalSession {
+    spotify = lib.recursiveUpdate partOfMangoSession {
       description = "Spotify Flatpak client";
-      after = partOfGraphicalSession.after ++ [ "equibop.service" ];
+      after = partOfMangoSession.after ++ [ "equibop.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.flatpak}/bin/flatpak run --user com.spotify.Client";
         Restart = "no";
