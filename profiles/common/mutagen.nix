@@ -9,6 +9,33 @@ with lib;
 let
   cfg = config.services.mutagen;
 
+  ownershipLabel = "io.richendots.module=services.mutagen";
+
+  mutagenCommand = args: escapeShellArgs ([ "${pkgs.mutagen}/bin/mutagen" ] ++ args);
+
+  # Exact names clean up sessions created before this module added ownership labels.
+  terminateCommands =
+    kind: sessions:
+    [
+      "${
+        mutagenCommand [
+          kind
+          "terminate"
+          "--label-selector=${ownershipLabel}"
+        ]
+      } || true"
+    ]
+    ++ map (
+      name:
+      "${
+        mutagenCommand [
+          kind
+          "terminate"
+          name
+        ]
+      } || true"
+    ) (attrNames sessions);
+
   mkNullableOption =
     type: default: description:
     mkOption {
@@ -28,6 +55,7 @@ let
       "sync"
       "create"
       "--name=${name}"
+      "--label=${ownershipLabel}"
     ]
     ++ optionals (value.alpha != null) [ value.alpha ]
     ++ optionals (value.beta != null) [ value.beta ]
@@ -75,6 +103,7 @@ let
       "forward"
       "create"
       "--name=${name}"
+      "--label=${ownershipLabel}"
     ]
     ++ optionals (value.source != null) [ value.source ]
     ++ optionals (value.destination != null) [ value.destination ]
@@ -92,16 +121,16 @@ let
   generateSyncCommands = mapAttrsToList (
     name: value:
     optionals value.enable [
-      "echo \"Creating sync session: ${name}\""
-      "${pkgs.mutagen}/bin/mutagen ${concatStringsSep " " (buildSyncArgs name value)}"
+      "printf '%s\\n' ${escapeShellArg "Creating sync session: ${name}"}"
+      (mutagenCommand (buildSyncArgs name value))
     ]
   ) cfg.sync;
 
   generateForwardCommands = mapAttrsToList (
     name: value:
     optionals value.enable [
-      "echo \"Creating forward session: ${name}\""
-      "${pkgs.mutagen}/bin/mutagen ${concatStringsSep " " (buildForwardArgs name value)}"
+      "printf '%s\\n' ${escapeShellArg "Creating forward session: ${name}"}"
+      (mutagenCommand (buildForwardArgs name value))
     ]
   ) cfg.forward;
 
@@ -285,12 +314,12 @@ in
               exit 1
             fi
 
-            # restart sessions from config so stale syncs do not stick around.
-            echo "Terminating all existing sync sessions..."
-            ${pkgs.mutagen}/bin/mutagen sync terminate -a || true
+            # Restart module-owned sessions so removed configuration does not leave stale sessions.
+            echo "Terminating existing module-owned sync sessions..."
+            ${concatStringsSep "\n" (terminateCommands "sync" cfg.sync)}
 
-            echo "Terminating all existing forward sessions..."
-            ${pkgs.mutagen}/bin/mutagen forward terminate -a || true
+            echo "Terminating existing module-owned forward sessions..."
+            ${concatStringsSep "\n" (terminateCommands "forward" cfg.forward)}
 
             # todo: terminate mutagen projects here once mutagen supports it.
             # ${pkgs.mutagen}/bin/mutagen project terminate -a
@@ -302,11 +331,11 @@ in
             echo "All mutagen sessions have been created successfully"
           '';
           ExecStop = pkgs.writeShellScript "mutagen-sessions-stop" ''
-            echo "Terminating all sync sessions..."
-            ${pkgs.mutagen}/bin/mutagen sync terminate -a || true
+            echo "Terminating module-owned sync sessions..."
+            ${concatStringsSep "\n" (terminateCommands "sync" cfg.sync)}
 
-            echo "Terminating all forward sessions..."
-            ${pkgs.mutagen}/bin/mutagen forward terminate -a || true
+            echo "Terminating module-owned forward sessions..."
+            ${concatStringsSep "\n" (terminateCommands "forward" cfg.forward)}
 
             # todo: terminate mutagen projects here once mutagen supports it.
             # ${pkgs.mutagen}/bin/mutagen project terminate -a
