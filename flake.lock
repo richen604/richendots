@@ -290,8 +290,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1790030364,
-        "narHash": "sha256-ELwufNE6C+ThUOLBb22i1RCXOXXBtWO6/aB+E55Jhwc=",
+        "lastModified": 1790030420,
+        "narHash": "sha256-UVjBPlim5F5eMz2DHtGUdb3YUtlhyusIGYBE/pjOVHA=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },
