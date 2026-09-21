@@ -1,4 +1,5 @@
 {
+  cursorSize,
   pkgs,
   richenLib,
   ...
@@ -360,8 +361,6 @@ let
     no_border_when_single=0
     axis_bind_apply_timeout=100
     focus_on_activate=0
-    # todo: currently doesnt work
-    # inhibit_regardless_of_visibility=0
     sloppyfocus=1
     warpcursor=1
     focus_cross_monitor=1
@@ -369,7 +368,7 @@ let
     allow_shortcuts_inhibit=1
     enable_floating_snap=1
     snap_distance=30
-    cursor_size=24
+    cursor_size=${toString cursorSize}
     cursor_hide_on_keypress=1
     drag_tile_to_tile=1
     view_current_to_back=1
@@ -466,10 +465,6 @@ let
     mousebind=SUPER,btn_left,moveresize,curmove
     mousebind=SUPER,btn_right,moveresize,curresize
     mousebind=NONE,btn_extra,spawn,${toggleGlobalMute}/bin/mango-toggle-global-mute
-    # todo: none don't currently work, need to investigate
-    # mousebind=NONE,btn_middle,togglemaximizescreen,0
-    # mousebind=NONE,btn_left,toggleoverview,1
-    # mousebind=NONE,btn_right,killclient,0
 
     # Axis Bindings
     axisbind=SUPER,UP,viewtoleft_have_client

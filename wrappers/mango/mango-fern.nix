@@ -4,48 +4,17 @@
   richenLib,
   ...
 }:
-let
-  mangoPackage = pkgs.callPackage ./_package.nix { src = inputs.mango; };
-  mangoBase = pkgs.callPackage ./_base-config.nix { inherit richenLib; };
+
+pkgs.callPackage ./_mango.nix {
+  inherit inputs richenLib;
+  cursorSize = 24;
+  tagLayouts = {
+    "BenQ GW2780" = "vertical_tile";
+    "Dell S2716DG" = "vertical_tile";
+    "Odyssey G70D" = "scroller";
+  };
+  env.WLR_DRM_DEVICES = "/dev/dri/nvidia-card:/dev/dri/intel-card";
   config = ''
-    # tag rules
-    # layout support: tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
-    tagrule=id:1,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:1,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:1,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:2,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:2,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:2,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:3,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:3,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:3,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:4,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:4,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:4,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:5,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:5,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:5,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:6,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:6,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:6,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:7,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:7,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:7,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:8,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:8,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:8,monitor_model:Odyssey G70D,layout_name:scroller
-
-    tagrule=id:9,monitor_model:BenQ GW2780,layout_name:vertical_tile
-    tagrule=id:9,monitor_model:Dell S2716DG,layout_name:vertical_tile
-    tagrule=id:9,monitor_model:Odyssey G70D,layout_name:scroller
-
     # monitor rules
     # The NVIDIA DRM connector reports vrr_capable=0 for this proprietary
     # G-Sync display, so Mango cannot enable Wayland adaptive sync on it.
@@ -53,7 +22,6 @@ let
     monitorrule=model:Odyssey G70D,width:3840,height:2160,refresh:144,x:1081,y:0,scale:1.25,vrr:0,rr:0
     monitorrule=model:Dell S2716DG,width:2560,height:1440,refresh:60,x:4153,y:295,scale:1.333333,vrr:0,rr:3
     monitorrule=name:^HEADLESS-[0-9]+$,width:1920,height:1080,refresh:60,x:0,y:0,scale:1,vrr:0,rr:0
-    monitorrule=make:sisel muhendislik,model:EK1080T4KV2,serial:0x00005445,disable:1
 
     # window rules
     windowrule=tags:1,appid:equibop,monitor:model:BenQ GW2780
@@ -97,51 +65,8 @@ let
     bind=SUPER+SHIFT,8,view,8
     bind=SUPER+SHIFT,9,view,9
 
-    # hyprland-style secret tag
+    # scratch tag
     bind=SUPER,S,view,9,
     bind=SUPER+ALT,S,tagsilent,9
-
-    cursor_size=24
   '';
-
-  fullConfig = mangoBase + "\n" + config;
-  wrappedMango = pkgs.writeShellApplication {
-    name = "mango";
-    text = ''
-      export WLR_DRM_DEVICES=/dev/dri/nvidia-card:/dev/dri/intel-card
-      exec ${mangoPackage}/bin/mango -c "$HOME/.config/mango/config.conf" "$@"
-    '';
-  };
-in
-pkgs.stdenv.mkDerivation {
-  pname = mangoPackage.pname or "mango";
-  version = mangoPackage.version or "unstable";
-  dontUnpack = true;
-
-  buildCommand = ''
-    mkdir -p $out
-    ${pkgs.lndir}/bin/lndir -silent ${mangoPackage} $out
-
-    rm -f $out/bin/mango
-    mkdir -p $out/bin
-    ln -s ${wrappedMango}/bin/mango $out/bin/mango
-
-    desktopFile=$out/share/wayland-sessions/mango.desktop
-    if [ -L "$desktopFile" ]; then
-      target=$(readlink -f "$desktopFile")
-      if grep -qF ${pkgs.lib.escapeShellArg (toString mangoPackage)} "$target" 2>/dev/null; then
-        rm "$desktopFile"
-        substitute "$target" "$desktopFile" \
-          --replace-fail ${pkgs.lib.escapeShellArg (toString mangoPackage)} "$out"
-        chmod --reference="$target" "$desktopFile"
-      fi
-    fi
-  '';
-
-  passthru = (mangoPackage.passthru or { }) // {
-    config.content = fullConfig;
-  };
-  meta = (mangoPackage.meta or { }) // {
-    mainProgram = "mango";
-  };
 }
