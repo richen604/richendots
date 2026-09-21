@@ -1,6 +1,9 @@
 {
   pkgs,
   richenLib,
+  mangoPackage,
+  outputs ? null,
+  laptop ? false,
   ...
 }:
 let
@@ -108,11 +111,11 @@ let
       )
     fi
 
-    if [ -x "${richenLib.wrappers.mango-fern}/bin/mmsg" ]; then
+    if [ -x "${mangoPackage}/bin/mmsg" ]; then
       while IFS= read -r client; do
         [ -n "$client" ] && reasons+=("fullscreen: $client")
       done < <(
-        ${pkgs.coreutils}/bin/timeout 1s ${richenLib.wrappers.mango-fern}/bin/mmsg get all-clients 2>/dev/null | ${pkgs.jq}/bin/jq -r '
+        ${pkgs.coreutils}/bin/timeout 1s ${mangoPackage}/bin/mmsg get all-clients 2>/dev/null | ${pkgs.jq}/bin/jq -r '
           .clients[]?
           | select(.is_visible == true)
           | select(
@@ -151,222 +154,191 @@ let
     ${pkgs.procps}/bin/pkill -RTMIN+9 waybar 2>/dev/null || true
   '';
 
-  config = (pkgs.formats.json { }).generate "waybar-config" {
-    layer = "top";
-    output = [
-      "BNQ BenQ GW2780 ET85P0086404U"
-      "Dell Inc. Dell S2716DG #ASMV9wwvvm3d"
-      "Samsung Electric Company Odyssey G70D H1AK500000"
-    ];
-    position = "top";
-    exclusive = true;
-    passthrough = false;
-    "gtk-layer-shell" = true;
-    ipc = false;
-    reload_style_on_change = false;
-    height = 40;
-    tray = {
-      interval = 1;
-      "icon-size" = 18;
-      "show-passive-items" = true;
-      spacing = 8;
-    };
-    "modules-left" = [
-      "mango/workspaces"
-      "wlr/taskbar"
-    ];
-    "modules-center" = [ ];
-    "modules-right" = [
-      "tray"
-      # "network"
-      "pulseaudio"
-      # "pulseaudio#microphone"
-      "custom/cpu-temp"
-      "custom/gpu-temp"
-      "custom/replay"
-      "custom/idle-inhibit"
-      "clock"
-      "custom/notification"
-    ];
-    "mango/window" = {
-      format = "{title}";
-    };
-    "mango/workspaces" = {
-      "format" = "{value}";
-      "hide-empty" = true;
-      "on-click" = "activate";
-    };
-    "custom/notification" = {
-      tooltip = false;
-      format = "{icon}";
-      "format-icons" = {
-        notification = "<span foreground='red'><sup></sup></span>";
-        none = "  ";
-        "dnd-notification" = "<span foreground='red'><sup></sup></span>";
-        "dnd-none" = "";
-        "inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-        "inhibited-none" = "";
-        "dnd-inhibited-notification" = "<span foreground='red'><sup></sup></span>";
-        "dnd-inhibited-none" = "";
+  config = (pkgs.formats.json { }).generate "waybar-config" (
+    {
+      layer = "top";
+      position = "top";
+      exclusive = true;
+      passthrough = false;
+      "gtk-layer-shell" = true;
+      ipc = false;
+      reload_style_on_change = false;
+      height = 40;
+      tray = {
+        interval = 1;
+        "icon-size" = 18;
+        "show-passive-items" = true;
+        spacing = 8;
       };
-      "return-type" = "json";
-      "exec-if" = "which swaync-client";
-      exec = "swaync-client -swb";
-      "on-click" = "sleep 0.1s && swaync-client -t -sw";
-      "on-click-right" = "swaync-client -d -sw";
-      escape = true;
-    };
-    "keyboard-state" = {
-      numlock = false;
-      scrolllock = false;
-      capslock = true;
-      format = "{icon}";
-      "format-icons" = {
-        locked = "Capslock";
-        unlocked = "";
-      };
-    };
-    "custom/cpu-temp" = {
-      interval = 2;
-      format = " {text}";
-      exec = "${cpuTemp}/bin/waybar-cpu-temp";
-      "return-type" = "json";
-      "hide-empty-text" = true;
-    };
-    "custom/gpu-temp" = {
-      interval = 2;
-      format = "󰢮 {text}";
-      exec = "${gpuTemp}/bin/waybar-gpu-temp";
-      "return-type" = "json";
-      "hide-empty-text" = true;
-    };
-    "custom/replay" = {
-      interval = 5;
-      signal = 10;
-      format = "{text}";
-      exec = "replay-status";
-      "on-click" = "replay-mode-menu";
-      "on-click-right" = "replay-save";
-      "on-click-middle" = "replay-recent";
-      "return-type" = "json";
-      tooltip = true;
-    };
-    "custom/idle-inhibit" = {
-      interval = 5;
-      signal = 9;
-      format = "{text}";
-      exec = "${idleStatus}/bin/waybar-idle-status";
-      "on-click" = "${idleToggle}/bin/waybar-idle-toggle";
-      "return-type" = "json";
-      tooltip = true;
-    };
-    "wlr/taskbar" = {
-      format = "{icon}";
-      "icon-size" = 22;
-      "all-outputs" = false;
-      "tooltip-format" = "{title}";
-      markup = true;
-      "on-click" = "activate";
-      "on-click-right" = "close";
-      "ignore-list" = [
-        "Rofi"
-        "wofi"
+      "modules-left" = [
+        "mango/workspaces"
+        "wlr/taskbar"
       ];
-    };
-    network = {
-      interval = 2;
-      "format-wifi" = "{essid} ({signalStrength}%)";
-      "format-ethernet" = "󰈀 {ifname}";
-      "format-linked" = " No IP ({ifname})";
-      "format-disconnected" = " Disconnected";
-      "tooltip-format" = "{ifname} {ipaddr}/{cidr} via {gwaddr}";
-      "format-alt" = "↓{bandwidthDownBytes} ↑{bandwidthUpBytes}";
-    };
-    clock = {
-      format = "{:%H:%M} ";
-      "format-alt" = "{:%A, %b %d} ";
-      "tooltip-format" = "{:%Y}";
-      calendar = {
-        mode = "year";
-        "mode-mon-col" = 3;
-        "weeks-pos" = "right";
-        "on-scroll" = 1;
-        format = {
-          months = "<span color='${richenLib.theme.acc.s."9"}'><b>{}</b></span>";
-          days = "<span color='${richenLib.theme.syntax.function}'><b>{}</b></span>";
-          weeks = "<span color='${richenLib.theme.acc.p."7"}'><b>W{}</b></span>";
-          weekdays = "<span color='${richenLib.theme.ui.warning}'><b>{}</b></span>";
-          today = "<span color='${richenLib.theme.ui.error}'><b><u>{}</u></b></span>";
-        };
+      "modules-center" = [ ];
+      "modules-right" = [
+        "tray"
+        "pulseaudio"
+        "custom/cpu-temp"
+        "custom/gpu-temp"
+        "custom/replay"
+      ]
+      ++ pkgs.lib.optionals laptop [
+        "backlight"
+        "battery"
+      ]
+      ++ [
+        "custom/idle-inhibit"
+        "clock"
+        "custom/notification"
+      ];
+      "mango/workspaces" = {
+        "format" = "{value}";
+        "hide-empty" = true;
+        "on-click" = "activate";
       };
-    };
-    pulseaudio = {
-      format = "{icon} {volume}%";
-      tooltip = false;
-      "format-muted" = " Muted";
-      "on-click" = "pamixer -t";
-      "on-scroll-up" = "pamixer -i 2";
-      "on-scroll-down" = "pamixer -d 2";
-      "scroll-step" = 5;
-      "format-icons" = {
-        headphone = "";
-        "hands-free" = "";
-        headset = "";
-        phone = "";
-        portable = "";
-        car = "";
-        default = [
-          ""
-          ""
-          ""
+      "custom/notification" = {
+        tooltip = false;
+        format = "{icon}";
+        "format-icons" = {
+          notification = "<span foreground='red'><sup></sup></span>";
+          none = "  ";
+          "dnd-notification" = "<span foreground='red'><sup></sup></span>";
+          "dnd-none" = "";
+          "inhibited-notification" = "<span foreground='red'><sup></sup></span>";
+          "inhibited-none" = "";
+          "dnd-inhibited-notification" = "<span foreground='red'><sup></sup></span>";
+          "dnd-inhibited-none" = "";
+        };
+        "return-type" = "json";
+        "exec-if" = "which swaync-client";
+        exec = "swaync-client -swb";
+        "on-click" = "sleep 0.1s && swaync-client -t -sw";
+        "on-click-right" = "swaync-client -d -sw";
+        escape = true;
+      };
+      "custom/cpu-temp" = {
+        interval = 2;
+        format = " {text}";
+        exec = "${cpuTemp}/bin/waybar-cpu-temp";
+        "return-type" = "json";
+        "hide-empty-text" = true;
+      };
+      "custom/gpu-temp" = {
+        interval = 2;
+        format = "󰢮 {text}";
+        exec = "${gpuTemp}/bin/waybar-gpu-temp";
+        "return-type" = "json";
+        "hide-empty-text" = true;
+      };
+      "custom/replay" = {
+        interval = 5;
+        signal = 10;
+        format = "{text}";
+        exec = "replay-status";
+        "on-click" = "replay-mode-menu";
+        "on-click-right" = "replay-save";
+        "on-click-middle" = "replay-recent";
+        "return-type" = "json";
+        tooltip = true;
+      };
+      "custom/idle-inhibit" = {
+        interval = 5;
+        signal = 9;
+        format = "{text}";
+        exec = "${idleStatus}/bin/waybar-idle-status";
+        "on-click" = "${idleToggle}/bin/waybar-idle-toggle";
+        "return-type" = "json";
+        tooltip = true;
+      };
+      "wlr/taskbar" = {
+        format = "{icon}";
+        "icon-size" = 22;
+        "all-outputs" = false;
+        "tooltip-format" = "{title}";
+        markup = true;
+        "on-click" = "activate";
+        "on-click-right" = "close";
+        "ignore-list" = [
+          "Rofi"
+          "wofi"
         ];
       };
-    };
-    "pulseaudio#microphone" = {
-      format = "{format_source}";
-      "format-source" = " {volume}%";
-      tooltip = false;
-      "format-source-muted" = " Muted";
-      "on-click" = "pamixer --default-source -t";
-      "on-scroll-up" = "pamixer --default-source -i 2";
-      "on-scroll-down" = "pamixer --default-source -d 2";
-      "scroll-step" = 5;
-    };
-    "custom/playerctl" = {
-      format = "{2} <span>{0}</span>";
-      "return-type" = "json";
-      exec = "playerctl -p spotify metadata -f '{\"text\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"tooltip\": \"{{markup_escape(title)}} - {{markup_escape(artist)}}  {{ duration(position) }}/{{ duration(mpris:length) }}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F";
-      tooltip = false;
-      "on-click-middle" = "playerctl -p spotify previous";
-      "on-click" = "playerctl -p spotify play-pause";
-      "on-click-right" = "playerctl -p spotify next";
-      "on-click-forward" = "playerctl -p spotify position 10+";
-      "on-click-backward" = "playerctl -p spotify position 10-";
-      "on-scroll-up" = "playerctl -p spotify volume 0.02+";
-      "on-scroll-down" = "playerctl -p spotify volume 0.02-";
-      "format-icons" = {
-        Paused = " ";
-        Playing = " ";
+      clock = {
+        format = "{:%H:%M} ";
+        "format-alt" = "{:%A, %b %d} ";
+        "tooltip-format" = "{:%Y}";
+        calendar = {
+          mode = "year";
+          "mode-mon-col" = 3;
+          "weeks-pos" = "right";
+          "on-scroll" = 1;
+          format = {
+            months = "<span color='${richenLib.theme.acc.s."9"}'><b>{}</b></span>";
+            days = "<span color='${richenLib.theme.syntax.function}'><b>{}</b></span>";
+            weeks = "<span color='${richenLib.theme.acc.p."7"}'><b>W{}</b></span>";
+            weekdays = "<span color='${richenLib.theme.ui.warning}'><b>{}</b></span>";
+            today = "<span color='${richenLib.theme.ui.error}'><b><u>{}</u></b></span>";
+          };
+        };
       };
-    };
-    battery = {
-      bat = "BAT0";
-      interval = 1800;
-      states = {
-        warning = 20;
-        critical = 10;
+      pulseaudio = {
+        format = "{icon} {volume}%";
+        tooltip = false;
+        "format-muted" = " Muted";
+        "on-click" = "pamixer -t";
+        "on-scroll-up" = "pamixer -i 2";
+        "on-scroll-down" = "pamixer -d 2";
+        "scroll-step" = 5;
+        "format-icons" = {
+          headphone = "";
+          "hands-free" = "";
+          headset = "";
+          phone = "";
+          portable = "";
+          car = "";
+          default = [
+            ""
+            ""
+            ""
+          ];
+        };
       };
-      format = "{icon}";
-      "format-icons" = [
-        ""
-        ""
-        ""
-        ""
-        ""
-      ];
-      "max-length" = 25;
-    };
-  };
+      battery = {
+        bat = "BAT0";
+        interval = 1800;
+        states = {
+          warning = 20;
+          critical = 10;
+        };
+        format = "{icon}";
+        "format-icons" = [
+          ""
+          ""
+          ""
+          ""
+          ""
+        ];
+        "max-length" = 25;
+      };
+    }
+    // pkgs.lib.optionalAttrs (outputs != null) {
+      output = outputs;
+    }
+    // pkgs.lib.optionalAttrs laptop {
+      backlight = {
+        interval = 2;
+        device = "amdgpu_bl0";
+        format = "{icon} {percent}%";
+        "format-icons" = [
+          "󰖔"
+          "󰖨"
+        ];
+        "on-scroll-up" = "brightnessctl set +1%";
+        "on-scroll-down" = "brightnessctl set 1%-";
+        "smooth-scrolling-threshold" = 1;
+      };
+    }
+  );
   waybarTheme = import ./_theme.nix { inherit (richenLib) theme; };
   defineGtkColors =
     colors:
@@ -396,113 +368,25 @@ let
       color: @active-foreground;
     }
 
-    #language,
-    #custom-weather,
     #custom-cpu-temp,
     #custom-gpu-temp,
     #custom-replay,
     #custom-idle-inhibit,
-    #window,
     #taskbar,
-    #tags,
-    #custom-playerctl,
     #clock,
     #battery,
     #pulseaudio,
-    #cpu,
-    #temperature,
-    #network,
     #workspaces,
     #tray,
-    #keyboard-state,
     #custom-notification {
       background: none;
       padding: 0px 10px;
-      margin: 0px;
-      margin-top: 5px;
-      margin-bottom: 0px;
-    }
-
-
-    #tags {
-      margin-left: 4px;
-      padding-left: 10px;
-      padding-right: 6px;
-      background: none;
-    }
-
-    #tags button {
-      border: none;
-      transition-duration: 0.3s;
-      background: none;
-      box-shadow: inherit;
-      text-shadow: inherit;
-      color: @foreground;
-      padding: 1px;
-      padding-left: 1px;
-      padding-right: 1px;
-      margin-right: 4px;
-    }
-
-    #tags button {
-      color: @foreground;
-    }
-
-    #tags button:not(.occupied):not(.focused) {
-      font-size: 0;
-      min-width: 0;
-      min-height: 0;
-      margin: -17px;
-      padding: 0;
-      color: transparent;
-      background-color: transparent;
-    }
-
-    #tags button.occupied {
-      color: @active-foreground;
-    }
-
-    #tags button.overview {
-      color: @active-foreground;
-    }
-
-    #tags button:hover {
-      color: @hover-foreground;
-    }
-
-    #tags button.focused {
-      color: @active-foreground;
-      margin-top: 5px;
-      margin-bottom: 5px;
-      padding-top: 1px;
-      padding-bottom: 0px;
-      border-radius: 3px;
-    }
-
-    #tags button.urgent {
-      background-color: @urgent;
-      color: @active-foreground;
-      margin-top: 5px;
-      margin-bottom: 5px;
-      padding-top: 1px;
-      padding-bottom: 0px;
-      border-radius: 3px;
+      margin: 5px 0px 0px;
     }
 
     #tray {
-      background: none;
       margin-right: 4px;
       margin-left: 4px;
-      padding-right: 8px;
-      padding-left: 9px;
-      padding-top: 2px;
-      color: @active-foreground;
-    }
-
-    #network {
-      background: none;
-      margin-right: 4px;
-      margin-left: 0px;
       padding-right: 8px;
       padding-left: 9px;
       padding-top: 2px;
@@ -514,7 +398,6 @@ let
       margin-left: 4px;
       padding-left: 10px;
       padding-right: 6px;
-      background: transparent;
     }
 
     #workspaces button {
@@ -543,48 +426,24 @@ let
       color: @active-foreground;
     }
 
-    #workspaces button.active {
-      background-color: @active-background;
+    #workspaces button.active,
+    #workspaces button.urgent {
       color: @active-foreground;
       margin-top: 5px;
       margin-bottom: 5px;
-      padding-top: 1px;
-      padding-bottom: 0px;
+      padding: 1px 3px 0px;
       border-radius: 3px;
+    }
+
+    #workspaces button.active {
+      background-color: @active-background;
     }
 
     #workspaces button.urgent {
       background-color: @urgent;
-      color: @active-foreground;
-      margin-top: 5px;
-      margin-bottom: 5px;
-      padding-top: 1px;
-      padding-bottom: 0px;
-      border-radius: 3px;
-    }
-
-    #language {
-      background: none;
-      color: @active-foreground;
-      min-width: 24px;
-    }
-
-    #keyboard-state {
-      background: none;
-      color: @active-foreground;
-      border: none;
-      padding-top: 1px;
-    }
-
-    #window {
-      background: none;
-      margin-left: 0px;
-      margin-right: 10px;
-      color: @active-foreground;
     }
 
     #taskbar {
-      background: none;
       margin-left: 10px;
       margin-right: 10px;
       color: @active-foreground;
@@ -593,66 +452,41 @@ let
     #taskbar.empty {
       margin-left: 0px;
       margin-right: 0px;
-      padding-left: 10px;
       padding-right: 0px;
       border-radius: 0px;
-      border-color: transparent;
-      border: none;
-      background-color: transparent;
     }
 
     #taskbar button {
       margin-right: 3px;
     }
 
-    #taskbar button.minimized {
-      background-color: @hover-background;
+    #taskbar button.minimized,
+    #taskbar button.urgent,
+    #taskbar button.active {
       color: @active-foreground;
       margin-top: 5px;
       margin-bottom: 5px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      padding-left: 3px;
-      padding-right: 3px;
+      padding: 0px 3px;
       border-radius: 3px;
     }
 
-    #taskbar button.urgent {
-      background-color: @urgent;
-      color: @active-foreground;
-      margin-top: 5px;
-      margin-bottom: 5px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      padding-left: 3px;
-      padding-right: 3px;
-      border-radius: 3px;
+    #taskbar button.minimized {
+      background-color: @hover-background;
     }
 
     #taskbar button.active {
       background-color: @active-background;
-      color: @active-foreground;
-      margin-top: 5px;
-      margin-bottom: 5px;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      padding-left: 3px;
-      padding-right: 3px;
-      border-radius: 3px;
     }
 
-    #custom-playerctl {
-      background: none;
-      color: @active-foreground;
+    #taskbar button.urgent {
+      background-color: @urgent;
     }
 
     #clock {
-      background: none;
       color: @active-foreground;
     }
 
     #pulseaudio {
-      background: none;
       color: @active-foreground;
       margin-left: 0px;
     }
@@ -661,7 +495,6 @@ let
     #custom-gpu-temp,
     #custom-replay,
     #custom-idle-inhibit {
-      background: none;
       color: @active-foreground;
     }
 
@@ -703,20 +536,18 @@ let
     }
 
     #battery {
-      background: none;
       color: @active-foreground;
     }
 
-    #custom-weather {
-      background: none;
-      color: @active-foreground;
-      margin-left: 4px;
-      padding-right: 7px;
-      padding-top: 1px;
-    }
+    ${pkgs.lib.optionalString laptop ''
+      #backlight {
+        background: none;
+        color: @active-foreground;
+        margin-right: 4px;
+      }
+    ''}
 
     #custom-notification {
-      background: none;
       color: @active-foreground;
       min-width: 18px;
     }
