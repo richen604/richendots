@@ -47,8 +47,49 @@ remote test -s "$firmware"
 printf 'Firmware: %s:%s\n' "$target" "$firmware"
 
 if $check_only; then
+  progress 'Validate boot volumes on Fern'
+  remote bash -s <<'REMOTE'
+set -euo pipefail
+
+validate_volume() {
+  local label=$1
+  local matches=()
+
+  mapfile -t matches < <(
+    lsblk -nrpo NAME,LABEL,FSTYPE,TYPE | while read -r device found_label filesystem type; do
+      if [ "$found_label" = "$label" ]; then
+        printf '%s\t%s\t%s\n' "$device" "$filesystem" "$type"
+      fi
+    done
+  )
+
+  [ "${#matches[@]}" -eq 1 ] || {
+    printf 'expected exactly one %s volume, found %s\n' "$label" "${#matches[@]}" >&2
+    return 1
+  }
+
+  IFS=$'\t' read -r device filesystem type <<< "${matches[0]}"
+  [ "$filesystem" = vfat ] || {
+    printf 'refusing filesystem %s on %s (%s)\n' "$filesystem" "$device" "$label" >&2
+    return 1
+  }
+  [ "$type" = disk ] || {
+    printf 'refusing device type %s on %s (%s)\n' "$type" "$device" "$label" >&2
+    return 1
+  }
+  case "$device" in
+    /dev/*) ;;
+    *) printf 'refusing device path %s (%s)\n' "$device" "$label" >&2; return 1 ;;
+  esac
+
+  printf '%s: %s (%s, %s)\n' "$label" "$device" "$filesystem" "$type"
+}
+
+validate_volume GLV80RHBOOT
+validate_volume GLV80LHBOOT
+REMOTE
   progress 'Read-only check complete'
-  printf 'No volume was mounted and no firmware was copied.\n'
+  printf 'Both boot volumes are valid. No volume was mounted and no firmware was copied.\n'
   exit 0
 fi
 

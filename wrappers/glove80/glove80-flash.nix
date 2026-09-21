@@ -173,7 +173,7 @@ pkgs.writeShellApplication {
       local side=$1
       local label=$2
       local other=$3
-      local keys normal_product device mountpoint copy_status present retries
+      local keys normal_product device mountpoint present retries
 
       case "$side" in
         Right)
@@ -220,11 +220,11 @@ pkgs.writeShellApplication {
       printf 'Do not touch the power switch, cable, KVM, or USB switch during the copy.\n'
       read -r -p "Press Enter to copy firmware to the $side half... " _
       printf 'Copying %s to %s/flash.uf2...\n' "$firmware" "$mountpoint"
-      set +e
-      cp "$firmware" "$mountpoint/flash.uf2"
-      copy_status=$?
-      set -e
-      printf 'Copy command exited with status %s.\n' "$copy_status"
+      if ! cp "$firmware" "$mountpoint/flash.uf2"; then
+        printf 'failed to copy firmware to the %s half\n' "$side" >&2
+        return 1
+      fi
+      printf 'Firmware copy completed.\n'
 
       phase="waiting for the $side bootloader to reboot"
       printf 'Waiting up to 10 seconds for %s to disappear...\n' "$label"
@@ -262,7 +262,7 @@ pkgs.writeShellApplication {
       done
 
       printf '%s disappeared but %s did not return; this is not counted as success\n' "$label" "$normal_product" >&2
-      printf 'The copy command status was %s. Keep both halves off and retry the complete workflow.\n' "$copy_status" >&2
+      printf 'Keep both halves off and retry the complete workflow.\n' >&2
       return 1
     }
 
