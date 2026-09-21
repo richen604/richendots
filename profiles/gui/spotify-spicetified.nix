@@ -20,19 +20,17 @@ let
     config_file="''${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/config-xpui.ini"
 
     ${pkgs.coreutils}/bin/mkdir -p "$state_dir"
+    ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$config_file")"
     exec 9>"$state_dir/apply.lock"
     ${pkgs.util-linux}/bin/flock 9
 
     replace_backup_metadata() {
-      source_file="$1"
       config_tmp="$(${pkgs.coreutils}/bin/mktemp "$state_dir/config.XXXXXX")"
-      ${pkgs.gawk}/bin/awk '
-        /^\[Backup\]$/ { skipping = 1; next }
-        skipping && /^\[/ { skipping = 0 }
-        !skipping { print }
-      ' "$config_file" > "$config_tmp"
-      ${pkgs.coreutils}/bin/printf '\n' >> "$config_tmp"
-      ${pkgs.coreutils}/bin/cat "$source_file" >> "$config_tmp"
+      ${pkgs.coreutils}/bin/cat ${spicetifyManaged.config} > "$config_tmp"
+      if [ -s "$backup_metadata" ]; then
+        ${pkgs.coreutils}/bin/printf '\n' >> "$config_tmp"
+        ${pkgs.coreutils}/bin/cat "$backup_metadata" >> "$config_tmp"
+      fi
       ${pkgs.coreutils}/bin/install -m 0644 "$config_tmp" "$config_file"
       ${pkgs.coreutils}/bin/rm -f "$config_tmp"
     }
@@ -57,10 +55,6 @@ let
       ${pkgs.coreutils}/bin/mv "$backup_tmp" "$backup_metadata"
     }
 
-    if [ -s "$backup_metadata" ]; then
-      replace_backup_metadata "$backup_metadata"
-    fi
-
     echo "==> Checking Flathub repository..."
     ${pkgs.flatpak}/bin/flatpak remote-add --user --if-not-exists flathub \
       https://flathub.org/repo/flathub.flatpakrepo
@@ -84,7 +78,8 @@ let
       IFS= read -r applied_revision < "$stamp_file"
     fi
 
-    if [ "$applied_revision" != "$desired_revision" ]; then
+    if [ ! -s "$config_file" ] || [ "$applied_revision" != "$desired_revision" ]; then
+      replace_backup_metadata
       echo "==> Backing up and applying managed Spicetify theme..."
       if ! ${pkgs.spicetify-cli}/bin/spicetify backup apply; then
         echo "==> Restoring Spotify before retrying..."

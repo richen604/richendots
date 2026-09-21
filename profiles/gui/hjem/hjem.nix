@@ -57,11 +57,6 @@ in
         '';
         ".config/kdeglobals".source = kdeglobals;
         ".config/qt6ct".source = ./config/qt6ct;
-        ".config/spicetify/config-xpui.ini" = {
-          type = "copy";
-          permissions = "0644";
-          source = spicetifyManaged.config;
-        };
         ".config/spicetify/CustomApps/marketplace/extension.js" = {
           type = "copy";
           permissions = "0644";
