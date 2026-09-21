@@ -1,4 +1,3 @@
-// stay close to defaults with predictable physical keymaps.
 glide.g.mapleader = "<Space>";
 glide.o.keyboard_layout = "qwerty";
 glide.o.keymaps_use_physical_layout = "force";

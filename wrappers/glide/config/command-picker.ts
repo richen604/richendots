@@ -1,4 +1,3 @@
-// keep the picker focused and easy to move through.
 const command_mode = glide.modes.get("command");
 if (command_mode) {
   command_mode.switch_mode_on_focus = false;

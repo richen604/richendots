@@ -22,7 +22,8 @@
     "ui.systemUsesDarkTheme" = true;
     "widget.use-xdg-desktop-portal.file-picker" = 1;
     "extensions.autoDisableScopes" = 0;
-    "extensions.update.enabled" = false;
+    # Managed extensions intentionally track AMO's latest release URLs below.
+    "extensions.update.enabled" = true;
     "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
     # Low-breakage privacy baseline. Avoid RFP, WebGL/WebRTC disablement, and

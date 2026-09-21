@@ -1,4 +1,3 @@
-// close everything except the tab in front.
 glide.keymaps.set("normal", "<leader>D", async () => {
   const active_tab = await glide.tabs.active();
   const tabs = await glide.tabs.query({ currentWindow: true });

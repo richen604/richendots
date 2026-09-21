@@ -29,6 +29,7 @@ let
           ScreenShare.Allow = [ "http://127.0.0.1:16432" ];
         };
         Preferences = {
+          "firefoxpwa.enableHidingIconBar" = true;
           "media.eme.enabled" = true;
           "media.ffmpeg.vaapi.enabled" = true;
           "media.hardware-video-decoding.force-enabled" = true;
@@ -58,6 +59,15 @@ let
   # FirefoxPWA's native connector and patch assets, without its bundled Firefox runtime.
   firefoxpwaConnectorOnly = pkgs.firefoxpwa-unwrapped.overrideAttrs (old: {
     pname = "firefoxpwa-connector";
+    version = "2.20.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "filips123";
+      repo = "PWAsForFirefox";
+      tag = "v2.20.0";
+      hash = "sha256-4Gbwfx/Gv21dvCEeS6HE1zHflD7xABRX3rAJdHWIsHU=";
+    };
+    sourceRoot = "source/native";
+    preConfigure = builtins.replaceStrings [ "2.19.0" ] [ "2.20.0" ] old.preConfigure;
     postInstall = ''
       mkdir -p $out/share/firefoxpwa
       cp -r userchrome $out/share/firefoxpwa
@@ -125,6 +135,34 @@ let
     pkgs.libva.out
     pkgs.pipewire
   ];
+  firefoxpwaRuntimeRepair = ''
+    firefoxpwa_runtime="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/runtime"
+    firefoxpwa_config="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/config.json"
+    mkdir -p "\$(dirname "\$firefoxpwa_config")"
+    if [ ! -f "\$firefoxpwa_config" ]; then
+      cat > "\$firefoxpwa_config" <<'CONFIG_EOF'
+    {"profiles":{"00000000000000000000000000":{"ulid":"00000000000000000000000000","name":"Default","description":"Default profile for all web apps","sites":[]}},"sites":{},"arguments":[],"variables":{},"config":{"always_patch":false,"runtime_enable_wayland":true,"runtime_use_xinput2":false,"runtime_use_portals":true,"use_linked_runtime":true}}
+    CONFIG_EOF
+    fi
+    if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
+      rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
+    fi
+    if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
+      rm "\$firefoxpwa_runtime"
+    fi
+    if [ ! -e "\$firefoxpwa_runtime" ]; then
+      mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
+      ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
+    fi
+    if [ -f "\$firefoxpwa_config" ]; then
+      config_tmp="\$(mktemp)"
+      if ${pkgs.jq}/bin/jq '.config.use_linked_runtime = true | .config.runtime_enable_wayland = true | .config.runtime_use_portals = true' "\$firefoxpwa_config" > "\$config_tmp"; then
+        mv "\$config_tmp" "\$firefoxpwa_config"
+      else
+        rm -f "\$config_tmp"
+      fi
+    fi
+  '';
 in
 pkgs.stdenv.mkDerivation {
   pname = "glide-browser";
@@ -185,45 +223,19 @@ pkgs.stdenv.mkDerivation {
         cat > $out/bin/firefoxpwa <<EOF
     #!${pkgs.runtimeShell}
     export MOZ_ENABLE_WAYLAND=1
-    export MOZ_DISABLE_RDD_SANDBOX="\''${MOZ_DISABLE_RDD_SANDBOX:-1}"
     export LD_LIBRARY_PATH="/run/opengl-driver/lib:${graphicsLibraryPath}:\''${LD_LIBRARY_PATH:-}"
     if [ -e /run/opengl-driver/lib/dri/nvidia_drv_video.so ]; then
       export LIBVA_DRIVER_NAME="\''${LIBVA_DRIVER_NAME:-nvidia}"
       export LIBVA_DRIVERS_PATH="/run/opengl-driver/lib/dri:\''${LIBVA_DRIVERS_PATH:-}"
       export NVD_BACKEND="\''${NVD_BACKEND:-direct}"
     fi
-    firefoxpwa_runtime="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/runtime"
-    firefoxpwa_config="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/config.json"
-    mkdir -p "\$(dirname "\$firefoxpwa_config")"
-    if [ ! -f "\$firefoxpwa_config" ]; then
-      cat > "\$firefoxpwa_config" <<'CONFIG_EOF'
-    {"profiles":{"00000000000000000000000000":{"ulid":"00000000000000000000000000","name":"Default","description":"Default profile for all web apps","sites":[]}},"sites":{},"arguments":[],"variables":{},"config":{"always_patch":false,"runtime_enable_wayland":true,"runtime_use_xinput2":false,"runtime_use_portals":true,"use_linked_runtime":true}}
-    CONFIG_EOF
-    fi
-    if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
-      rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
-    fi
-    if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
-      rm "\$firefoxpwa_runtime"
-    fi
-    if [ ! -e "\$firefoxpwa_runtime" ]; then
-      mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-      ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
-    fi
-    if [ -f "\$firefoxpwa_config" ]; then
-      config_tmp="\$(mktemp)"
-      if ${pkgs.jq}/bin/jq '.config.use_linked_runtime = true | .config.runtime_enable_wayland = true | .config.runtime_use_portals = true' "\$firefoxpwa_config" > "\$config_tmp"; then
-        mv "\$config_tmp" "\$firefoxpwa_config"
-      else
-        rm -f "\$config_tmp"
-      fi
-    fi
+    ${firefoxpwaRuntimeRepair}
     repair_desktop_entries() {
       for desktop_entry in "\''${XDG_DATA_HOME:-\$HOME/.local/share}"/applications/FFPWA-*.desktop; do
         [ -e "\$desktop_entry" ] || continue
         ${pkgs.gnused}/bin/sed -i \
-          -e 's|^Exec=firefoxpwa |Exec=$out/bin/firefoxpwa |' \
-          -e 's|^Exec=/nix/store/[^ ]*/bin/firefoxpwa |Exec=$out/bin/firefoxpwa |' \
+          -e 's|^Exec=firefoxpwa |Exec=/run/current-system/sw/bin/firefoxpwa |' \
+          -e 's|^Exec=/nix/store/[^ ]*/bin/firefoxpwa |Exec=/run/current-system/sw/bin/firefoxpwa |' \
           "\$desktop_entry"
       done
     }
@@ -260,45 +272,19 @@ pkgs.stdenv.mkDerivation {
         cat > $out/bin/firefoxpwa-connector <<EOF
     #!${pkgs.runtimeShell}
     export MOZ_ENABLE_WAYLAND=1
-    export MOZ_DISABLE_RDD_SANDBOX="\''${MOZ_DISABLE_RDD_SANDBOX:-1}"
     export LD_LIBRARY_PATH="/run/opengl-driver/lib:${graphicsLibraryPath}:\''${LD_LIBRARY_PATH:-}"
     if [ -e /run/opengl-driver/lib/dri/nvidia_drv_video.so ]; then
       export LIBVA_DRIVER_NAME="\''${LIBVA_DRIVER_NAME:-nvidia}"
       export LIBVA_DRIVERS_PATH="/run/opengl-driver/lib/dri:\''${LIBVA_DRIVERS_PATH:-}"
       export NVD_BACKEND="\''${NVD_BACKEND:-direct}"
     fi
-    firefoxpwa_runtime="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/runtime"
-    firefoxpwa_config="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/config.json"
-    mkdir -p "\$(dirname "\$firefoxpwa_config")"
-    if [ ! -f "\$firefoxpwa_config" ]; then
-      cat > "\$firefoxpwa_config" <<'CONFIG_EOF'
-    {"profiles":{"00000000000000000000000000":{"ulid":"00000000000000000000000000","name":"Default","description":"Default profile for all web apps","sites":[]}},"sites":{},"arguments":[],"variables":{},"config":{"always_patch":false,"runtime_enable_wayland":true,"runtime_use_xinput2":false,"runtime_use_portals":true,"use_linked_runtime":true}}
-    CONFIG_EOF
-    fi
-    if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
-      rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
-    fi
-    if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
-      rm "\$firefoxpwa_runtime"
-    fi
-    if [ ! -e "\$firefoxpwa_runtime" ]; then
-      mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-      ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
-    fi
-    if [ -f "\$firefoxpwa_config" ]; then
-      config_tmp="\$(mktemp)"
-      if ${pkgs.jq}/bin/jq '.config.use_linked_runtime = true | .config.runtime_enable_wayland = true | .config.runtime_use_portals = true' "\$firefoxpwa_config" > "\$config_tmp"; then
-        mv "\$config_tmp" "\$firefoxpwa_config"
-      else
-        rm -f "\$config_tmp"
-      fi
-    fi
+    ${firefoxpwaRuntimeRepair}
     repair_desktop_entries() {
       for desktop_entry in "\''${XDG_DATA_HOME:-\$HOME/.local/share}"/applications/FFPWA-*.desktop; do
         [ -e "\$desktop_entry" ] || continue
         ${pkgs.gnused}/bin/sed -i \
-          -e 's|^Exec=firefoxpwa |Exec=$out/bin/firefoxpwa |' \
-          -e 's|^Exec=/nix/store/[^ ]*/bin/firefoxpwa |Exec=$out/bin/firefoxpwa |' \
+          -e 's|^Exec=firefoxpwa |Exec=/run/current-system/sw/bin/firefoxpwa |' \
+          -e 's|^Exec=/nix/store/[^ ]*/bin/firefoxpwa |Exec=/run/current-system/sw/bin/firefoxpwa |' \
           "\$desktop_entry"
       done
     }
@@ -338,8 +324,7 @@ pkgs.stdenv.mkDerivation {
         cat > $out/bin/glide <<EOF
     #!${pkgs.runtimeShell}
     export MOZ_ENABLE_WAYLAND=1
-    export MOZ_DISABLE_RDD_SANDBOX="\''${MOZ_DISABLE_RDD_SANDBOX:-1}"
-    #prevents media playback from throttling cpu with no changes to playback performance
+    # Disable NVIDIA CUDA performance boosting for Glide.
     export CUDA_DISABLE_PERF_BOOST=1
     export LD_LIBRARY_PATH="/run/opengl-driver/lib:${graphicsLibraryPath}:\''${LD_LIBRARY_PATH:-}"
     if [ -e /run/opengl-driver/lib/dri/nvidia_drv_video.so ]; then
@@ -354,32 +339,7 @@ pkgs.stdenv.mkDerivation {
     ln -sf ${./tsconfig.json} "\$profile/tsconfig.json"
     ln -sf ${chromeCss} "\$profile/chrome/userChrome.css"
     ln -sf ${contentCss} "\$profile/chrome/userContent.css"
-    firefoxpwa_runtime="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/runtime"
-    firefoxpwa_config="\''${XDG_DATA_HOME:-\$HOME/.local/share}/firefoxpwa/config.json"
-    mkdir -p "\$(dirname "\$firefoxpwa_config")"
-    if [ ! -f "\$firefoxpwa_config" ]; then
-      cat > "\$firefoxpwa_config" <<'CONFIG_EOF'
-    {"profiles":{"00000000000000000000000000":{"ulid":"00000000000000000000000000","name":"Default","description":"Default profile for all web apps","sites":[]}},"sites":{},"arguments":[],"variables":{},"config":{"always_patch":false,"runtime_enable_wayland":true,"runtime_use_xinput2":false,"runtime_use_portals":true,"use_linked_runtime":true}}
-    CONFIG_EOF
-    fi
-    if [ -d "\$firefoxpwa_runtime" ] && [ ! -e "\$firefoxpwa_runtime/firefox" ] && [ ! -e "\$firefoxpwa_runtime/application.ini" ]; then
-      rmdir "\$firefoxpwa_runtime" 2>/dev/null || true
-    fi
-    if [ -L "\$firefoxpwa_runtime" ] && [ "\$(readlink "\$firefoxpwa_runtime")" != "$out/${pwaRuntimeSubdir}" ]; then
-      rm "\$firefoxpwa_runtime"
-    fi
-    if [ ! -e "\$firefoxpwa_runtime" ]; then
-      mkdir -p "\$(dirname "\$firefoxpwa_runtime")"
-      ln -s $out/${pwaRuntimeSubdir} "\$firefoxpwa_runtime"
-    fi
-    if [ -f "\$firefoxpwa_config" ]; then
-      config_tmp="\$(mktemp)"
-      if ${pkgs.jq}/bin/jq '.config.use_linked_runtime = true | .config.runtime_enable_wayland = true | .config.runtime_use_portals = true' "\$firefoxpwa_config" > "\$config_tmp"; then
-        mv "\$config_tmp" "\$firefoxpwa_config"
-      else
-        rm -f "\$config_tmp"
-      fi
-    fi
+    ${firefoxpwaRuntimeRepair}
     mkdir -p "\$HOME/.glide-browser/native-messaging-hosts"
     ln -sf ${keepassxcNativeMessagingManifest} "\$HOME/.glide-browser/native-messaging-hosts/org.keepassxc.keepassxc_browser.json"
     ln -sf $out/share/firefoxpwa/firefoxpwa.json "\$HOME/.glide-browser/native-messaging-hosts/firefoxpwa.json"
