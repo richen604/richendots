@@ -2,7 +2,6 @@ packages:
 {
   config,
   inputs,
-  pkgs,
   lib,
   ...
 }:
