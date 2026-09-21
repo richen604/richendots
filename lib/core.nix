@@ -44,21 +44,7 @@ rec {
     );
 
   escapeShellArgWithEnv =
-    arg:
-    let
-      escaped =
-        lib.replaceStrings
-          [
-            ''\''
-            ''"''
-          ]
-          [
-            ''\\''
-            ''\"''
-          ]
-          (toString arg);
-    in
-    ''"${escaped}"'';
+    arg: if toString arg == "$@" then ''"$@"'' else lib.escapeShellArg (toString arg);
 
   listFilesRecursiveCond =
     dir: condition:
@@ -114,14 +100,20 @@ rec {
         ''
           ${envString}
           ${preHook}
-          ${lib.optionalString (postHook == "") "exec"} ${exePath}${flagsString}
+          ${lib.optionalString (postHook == "") "exec"} ${lib.escapeShellArg (toString exePath)}${flagsString}
           ${postHook}
         ''
       ),
     }:
     let
       envString = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (name: value: ''export ${name}="${toString value}"'') env
+        lib.mapAttrsToList (
+          name: value:
+          if builtins.match "[a-zA-Z_][a-zA-Z0-9_]*" name == null then
+            throw "wrapPackage env name ${lib.escapeShellArg name} is not a valid shell variable name"
+          else
+            "export ${name}=${lib.escapeShellArg (toString value)}"
+        ) env
       );
 
       flagsString = lib.optionalString (args != [ ]) (
