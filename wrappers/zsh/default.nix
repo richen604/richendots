@@ -95,12 +95,12 @@ let
   interactiveShellInit = ''
     ${pkgs.pokemon-colorscripts}/bin/pokemon-colorscripts -r 1,2 --no-title
 
-    # Powerlevel10k instant prompt
+    eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} export zsh)"
+
+    # instant prompt preamble
     if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
       source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
     fi
-
-    eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
   '';
 
   promptInit = ''
@@ -176,6 +176,8 @@ let
 
         source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
         export ZSH_AUTOSUGGEST_STRATEGY=(history)
+
+        eval "$(${pkgs.lib.getExe' pkgs.direnv "direnv"} hook zsh)"
 
         if [[ "$TERM" != dumb && $options[zle] = on ]]; then
           eval "$(${pkgs.atuin}/bin/atuin init zsh --disable-up-arrow --disable-ai)"

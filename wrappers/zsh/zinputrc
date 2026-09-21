@@ -1,4 +1,5 @@
-# Stolen from ArchWiki
+# Adapted from the ArchWiki Zsh key bindings example:
+# https://wiki.archlinux.org/title/Zsh#Key_bindings
 
 # create a zkbd compatible hash;
 # to add other keys to this hash, see: man 5 terminfo
