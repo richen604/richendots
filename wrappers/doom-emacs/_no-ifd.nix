@@ -150,8 +150,9 @@ let
           # esuper. Instead we map repositories to pins, and then do the rest of the work in
           # makePackage.
 
-          # TODO: refactor url determination out of makePackage, use here?
-          # Probably best done at the same time as the codeberg TODO in fetch-overrides.nix.
+          # Repository pin propagation uses nixpkgs' gitRepoUrl metadata. Recipe-derived
+          # and fallback URLs below cannot be reused here without preserving Straight's
+          # ELPA mirror and repository-identity semantics.
           repoToPin =
             let
               # Not unique, but that's ok as this is only used with genAttrs.
@@ -230,8 +231,6 @@ let
               # use it), and replacing the source in nixpkgs's derivation will not work
               # (it assumes it gets a tarball as input).
 
-              # TODO: check notmuch works correctly without notmuch-version.el
-
               isElpa =
                 hasOrigEPkg
                 && (
@@ -252,8 +251,9 @@ let
                   # Assume we can safely ignore (pre-)build unless we're actually
                   # building our own package.
 
-                  # HACK: ignore these checks for org, which elisp-packages-late fixes up.
-                  # (Generalize this if we ever need the same treatment for other packages.)
+                  # Org's Straight recipe declares build hooks that this generic builder does
+                  # not execute. elisp-packages-late.nix supplies the corresponding Org-specific
+                  # configure, autoload-generation, and install phases.
                   assert lib.assertMsg (name != "org" -> !(p ? recipe.pre-build)) "${name}: pre-build not supported";
                   assert lib.assertMsg (name != "org" -> !(p ? recipe.build)) "${name}: build not supported";
                   assert lib.assertMsg (pin != null) ''
@@ -323,14 +323,13 @@ let
                 # parity between fetchTree's github fetcher and fetchGit (GitHub's exports don't
                 # seem to contain submodules).
                 submodules = !(p.recipe.nonrecursive or true);
-                # TODO: pull ref from derivation.src when not pulling it from p.recipe?
-                # Note Doom does have packages with pin + branch (or nonrecursive) set,
-                # expecting to inherit the rest of the recipe from Straight.
-
-                # Always specify a ref to work around https://github.com/NixOS/nix/issues/10773
+                # Honor only branches declared by Doom's recipe. Inferring a ref from epkg.src
+                # could constrain Doom's pinned revision to nixpkgs' source branch. Always
+                # specify a ref to work around https://github.com/NixOS/nix/issues/10773.
                 ref = p.recipe.branch or "HEAD";
 
-                # TODO: remove if https://github.com/NixOS/nix/issues/11012 is fixed.
+                # Full fetches support pinned non-tip revisions on servers that reject shallow
+                # requests for unadvertised objects; see Nix issue #11012.
                 shallow = false;
               };
               src =
@@ -392,11 +391,9 @@ let
               })
             else
               epkg;
-          # Hack: we call makePackage for everything (not just doomPackageSet), just to hit the
-          # repoToPin check. We cannot easily call it just for transitive dependencies, because we
-          # need makePackage to figure out what the dependencies (for packages not in esuper) are.
-          # But we do need some filtering (currently just "emacs" itself) to avoid infinite recursion
-          # while populating repoToPin.
+          # Apply makePackage across esuper so packages outside doomPackageSet inherit pins from
+          # Doom packages sharing their repository. Skip non-derivations and Emacs itself;
+          # evaluating Emacs through makePackage recurses via repoToPin.
           upstreamWithPins = lib.mapAttrs (
             n: p: if (!lib.isDerivation p) || p == esuper.emacs then p else makePackage n { }
           ) esuper;
@@ -424,20 +421,14 @@ let
               || (lib.elem "lsp-mode" (map (p: p.ename or "not-a-package") (pkg.packageRequires or [ ])));
           in
           pkg.overrideAttrs (
+            old:
             lib.optionalAttrs isLspModeOrDependant {
-              # TODO: simplify if https://github.com/NixOS/nixpkgs/pull/452898 is merged.
-              preBuild =
-                let
-                  origPreBuild = pkg.preBuild or "";
-                  origPreBuildString = if origPreBuild == null then "" else origPreBuild;
-                in
-                origPreBuildString
-                + ''
-                  export LSP_USE_PLISTS=1
-                '';
+              preBuild = (old.preBuild or "") + ''
+                export LSP_USE_PLISTS=1
+              '';
             }
           );
-        # TODO: very similar map to the upstreamWithPins one. Rework makePackage signature for reuse?
+        # Apply LSP build settings to derivations in this override scope.
         result = lib.mapAttrs (
           name: pkg: if (!lib.isDerivation pkg) || pkg == esuper.emacs then pkg else (manglePackage name pkg)
         ) esuper;
@@ -476,6 +467,8 @@ let
       ;
     doomDir = doomDir';
     profileName = nonEmptyProfileName;
+    # build-doom-profile.sh translates this flag to `-u`, disabling profile selection
+    # in Doom's early loader when callers pass profileName = "".
     noProfileHack = profileName == "";
     buildProfileLoader = unstraightenedSource + "/build-helpers/build-profile-loader";
     buildProfile = unstraightenedSource + "/build-helpers/build-profile";
