@@ -100,42 +100,110 @@ let
     };
   };
 
+  leader = on: run: desc: {
+    on = [ "<Space>" ] ++ on;
+    inherit run desc;
+  };
+
   keymap.mgr.prepend_keymap = [
-    {
-      on = "M";
-      run = "plugin mount";
-      desc = "Mount manager";
-    }
-    {
-      on = "C";
-      run = "plugin ouch";
-      desc = "Compress with ouch";
-    }
     {
       on = "<Enter>";
       run = "plugin smart-enter";
       desc = "Enter directory or open file";
     }
-    {
-      on = "f";
-      run = "plugin smart-filter";
-      desc = "Smart filter";
-    }
-    {
-      on = "p";
-      run = "plugin smart-paste";
-      desc = "Paste into hovered directory";
-    }
-    {
-      on = "+";
-      run = "plugin zoom 1";
-      desc = "Zoom preview in";
-    }
-    {
-      on = "-";
-      run = "plugin zoom -1";
-      desc = "Zoom preview out";
-    }
+  ]
+  ++ [
+    # Selection
+    (leader [ "<Space>" ] [ "toggle" "arrow 1" ] "Toggle selection")
+
+    # Files
+    (leader [ "f" "a" ] "create" "Create file or directory")
+    (leader [ "f" "A" ] "bulk_create" "Bulk create files")
+    (leader [ "f" "r" ] "rename --cursor=before_ext" "Rename selected files")
+    (leader [ "f" "d" ] "remove" "Trash selected files")
+    (leader [ "f" "D" ] "remove --permanently" "Permanently delete selected files")
+    (leader [ "f" "o" ] "open" "Open selected files")
+    (leader [ "f" "O" ] "open --interactive" "Open with…")
+    (leader [ "f" "y" ] "yank" "Yank selected files")
+    (leader [ "f" "x" ] "yank --cut" "Cut selected files")
+    (leader [ "f" "p" ] "plugin smart-paste" "Paste into hovered directory")
+    (leader [ "f" "u" ] "unyank" "Cancel yank")
+    (leader [ "f" "l" ] "link" "Create absolute symlink")
+    (leader [ "f" "L" ] "link --relative" "Create relative symlink")
+    (leader [ "f" "h" ] "hardlink" "Create hardlink")
+    (leader [ "f" "c" ] "plugin ouch" "Compress with ouch")
+
+    # Clipboard
+    (leader [ "c" "y" ] "plugin wl-clipboard" "Copy files to system clipboard")
+    (leader [ "c" "p" ] "copy path" "Copy file path")
+    (leader [ "c" "u" ] "copy url" "Copy file URL")
+    (leader [ "c" "d" ] "copy dirpath" "Copy directory path")
+    (leader [ "c" "D" ] "copy dirurl" "Copy directory URL")
+    (leader [ "c" "f" ] "copy filename" "Copy filename")
+    (leader [ "c" "n" ] "copy name_without_ext" "Copy filename without extension")
+
+    # Go
+    (leader [ "g" "h" ] "cd ~" "Go home")
+    (leader [ "g" "c" ] "cd ~/.config" "Go to config")
+    (leader [ "g" "d" ] "cd ~/Downloads" "Go to downloads")
+    (leader [ "g" "t" ] "plugin trash" "Go to trash")
+    (leader [ "g" "g" ] "cd --interactive" "Jump interactively")
+    (leader [ "g" "f" ] "follow" "Follow hovered symlink")
+
+    # Search and sort
+    (leader [ "s" "f" ] "plugin smart-filter" "Smart filter")
+    (leader [ "s" "n" ] "search --via=fd" "Search filenames")
+    (leader [ "s" "c" ] "search --via=rg" "Search file contents")
+    (leader [ "s" "j" ] "plugin fzf" "Jump with fzf")
+    (leader [ "s" "z" ] "plugin zoxide" "Jump with zoxide")
+    (leader [ "s" "s" "n" ] "sort natural --reverse=no" "Sort naturally")
+    (leader [ "s" "s" "N" ] "sort natural --reverse=yes" "Sort naturally, reverse")
+    (leader [ "s" "s" "a" ] "sort alphabetical --reverse=no" "Sort alphabetically")
+    (leader [ "s" "s" "A" ] "sort alphabetical --reverse=yes" "Sort alphabetically, reverse")
+    (leader [ "s" "s" "m" ] [ "sort mtime --reverse=no" "linemode mtime" ] "Sort by modified time")
+    (leader [ "s" "s" "M" ] [ "sort mtime --reverse=yes" "linemode mtime" ]
+      "Sort by modified time, reverse"
+    )
+    (leader [ "s" "s" "b" ] [ "sort btime --reverse=no" "linemode btime" ] "Sort by birth time")
+    (leader [ "s" "s" "B" ] [ "sort btime --reverse=yes" "linemode btime" ]
+      "Sort by birth time, reverse"
+    )
+    (leader [ "s" "s" "e" ] "sort extension --reverse=no" "Sort by extension")
+    (leader [ "s" "s" "E" ] "sort extension --reverse=yes" "Sort by extension, reverse")
+    (leader [ "s" "s" "s" ] [ "sort size --reverse=no" "linemode size" ] "Sort by size")
+    (leader [ "s" "s" "S" ] [ "sort size --reverse=yes" "linemode size" ] "Sort by size, reverse")
+    (leader [ "s" "s" "r" ] "sort random --reverse=no" "Sort randomly")
+
+    # Tabs and tasks
+    (leader [ "t" "n" ] "tab_create --current" "Create tab in current directory")
+    (leader [ "t" "r" ] "tab_rename --interactive" "Rename current tab")
+    (leader [ "t" "h" ] "tab_switch -1 --relative" "Previous tab")
+    (leader [ "t" "l" ] "tab_switch 1 --relative" "Next tab")
+    (leader [ "t" "H" ] "tab_swap -1" "Move tab left")
+    (leader [ "t" "L" ] "tab_swap 1" "Move tab right")
+    (leader [ "t" "w" ] "tasks:show" "Show task manager")
+
+    # View
+    (leader [ "v" "h" ] "hidden toggle" "Toggle hidden files")
+    (leader [ "v" "s" ] "spot" "Spot hovered file")
+    (leader [ "v" "z" "i" ] "plugin zoom 1" "Zoom preview in")
+    (leader [ "v" "z" "o" ] "plugin zoom -1" "Zoom preview out")
+    (leader [ "v" "l" "s" ] "linemode size" "Show sizes")
+    (leader [ "v" "l" "p" ] "linemode permissions" "Show permissions")
+    (leader [ "v" "l" "b" ] "linemode btime" "Show birth time")
+    (leader [ "v" "l" "m" ] "linemode mtime" "Show modified time")
+    (leader [ "v" "l" "o" ] "linemode owner" "Show owners")
+    (leader [ "v" "l" "n" ] "linemode none" "Hide line metadata")
+
+    # Utilities and session
+    (leader [ "u" "m" ] "plugin mount" "Mount manager")
+    (leader [ "u" "s" ] "shell --interactive" "Run shell command")
+    (leader [ "u" "S" ] "shell --block --interactive" "Run blocking shell command")
+    (leader [ "q" "q" ] "quit" "Quit")
+    (leader [ "q" "Q" ] "quit --no-cwd-file" "Quit without changing directory")
+    (leader [ "q" "c" ] "close" "Close current tab")
+    (leader [ "q" "s" ] "suspend" "Suspend Yazi")
+    (leader [ "q" "h" ] "help" "Open full help")
   ];
 
   theme = import ./yazi/_theme.nix { inherit (richenLib) theme; };
