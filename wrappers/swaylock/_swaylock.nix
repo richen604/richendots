@@ -25,10 +25,8 @@ let
       {
         daemonize = true;
         clock = true;
-        image = ./../swaybg/wall.png;
+        image = "${./wall.jpg}";
         scaling = "fill";
-        effect-blur = "5x5";
-        effect-vignette = "1:1";
         font = "GohuFont uni14 Nerd Font Propo";
         font-size = fontSize;
         indicator = true;

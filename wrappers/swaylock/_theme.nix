@@ -4,7 +4,7 @@ let
 in
 {
   colors = {
-    color = "${stripHash theme.bg.p}80";
+    color = stripHash theme.bg.p;
     line-color = stripHash theme.bg.p;
     ring-color = stripHash theme.acc.p."2";
     inside-color = stripHash theme.bg.p;
