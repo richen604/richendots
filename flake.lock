@@ -271,6 +271,27 @@
         "type": "github"
       }
     },
+    "opencode": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790147748,
+        "narHash": "sha256-oWJ2h4x4WWfTtMUMmOs62KnJ2n331zMrv9sQux8KpIk=",
+        "owner": "anomalyco",
+        "repo": "opencode",
+        "rev": "6f3639d82ed0760091792189b78f8eeb44f699b1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anomalyco",
+        "ref": "v2.0.15",
+        "repo": "opencode",
+        "type": "github"
+      }
+    },
     "richendots-private": {
       "inputs": {
         "disko": [
@@ -290,8 +311,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1790030420,
-        "narHash": "sha256-UVjBPlim5F5eMz2DHtGUdb3YUtlhyusIGYBE/pjOVHA=",
+        "lastModified": 1790271096,
+        "narHash": "sha256-qL9IGl8izslonFisQC574m4WzQna7QTEx5K2UDc3uww=",
         "path": "/mnt/dev/richendots-private",
         "type": "path"
       },
@@ -313,6 +334,7 @@
         "nix-flatpak": "nix-flatpak",
         "nixarr": "nixarr",
         "nixpkgs": "nixpkgs",
+        "opencode": "opencode",
         "richendots-private": "richendots-private",
         "sops-nix": "sops-nix",
         "trynix": "trynix"
