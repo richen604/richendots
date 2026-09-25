@@ -93,10 +93,10 @@
     };
 
     interval = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
       default = "hourly";
       example = "Mon *-*-* 03:00:00";
-      description = "Builder timer schedule.";
+      description = "Builder timer schedule, or null to allow only manual builds.";
     };
   };
 
@@ -185,13 +185,13 @@
     autoApply = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Enable automatic client activation of fetched builds.";
+      description = "Immediately activate successfully fetched builds.";
     };
 
     interval = lib.mkOption {
       type = lib.types.str;
       default = "daily";
-      description = "Client auto-activation timer schedule.";
+      description = "Deprecated auto-activation timer schedule.";
     };
 
     goal = lib.mkOption {

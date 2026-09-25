@@ -103,7 +103,7 @@ cmd_fetch() {
 }
 
 activate_latest() {
-  local metadata=$1 activatable temp_path activation_timeout magic_rollback activate_pid store_name store_hash canary wait_log
+  local metadata=$1 activatable temp_path activation_timeout magic_rollback activate_pid store_name store_hash canary cancel wait_log
   activatable=$(jq -r '.activatablePath' <<<"$metadata")
   temp_path=$(jq -r '.activation.tempPath' "$CONFIG")
   if [ "$(id -u)" -ne 0 ]; then
@@ -127,6 +127,12 @@ activate_latest() {
     return
   fi
 
+  store_name=${activatable#/nix/store/}
+  store_hash=${store_name%%-*}
+  canary=$temp_path/deploy-rs-canary-$store_hash
+  cancel=$temp_path/deploy-rs-cancel-$store_hash
+  rm -f "$canary" "$cancel"
+
   wait_log=$CLIENT_DIR/activate-rs-wait.log
   : >"$wait_log"
 
@@ -138,11 +144,19 @@ activate_latest() {
     return 1
   fi
 
-  store_name=${activatable#/nix/store/}
-  store_hash=${store_name%%-*}
-  canary=$temp_path/deploy-rs-canary-$store_hash
   rm -f "$canary"
   wait "$activate_pid"
+}
+
+record_activating() {
+  local host=$1 metadata=$2 result
+  result=$(jq -n \
+    --arg status activating \
+    --arg at "$(date --iso-8601=seconds)" \
+    --arg activatablePath "$(jq -r '.activatablePath' <<<"$metadata")" \
+    --arg toplevelPath "$(jq -r '.toplevelPath' <<<"$metadata")" \
+    '{status: $status, at: $at, activatablePath: $activatablePath, toplevelPath: $toplevelPath}')
+  jq --arg host "$host" --argjson result "$result" '.host = $host | .lastPull = $result' "$CLIENT_STATE" | atomic_write "$CLIENT_STATE"
 }
 
 cmd_activate() {
@@ -155,6 +169,11 @@ cmd_activate() {
     return 1
   }
 
+  if [ "$(jq -r '.toplevelPath' <<<"$metadata")" = "$(readlink /run/current-system 2>/dev/null || true)" ]; then
+    return 0
+  fi
+
+  record_activating "$host" "$metadata"
   print_nixpull_event "activating" "$(jq -r '.activatablePath' <<<"$metadata")"
   started=$(date +%s%3N)
   if activate_latest "$metadata"; then

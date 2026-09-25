@@ -79,6 +79,7 @@ let
       state_home=''${XDG_STATE_HOME:-$HOME/.local/state}/nixpull
       dismissed="$state_home/dismissed"
       current=$(readlink /run/current-system 2>/dev/null || true)
+      auto_apply=${lib.boolToString cfg.activation.autoApply}
 
       notify_last_pull_result() {
         [ -r "$state" ] || return 1
@@ -96,7 +97,18 @@ let
         fi
 
         host=$(jq -r '.host // "unknown"' "$state")
-        if [ "$last_pull_status" = success ] && [ -n "$last_pull_toplevel" ] && [ "$(readlink /run/current-system 2>/dev/null || true)" = "$last_pull_toplevel" ]; then
+        if [ "$last_pull_status" = activating ]; then
+          mkdir -p "$state_home"
+          printf '%s\n' "$notified_key" >>"$notified"
+          notify-send \
+            --app-name=nixpull \
+            --icon=software-update-available \
+            --expire-time=0 \
+            --hint=string:x-canonical-private-synchronous:nixpull-apply \
+            "NixOS update applying" \
+            "Host: $host" || true
+          return 0
+        elif [ "$last_pull_status" = success ] && [ -n "$last_pull_toplevel" ] && [ "$(readlink /run/current-system 2>/dev/null || true)" = "$last_pull_toplevel" ]; then
           mkdir -p "$state_home"
           printf '%s\n' "$notified_key" >>"$notified"
           notify-send \
@@ -153,7 +165,25 @@ let
 
       fetching_status=$(jq -r '.fetching.status // empty' "$state")
       fetching_activatable=$(jq -r '.fetching.metadata.activatablePath // empty' "$state")
-      if [ "$fetching_status" = failure ] && [ -n "$fetching_activatable" ]; then
+      if [ "$fetching_status" = fetching ] && [ -n "$fetching_activatable" ]; then
+        host=$(jq -r '.host // "unknown"' "$state")
+        fetching_at=$(jq -r '.fetching.at // empty' "$state")
+        notified="$state_home/notified-fetching"
+        notified_key="$fetching_at $fetching_activatable"
+        if [ -f "$notified" ] && grep -Fxq "$notified_key" "$notified"; then
+          exit 0
+        fi
+        mkdir -p "$state_home"
+        printf '%s\n' "$notified_key" >>"$notified"
+        notify-send \
+          --app-name=nixpull \
+          --icon=software-update-available \
+          --expire-time=0 \
+          --hint=string:x-canonical-private-synchronous:nixpull-fetching \
+          "NixOS update fetching" \
+          "Host: $host" || true
+        exit 0
+      elif [ "$fetching_status" = failure ] && [ -n "$fetching_activatable" ]; then
         host=$(jq -r '.host // "unknown"' "$state")
         exit_code=$(jq -r '.fetching.exitCode // "unknown"' "$state")
         fetching_at=$(jq -r '.fetching.at // empty' "$state")
@@ -180,6 +210,8 @@ let
       [ -n "$activatable" ] || exit 0
 
       [ -n "$toplevel" ] && [ "$current" = "$toplevel" ] && exit 0
+
+      [ "$auto_apply" = true ] && exit 0
 
       last_pull_status=$(jq -r '.lastPull.status // empty' "$state")
       last_pull_path=$(jq -r '.lastPull.activatablePath // empty' "$state")

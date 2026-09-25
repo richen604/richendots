@@ -85,7 +85,7 @@ in
           }
         ];
 
-        systemd.timers.nixpull-build = {
+        systemd.timers.nixpull-build = lib.mkIf (cfg.builder.interval != null) {
           wantedBy = [ "timers.target" ];
           timerConfig = {
             OnCalendar = cfg.builder.interval;
@@ -133,21 +133,15 @@ in
 
         systemd.services.nixpull-fetch = lib.mkIf (cfg.fetch.enable || cfg.fetch.webhook.enable) {
           description = "Fetch latest published nixpull profile";
+          unitConfig = lib.optionalAttrs cfg.activation.autoApply {
+            OnSuccess = "nixpull-apply.service";
+          };
           serviceConfig = {
             Type = "oneshot";
             User = "root";
             StateDirectory = "nixpull";
           };
           script = "${nixpullPackage}/bin/nixpull fetch";
-        };
-
-        systemd.timers.nixpull-apply = lib.mkIf cfg.activation.autoApply {
-          wantedBy = [ "timers.target" ];
-          timerConfig = {
-            OnCalendar = cfg.activation.interval;
-            Persistent = true;
-            RandomizedDelaySec = "5m";
-          };
         };
 
         systemd.services.nixpull-apply = {
