@@ -2,6 +2,7 @@
 {
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
+    kernel.sysctl."fs.protected_hardlinks" = 1;
     tmp.cleanOnBoot = true;
     loader.efi.canTouchEfiVariables = true;
     loader.grub = {
