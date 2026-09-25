@@ -58,11 +58,13 @@ richenLib.lib.wrapPackage {
   env = {
     USE_LAYER_SHELL = "1";
     VICINAE_OVERRIDES = config;
-    XDG_DATA_DIRS = "$XDG_DATA_DIRS:${themesPackage}/share";
   }
   // pkgs.lib.optionalAttrs (qtScaleFactor != null) {
     QT_SCALE_FACTOR = qtScaleFactor;
   };
+  preHook = ''
+    export XDG_DATA_DIRS="$XDG_DATA_DIRS:${themesPackage}/share"
+  '';
   passthru = {
     config.path = config;
     inherit themesPackage;
