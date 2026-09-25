@@ -3,18 +3,23 @@
   richenLib,
   dpmsTimeout ? 1500,
   suspendTimeout ? 3600,
+  afterResumeExtraCommand ? null,
   ...
 }:
 let
   dpmsOff = pkgs.writeShellScript "dpms-off" ''
-    wlr-randr | grep -E '^[^ ]' | awk '{print $1}' | while read -r output; do
-      wlr-randr --output "$output" --off
+    ${pkgs.wlr-randr}/bin/wlr-randr | ${pkgs.gnugrep}/bin/grep -E '^[^ ]' | ${pkgs.gawk}/bin/awk '{print $1}' | while read -r output; do
+      ${pkgs.wlr-randr}/bin/wlr-randr --output "$output" --off
     done
   '';
   dpmsOn = pkgs.writeShellScript "dpms-on" ''
-    wlr-randr | grep -E '^[^ ]' | awk '{print $1}' | while read -r output; do
-      wlr-randr --output "$output" --on
+    ${pkgs.wlr-randr}/bin/wlr-randr | ${pkgs.gnugrep}/bin/grep -E '^[^ ]' | ${pkgs.gawk}/bin/awk '{print $1}' | while read -r output; do
+      ${pkgs.wlr-randr}/bin/wlr-randr --output "$output" --on
     done
+  '';
+  afterResume = pkgs.writeShellScript "after-resume" ''
+    ${dpmsOn}
+    ${pkgs.lib.optionalString (afterResumeExtraCommand != null) (toString afterResumeExtraCommand)}
   '';
   eventsToArgs =
     events:
@@ -46,7 +51,7 @@ richenLib.lib.wrapPackage {
     {
       type = "timeout";
       timeout = 300;
-      command = "swaylock";
+      command = "${richenLib.wrappers.swaylock}/bin/swaylock";
     }
     {
       type = "timeout";
@@ -57,23 +62,23 @@ richenLib.lib.wrapPackage {
     {
       type = "timeout";
       timeout = suspendTimeout;
-      command = "systemctl suspend";
+      command = "${pkgs.systemd}/bin/systemctl suspend";
     }
     {
       type = "before-sleep";
-      command = "swaylock";
+      command = "${richenLib.wrappers.swaylock}/bin/swaylock";
     }
     {
       type = "lock";
-      command = "swaylock";
+      command = "${richenLib.wrappers.swaylock}/bin/swaylock";
     }
     {
       type = "after-resume";
-      command = toString dpmsOn;
+      command = toString afterResume;
     }
     {
       type = "unlock";
-      command = "pkill -USR1 swaylock";
+      command = "${pkgs.procps}/bin/pkill -USR1 swaylock";
     }
   ]
   ++ [ "$@" ];
