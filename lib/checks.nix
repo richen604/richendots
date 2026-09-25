@@ -8,10 +8,6 @@ forEachSystem (
   system:
   let
     pkgs = pkgsFor system;
-    privateSrc = lib.cleanSourceWith {
-      src = inputs.richendots-private;
-      filter = path: type: lib.cleanSourceFilter path type && baseNameOf path != ".direnv";
-    };
     mkChecks =
       name: src:
       let
@@ -80,7 +76,14 @@ forEachSystem (
       };
   in
   mkChecks "richendots" inputs.self
-  // lib.mapAttrs' (name: value: lib.nameValuePair "private-${name}" value) (
-    mkChecks "richendots-private" privateSrc
+  // lib.optionalAttrs (inputs ? richendots-private) (
+    lib.mapAttrs' (name: value: lib.nameValuePair "private-${name}" value) (
+      mkChecks "richendots-private" (
+        lib.cleanSourceWith {
+          src = inputs.richendots-private;
+          filter = path: type: lib.cleanSourceFilter path type && baseNameOf path != ".direnv";
+        }
+      )
+    )
   )
 )

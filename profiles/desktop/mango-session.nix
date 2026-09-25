@@ -127,14 +127,14 @@ in
       inherit pkgs richenLib;
       mangoPackage = richenLib.wrappers.mango-fern;
       waybarPackage = richenLib.wrappers.waybar;
-      swayidlePackage = richenLib.wrappers.swayidle;
+      swayidlePackage = richenLib.wrappers.swayidle-fern;
     })
   ];
 
   environment.systemPackages = [
     richenLib.wrappers.mango-fern
     richenLib.wrappers.swaylock
-    richenLib.wrappers.swayidle
+    richenLib.wrappers.swayidle-fern
     richenLib.wrappers.waybar
   ];
 

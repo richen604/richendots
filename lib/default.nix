@@ -2,13 +2,17 @@
 let
   inherit (inputs.nixpkgs) lib;
 
+  hostVars = import ./host-vars.nix { inherit inputs; };
+
   packageLib = import ./packages.nix { inherit inputs lib; };
   inherit (packageLib) forEachSystem pkgsFor;
 
   mkLib =
-    pkgs:
+    pkgs: hostVars:
     let
       selfLib = {
+        inherit hostVars;
+
         vars = import ./vars.nix { inherit inputs lib; };
 
         theme = import ./theme { inherit (selfLib) vars; };
@@ -25,6 +29,7 @@ let
 
   hosts = import ./hosts.nix {
     inherit
+      hostVars
       inputs
       lib
       mkLib

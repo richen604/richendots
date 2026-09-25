@@ -156,7 +156,7 @@
       "Perplexity"
     ];
     Default = "Rebang";
-    Add = richenLib.vars.private.glide.searchEngines ++ [
+    Add = richenLib.vars.glide.searchEngines ++ [
       {
         Name = "Rebang";
         Alias = "rb";

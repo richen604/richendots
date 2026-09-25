@@ -1,12 +1,13 @@
 {
   hostvars,
+  lib,
   pkgs,
   richenLib,
   ...
 }:
 let
   vicinaePackage =
-    if hostvars.profile == "laptop" then
+    if lib.elem "laptop" hostvars.profiles then
       richenLib.wrappers.vicinae-laptop
     else
       richenLib.wrappers.vicinae;

@@ -116,7 +116,7 @@ let
       SupportKphFields = true;
       NoMigrationPrompt = false;
       Browser_AllowLocalhostWithPasskeys = false;
-    } (richenLib.vars.private.keepassxc.localConfig.Browser or { });
+    } richenLib.vars.keepassxc.localConfig.Browser;
     # ssh agent
     SSHAgent = {
       Enabled = false;
@@ -125,7 +125,7 @@ let
     };
     # fdo secrets
     FdoSecrets = {
-      Enabled = false;
+      Enabled = true;
       ShowNotification = true;
       ConfirmDeleteItem = true;
       ConfirmAccessItem = true;

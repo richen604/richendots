@@ -71,12 +71,19 @@ let
       system:
       let
         pkgs = pkgsFor system;
-        richenLib = mkLib pkgs;
+        fernLib = mkLib pkgs hostVars.fern;
+        oakLib = mkLib pkgs hostVars.oak;
+        wrappers = lib.filterAttrs (_name: package: lib.meta.availableOn pkgs.stdenv.hostPlatform package) (
+          fernLib.wrappers
+          // {
+            mango-oak = oakLib.wrappers.mango-oak;
+            waybar-laptop = oakLib.wrappers.waybar-laptop;
+          }
+        );
         vmCandidates = lib.filterAttrs (
           _name: hostvars:
           hostvars.system == system
-          && hostvars ? profile
-          && lib.elem hostvars.profile [
+          && lib.any (profile: lib.elem profile hostvars.profiles) [
             "desktop"
             "laptop"
           ]
@@ -85,7 +92,7 @@ let
           name: hostvars: lib.nameValuePair "vm-${name}" (mkVm (hostvars // { inherit system; }))
         ) vmCandidates;
       in
-      vmPackages // richenLib.wrappers
+      vmPackages // wrappers
     );
 
   devShell = forEachSystem (

@@ -28,7 +28,7 @@ let
       # makes git branch sort by most recently used branches instead of alphabetical
       branch.sort = "-committerdate";
       merge.conflictStyle = "zdiff3";
-    } richenLib.vars.private.git.config
+    } richenLib.vars.git.config
   );
 in
 richenLib.lib.wrapPackage {

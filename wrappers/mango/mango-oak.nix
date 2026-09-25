@@ -7,7 +7,7 @@
 
 pkgs.callPackage ./_mango.nix {
   inherit inputs richenLib;
-  cursorSize = 48;
+  cursorSize = richenLib.hostVars.cursorSize;
   tagLayouts = {
     "BenQ GW2780" = "vertical_tile";
     "DELL E2020H" = "vertical_tile";

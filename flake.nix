@@ -30,6 +30,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    opencode = {
+      url = "github:anomalyco/opencode/v2.0.15";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     trynix = {
       url = "github:fzakaria/trynix";
       inputs.nixpkgs.follows = "nixpkgs";
