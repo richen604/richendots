@@ -6,6 +6,8 @@
   # Unused; disabling it also saves eval.
   system.tools.nixos-option.enable = false;
 
+  systemd.enableStrictShellChecks = true;
+
   programs.nh.clean = {
     enable = true;
     dates = "weekly";
@@ -18,16 +20,17 @@
     settings = {
       warn-dirty = false;
       allow-import-from-derivation = false;
-      substituters = richenLib.vars.private.nix.substituters ++ [
+      timeout = 7200;
+      substituters = richenLib.vars.nix.substituters ++ [
         "https://doom-emacs-unstraightened.cachix.org"
-        "https://cache.nixos-cuda.org"
-        "https://cache.nixos.org"
       ];
+      fallback = true;
+      connect-timeout = 2;
+      download-attempts = 2;
+      stalled-download-timeout = 10;
       http-connections = 64;
-      trusted-public-keys = richenLib.vars.private.nix.trustedPublicKeys ++ [
+      trusted-public-keys = richenLib.vars.nix.trustedPublicKeys ++ [
         "doom-emacs-unstraightened.cachix.org-1:O5oOlRPnmQEvVaFyuMTmthCEooHbrg54WgSLR07tmg4="
-        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       experimental-features = [
         "nix-command"
